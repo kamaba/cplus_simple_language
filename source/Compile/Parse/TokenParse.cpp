@@ -7,6 +7,7 @@
 //****************************************************************************
 
 #include "TokenParse.h"
+#include "../FileMeta/FileMeta.h"
 #include <iostream>
 #include <sstream>
 

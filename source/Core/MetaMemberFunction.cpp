@@ -229,12 +229,12 @@ namespace Core {
         sb << "_";
         if (m_ReturnMetaVariable)
         {
-            sb << m_ReturnMetaVariable->GetMetaDefineType()->toFormatString();
+            sb << m_ReturnMetaVariable->GetMetaDefineType()->ToFormatString();
         }
         sb << "_";
         if (m_MetaMemberParamCollection)
         {
-            sb << m_MetaMemberParamCollection->getMaxParamCount();
+            sb << m_MetaMemberParamCollection->GetMaxParamCount();
         }
         m_VirtualFunctionName = sb.str();
     }

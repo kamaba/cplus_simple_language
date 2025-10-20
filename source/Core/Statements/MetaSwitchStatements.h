@@ -13,7 +13,6 @@
 #include "../MetaCallLink.h"
 #include "../AllowUseSettings.h"
 #include "../Compile/CoreFileMeta/FileMetaKeySwitchSyntax.h"
-#include "../Global.h"
 #include <string>
 #include <vector>
 

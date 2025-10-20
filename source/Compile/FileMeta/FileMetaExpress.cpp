@@ -112,8 +112,8 @@ void FileMetaParTerm::BuildAST() {
     // Create expression from par node content
     std::vector<Node*> parContent;
     for (auto child : m_ParNode->childList()) {
-        if (child->nodeType() != SimpleLanguage::Core::ENodeType::LineEnd &&
-            child->nodeType() != SimpleLanguage::Core::ENodeType::SemiColon) {
+        if (child->nodeType() != SimpleLanguage::Compile::Parse::ENodeType::LineEnd &&
+            child->nodeType() != SimpleLanguage::Compile::Parse::ENodeType::SemiColon) {
             parContent.push_back(child);
         }
     }

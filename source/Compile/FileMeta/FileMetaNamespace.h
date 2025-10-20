@@ -10,8 +10,8 @@
 
 #include "FileMetaBase.h"
 #include "FileMetaCommon.h"
-#include "../../Parse/Node.h"
-#include "../../Core/Define.h"
+#include "../Parse/Node.h"
+#include "../../Define.h"
 #include <vector>
 #include <string>
 #include <stack>
@@ -33,9 +33,9 @@ public:
     virtual ~FileMetaNamespace() = default;
 
     // Properties
-    bool isSearchNamespace() const { return m_IsSearchNamespace; }
-    Node* namespaceNode() const { return m_NamespaceNode; }
-    Node* namespaceNameNode() const { return m_NamespaceNameNode; }
+    bool IsSearchNamespace() const { return m_IsSearchNamespace; }
+    Node* NamespaceNode() const { return m_NamespaceNode; }
+    Node* NamespaceNameNode() const { return m_NamespaceNameNode; }
     virtual std::string Name() const override;
     NamespaceStatementBlock* namespaceStatementBlock() const { return m_NamespaceStateBlock; }
     FileMetaNamespace* topLevelFileMetaNamespace = nullptr;

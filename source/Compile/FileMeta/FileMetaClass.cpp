@@ -31,7 +31,7 @@ FileMetaClass::FileMetaClass(FileMeta* fm, const ::std::vector<Node*>& listNode)
 
 bool FileMetaClass::Parse() {
     if (m_NodeList.empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 错误 !!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 错误 !!!");
         return false;
     }
 
@@ -47,34 +47,34 @@ bool FileMetaClass::Parse() {
     int addCount = 0;
     
     while (addCount < static_cast<int>(m_NodeList.size())) {
-        auto cnode = m_NodeList[addCount++];
+        Node* cnode = m_NodeList[addCount++];
 
-        if (cnode->nodeType() == SimpleLanguage::Core::ENodeType::IdentifierLink) {
+        if (cnode->NodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
             if (m_SufInterfaceToken != nullptr || m_ExtendsToken != nullptr) {
                 ::std::vector<FileMetaClassDefine*> fcdList;
                 addCount = ReadClassDefineStruct(addCount - 1, m_NodeList, fcdList);
                 if (m_ExtendsToken != nullptr && m_SufInterfaceToken == nullptr) {
                     if (m_FileMetaExtendClass != nullptr) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 已有继承类,请勿多重继承!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 已有继承类,请勿多重继承!");
                     }
                     if (fcdList.empty()) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 继承关键字后边没有相应的内容!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 继承关键字后边没有相应的内容!");
                     }
                     if (fcdList.size() > 1) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 继承只能单继承，不能多继承!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 继承只能单继承，不能多继承!!");
                     }
                     m_FileMetaExtendClass = fcdList[0];
                 } else if (m_SufInterfaceToken != nullptr) {
                     if (fcdList.empty()) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "接口关键字后边没有相应的内容!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "接口关键字后边没有相应的内容!");
                     }
                     m_InterfaceClassList.insert(m_InterfaceClassList.end(), fcdList.begin(), fcdList.end());
                 }
             } else {
                 if (!classNameTokenList.empty()) {
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructClassNameRepeat, "Error 字符两次赋值 107");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructClassNameRepeat, "Error 字符两次赋值 107");
                     for (size_t i = 0; i < classNameTokenList.size(); i++) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, classNameTokenList[i]->lexeme().ToString());
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, classNameTokenList[i]->GetLexeme());
                     }
                 }
                 classNameTokenList = cnode->linkTokenList();
@@ -84,16 +84,16 @@ bool FileMetaClass::Parse() {
                     nnode = m_NodeList[addCount];
                 }
 
-                if (nnode != nullptr && nnode->nodeType() == SimpleLanguage::Core::ENodeType::LeftAngle) {
+                if (nnode != nullptr && nnode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::LeftAngle) {
                     int cAddCount = addCount + 1;
                     bool templateInExtends = false;
                     Node* templateNode = nullptr;
                     Node* templateExtendsNode = nullptr;
                     while (cAddCount < static_cast<int>(m_NodeList.size())) {
                         auto cnode2 = m_NodeList[cAddCount++];
-                        if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::RightAngle) {
+                        if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::RightAngle) {
                             if (templateNode == nullptr) {
-                                auto ld = SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "没有找到模板定义T");
+                                auto ld = SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "没有找到模板定义T");
                                 ld->filePath = cnode2->token()->path();
                                 ld->sourceBeginLine = cnode2->token()->sourceBeginLine();
                                 break;
@@ -101,24 +101,24 @@ bool FileMetaClass::Parse() {
                             auto fmtd = new FileMetaTemplateDefine(m_FileMeta, templateNode, templateExtendsNode);
                             m_TemplateDefineList.push_back(fmtd);
                             break;
-                        } else if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::Comma) {
+                        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
                             auto fmtd = new FileMetaTemplateDefine(m_FileMeta, templateNode, templateExtendsNode);
                             m_TemplateDefineList.push_back(fmtd);
                             templateNode = nullptr;
                             continue;
-                        } else if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::Key && 
+                        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Key && 
                                   cnode2->token() != nullptr && 
-                                  cnode2->token()->type() == SimpleLanguage::Core::ETokenType::Colon) {
+                                  cnode2->token()->type() == SimpleLanguage::ETokenType::Colon) {
                             templateInExtends = true;
                             continue;
-                        } else if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::IdentifierLink) {
+                        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
                             if (templateInExtends) {
                                 templateExtendsNode = cnode2;
                             } else {
                                 templateNode = cnode2;
                             }
                         } else {
-                            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 不支持其它格式 在类后续的模板限定中!");
+                            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 不支持其它格式 在类后续的模板限定中!");
                         }
                     }
                     addCount = cAddCount;
@@ -126,117 +126,117 @@ bool FileMetaClass::Parse() {
             }
         } else {
             auto token = cnode->token();
-            if (token->type() == SimpleLanguage::Core::ETokenType::Public ||
-                token->type() == SimpleLanguage::Core::ETokenType::Private ||
-                token->type() == SimpleLanguage::Core::ETokenType::Projected ||
-                token->type() == SimpleLanguage::Core::ETokenType::Extern) {
+            if (token->type() == SimpleLanguage::ETokenType::Public ||
+                token->type() == SimpleLanguage::ETokenType::Private ||
+                token->type() == SimpleLanguage::ETokenType::Projected ||
+                token->type() == SimpleLanguage::ETokenType::Extern) {
                 if (permissionToken == nullptr) {
                     permissionToken = token;
                 } else {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次权限!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次权限!!");
                 }
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Const) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Const) {
                 if (m_ConstToken == nullptr) {
                     m_ConstToken = token;
                 } else {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Const!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Const!!");
                 }
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Partial) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Partial) {
                 if (m_PartialToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
                 }
                 m_PartialToken = token;
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Class) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Class) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
                 }
                 if (m_DataToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次data!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次data!!");
                 }
                 if (m_ClassToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
                 }
                 m_ClassToken = token;
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Enum) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Enum) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
                 }
                 if (m_DataToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次data!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次data!!");
                 }
                 if (m_ClassToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
                 }
                 m_EnumToken = token;
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Data) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Data) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
                 } else {
                     if (m_DataToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次data!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次data!!");
                     }
                     if (m_ClassToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
                     }
                     m_DataToken = token;
                 }
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Extends) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Extends) {
                 if (m_ExtendsToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Extend!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Extend!!");
                 }
                 m_ExtendsToken = token;
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Interface) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Interface) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
                 }
                 if (m_DataToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析过了一次data!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次data!!");
                 }
                 if (!classNameTokenList.empty()) {    //后置
                     if (m_PreInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
                     }
                     if (m_SufInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
                     }
                     m_SufInterfaceToken = token;
                 } else {
                     if (m_ClassToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析interface与class不可以周时出现!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析interface与class不可以周时出现!!");
                     }
                     if (m_PreInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
                     }
                     if (m_SufInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析类时，已发现用过interface标记，不可重复使用该标记");
                     }
                     m_PreInterfaceToken = token;
                 }
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Comma) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Comma) {
                 commaToken = token;
             } else {
                 isError = true;
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 有其它未知类型在class中");
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 有其它未知类型在class中");
                 break;
             }
         }
@@ -245,42 +245,42 @@ bool FileMetaClass::Parse() {
 
     if (m_EnumToken != nullptr) {
         if (m_PreInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Enum方式，与enum同级，不允许同时出现");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum方式，与enum同级，不允许同时出现");
             return false;
         }
         if (m_SufInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Enum方式，不支持接口方式");
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum方式，不支持接口方式");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "");
             return false;
         }
         if (permissionToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Enum方式，不支持权限的使用!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum方式，不支持权限的使用!!");
             return false;
         }
         if (m_PartialToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Enum方式，不支持partial的使用!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum方式，不支持partial的使用!!");
             return false;
         }
     } else if (m_DataToken != nullptr) {
         if (m_PreInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Enum方式，与data同级，不允许同时出现");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum方式，与data同级，不允许同时出现");
             return false;
         }
         if (m_SufInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Enum方式，不支持接口方式");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum方式，不支持接口方式");
             return false;
         }
         if (permissionToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Data方式，不支持权限的使用!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Data方式，不支持权限的使用!!");
             return false;
         }
         if (m_PartialToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error Data方式，不支持partial的使用!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Data方式，不支持partial的使用!!");
             return false;
         }
     } else {
         if (classNameTokenList.empty()) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::StructFileMetaStart, "Error 解析类型名称错误!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析类型名称错误!!");
         }
     }
     
@@ -303,7 +303,7 @@ int FileMetaClass::ReadClassDefineStruct(int cAddCount, const std::vector<Node*>
     while (cAddCount < static_cast<int>(m_NodeList.size())) {
         auto cnode2 = m_NodeList[cAddCount];
         
-        if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::RightAngle) {
+        if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::RightAngle) {
             if (curPST == nullptr) {
                 cAddCount++;
                 break;
@@ -324,13 +324,13 @@ int FileMetaClass::ReadClassDefineStruct(int cAddCount, const std::vector<Node*>
                     curPST = curPST->parentPSt;
                 }
             }
-        } else if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::Comma) {
+        } else if (cnode2->NodeType() == SimpleLanguage::ENodeType::Comma) {
             cAddCount++;
             continue;
-        } else if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::IdentifierLink ||
-                  (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::Key && 
-                   cnode2->token() != nullptr && 
-                   cnode2->token()->type() == SimpleLanguage::Core::ETokenType::Object)) {
+        } else if (cnode2->NodeType() == SimpleLanguage::ENodeType::IdentifierLink ||
+                  (cnode2->NodeType() == SimpleLanguage::ENodeType::Key &&
+                   cnode2->GetToken() != nullptr && 
+                   cnode2->GetToken()->type() == SimpleLanguage::ETokenType::Object)) {
             ParseStructTemp* newpst = nullptr;
             if (curPST == nullptr) {
                 newpst = new ParseStructTemp();
@@ -344,19 +344,19 @@ int FileMetaClass::ReadClassDefineStruct(int cAddCount, const std::vector<Node*>
             
             if (cAddCount + 1 < static_cast<int>(m_NodeList.size())) {
                 auto nextNode = m_NodeList[cAddCount + 1];
-                if (nextNode->nodeType() == SimpleLanguage::Core::ENodeType::LeftAngle) {
+                if (nextNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::LeftAngle) {
                     cAddCount++;
                     newpst->angleNode = nextNode;
                     curPST = newpst;
                 }
             }
-        } else if (cnode2->nodeType() == SimpleLanguage::Core::ENodeType::Key && 
+        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Key && 
                   cnode2->token() != nullptr && 
-                  cnode2->token()->type() == SimpleLanguage::Core::ETokenType::Interface) {
+                  cnode2->token()->type() == SimpleLanguage::ETokenType::Interface) {
             cAddCount++;
             break;
         } else {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 不支持其它格式 在类后续的模板限定中!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 不支持其它格式 在类后续的模板限定中!");
         }
         cAddCount++;
     }
@@ -466,43 +466,43 @@ void FileMetaClass::SetDeep(int _deep) {
 }
 
 std::string FileMetaClass::ToString() const {
-    return name();
+    return Name();
 }
 
 std::string FileMetaClass::ToFormatString() const {
-    stringBuilder.str("");
+    /*stringBuilder.str("");
     stringBuilder.clear();
     
-    for (int i = 0; i < deep(); i++)
-        stringBuilder << SimpleLanguage::Core::Global::tabChar;
+    for (int i = 0; i < GetDeep(); i++)
+        stringBuilder << SimpleLanguage::Global::tabChar;
 
     if (m_DataToken != nullptr) {
         if (m_ConstToken != nullptr) {
-            stringBuilder << m_ConstToken->lexeme().ToString() << " ";
+            stringBuilder << m_ConstToken->GetLexeme() << " ";
         }
-        stringBuilder << m_DataToken->lexeme().ToString() << " ";
-        stringBuilder << name();
+        stringBuilder << m_DataToken->GetLexeme() << " ";
+        stringBuilder << Name();
         stringBuilder << std::endl;
-        for (int i = 0; i < deep(); i++)
-            stringBuilder << SimpleLanguage::Core::Global::tabChar;
+        for (int i = 0; i < GetDeep(); i++)
+            stringBuilder << SimpleLanguage::Global::tabChar;
         stringBuilder << "{" << std::endl;
 
         for (auto v : m_MemberDataList) {
             stringBuilder << v->ToFormatString() << std::endl;
         }
 
-        for (int i = 0; i < deep(); i++)
-            stringBuilder << SimpleLanguage::Core::Global::tabChar;
+        for (int i = 0; i < GetDeep(); i++)
+            stringBuilder << SimpleLanguage::Global::tabChar;
         stringBuilder << "}";
     } else if (m_EnumToken != nullptr) {
         if (m_ConstToken != nullptr) {
-            stringBuilder << m_ConstToken->lexeme().ToString() << " ";
+            stringBuilder << m_ConstToken->GetLexeme() << " ";
         }
-        stringBuilder << m_EnumToken->lexeme().ToString() << " ";
+        stringBuilder << m_EnumToken->GetLexeme() << " ";
         stringBuilder << name();
         stringBuilder << std::endl;
         for (int i = 0; i < deep(); i++)
-            stringBuilder << SimpleLanguage::Core::Global::tabChar;
+            stringBuilder << SimpleLanguage::Global::tabChar;
         stringBuilder << "{" << std::endl;
 
         for (auto v : m_MemberVariableList) {
@@ -512,7 +512,7 @@ std::string FileMetaClass::ToFormatString() const {
             stringBuilder << std::endl;
 
         for (int i = 0; i < deep(); i++)
-            stringBuilder << SimpleLanguage::Core::Global::tabChar;
+            stringBuilder << SimpleLanguage::Global::tabChar;
         stringBuilder << "}";
     } else {
         stringBuilder << (m_PermissionToken != nullptr ? m_PermissionToken->lexeme().ToString() : "_public");
@@ -558,7 +558,7 @@ std::string FileMetaClass::ToFormatString() const {
         }
         stringBuilder << std::endl;
         for (int i = 0; i < deep(); i++)
-            stringBuilder << SimpleLanguage::Core::Global::tabChar;
+            stringBuilder << SimpleLanguage::Global::tabChar;
         stringBuilder << "{" << std::endl;
         for (auto v : m_ChildrenClassList) {
             stringBuilder << v->ToFormatString() << std::endl;
@@ -576,9 +576,9 @@ std::string FileMetaClass::ToFormatString() const {
             stringBuilder << v->ToFormatString() << std::endl;
         }
         for (int i = 0; i < deep(); i++)
-            stringBuilder << SimpleLanguage::Core::Global::tabChar;
+            stringBuilder << SimpleLanguage::Global::tabChar;
         stringBuilder << "}";
-    }
+    }*/
 
     return stringBuilder.str();
 }
@@ -588,7 +588,6 @@ void FileMetaClass::ParseStructTemp::AddParseStructTemplate(ParseStructTemp* pst
     angleContentNodeList.push_back(pst);
     pst->parentPSt = this;
 }
-
 void FileMetaClass::ParseStructTemp::GenFileInputTemplateNode(Node* node, FileMeta* fm) {
     node->setAngleNode(angleNode);
     for (size_t i = 0; i < angleContentNodeList.size(); i++) {
@@ -598,7 +597,6 @@ void FileMetaClass::ParseStructTemp::GenFileInputTemplateNode(Node* node, FileMe
         }
     }
 }
-
 } // namespace Compile
 } // namespace SimpleLanguage
 

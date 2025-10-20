@@ -1,31 +1,34 @@
 #include "FileMetaMemberVariable.h"
 #include "FileMeta.h"
-#include "FileMetaClassDefine.h"
+#include "FileMetaClass.h"
 #include "FileMetaExpress.h"
 #include "../FileMetatUtil.h"
 #include "../CompilerUtil.h"
-#include "../../Core/Log.h"
-#include "../../Core/Define.h"
-#include "../../Core/StructParse.h"
+#include "../../Debug/Log.h"
+#include "../../Define.h"
+#include "../Parse/StructParse.h"
 #include <algorithm>
 
 namespace SimpleLanguage {
 namespace Compile {
 
 FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, const std::vector<Node*>& list) 
-    : m_FileMeta(fm), m_NodeList(list) {
+    : m_NodeList(list) {
+    m_FileMeta = fm;
     ParseBuildMetaVariable();
 }
 
-FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, Node* brace) : m_FileMeta(fm) {
+FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, Node* brace) {
     // 分析 {}中的内容，一般用于解析匿名函数
-    m_Token = brace->token();
+
+    m_FileMeta = fm;
+    m_Token = brace->token;
 
     std::vector<Node*> list2;
-    for (size_t i = 0; i < brace->childList().size(); i++) {
-        Node* c = brace->childList()[i];
-        if (c->nodeType() == SimpleLanguage::Core::ENodeType::LineEnd || 
-            c->nodeType() == SimpleLanguage::Core::ENodeType::SemiColon) {
+    for (size_t i = 0; i < brace->childList.size(); i++) {
+        Node* c = brace->childList[i];
+        if (c->nodeType == SimpleLanguage::Compile::Parse::ENodeType::LineEnd || 
+            c->nodeType == SimpleLanguage::Compile::Parse::ENodeType::SemiColon) {
             if (list2.empty()) {
                 continue;
             }
@@ -40,7 +43,9 @@ FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, Node* brace) : m_Fi
 }
 
 FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, Node* _beforeNode, Node* _afterNode, EMemberDataType dataType)
-    : m_MemberDataType(dataType), m_FileMeta(fm), m_Token(_beforeNode->token()) {
+    : m_MemberDataType(dataType) {
+    m_FileMeta = fm;
+    m_Token = _beforeNode->token;
     
     bool isParseBuild = true;
     if (dataType == EMemberDataType::NameClass) {
@@ -64,11 +69,11 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     std::vector<Node*> afterNodeList;
 
     if (!SimpleLanguage::Compile::FileMetatUtil::SplitNodeList(m_NodeList, bedoreNodeList, afterNodeList, m_AssignToken)) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 解析NodeList出现错误~~~");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 解析NodeList出现错误~~~");
         return false;
     }
     if (bedoreNodeList.empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error listDefieNode 不能为空~");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error listDefieNode 不能为空~");
         return false;
     }
 
@@ -81,19 +86,19 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     Node* typeNode = nullptr;
     Node* mutNode = nullptr;
     if (!GetNameAndTypeToken(defineNodeList, typeNode, mutNode, nameNode, m_PermissionToken, m_StaticToken)) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 没有找到该定义名称 必须使用例: X = 103; 的格式");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 没有找到该定义名称 必须使用例: X = 103; 的格式");
         return false;
     }
 
     if (nameNode == nullptr) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 没有找到该定义名称 必须使用例: X = 104; 的格式");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 没有找到该定义名称 必须使用例: X = 104; 的格式");
         return false;
     }
     if (!nameNode->extendLinkNodeList().empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 没有找到该定义名称 必须使用例: X = 105; 的格式");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 没有找到该定义名称 必须使用例: X = 105; 的格式");
         return false;
     }
-    m_Token = nameNode->token();
+    m_Token = nameNode->token;
 
     if (typeNode != nullptr) {
         m_ClassDefineRef = new FileMetaClassDefine(m_FileMeta, typeNode, mutNode);
@@ -101,7 +106,7 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     }
 
     if (!afterNodeList.empty()) {
-        if (afterNodeList[0]->nodeType() == SimpleLanguage::Core::ENodeType::Bracket) {
+        if (afterNodeList[0]->NodeType() == SimpleLanguage::Compile::Parse::ENodeType::Bracket) {
             m_MemberDataType = EMemberDataType::Array;
             ParseBracketContrent(afterNodeList[0]);
         } else {
@@ -116,19 +121,19 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
 
 void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
     int type = -1;
-    for (size_t index = 0; index < pnode->childList().size(); index++) {
-        auto curNode = pnode->childList()[index];
-        if (curNode->nodeType() == SimpleLanguage::Core::ENodeType::LineEnd ||
-            curNode->nodeType() == SimpleLanguage::Core::ENodeType::SemiColon ||
-            curNode->nodeType() == SimpleLanguage::Core::ENodeType::Comma) {
+    for (size_t index = 0; index < pnode->childList.size(); index++) {
+        auto curNode = pnode->childList[index];
+        if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::LineEnd ||
+            curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::SemiColon ||
+            curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
             continue;
         }
-        if (curNode->nodeType() == SimpleLanguage::Core::ENodeType::IdentifierLink) {
+        if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
             // aaa(){},aaa(){}
         }
-        if (curNode->nodeType() == SimpleLanguage::Core::ENodeType::Brace) {  // Class1 [{},{}]
+        if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Brace) {  // Class1 [{},{}]
             if (type == 2 || type == 3) {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, 
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
                     "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
                 continue;
             }
@@ -137,9 +142,9 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
 
             auto fmmd = new FileMetaMemberVariable(m_FileMeta, curNode, nullptr, EMemberDataType::Array);
             AddFileMemberVariable(fmmd);
-        } else if (curNode->nodeType() == SimpleLanguage::Core::ENodeType::ConstValue) {  // ["stringValue","Stvlue"]
+        } else if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::ConstValue) {  // ["stringValue","Stvlue"]
             if (type == 1 || type == 3) {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, 
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
                     "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
                 continue;
             }
@@ -148,9 +153,9 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
 
             auto fmmd = new FileMetaMemberVariable(m_FileMeta, curNode, nullptr, EMemberDataType::ConstVariable);
             AddFileMemberVariable(fmmd);
-        } else if (curNode != nullptr && curNode->nodeType() == SimpleLanguage::Core::ENodeType::Bracket) {  // [[],[]]
+        } else if (curNode != nullptr && curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Bracket) {  // [[],[]]
             if (type == 1 || type == 2) {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, 
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
                     "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
                 continue;
             }
@@ -160,7 +165,7 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
             auto fmmd = new FileMetaMemberVariable(m_FileMeta, curNode, nullptr, EMemberDataType::Array);
             AddFileMemberVariable(fmmd);
         } else {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, 
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
                 "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
             continue;
         }
@@ -180,35 +185,35 @@ bool FileMetaMemberVariable::GetNameAndTypeToken(const std::vector<Node*>& defin
     for (size_t i = 0; i < defineNodeList.size(); i++) {
         auto cnode = defineNodeList[i];
 
-        if (cnode->nodeType() == SimpleLanguage::Core::ENodeType::IdentifierLink) {
+        if (cnode->NodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
             nodeList.push_back(cnode);
         } else {
-            auto token = cnode->token();
-            if (token->type() == SimpleLanguage::Core::ETokenType::Public ||
-                token->type() == SimpleLanguage::Core::ETokenType::Projected ||
-                token->type() == SimpleLanguage::Core::ETokenType::Extern ||
-                token->type() == SimpleLanguage::Core::ETokenType::Private) {
+            auto token = cnode->token;
+            if (token->type() == SimpleLanguage::ETokenType::Public ||
+                token->type() == SimpleLanguage::ETokenType::Projected ||
+                token->type() == SimpleLanguage::ETokenType::Extern ||
+                token->type() == SimpleLanguage::ETokenType::Private) {
                 if (permissionToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 多重定义名称的权限定义!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 多重定义名称的权限定义!!");
                 }
                 permissionToken = token;
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Static) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Static) {
                 if (staticToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 多重定义名称的静态定义!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 多重定义名称的静态定义!!");
                 }
                 staticToken = token;
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Type) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Type) {
                 nodeList.push_back(cnode);
-            } else if (token->type() == SimpleLanguage::Core::ETokenType::Mut) {
+            } else if (token->type() == SimpleLanguage::ETokenType::Mut) {
                 if (mutNode != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 多重定义名称的Mut定义!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 多重定义名称的Mut定义!!");
                 }
                 mutNode = cnode;
             } else {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, 
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
                     "Error 解析变量中，不允许的类型存在!!" + token->ToLexemeAllString());
             }
         }
@@ -230,7 +235,7 @@ void FileMetaMemberVariable::AddFileMemberVariable(FileMetaMemberVariable* fmmd)
 
 FileMetaMemberVariable* FileMetaMemberVariable::GetFileMetaMemberDataByName(const std::string& name) {
     auto it = std::find_if(m_FileMetaMemberVariableList.begin(), m_FileMetaMemberVariableList.end(),
-        [&name](FileMetaMemberVariable* fmmd) { return fmmd->name() == name; });
+        [&name](FileMetaMemberVariable* fmmd) { return fmmd->Name() == name; });
     
     if (it != m_FileMetaMemberVariableList.end()) {
         return *it;
@@ -247,13 +252,13 @@ void FileMetaMemberVariable::SetDeep(int _deep) {
 }
 
 std::string FileMetaMemberVariable::ToString() const {
-    return m_Token ? m_Token->lexeme().ToString() : "";
+    return m_Token ? m_Token->GetLexeme() : "";
 }
 
 std::string FileMetaMemberVariable::ToFormatString() const {
     std::ostringstream sb;
-    for (int i = 0; i < deep(); i++)
-        sb << SimpleLanguage::Core::Global::tabChar;
+    /*for (int i = 0; i < deep(); i++)
+        sb << SimpleLanguage::Global::tabChar;
     
     SimpleLanguage::Core::EPermission permis = SimpleLanguage::Compile::CompilerUtil::GetPerMissionByString(
         m_PermissionToken ? m_PermissionToken->lexeme().ToString() : "");
@@ -268,16 +273,16 @@ std::string FileMetaMemberVariable::ToFormatString() const {
 
     if (m_MemberDataType == EMemberDataType::NameClass) {
         for (int i = 0; i < deep(); i++)
-            sb << SimpleLanguage::Core::Global::tabChar;
+            sb << SimpleLanguage::Global::tabChar;
         sb << name() << std::endl;
         for (int i = 0; i < deep(); i++)
-            sb << SimpleLanguage::Core::Global::tabChar;
+            sb << SimpleLanguage::Global::tabChar;
         sb << "{" << std::endl;
         for (size_t i = 0; i < m_FileMetaMemberVariableList.size(); i++) {
             sb << m_FileMetaMemberVariableList[i]->ToFormatString() << std::endl;
         }
         for (int i = 0; i < deep(); i++)
-            sb << SimpleLanguage::Core::Global::tabChar;
+            sb << SimpleLanguage::Global::tabChar;
         sb << "}";
 
         if (m_ClassDefineRef != nullptr)
@@ -290,13 +295,13 @@ std::string FileMetaMemberVariable::ToFormatString() const {
         sb << ";";
     } else if (m_MemberDataType == EMemberDataType::KeyValue) {
         for (int i = 0; i < deep(); i++)
-            sb << SimpleLanguage::Core::Global::tabChar;
+            sb << SimpleLanguage::Global::tabChar;
         sb << name() << " = ";
         sb << (m_Express ? m_Express->ToFormatString() : "");
         sb << ";";
     } else if (m_MemberDataType == EMemberDataType::Array) {
         for (int i = 0; i < deep(); i++)
-            sb << SimpleLanguage::Core::Global::tabChar;
+            sb << SimpleLanguage::Global::tabChar;
         sb << name() << " = [";
         for (size_t i = 0; i < m_FileMetaMemberVariableList.size(); i++) {
             sb << m_FileMetaMemberVariableList[i]->ToFormatString();
@@ -312,7 +317,7 @@ std::string FileMetaMemberVariable::ToFormatString() const {
         sb << (m_Express ? m_Express->ToFormatString() : "");
     } else {
         sb << "没有差别MemberDataType";
-    }
+    }*/
     return sb.str();
 }
 

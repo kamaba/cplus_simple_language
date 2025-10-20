@@ -18,13 +18,13 @@ FileMetaImportSyntax::FileMetaImportSyntax(const std::vector<Node*>& _nodeList) 
 
 bool FileMetaImportSyntax::ParseImportSyntax() {
     if (m_NodeList.size() < 2) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error import必须有2个节点!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error import必须有2个节点!!");
         return false;
     }
     
     auto namespaceNode = m_NodeList[0];
     if (namespaceNode != nullptr && namespaceNode->token() != nullptr && 
-        namespaceNode->token()->type() == SimpleLanguage::Core::ETokenType::Import) {
+        namespaceNode->token()->type() == SimpleLanguage::ETokenType::Import) {
         m_Token = namespaceNode->token();
     }
     
@@ -38,7 +38,7 @@ bool FileMetaImportSyntax::ParseImportSyntax() {
     if (m_NodeList.size() > 2) {
         auto asNode = m_NodeList[2];
         if (asNode != nullptr && asNode->token() != nullptr && 
-            asNode->token()->type() == SimpleLanguage::Core::ETokenType::As) {
+            asNode->token()->type() == SimpleLanguage::ETokenType::As) {
             m_AsToken = asNode->token();
             
             if (m_NodeList.size() > 3) {

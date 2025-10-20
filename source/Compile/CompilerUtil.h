@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../Core/Define.h"
-#include "../Core/Log.h"
-#include "../Core/GrammerUtil.h"
+#include "../Define.h"
+#include "../Debug/Log.h"
 #include <string>
 #include <vector>
 #include <sstream>
@@ -15,8 +14,8 @@ public:
     static std::ostringstream tempBuild;
 
     static bool CheckNameList(const std::string& ns, std::vector<std::string>* list = nullptr);
-    static std::string ToFormatString(SimpleLanguage::Core::EPermission permission);
-    static SimpleLanguage::Core::EPermission GetPerMissionByString(const std::string& str);
+    static std::string ToFormatString(SimpleLanguage::EPermission permission);
+    static SimpleLanguage::EPermission GetPerMissionByString(const std::string& str);
 
 private:
     CompilerUtil() = default;

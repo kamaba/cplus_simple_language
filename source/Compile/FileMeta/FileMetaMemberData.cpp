@@ -26,7 +26,7 @@ FileMetaMemberData::FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& f
         if (!frontList.empty()) {
             m_Token = frontList[0]->token();
         } else {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, 
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
                 "Error 带着名称FileMetaMemberData 但没有发现相关的token");
         }
     }
@@ -40,7 +40,7 @@ FileMetaMemberData::FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& f
             Token* signalToken = nullptr;
             Token* valueToken = nullptr;
             for (auto node : backList) {
-                if (node->nodeType() == SimpleLanguage::Core::ENodeType::Symbol) {
+                if (node->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Symbol) {
                     signalToken = node->token();
                 } else {
                     valueToken = node->token();
@@ -84,7 +84,7 @@ std::string FileMetaMemberData::ToFormatString() const {
     std::ostringstream sb;
 
     for (int i = 0; i < deep(); i++)
-        sb << SimpleLanguage::Core::Global::tabChar;
+        sb << SimpleLanguage::Global::tabChar;
     if (m_IsWithName) {
         sb << name() << " = ";
     }
@@ -94,7 +94,7 @@ std::string FileMetaMemberData::ToFormatString() const {
             sb << std::endl << m_FileMetaMemberData[i]->ToFormatString();
         }
         for (int i = 0; i < deep(); i++)
-            sb << SimpleLanguage::Core::Global::tabChar;
+            sb << SimpleLanguage::Global::tabChar;
         sb << "}";
     } else if (m_MemberDataType == EMemberDataType::Array) {
         sb << "[";

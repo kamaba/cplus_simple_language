@@ -5,10 +5,9 @@
 #include "FileMetaExpress.h"
 #include "../FileMetatUtil.h"
 #include "../CompilerUtil.h"
-#include "../../Parse/Node.h"
-#include "../../Core/Define.h"
-#include "../../Core/Log.h"
-#include "../../Core/StructParse.h"
+#include "../Parse/Node.h"
+#include "../../Define.h"
+#include "../../Debug/Log.h"
 #include <vector>
 #include <string>
 #include <sstream>

@@ -172,7 +172,7 @@ void FileMetaCallNode::CreateFileMetaCallNode() {
         m_EndAngleToken = m_Node->angleNode()->endToken();
         const auto& list = m_Node->angleNode()->childList();
         for (size_t i = 0; i < list.size(); i++) {
-            if (list[i]->nodeType() == SimpleLanguage::Core::ENodeType::Comma) {
+            if (list[i]->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
                 continue;
             }
             auto aa = new FileInputTemplateNode(m_FileMeta, list[i]);
@@ -187,9 +187,9 @@ void FileMetaCallNode::CreateFileMetaCallNode() {
         
         const auto& list = m_Node->bracketNode()->childList();
         for (size_t i = 0; i < list.size(); i++) {
-            if (list[i]->nodeType() == SimpleLanguage::Core::ENodeType::Comma) {
+            if (list[i]->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
                 if (i == list.size() - 1) {
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Warning [1,2,3,]有多余逗号出现??");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Warning [1,2,3,]有多余逗号出现??");
                 }
                 continue;
             }
@@ -347,7 +347,7 @@ FileMetaClassDefine::FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode
         m_AngleTokenEnd = node->angleNode()->endToken();
         for (size_t i = 0; i < node->angleNode()->childList().size(); i++) {
             auto cnode = node->angleNode()->childList()[i];
-            if (cnode->nodeType() == SimpleLanguage::Core::ENodeType::Comma)
+            if (cnode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma)
                 continue;
             auto fmcn = new FileInputTemplateNode(fm, cnode);
             m_InputTemplateNodeList.push_back(fmcn);
@@ -362,7 +362,7 @@ FileMetaClassDefine::FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode
         const auto& cl = node->bracketNode()->childList();
         if (cl.empty()) {
             auto token = new Token(*frontToken);
-            token->SetLexeme(-1, SimpleLanguage::Core::ETokenType::Number);
+            token->SetLexeme(-1, SimpleLanguage::ETokenType::Number);
             token->SetExtend(SimpleLanguage::Core::EType::Int32);
             m_ArrayTokenList.push_back(token);
         } else {
@@ -370,10 +370,10 @@ FileMetaClassDefine::FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode
             bool isOnlyComma = true;
             for (size_t i = 0; i < cl.size(); i++) {
                 auto cnode = cl[i];
-                if (cnode->nodeType() == SimpleLanguage::Core::ENodeType::Comma) {
+                if (cnode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
                     if (isOnlyComma) {
                         auto t = new Token(*cnode->token());
-                        t->SetLexeme(-1, SimpleLanguage::Core::ETokenType::Number);
+                        t->SetLexeme(-1, SimpleLanguage::ETokenType::Number);
                         t->SetExtend(SimpleLanguage::Core::EType::Int32);
                         m_ArrayTokenList.push_back(t);
                     }
@@ -465,7 +465,7 @@ void FileMetaClassDefine::AddError2(int errorId, const std::string& pfile, const
           (m_ClassNameToken ? std::to_string(m_ClassNameToken->sourceBeginLine()) : "") + "开始位置: " +
           (m_ClassNameToken ? std::to_string(m_ClassNameToken->sourceBeginChar()) : "");
     str = str + " \n 在代码中文件:" + pfile + "   函数:" + pfunction + "行号: " + std::to_string(line);
-    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, str);
+    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, str);
 }
 
 // FileMetaTemplateDefine implementation
@@ -482,7 +482,7 @@ FileMetaTemplateDefine::FileMetaTemplateDefine(FileMeta* fm, Node* node, Node* e
 
 FileMetaTemplateDefine::FileMetaTemplateDefine(FileMeta* fm, const std::vector<Node*>& nodeList) : m_FileMeta(fm) {
     if (nodeList.empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 在<>中没有发现元素!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 在<>中没有发现元素!!");
         return;
     }
     m_Token = nodeList[0]->token();
@@ -490,7 +490,7 @@ FileMetaTemplateDefine::FileMetaTemplateDefine(FileMeta* fm, const std::vector<N
         m_InToken = nodeList[1]->token();
         m_InClassNameTemplateNode = new FileInputTemplateNode(fm, nodeList[2]);
     } else if (nodeList.size() == 2) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 在<T in> or <T []> or <T ClassName> 使用方法不正确,请使用 <T in []>或者是 <T in ClassName> !!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 在<T in> or <T []> or <T ClassName> 使用方法不正确,请使用 <T in []>或者是 <T in ClassName> !!");
     }
 }
 

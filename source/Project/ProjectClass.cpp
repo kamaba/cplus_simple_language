@@ -97,7 +97,7 @@ void ProjectClass::AddDefineNamespace(MetaNode* parentRoot, DefineStruct* dns, b
                 }
             } else {
                 if (!(cfindNode->isMetaNamespace())) {
-                    Log::AddInStructMeta(SimpleLanguage::Core::EError::None, "Error 解析namespace添加命名空间节点时，发现已有定义类!!");
+                    Log::AddInStructMeta(SimpleLanguage::Debug::EError::None, "Error 解析namespace添加命名空间节点时，发现已有定义类!!");
                     return;
                 }
                 nodeNS = cfindNode->metaNamespace();

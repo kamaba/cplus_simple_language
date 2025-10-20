@@ -9,8 +9,9 @@
 #include "FileMetaNamespace.h"
 #include "FileMeta.h"
 #include "FileMetaClass.h"
-#include "../../Core/Log.h"
-#include "../../Core/Define.h"
+#include "../Parse/Node.h"
+#include "../../Debug/Log.h"
+#include "../../Define.h"
 #include <sstream>
 
 namespace SimpleLanguage {
@@ -25,17 +26,17 @@ FileMetaNamespace::FileMetaNamespace(Node* namespaceNode, Node* namespaceNameNod
     : m_NamespaceNode(namespaceNode), m_NamespaceNameNode(namespaceNameNode) {
     
     if (namespaceNode == nullptr) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Core::EError::None, "Error 在解析namespace 中，没有找到namespace设置的名称!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 在解析namespace 中，没有找到namespace设置的名称!!");
         return;
     }
 
-    Node* blockNode = namespaceNode->blockNode();
+    Node* blockNode = namespaceNode->blockNode;
 
-    m_Token = m_NamespaceNode->token();
+    m_Token = m_NamespaceNode->token;
     m_IsSearchNamespace = true;
     if (blockNode != nullptr) {
-        m_BraceBeginToken = blockNode->token();
-        m_BraceEndToken = blockNode->endToken();
+        m_BraceBeginToken = blockNode->token;
+        m_BraceEndToken = blockNode->endToken;
         m_IsSearchNamespace = false;
     }
     m_NamespaceStateBlock = NamespaceStatementBlock::CreateStateBlock(m_NamespaceNameNode->linkTokenList());
@@ -43,7 +44,7 @@ FileMetaNamespace::FileMetaNamespace(Node* namespaceNode, Node* namespaceNameNod
 
 std::string FileMetaNamespace::Name() const {
     if (m_NamespaceStateBlock != nullptr) {
-        return m_NamespaceStateBlock->namespaceString();
+        return m_NamespaceStateBlock->NamespaceString();
     }
     return "";
 }
@@ -63,7 +64,7 @@ std::stack<FileMetaNamespace*> FileMetaNamespace::NamespaceStack() const {
 FileMetaNamespace* FileMetaNamespace::AddFileNamespace(FileMetaNamespace* dln) {
     dln->topLevelFileMetaNamespace = this;
     m_MetaNamespaceList.push_back(dln);
-    dln->m_Deep = deep() + 1;
+    dln->m_Deep = Deep() + 1;
 
     return dln;
 }
@@ -89,12 +90,12 @@ void FileMetaNamespace::SetDeep(int _deep) {
 
 std::string FileMetaNamespace::ToFormatString() const {
     std::ostringstream sb;
-    for (int i = 0; i < deep(); i++)
-        sb << SimpleLanguage::Core::Global::tabChar;
+    /*for (int i = 0; i < deep(); i++)
+        sb << SimpleLanguage::Global::tabChar;
     sb << m_Token->lexeme().ToString() << " " << m_NamespaceStateBlock->ToFormatString();
     sb << std::endl;
     for (int i = 0; i < deep(); i++)
-        sb << SimpleLanguage::Core::Global::tabChar;
+        sb << SimpleLanguage::Global::tabChar;
     sb << "{" << std::endl;
     for (size_t i = 0; i < m_MetaNamespaceList.size(); i++) {
         sb << m_MetaNamespaceList[i]->ToFormatString() << std::endl;
@@ -103,8 +104,8 @@ std::string FileMetaNamespace::ToFormatString() const {
         sb << m_ChildrenClassList[i]->ToFormatString() << std::endl;
     }
     for (int i = 0; i < deep(); i++)
-        sb << SimpleLanguage::Core::Global::tabChar;
-    sb << "}";
+        sb << SimpleLanguage::Global::tabChar;
+    sb << "}";*/
 
     return sb.str();
 }

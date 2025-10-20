@@ -25,6 +25,7 @@ namespace SimpleLanguage
 		class FileMetaClass;
 		class FileMetaImportSyntax;
 		class FileMetaNamespace;
+		class FileMetaClassDefine;
 
 		class FileMeta : public FileMetaBase 
 		{
@@ -33,7 +34,7 @@ namespace SimpleLanguage
 			virtual ~FileMeta() = default;
 
 			// Properties
-			::std::string Path() const { return m_Path; }
+			::std::string GetPath() const { return m_Path; }
 			const ::std::vector<FileMetaClass*>& FileMetaClassList() const { return m_FileMetaClassList; }
 
 			// Methods

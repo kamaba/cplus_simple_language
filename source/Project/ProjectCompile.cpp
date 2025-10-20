@@ -147,7 +147,7 @@ void ProjectCompile::FileListStructParse() {
     for (size_t i = 0; i < s_FileParseList.size(); i++) {
         s_FileParseList[i]->StructParse();
 
-        Log::AddProcess(SimpleLanguage::Core::EProcess::StructMeta, SimpleLanguage::Core::EError::StructFileMetaEnd, 
+        Log::AddProcess(SimpleLanguage::Core::EProcess::StructMeta, SimpleLanguage::Debug::EError::StructFileMetaEnd, 
                        s_FileParseList[i]->ToFormatString());
     }
 }

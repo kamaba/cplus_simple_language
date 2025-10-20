@@ -7,6 +7,7 @@
 //****************************************************************************
 
 #include "CompileManager.h"
+#include <string>
 
 namespace SimpleLanguage {
 namespace Compile {

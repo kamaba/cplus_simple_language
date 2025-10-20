@@ -11,9 +11,9 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "Token.h"
-#include "CompileManager.h"
-#include "Log.h"
+#include "../Token.h"
+#include "../CompileManager.h"
+#include "../../Debug/Log.h"
 
 namespace SimpleLanguage {
 namespace Compile {
