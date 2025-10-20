@@ -1,41 +1,31 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# debug information files
-*.dwo
+/obj
+/bin/Debug/net7.0
+/bin/Debug/net6.0
+/.vs
+/.vscode
+/bin
+/Backup/SimpleLanguage.csproj
+/Backup/SimpleLanguage.sln
+/UpgradeLog.htm
+/source/clang/Makefile
+/source/clang/Makefile.simple
+/source/clang/README.md
+/source/clang/build.sh
+/source/clang/include/define.h
+/source/clang/include/lexer.h
+/source/clang/include/meta_base.h
+/source/clang/include/meta_class.h
+/source/clang/include/node.h
+/source/clang/include/parser.h
+/source/clang/include/simple_language.h
+/source/clang/include/token.h
+/source/clang/include/vm.h
+/source/clang/include/vm_object.h
+/source/clang/src/main.c
+/source/clang/src/meta_base.c
+/source/clang/src/node.c
+/source/clang/src/token.c
+/source/clang/src/vm_object.c
+/source/clang/test/test_basic.c
+/cplus_simple_language.vcxproj.user
+/x64

@@ -1,0 +1,72 @@
+#pragma once
+
+
+#include "../Define.h"
+#include "../Debug/Log.h"
+#include <string>
+#include <vector>
+
+
+namespace SimpleLanguage 
+{
+	namespace Project
+	{
+		// Forward declarations
+		class ProjectData;
+		class LexerParse;
+		class TokenParse;
+		class StructParse;
+		class ProjectParse;
+		class FileMeta;
+		class FileParse;
+
+		class ProjectCompile {
+		public:
+			ProjectCompile();
+			virtual ~ProjectCompile() = default;
+
+			// Properties
+			bool isThreadCompile() const { return m_IsThreadCompile; }
+			void setThreadCompile(bool value) { m_IsThreadCompile = value; }
+
+			static bool isLoaded() { return s_IsLoaded; }
+			static FileMeta* projectFileMeta() { return s_ProjectFile; }
+
+			static int structParseCount() { return s_StructParseCount; }
+			static int buildParseCount() { return s_BuildParseCount; }
+			static int grammerParseCount() { return s_GrammerParseCount; }
+			static int parseListCount() { return s_ParseListCount; }
+			static const std::vector<FileParse*>& fileParseList() { return s_FileParseList; }
+
+			// Methods
+			static void LoadProject();
+			static void Compile(const std::string& path, ProjectData* pd);
+			static void AddFileParse(const std::string& path);
+			static bool CheckFileList();
+			static void FileListStructParse();
+			static void StructParseComplete();
+			static void BuildParseComplete();
+			static void GrammerParseComplete();
+			static void Update();
+			static void CompileFileAllEnd();
+
+		private:
+			bool m_IsThreadCompile = false;
+
+			static bool s_IsLoaded;
+			static std::string s_FileContentString;
+			static FileMeta* s_ProjectFile;
+			static LexerParse* s_LexerParse;
+			static TokenParse* s_TokenParse;
+			static StructParse* s_ProjectBuild;
+			static ProjectParse* s_ProjectParse;
+			static ProjectData* s_Data;
+			static int s_StructParseCount;
+			static int s_BuildParseCount;
+			static int s_GrammerParseCount;
+			static int s_ParseListCount;
+			static std::vector<FileParse*> s_FileParseList;
+		};
+
+	} // namespace Project
+} // namespace SimpleLanguage

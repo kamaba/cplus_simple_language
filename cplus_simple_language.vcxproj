@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{9ac6936f-5ab0-4755-991f-cf2bef54a782}</ProjectGuid>
+    <RootNamespace>cplussimplelanguage</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="source\Compile\CompileManager.cpp" />
+    <ClCompile Include="source\Compile\CompilerUtil.cpp" />
+    <ClCompile Include="source\Compile\FileMetatUtil.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMeta.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaBase.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaClass.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaCommon.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaExpress.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaGlobalSyntax.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaMemberData.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaMemberMethod.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaMemberVariable.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaNamespace.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaSyntax.cpp" />
+    <ClCompile Include="source\Compile\Parse\FileParse.cpp" />
+    <ClCompile Include="source\Compile\Parse\LexerParse.cpp" />
+    <ClCompile Include="source\Compile\Parse\Node.cpp" />
+    <ClCompile Include="source\Compile\Parse\StructParse.cpp" />
+    <ClCompile Include="source\Compile\Parse\TokenParse.cpp" />
+    <ClCompile Include="source\Compile\Token.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\ArrayMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\BooleanMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\ByteMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\CoreMetaClassManager.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\DynamicMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\DynamicMetaData.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\EnumMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\IntMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\NullMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\ObjectMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\RangeMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\RealMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\StringMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\TypeMetaClass.cpp" />
+    <ClCompile Include="source\Core\BaseMetaClass\VoidMetaClass.cpp" />
+    <ClCompile Include="source\Core\ClassManager.cpp" />
+    <ClCompile Include="source\Core\MetaBase.cpp" />
+    <ClCompile Include="source\Core\MetaCallLink.cpp" />
+    <ClCompile Include="source\Core\MetaCallNode.cpp" />
+    <ClCompile Include="source\Core\MetaClass.cpp" />
+    <ClCompile Include="source\Core\MetaData.cpp" />
+    <ClCompile Include="source\Core\MetaDefineParam.cpp" />
+    <ClCompile Include="source\Core\MetaEnum.cpp" />
+    <ClCompile Include="source\Core\MetaExpressNode.cpp" />
+    <ClCompile Include="source\Core\MetaExpressNode\MetaExpressBase.cpp" />
+    <ClCompile Include="source\Core\MetaExpressNode\MetaExpressCalllink.cpp" />
+    <ClCompile Include="source\Core\MetaExpressNode\MetaExpressConst.cpp" />
+    <ClCompile Include="source\Core\MetaExpressNode\MetaExpressNewObject.cpp" />
+    <ClCompile Include="source\Core\MetaExpressNode\MetaExpressOperator.cpp" />
+    <ClCompile Include="source\Core\MetaMemberData.cpp" />
+    <ClCompile Include="source\Core\MetaMemberEnum.cpp" />
+    <ClCompile Include="source\Core\MetaMemberFunction.cpp" />
+    <ClCompile Include="source\Core\MetaMemberVariable.cpp" />
+    <ClCompile Include="source\Core\MetaModule.cpp" />
+    <ClCompile Include="source\Core\MetaNamespace.cpp" />
+    <ClCompile Include="source\Core\MetaNode.cpp" />
+    <ClCompile Include="source\Core\MetaTemplate.cpp" />
+    <ClCompile Include="source\Core\MetaType.cpp" />
+    <ClCompile Include="source\Core\MetaVariable.cpp" />
+    <ClCompile Include="source\Core\MetaVariableManager.cpp" />
+    <ClCompile Include="source\Core\MetaVisitCall.cpp" />
+    <ClCompile Include="source\Core\ModuleManager.cpp" />
+    <ClCompile Include="source\Core\NamespaceManager.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaAssignStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaBlockStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaBreakContinueGoStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaCallStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaDefineVarStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaIfStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaOtherPlatformStatement.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaReturnStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaSwitchStatements.cpp" />
+    <ClCompile Include="source\Core\Statements\MetaWhileDoWhileStatements.cpp" />
+    <ClCompile Include="source\Debug\Log.cpp" />
+    <ClCompile Include="source\Define.cpp" />
+    <ClCompile Include="source\IR\Core\IRMetaCallLink.cpp" />
+    <ClCompile Include="source\IR\Core\IRMetaClass.cpp" />
+    <ClCompile Include="source\IR\Core\IRMetaType.cpp" />
+    <ClCompile Include="source\IR\Core\IRMetaVariable.cpp" />
+    <ClCompile Include="source\IR\Core\IRMethodCall.cpp" />
+    <ClCompile Include="source\IR\IRBase.cpp" />
+    <ClCompile Include="source\IR\IRCall.cpp" />
+    <ClCompile Include="source\IR\IRData.cpp" />
+    <ClCompile Include="source\IR\IRExpress.cpp" />
+    <ClCompile Include="source\IR\IRManager.cpp" />
+    <ClCompile Include="source\IR\IRMethod.cpp" />
+    <ClCompile Include="source\IR\IRStatements\IRAssignStatements.cpp" />
+    <ClCompile Include="source\IR\IRStatements\IRBlockStatements.cpp" />
+    <ClCompile Include="source\IR\IRStatements\IRIfStatements.cpp" />
+    <ClCompile Include="source\IR\IRStatements\IRStatementManager.cpp" />
+    <ClCompile Include="source\IR\IRStatements\IRStatements.cpp" />
+    <ClCompile Include="source\IR\IRVariable.cpp" />
+    <ClCompile Include="source\Project\ProjectClass.cpp" />
+    <ClCompile Include="source\Project\ProjectCompile.cpp" />
+    <ClCompile Include="source\Project\ProjectData.cpp" />
+    <ClCompile Include="source\Project\ProjectManager.cpp" />
+    <ClCompile Include="source\Project\ProjectParse.cpp" />
+    <ClCompile Include="source\VM\AnyObject.cpp" />
+    <ClCompile Include="source\VM\ArrayObject.cpp" />
+    <ClCompile Include="source\VM\BoolObject.cpp" />
+    <ClCompile Include="source\VM\ByteObject.cpp" />
+    <ClCompile Include="source\VM\ClassObject.cpp" />
+    <ClCompile Include="source\VM\DoubleObject.cpp" />
+    <ClCompile Include="source\VM\FloatObject.cpp" />
+    <ClCompile Include="source\VM\InnerCLRRegisterClass.cpp" />
+    <ClCompile Include="source\VM\InnerCLRRRuntimeVM.cpp" />
+    <ClCompile Include="source\VM\Int16Object.cpp" />
+    <ClCompile Include="source\VM\Int32Object.cpp" />
+    <ClCompile Include="source\VM\Int64Object.cpp" />
+    <ClCompile Include="source\VM\LocalRuntime.cpp" />
+    <ClCompile Include="source\VM\LocalRuntimeVM.cpp" />
+    <ClCompile Include="source\VM\ObjectManager.cpp" />
+    <ClCompile Include="source\VM\RuntimeType.cpp" />
+    <ClCompile Include="source\VM\RuntimeVM.cpp" />
+    <ClCompile Include="source\VM\SObject.cpp" />
+    <ClCompile Include="source\VM\StringObject.cpp" />
+    <ClCompile Include="source\VM\SValue.cpp" />
+    <ClCompile Include="source\VM\TemplateObject.cpp" />
+    <ClCompile Include="source\VM\VoidObject.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\Compile\CompileManager.h" />
+    <ClInclude Include="source\Compile\CompilerUtil.h" />
+    <ClInclude Include="source\Compile\FileMetatUtil.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMeta.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaBase.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaClass.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaCommon.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaExpress.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaGlobalSyntax.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaMemberData.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaMemberMethod.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaMemberVariable.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaNamespace.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaSyntax.h" />
+    <ClInclude Include="source\Compile\Parse\FileParse.h" />
+    <ClInclude Include="source\Compile\Parse\LexerParse.h" />
+    <ClInclude Include="source\Compile\Parse\Node.h" />
+    <ClInclude Include="source\Compile\Parse\StructParse.h" />
+    <ClInclude Include="source\Compile\Parse\TokenParse.h" />
+    <ClInclude Include="source\Compile\Process\CompileStateBase.h" />
+    <ClInclude Include="source\Compile\Process\CoreCompileState.h" />
+    <ClInclude Include="source\Compile\Process\FileMetaCompileState.h" />
+    <ClInclude Include="source\Compile\Process\MethodCompileState.h" />
+    <ClInclude Include="source\Compile\Process\ProjectCompileState.h" />
+    <ClInclude Include="source\Compile\Token.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\ArrayMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\BooleanMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\ByteMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\CoreMetaClassManager.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\DynamicMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\DynamicMetaData.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\EnumMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\IntMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\NullMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\ObjectMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\RangeMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\RealMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\StringMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\TypeMetaClass.h" />
+    <ClInclude Include="source\Core\BaseMetaClass\VoidMetaClass.h" />
+    <ClInclude Include="source\Core\ClassManager.h" />
+    <ClInclude Include="source\Core\MetaBase.h" />
+    <ClInclude Include="source\Core\MetaCallLink.h" />
+    <ClInclude Include="source\Core\MetaCallNode.h" />
+    <ClInclude Include="source\Core\MetaClass.h" />
+    <ClInclude Include="source\Core\MetaData.h" />
+    <ClInclude Include="source\Core\MetaDefineParam.h" />
+    <ClInclude Include="source\Core\MetaEnum.h" />
+    <ClInclude Include="source\Core\MetaExpressNode.h" />
+    <ClInclude Include="source\Core\MetaExpressNode\MetaExecuteStatementsNode.h" />
+    <ClInclude Include="source\Core\MetaExpressNode\MetaExpressBase.h" />
+    <ClInclude Include="source\Core\MetaExpressNode\MetaExpressCalllink.h" />
+    <ClInclude Include="source\Core\MetaExpressNode\MetaExpressConst.h" />
+    <ClInclude Include="source\Core\MetaExpressNode\MetaExpressNewObject.h" />
+    <ClInclude Include="source\Core\MetaExpressNode\MetaExpressOperator.h" />
+    <ClInclude Include="source\Core\MetaMemberData.h" />
+    <ClInclude Include="source\Core\MetaMemberEnum.h" />
+    <ClInclude Include="source\Core\MetaMemberFunction.h" />
+    <ClInclude Include="source\Core\MetaMemberVariable.h" />
+    <ClInclude Include="source\Core\MetaModule.h" />
+    <ClInclude Include="source\Core\MetaNamespace.h" />
+    <ClInclude Include="source\Core\MetaNode.h" />
+    <ClInclude Include="source\Core\MetaTemplate.h" />
+    <ClInclude Include="source\Core\MetaType.h" />
+    <ClInclude Include="source\Core\MetaVariable.h" />
+    <ClInclude Include="source\Core\MetaVariableManager.h" />
+    <ClInclude Include="source\Core\MetaVisitCall.h" />
+    <ClInclude Include="source\Core\ModuleManager.h" />
+    <ClInclude Include="source\Core\NamespaceManager.h" />
+    <ClInclude Include="source\Core\Statements\MetaAssignStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaBlockStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaBreakContinueGoStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaCallStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaDefineVarStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaIfStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaOtherPlatformStatement.h" />
+    <ClInclude Include="source\Core\Statements\MetaReturnStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaSwitchStatements.h" />
+    <ClInclude Include="source\Core\Statements\MetaWhileDoWhileStatements.h" />
+    <ClInclude Include="source\Debug\Log.h" />
+    <ClInclude Include="source\Define.h" />
+    <ClInclude Include="source\IR\Core\IRMetaCallLink.h" />
+    <ClInclude Include="source\IR\Core\IRMetaClass.h" />
+    <ClInclude Include="source\IR\Core\IRMetaType.h" />
+    <ClInclude Include="source\IR\Core\IRMetaVariable.h" />
+    <ClInclude Include="source\IR\Core\IRMethodCall.h" />
+    <ClInclude Include="source\IR\IRBase.h" />
+    <ClInclude Include="source\IR\IRCall.h" />
+    <ClInclude Include="source\IR\IRData.h" />
+    <ClInclude Include="source\IR\IRExpress.h" />
+    <ClInclude Include="source\IR\IRManager.h" />
+    <ClInclude Include="source\IR\IRMethod.h" />
+    <ClInclude Include="source\IR\IROpEnum.h" />
+    <ClInclude Include="source\IR\IRStatements\IRAssignStatements.h" />
+    <ClInclude Include="source\IR\IRStatements\IRBlockStatements.h" />
+    <ClInclude Include="source\IR\IRStatements\IRIfStatements.h" />
+    <ClInclude Include="source\IR\IRStatements\IRStatementManager.h" />
+    <ClInclude Include="source\IR\IRStatements\IRStatements.h" />
+    <ClInclude Include="source\IR\IRVariable.h" />
+    <ClInclude Include="source\Project\ProjectClass.h" />
+    <ClInclude Include="source\Project\ProjectCompile.h" />
+    <ClInclude Include="source\Project\ProjectData.h" />
+    <ClInclude Include="source\Project\ProjectManager.h" />
+    <ClInclude Include="source\Project\ProjectParse.h" />
+    <ClInclude Include="source\VM\AnyObject.h" />
+    <ClInclude Include="source\VM\ArrayObject.h" />
+    <ClInclude Include="source\VM\BoolObject.h" />
+    <ClInclude Include="source\VM\ByteObject.h" />
+    <ClInclude Include="source\VM\ClassObject.h" />
+    <ClInclude Include="source\VM\DoubleObject.h" />
+    <ClInclude Include="source\VM\FloatObject.h" />
+    <ClInclude Include="source\VM\InnerCLRRegisterClass.h" />
+    <ClInclude Include="source\VM\InnerCLRRRuntimeVM.h" />
+    <ClInclude Include="source\VM\Int16Object.h" />
+    <ClInclude Include="source\VM\Int32Object.h" />
+    <ClInclude Include="source\VM\Int64Object.h" />
+    <ClInclude Include="source\VM\LocalRuntime.h" />
+    <ClInclude Include="source\VM\LocalRuntimeVM.h" />
+    <ClInclude Include="source\VM\Malloc.h" />
+    <ClInclude Include="source\VM\ObjectManager.h" />
+    <ClInclude Include="source\VM\RuntimeType.h" />
+    <ClInclude Include="source\VM\RuntimeVM.h" />
+    <ClInclude Include="source\VM\SObject.h" />
+    <ClInclude Include="source\VM\StringObject.h" />
+    <ClInclude Include="source\VM\SValue.h" />
+    <ClInclude Include="source\VM\TemplateObject.h" />
+    <ClInclude Include="source\VM\VoidObject.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\Core\MetaParam.cs" />
+    <None Include="source\Core\MetaTypeFactory.cs" />
+    <None Include="source\Core\Statements\MetaAssignStatements.cs" />
+    <None Include="source\Core\Statements\MetaBlockStatements.cs" />
+    <None Include="source\Core\Statements\MetaBreakContinueGoStatements.cs" />
+    <None Include="source\Core\Statements\MetaCallStatements.cs" />
+    <None Include="source\Core\Statements\MetaDefineVarStatements.cs" />
+    <None Include="source\Core\Statements\MetaIfStatements.cs" />
+    <None Include="source\Core\Statements\MetaOtherPlatformStatement.cs" />
+    <None Include="source\Core\Statements\MetaReturnStatements.cs" />
+    <None Include="source\Core\Statements\MetaStatements.cs" />
+    <None Include="source\Core\Statements\MetaSwitchStatements.cs" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
