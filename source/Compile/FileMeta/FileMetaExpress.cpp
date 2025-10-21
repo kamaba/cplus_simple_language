@@ -153,7 +153,7 @@ std::string FileMetaBraceTerm::ToFormatString() const {
 // FileMetaBracketTerm implementation
 FileMetaBracketTerm::FileMetaBracketTerm(FileMeta* fm, Node* node, int bracketType)
     : FileMetaBaseTerm(fm), m_BracketNode(node), m_BracketType(bracketType) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaBracketTerm::BuildAST() {

@@ -47,7 +47,7 @@ public:
     }
     
     FileMetaBaseTerm* GetRight() const { return m_Right; }
-    void setRight(FileMetaBaseTerm* value) {
+    void SetRight(FileMetaBaseTerm* value) {
         m_Right = value;
         m_IsDirty = true;
     }
@@ -112,12 +112,14 @@ public:
     virtual ~FileMetaParTerm() = default;
 
     Node* ParNode() const { return m_ParNode; }
+    Token* EndToken() const { return m_EndToken; }
     FileMetaTermExpress::EExpressType ExpressType() const { return m_ExpressType; }
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
 
 private:
     Node* m_ParNode = nullptr;
+    Token* m_EndToken = nullptr;
     FileMetaTermExpress::EExpressType m_ExpressType;
 };
 
@@ -141,10 +143,12 @@ public:
 
     Node* BracketNode() const { return m_BracketNode; }
     int BracketType() const { return m_BracketType; }
+    public Token* EndToken() { return m_BracketeEndToken;  }
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
 
 private:
+    Token* m_BracketeEndToken;
     Node* m_BracketNode = nullptr;
     int m_BracketType = 0;
 };
@@ -191,10 +195,9 @@ private:
 class FileMetaTermExpress : public FileMetaBaseTerm {
 public:
     enum class EExpressType {
+        Common,
         MemberVariable,
         ParamVariable,
-        FunctionCall,
-        Expression
     };
 
     FileMetaTermExpress(FileMeta* fm, const std::vector<Node*>& nodeList, EExpressType expressType);

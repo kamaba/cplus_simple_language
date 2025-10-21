@@ -85,16 +85,14 @@ public:
     FileMetaCallNode(FileMeta* fm, Node* _node);
     virtual ~FileMetaCallNode() = default;
 
-    bool isOnlyName() const;
-    std::string name() const;
-    //const std::vector<FileMetaCallNode*>& callNodeList() const { return m_CallNodeList; }
-    bool isBrace() const { return m_FileMetaBraceTerm != nullptr; }
-    const std::vector<FileInputTemplateNode*>& inputTemplateNodeList() const { return m_InputTemplateNodeList; }
-    FileMetaParTerm* fileMetaParTerm() const { return m_FileMetaParTerm; }
-    FileMetaBraceTerm* fileMetaBraceTerm() const { return m_FileMetaBraceTerm; }
-    FileMetaBracketTerm* fileMetaBracketTerm() const { return m_FileMetaBracketTerm; }
+    std::string Name() const;
+    bool IsBrace() const { return m_FileMetaBraceTerm != nullptr; }
+    const std::vector<FileInputTemplateNode*>& InputTemplateNodeList() const { return m_InputTemplateNodeList; }
+    FileMetaParTerm* GetFileMetaParTerm() const { return m_FileMetaParTerm; }
+    FileMetaBraceTerm* GetFileMetaBraceTerm() const { return m_FileMetaBraceTerm; }
+    FileMetaBracketTerm* GetFileMetaBracketTerm() const { return m_FileMetaBracketTerm; }
     const std::vector<FileMetaCallLink*>& arrayNodeList() const { return m_ArrayNodeList; }
-    Token* Token() const { return m_Token; }
+    Token* GetToken() const { return m_Token; }
     Token* AtToken() const { return m_AtToken; }
     bool IsCallFunction() const { return m_IsCallFunction; }
     bool IsTemplate() const { return m_IsTemplate; }
@@ -133,9 +131,9 @@ public:
     FileMetaCallLink(FileMeta* fm, Node* node);
     virtual ~FileMetaCallLink() = default;
 
-    bool isOnlyName() const;
-    std::string name() const;
-    const std::vector<FileMetaCallNode*>& callNodeList() const { return m_CallNodeList; }
+    bool IsOnlyName() const;
+    std::string Name() const;
+    const std::vector<FileMetaCallNode*>& CallNodeList() const { return m_CallNodeList; }
 
     std::string ToFormatString() const;
     std::string ToTokenString() const;
@@ -154,15 +152,15 @@ public:
     FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode = nullptr);
     virtual ~FileMetaClassDefine() = default;
 
-    std::vector<std::string> stringList() const;
-    std::string allName() const;
-    std::string name() const;
-    FileMeta* fileMeta() const { return m_FileMeta; }
-    Token* classNameToken() const { return m_ClassNameToken; }
-    bool isInputTemplateData() const { return m_IsInputTemplateData; }
-    bool isArray() const { return m_IsArray; }
-    const std::vector<FileInputTemplateNode*>& inputTemplateNodeList() const { return m_InputTemplateNodeList; }
-    const std::vector<Token*>& arrayTokenList() const { return m_ArrayTokenList; }
+    std::vector<std::string> StringList() const;
+    std::string AllName() const;
+    std::string Name() const;
+    FileMeta* GetFileMeta() const { return m_FileMeta; }
+    Token* ClassNameToken() const { return m_ClassNameToken; }
+    bool IsInputTemplateData() const { return m_IsInputTemplateData; }
+    bool IsArray() const { return m_IsArray; }
+    const std::vector<FileInputTemplateNode*>& InputTemplateNodeList() const { return m_InputTemplateNodeList; }
+    const std::vector<Token*>& ArrayTokenList() const { return m_ArrayTokenList; }
 
     SimpleLanguage::Core::MetaNode* GetChildrenMetaNode(SimpleLanguage::Core::MetaNode* mb);
     std::string ToString() const;
@@ -192,9 +190,9 @@ public:
     FileMetaTemplateDefine(FileMeta* fm, const std::vector<Node*>& nodeList);
     virtual ~FileMetaTemplateDefine() = default;
 
-    Token* inToken() const { return m_InToken; }
-    FileInputTemplateNode* inClassNameTemplateNode() const { return m_InClassNameTemplateNode; }
-    Node* extendNode() const { return m_ExtendsNode; }
+    Token* InToken() const { return m_InToken; }
+    FileInputTemplateNode* InClassNameTemplateNode() const { return m_InClassNameTemplateNode; }
+    Node* ExtendNode() const { return m_ExtendsNode; }
 
     void Parse();
     virtual std::string ToFormatString() const override;

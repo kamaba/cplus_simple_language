@@ -11,7 +11,6 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
 
 Node::Node(std::shared_ptr<Token> _token) 
 {
@@ -25,35 +24,35 @@ Node* Node::GetParseCurrent() {
     if (parseIndex >= static_cast<int>(childList.size())) {
         return nullptr;
     }
-    return childList[parseIndex].get();
+    return childList[parseIndex];
 }
 
 Node* Node::GetFinalNode() {
     if (!m_ExtendLinkNodeList.empty()) {
-        return m_ExtendLinkNodeList.back().get();
+        return m_ExtendLinkNodeList.back();
     }
     return this;
 }
 
-std::vector<std::shared_ptr<Node>> Node::GetLinkNodeList(bool isIncludeSelf) {
-    std::vector<std::shared_ptr<Node>> tlist;
+std::vector<Node*> Node::GetLinkNodeList(bool isIncludeSelf) {
+    std::vector<Node*> tlist;
     if (isIncludeSelf) {
-        tlist.push_back(std::make_unique<Node>(*this));
+        tlist.push_back(this);
     }
     for (auto& node : m_ExtendLinkNodeList) {
-        tlist.push_back(std::make_unique<Node>(*node));
+        tlist.push_back(node);
     }
     return tlist;
 }
 
-std::vector<std::shared_ptr<Token>> Node::GetLinkTokenList() {
-    std::vector<std::shared_ptr<Token>> tlist;
+std::vector<Token*> Node::GetLinkTokenList() {
+    std::vector<Token*> tlist;
     if (token) {
-        tlist.push_back(std::make_unique<Token>(*token));
+        tlist.push_back(token);
     }
     for (auto& node : m_ExtendLinkNodeList) {
         if (node->token) {
-            tlist.push_back(std::make_unique<Token>(*node->token));
+            tlist.push_back(node->token);
         }
     }
     return tlist;
@@ -63,39 +62,39 @@ Node* Node::GetParseNode(int index, bool isAddIndex) {
     if (parseIndex >= static_cast<int>(childList.size())) {
         return nullptr;
     }
-    auto* node = childList[parseIndex].get();
+    auto node = childList[parseIndex];
     if (isAddIndex) {
         parseIndex += index;
     }
     return node;
 }
 
-void Node::AddLinkNode(std::shared_ptr<Node> node) {
+void Node::AddLinkNode(Node* node) {
     if (lastNode == nullptr) return;
-    lastNode->m_ExtendLinkNodeList.push_back(std::move(node));
+    lastNode->m_ExtendLinkNodeList.push_back(node);
 }
 
-void Node::SetLinkNode(const std::vector<std::shared_ptr<Node>>& nodeList) {
+void Node::SetLinkNode(const std::vector<Node*>& nodeList) {
     m_ExtendLinkNodeList.clear();
     for (const auto& node : nodeList) {
-        m_ExtendLinkNodeList.push_back(std::make_unique<Node>(*node));
+        m_ExtendLinkNodeList.push_back(node);
     }
 }
 
-void Node::SetLinkNode(std::vector<std::shared_ptr<Node>>&& nodeList) {
-    m_ExtendLinkNodeList = std::move(nodeList);
+void Node::SetLinkNode(std::vector<Node*>&& nodeList) {
+    m_ExtendLinkNodeList = nodeList;
 }
 
-void Node::AddChild(std::shared_ptr<Node> c, bool setParent) {
+void Node::AddChild(Node* c, bool setParent) {
     if (setParent) {
         c->parent = this;
     }
     this->childList.push_back(c);
-    this->lastNode = c.get();
+    this->lastNode = c;
 }
 
-void Node::AddSyntax(std::shared_ptr<Node> c) {
-    this->childList.push_back(std::move(c));
+void Node::AddSyntax(Node* c) {
+    this->childList.push_back(c);
 }
 
 std::string Node::ToString() const {
@@ -238,6 +237,5 @@ std::string Node::ToString() const {
     return sb.str();
 }
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

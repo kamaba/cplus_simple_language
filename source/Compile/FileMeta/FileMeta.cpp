@@ -149,7 +149,7 @@ namespace SimpleLanguage
 			for (size_t i = 0; i < m_ImportMetaNamespaceList.size(); i++) {
 				auto imn = m_ImportMetaNamespaceList[i];
 				if (imn->GetRefFromType() == SimpleLanguage::Core::RefFromType::CSharp) {
-					SimpleLanguage::Core::MetaNode* getmb = SimpleLanguage::OtherLanguage::CSharp::CSharpManager::FindCSharpClassOrNameSpace(imn->GetName(), name);
+					SimpleLanguage::Core::MetaNode* getmb = nullptr;// SimpleLanguage::OtherLanguage::CSharp::CSharpManager::FindCSharpClassOrNameSpace(imn->GetName(), name);
 					if (getmb != nullptr)
 						return getmb;
 				}
@@ -169,8 +169,8 @@ namespace SimpleLanguage
 			}
 			for (size_t i = 0; i < m_FileSearchNamespaceList.size(); i++) {
 				auto fmn = m_FileSearchNamespaceList[i];
-				if (SimpleLanguage::Parse::ProjectManager::useDefineNamespaceType != SimpleLanguage::Parse::EUseDefineType::NoUseProjectConfigNamespace) {
-					if (!SimpleLanguage::Parse::ProjectManager::GetData()->IsIncludeDefineStruct(fmn->namespaceStatementBlock()->NamespaceList())) {
+				if (SimpleLanguage::Project::ProjectManager::useDefineNamespaceType != SimpleLanguage::Project::EUseDefineType::NoUseProjectConfigNamespace) {
+					if (!(SimpleLanguage::Project::ProjectManager::GetData()->IsIncludeDefineStruct(fmn->namespaceStatementBlock()->NamespaceList()))) {
 						SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 暂不允许使用namespace 定义命名空间!!!" + fmn->ToFormatString() + " 位置: " + fmn->token()->ToLexemeAllString());
 					}
 				}
@@ -182,7 +182,7 @@ namespace SimpleLanguage
 		{
 			for (size_t i = 0; i < m_FileImportSyntax.size(); i++) 
 			{
-				m_FileImportSyntax[i]->Parse();
+				m_FileImportSyntax[i]->ParseImportSyntax();
 			}
 			for (size_t i = 0; i < m_FileMetaAllClassList.size(); i++) {
 				auto fns = m_FileMetaAllClassList[i];
@@ -234,7 +234,6 @@ namespace SimpleLanguage
 
 			return sb.str();
 		}
-		 namespace CoreFileMeta
 	} // namespace Compile
 } // namespace SimpleLanguage
 

@@ -3,13 +3,12 @@
 #include "FileMetaNamespace.h"
 #include "FileMetaClass.h"
 #include "../FileMetatUtil.h"
-#include "../../Core/Log.h"
-#include "../../Core/Define.h"
+#include "../../Debug/Log.h"
+#include "../../Define.h"
 #include <algorithm>
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace CoreFileMeta {
 
 // FileMetaImportSyntax implementation
 FileMetaImportSyntax::FileMetaImportSyntax(const std::vector<Node*>& _nodeList) : m_NodeList(_nodeList) {
@@ -23,13 +22,13 @@ bool FileMetaImportSyntax::ParseImportSyntax() {
     }
     
     auto namespaceNode = m_NodeList[0];
-    if (namespaceNode != nullptr && namespaceNode->token() != nullptr && 
-        namespaceNode->token()->type() == SimpleLanguage::ETokenType::Import) {
-        m_Token = namespaceNode->token();
+    if (namespaceNode != nullptr && namespaceNode->token != nullptr && 
+        namespaceNode->token->GetType() == SimpleLanguage::ETokenType::Import) {
+        m_Token = namespaceNode->token;
     }
     
     auto namespaceNameNode = m_NodeList[1];
-    m_ImportNameListToken = namespaceNameNode->linkTokenList();
+    m_ImportNameListToken = namespaceNameNode->GetLinkTokenList();
     
     // Parse namespace statement
     m_NamespaceStatement = NamespaceStatementBlock::CreateStateBlock(m_ImportNameListToken);
@@ -37,15 +36,15 @@ bool FileMetaImportSyntax::ParseImportSyntax() {
     // Check for 'as' keyword
     if (m_NodeList.size() > 2) {
         auto asNode = m_NodeList[2];
-        if (asNode != nullptr && asNode->token() != nullptr && 
-            asNode->token()->type() == SimpleLanguage::ETokenType::As) {
-            m_AsToken = asNode->token();
+        if (asNode != nullptr && asNode->token != nullptr && 
+            asNode->token->GetType() == SimpleLanguage::ETokenType::As) {
+            m_AsToken = asNode->token;
             
             if (m_NodeList.size() > 3) {
                 auto asNameNode = m_NodeList[3];
-                if (asNameNode != nullptr && asNameNode->token() != nullptr) {
-                    m_AsNameToken = asNameNode->token();
-                    std::vector<Token*> asNameList = {asNameNode->token()};
+                if (asNameNode != nullptr && asNameNode->token != nullptr) {
+                    m_AsNameToken = asNameNode->token;
+                    std::vector<Token*> asNameList = {asNameNode->token};
                     m_AsNameStatement = NamespaceStatementBlock::CreateStateBlock(asNameList);
                 }
             }
@@ -62,14 +61,15 @@ std::string FileMetaImportSyntax::ToFormatString() const {
         sb << m_NamespaceStatement->ToFormatString();
     }
     if (m_AsToken != nullptr && m_AsNameToken != nullptr) {
-        sb << " as " << m_AsNameToken->lexeme().ToString();
+        sb << " as " << m_AsNameToken->GetLexeme();
     }
     return sb.str();
 }
 
 // FileMetaGlobalSyntax implementation
 FileMetaGlobalSyntax::FileMetaGlobalSyntax(FileMeta* fm, const std::vector<Node*>& nodeList) 
-    : m_FileMeta(fm), m_NodeList(nodeList) {
+    : m_NodeList(nodeList) {
+    m_FileMeta = fm;
 }
 
 void FileMetaGlobalSyntax::AddImportSyntax(FileMetaImportSyntax* importSyntax) {
@@ -105,6 +105,5 @@ std::string FileMetaGlobalSyntax::ToFormatString() const {
     return sb.str();
 }
 
-} // namespace CoreFileMeta
 } // namespace Compile
 } // namespace SimpleLanguage

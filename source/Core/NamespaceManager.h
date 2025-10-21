@@ -26,7 +26,7 @@ namespace Core {
 class NamespaceManager {
 public:
     static NamespaceManager* s_Instance;
-    static NamespaceManager* GetInstance();
+    static NamespaceManager& GetInstance();
 
     std::map<std::string, MetaNamespace*> metaNamespaceDict;
 

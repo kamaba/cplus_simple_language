@@ -1,13 +1,9 @@
 #pragma once
 
-#include "FileMetaBase.h"
-#include "FileMetaExpress.h"
-#include "../../Parse/Node.h"
-#include "../../Core/Define.h"
-#include "../../Core/Log.h"
 #include <vector>
 #include <string>
 #include <sstream>
+#include "FileMetaMemberVariable.h"
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -17,6 +13,7 @@ class FileMeta;
 class FileMetaConstValueTerm;
 class FileMetaCallTerm;
 class MetaMemberData;
+class Node;
 
 class FileMetaMemberData : public FileMetaBase {
 public:
@@ -28,7 +25,7 @@ public:
     };
 
     FileMetaMemberData(FileMeta* fm, Node* node, bool isWithName, EMemberDataType dataType);
-    FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& frontList, Node* assignNode, 
+    FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& frontList, Node* assignNode,
                        const std::vector<Node*>& backList, bool isWithName, EMemberDataType dataType);
     virtual ~FileMetaMemberData() = default;
 

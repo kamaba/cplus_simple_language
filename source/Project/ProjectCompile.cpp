@@ -11,10 +11,8 @@
 #include "../Define.h"
 #include "../Core/ClassManager.h"
 #include "../Core/MetaVariableManager.h"
-#include "../Core/MethodManager.h"
 #include "../Core/ModuleManager.h"
 #include "../Core/NamespaceManager.h"
-#include "../Core/CoreMetaClassManager.h"
 #include "../IR/IRManager.h"
 #include <iostream>
 #include <fstream>
@@ -42,14 +40,14 @@ ProjectCompile::ProjectCompile() {
 }
 
 void ProjectCompile::LoadProject() {
-    std::filesystem::path directory(ProjectManager::projectPath);
+    ::std::filesystem::path directory(ProjectManager::projectPath);
 
-    if (!std::filesystem::exists(directory)) {
+    if (!::std::filesystem::exists(directory)) {
         std::cout << "Error 项目加载路径不正确!!" << std::endl;
     }
 
     std::vector<std::string> paths;
-    for (const auto& entry : std::filesystem::directory_iterator(directory)) {
+    for (const auto& entry : ::std::filesystem::directory_iterator(directory)) {
         if (entry.path().extension() == ".sp") {
             paths.push_back(entry.path().string());
         }
@@ -59,7 +57,7 @@ void ProjectCompile::LoadProject() {
         std::cout << "Error 项目加载路径没有找到sp文件!!" << std::endl;
     }
 
-    if (!std::filesystem::exists(paths[0])) {
+    if (!::std::filesystem::exists(paths[0])) {
         std::cout << "Error 项目加载路径不正确!!" << std::endl;
         return;
     }

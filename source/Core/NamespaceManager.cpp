@@ -23,11 +23,11 @@ namespace Core {
 // Static member initialization
 NamespaceManager* NamespaceManager::s_Instance = nullptr;
 
-NamespaceManager* NamespaceManager::GetInstance() {
+NamespaceManager& NamespaceManager::GetInstance() {
     if (s_Instance == nullptr) {
         s_Instance = new NamespaceManager();
     }
-    return s_Instance;
+    return *s_Instance;
 }
 
 NamespaceManager::NamespaceManager() {
@@ -42,7 +42,7 @@ NamespaceManager::~NamespaceManager() {
     metaNamespaceDict.clear();
 }
 
-MetaNode* NamespaceManager::SearchTopLevelFileMetaNamespace(SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fns, MetaNode* parentNode) {
+MetaNode* NamespaceManager::SearchTopLevelFileMetaNamespace(SimpleLanguage::Compile::FileMetaNamespace* fns, MetaNode* parentNode) {
     MetaNode* findNode = parentNode;
     if (fns->topLevelFileMetaNamespace != nullptr) {
         findNode = SearchTopLevelFileMetaNamespace(fns->topLevelFileMetaNamespace, findNode);
@@ -58,7 +58,7 @@ MetaNode* NamespaceManager::SearchTopLevelFileMetaNamespace(SimpleLanguage::Comp
     return findNode;
 }
 
-MetaNode* NamespaceManager::GetParentChildrenNode(SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fns, MetaNode* parentNode) {
+MetaNode* NamespaceManager::GetParentChildrenNode(SimpleLanguage::Compile::FileMetaNamespace* fns, MetaNode* parentNode) {
     MetaNode* findNode = parentNode;
     for (size_t i = 0; i < fns->namespaceStatementBlock()->tokenList().size(); i++) {
         std::string name = fns->namespaceStatementBlock()->tokenList()[i]->lexeme().ToString();
@@ -71,12 +71,12 @@ MetaNode* NamespaceManager::GetParentChildrenNode(SimpleLanguage::Compile::CoreF
     return findNode;
 }
 
-MetaNode* NamespaceManager::SearchFinalNamespace(SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fns) {
-    MetaNode* findNode = ModuleManager::GetInstance()->GetSelfModule()->getMetaNode();
+MetaNode* NamespaceManager::SearchFinalNamespace(SimpleLanguage::Compile::FileMetaNamespace* fns) {
+    MetaNode* findNode = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
 
-    std::vector<SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace*> list;
+    std::vector<SimpleLanguage::Compile::FileMetaNamespace*> list;
 
-    SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* PS_fmn = fns;
+    SimpleLanguage::Compile::FileMetaNamespace* PS_fmn = fns;
     list.push_back(PS_fmn);
     while (true) {
         if (PS_fmn->topLevelFileMetaNamespace != nullptr) {
@@ -87,7 +87,7 @@ MetaNode* NamespaceManager::SearchFinalNamespace(SimpleLanguage::Compile::CoreFi
         }
     }
 
-    SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fmn = nullptr;
+    SimpleLanguage::Compile::FileMetaNamespace* fmn = nullptr;
     for (int i = static_cast<int>(list.size()) - 1; i >= 0; i--) {
         fmn = list[i];
         findNode = GetParentChildrenNode(fmn, findNode);
@@ -99,28 +99,28 @@ MetaNode* NamespaceManager::SearchFinalNamespace(SimpleLanguage::Compile::CoreFi
     return findNode;
 }
 
-void NamespaceManager::CreateMetaNamespaceByFineDefineNamespace(SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fns, MetaNode* parentNode) {
-    SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fnsc = fns;
+void NamespaceManager::CreateMetaNamespaceByFineDefineNamespace(SimpleLanguage::Compile::FileMetaNamespace* fns, MetaNode* parentNode) {
+    SimpleLanguage::Compile::FileMetaNamespace* fnsc = fns;
     if (parentNode == nullptr) {
-        parentNode = ModuleManager::GetInstance()->GetSelfModule()->getMetaNode();
+        parentNode = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
     }
     parentNode = SearchTopLevelFileMetaNamespace(fns, parentNode);
 
     CreateMetaNamespaceHandle(fnsc, parentNode);
 }
 
-void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fns, MetaNode* parentNode) {
+void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::FileMetaNamespace* fns, MetaNode* parentNode) {
     MetaNode* mnode = parentNode;
     if (parentNode == nullptr) {
-        parentNode = ModuleManager::GetInstance()->GetSelfModule()->getMetaNode();
+        parentNode = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
     }
     //fns.metaNamespaceList.Clear();
-    for (size_t i = 0; i < fns->namespaceStatementBlock()->tokenList().size(); i++) {
-        std::string name = fns->namespaceStatementBlock()->tokenList()[i]->lexeme().ToString();
+    for (size_t i = 0; i < fns->namespaceStatementBlock()->TokenList().size(); i++) {
+        std::string name = fns->namespaceStatementBlock()->TokenList()[i]->GetLexeme();
         parentNode = parentNode->GetChildrenMetaNodeByName(name);
         bool isCreate = true;
         if (parentNode != nullptr) {
-            if (parentNode->getMetaNamespace() == nullptr) {
+            if (parentNode->GetMetaNamespace() == nullptr) {
                 isCreate = true;
             } else {
                 isCreate = false;
@@ -139,7 +139,7 @@ void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::CoreFi
     }
 }
 
-void NamespaceManager::CreateMetaNamespaceByFileMetaNamespace(SimpleLanguage::Compile::CoreFileMeta::FileMetaNamespace* fmn) {
+void NamespaceManager::CreateMetaNamespaceByFileMetaNamespace(SimpleLanguage::Compile::FileMetaNamespace* fmn) {
     MetaBase* mn = nullptr;
     if (fmn->topLevelFileMetaNamespace != nullptr) {
         //mn = fmn.topLevelFileMetaNamespace.namespaceStatementBlock;
@@ -147,23 +147,23 @@ void NamespaceManager::CreateMetaNamespaceByFileMetaNamespace(SimpleLanguage::Co
     //CreateMetaNamespaceByFineDefineNamespace(fmn, mn);
 }
 
-MetaNode* NamespaceManager::FindFinalMetaNamespaceByNSBlock(SimpleLanguage::Compile::CoreFileMeta::NamespaceStatementBlock* nsb, MetaNode* root) {
-    if (nsb->namespaceList().size() == 0) {
+MetaNode* NamespaceManager::FindFinalMetaNamespaceByNSBlock(SimpleLanguage::Compile::NamespaceStatementBlock* nsb, MetaNode* root) {
+    if (nsb->NamespaceList().size() == 0) {
         return nullptr;
     }
 
     if (root == nullptr) {
-        root = ModuleManager::GetInstance()->GetSelfModule()->getMetaNode();
+        root = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
     }
-    for (size_t i = 0; i < nsb->tokenList().size(); i++) {
-        std::string name = nsb->tokenList()[i]->lexeme().ToString();
+    for (size_t i = 0; i < nsb->TokenList().size(); i++) {
+        std::string name = nsb->TokenList()[i]->GetLexeme();
         MetaNode* findNode2 = root->GetChildrenMetaNodeByName(name);
         if (findNode2 == nullptr) {
             break;
         }
         root = findNode2;
-        if (i == nsb->tokenList().size() - 1) {
-            if (findNode2->getMetaNamespace() != nullptr) {
+        if (i == nsb->TokenList().size() - 1) {
+            if (findNode2->GetMetaNamespace() != nullptr) {
                 return findNode2;
             }
         }

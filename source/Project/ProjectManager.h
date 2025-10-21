@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace SimpleLanguage {
-namespace Parse {
+namespace Project {
 
 class CommandInputArgs {
 public:
@@ -33,7 +33,7 @@ enum class EUseDefineType {
 class ProjectManager {
 public:
     static std::string projectPath;
-    static class ProjectData* data();
+    static class ProjectData* GetData();
     static EUseDefineType useDefineNamespaceType;
     
     static bool useGenMetaClass;

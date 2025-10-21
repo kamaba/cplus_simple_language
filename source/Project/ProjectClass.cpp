@@ -1,6 +1,7 @@
 #include "ProjectClass.h"
 #include "ProjectCompile.h"
 #include "ProjectData.h"
+#include "ProjectManager.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
 #include "../Core/ClassManager.h"
 #include "../Core/ModuleManager.h"

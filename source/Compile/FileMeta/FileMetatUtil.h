@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../Define.h"
-#include "../Debug/Log.h"
+#include "../../Define.h"
+#include "../../Debug/Log.h"
 #include "../Parse/StructParse.h"
-#include "FileMeta/FileMetaCommon.h"
-#include "FileMeta/FileMetaExpress.h"
+#include "FileMetaCommon.h"
+#include "FileMetaExpress.h"
 #include "../Parse/Node.h"
 #include <vector>
 #include <string>

@@ -1,10 +1,6 @@
 #pragma once
 
-#include "FileMetaBase.h"
-#include "FileMetaCommon.h"
-#include "../Token.h"
 #include "../../Define.h"
-#include "../../Debug/Log.h"
 #include <vector>
 #include <string>
 #include <sstream>
@@ -16,7 +12,7 @@ namespace Compile {
 // Forward declarations
 class FileMeta;
 class NamespaceStatementBlock;
-class SimpleLanguage::Compile::P::Node;
+class Node;
 
 class FileMetaImportSyntax : public FileMetaBase {
 public:
@@ -24,11 +20,11 @@ public:
     virtual ~FileMetaImportSyntax() = default;
 
     // Properties
-    Token* asToken() const { return m_AsToken; }
-    Token* asNameToken() const { return m_AsNameToken; }
-    const ::std::vector<Token*>& importNameListToken() const { return m_ImportNameListToken; }
-    NamespaceStatementBlock* namespaceStatement() const { return m_NamespaceStatement; }
-    NamespaceStatementBlock* asNameStatement() const { return m_AsNameStatement; }
+    Token* AsToken() const { return m_AsToken; }
+    Token* AsNameToken() const { return m_AsNameToken; }
+    const ::std::vector<Token*>& ImportNameListToken() const { return m_ImportNameListToken; }
+    NamespaceStatementBlock* NamespaceStatement() const { return m_NamespaceStatement; }
+    NamespaceStatementBlock* AsNameStatement() const { return m_AsNameStatement; }
 
     // Methods
     bool ParseImportSyntax();

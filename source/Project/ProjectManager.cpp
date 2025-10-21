@@ -8,7 +8,7 @@
 #include <iostream>
 
 namespace SimpleLanguage {
-namespace Parse {
+namespace Project {
 
     CommandInputArgs::CommandInputArgs(const char* args)
     {

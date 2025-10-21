@@ -1,5 +1,5 @@
 #include "CompilerUtil.h"
-#include "../Core/GrammerUtil.h"
+//#include "../Core/GrammerUtil.h"
 #include <sstream>
 #include <algorithm>
 
@@ -23,7 +23,7 @@ bool CompilerUtil::CheckNameList(const std::string& ns, std::vector<std::string>
     }
     
     if (nsArr.size() == 1) {
-        bool isSuc = SimpleLanguage::Core::GrammerUtil::IdentifierCheck(nsArr[0]);
+        bool isSuc = false;// SimpleLanguage::Core::GrammerUtil::IdentifierCheck(nsArr[0]);
         if (isSuc && list != nullptr) {
             list->push_back(nsArr[0]);
         }
@@ -36,7 +36,8 @@ bool CompilerUtil::CheckNameList(const std::string& ns, std::vector<std::string>
             success = false;
             break;
         }
-        if (!SimpleLanguage::Core::GrammerUtil::IdentifierCheck(nsArr[i])) {
+        //if (!SimpleLanguage::Core::GrammerUtil::IdentifierCheck(nsArr[i]))
+        {
             success = false;
             break;
         }
@@ -47,22 +48,22 @@ bool CompilerUtil::CheckNameList(const std::string& ns, std::vector<std::string>
     return success;
 }
 
-std::string CompilerUtil::ToFormatString(SimpleLanguage::Core::EPermission permission) {
+std::string CompilerUtil::ToFormatString(SimpleLanguage::EPermission permission) {
     switch (permission) {
-        case SimpleLanguage::Core::EPermission::Public: return "public";
-        case SimpleLanguage::Core::EPermission::Export: return "export";
-        case SimpleLanguage::Core::EPermission::Protected: return "protected";
-        case SimpleLanguage::Core::EPermission::Private: return "private";
+        case SimpleLanguage::EPermission::Public: return "public";
+        case SimpleLanguage::EPermission::Export: return "export";
+        case SimpleLanguage::EPermission::Protected: return "protected";
+        case SimpleLanguage::EPermission::Private: return "private";
         default: return "_public";
     }
 }
 
-SimpleLanguage::Core::EPermission CompilerUtil::GetPerMissionByString(const std::string& str) {
-    if (str == "public") return SimpleLanguage::Core::EPermission::Public;
-    if (str == "export") return SimpleLanguage::Core::EPermission::Export;
-    if (str == "protected") return SimpleLanguage::Core::EPermission::Protected;
-    if (str == "private") return SimpleLanguage::Core::EPermission::Private;
-    return SimpleLanguage::Core::EPermission::Null;
+SimpleLanguage::EPermission CompilerUtil::GetPerMissionByString(const std::string& str) {
+    if (str == "public") return SimpleLanguage::EPermission::Public;
+    if (str == "export") return SimpleLanguage::EPermission::Export;
+    if (str == "protected") return SimpleLanguage::EPermission::Protected;
+    if (str == "private") return SimpleLanguage::EPermission::Private;
+    return SimpleLanguage::EPermission::Null;
 }
 
 } // namespace Compile

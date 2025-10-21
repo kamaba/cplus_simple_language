@@ -1,14 +1,16 @@
 #include "FileMetatUtil.h"
-#include "FileMeta/FileMeta.h"
-#include "FileMeta/FileMetaExpress.h"
-#include "../Debug/Log.h"
+#include "FileMeta.h"
+#include "FileMetaExpress.h"
+#include "../../Debug/Log.h"
 //#include "../Core/GrammerUtil.h"
-#include "Parse/StructParse.h"
-#include "Parse/Node.h"
+#include "../Parse/StructParse.h"
+#include "../Parse/Node.h"
 #include <algorithm>
 
 namespace SimpleLanguage {
 namespace Compile {
+
+    using namespace Parse;
 
 std::vector<std::string> FileMetatUtil::GetLinkStringMidPeriodList(const std::vector<Token*>& tokenList) {
     std::vector<std::string> stringList;
@@ -19,11 +21,12 @@ std::vector<std::string> FileMetatUtil::GetLinkStringMidPeriodList(const std::ve
             return std::vector<std::string>();
         }
         if (token->GetType() != SimpleLanguage::ETokenType::Period) {
-            if (!SimpleLanguage::Core::GrammerUtil::IdentifierCheck( token->GetLexeme() ) {
+            //if (!SimpleLanguage::Core::GrammerUtil::IdentifierCheck( token->GetLexeme() ) 
+            {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "检查到Import语句中，导入名称不合规!!");
                 return std::vector<std::string>();
             }
-            stringList.push_back(token->lexeme().ToString());
+            stringList.push_back(token->GetLexeme());
         }
     }
     return stringList;
@@ -70,9 +73,9 @@ bool FileMetatUtil::SplitNodeList(const std::vector<Node*>& nodeList, std::vecto
     bool isEqual = false;
     for (size_t i = 0; i < nodeList.size(); i++) {
         auto n = nodeList[i];
-        if (n->token()->type() == SimpleLanguage::ETokenType::Assign) {
+        if (n->token->GetType() == SimpleLanguage::ETokenType::Assign) {
             isEqual = true;
-            assignToken = n->token();
+            assignToken = n->token;
             continue;
         }
         if (isEqual)
@@ -94,34 +97,34 @@ bool FileMetatUtil::SplitNodeList(const std::vector<Node*>& nodeList, std::vecto
 
 FileMetaBaseTerm* FileMetatUtil::CreateFileOneTerm(FileMeta* fm, Node* node, FileMetaTermExpress::EExpressType expressType) {
     FileMetaBaseTerm* fmbt = nullptr;
-    if (node->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink ||
-        (node->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Key && 
-         (node->token() != nullptr && 
-          (node->token()->type() == SimpleLanguage::ETokenType::This || 
-           node->token()->type() == SimpleLanguage::ETokenType::Base)))) {
+    if (node->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink ||
+        (node->nodeType == SimpleLanguage::Compile::ENodeType::Key && 
+         (node->token != nullptr && 
+          (node->token->GetType() == SimpleLanguage::ETokenType::This ||
+           node->token->GetType() == SimpleLanguage::ETokenType::Base)))) {
         fmbt = new FileMetaCallTerm(fm, node);
-        fmbt->priority = SimpleLanguage::Core::SignComputePriority::Level1;
-    } else if (node->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::ConstValue) {
-        if (node->extendLinkNodeList().size() > 1) {
+        fmbt->SetPriority( SimpleLanguage::Compile::SignComputePriority::Level1 );
+    } else if (node->nodeType == SimpleLanguage::Compile::ENodeType::ConstValue) {
+        if (node->GetExtendLinkNodeList().size() > 1) {
             fmbt = new FileMetaCallTerm(fm, node);
-            fmbt->priority = SimpleLanguage::Core::SignComputePriority::Level1;
+            fmbt->SetPriority( SimpleLanguage::Compile::SignComputePriority::Level1);
         } else {
-            fmbt = new FileMetaConstValueTerm(fm, node->token());
-            fmbt->priority = SimpleLanguage::Core::SignComputePriority::Level1;
+            fmbt = new FileMetaConstValueTerm(fm, node->token);
+            fmbt->SetPriority( SimpleLanguage::Compile::SignComputePriority::Level1);
         }
-    } else if (node->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Par) {
+    } else if (node->nodeType == SimpleLanguage::Compile::ENodeType::Par) {
         fmbt = new FileMetaParTerm(fm, node, expressType);
-        fmbt->priority = SimpleLanguage::Core::SignComputePriority::Level1;
-    } else if (node->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Brace) {
+        fmbt->SetPriority(SimpleLanguage::Compile::SignComputePriority::Level1);
+    } else if (node->nodeType == SimpleLanguage::Compile::ENodeType::Brace) {
         fmbt = new FileMetaBraceTerm(fm, node);
-        fmbt->priority = SimpleLanguage::Core::SignComputePriority::Level1;
-    } else if (node->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Bracket) {
+        fmbt->SetPriority( SimpleLanguage::Compile::SignComputePriority::Level1);
+    } else if (node->nodeType == SimpleLanguage::Compile::ENodeType::Bracket) {
         fmbt = new FileMetaBracketTerm(fm, node);
-        fmbt->priority = SimpleLanguage::Core::SignComputePriority::Level1;
+        fmbt->SetPriority(SimpleLanguage::Compile::SignComputePriority::Level1 );
     } else {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error CreateFileOneTerm 单1表达式，没有找到该类型: " + 
-            (node->token() ? std::to_string(static_cast<int>(node->token()->type())) : "null") + " 位置: " + 
-            (node->token() ? node->token()->ToLexemeAllString() : ""));
+            (node->token ? std::to_string(static_cast<int>(node->token->GetType())) : "null") + " 位置: " + 
+            (node->token ? node->token->ToLexemeAllString() : ""));
     }
     return fmbt;
 }

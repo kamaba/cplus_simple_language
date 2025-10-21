@@ -15,7 +15,6 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
 
 class SignComputePriority {
 public:
@@ -75,8 +74,8 @@ public:
     Node* lastNode = nullptr;            // 最后处理的节点
 
     ENodeType nodeType = ENodeType::None;
-    ::std::vector<::std::shared_ptr<Node>> m_ExtendLinkNodeList;
-    ::std::vector<::std::shared_ptr<Node>> childList;       // 子内容节点
+    ::std::vector<Node*> m_ExtendLinkNodeList;
+    ::std::vector<Node*> childList;       // 子内容节点
 
     int parseIndex = 0;
 
@@ -85,23 +84,22 @@ public:
     
     Node* GetParseCurrent();
     Node* GetFinalNode();
-    const ::std::vector<::std::shared_ptr<Node>>& GetExtendLinkNodeList() const { return m_ExtendLinkNodeList; }
-    ::std::vector<::std::shared_ptr<Node>> GetLinkNodeList(bool isIncludeSelf = true);
-    ::std::vector<::std::shared_ptr<Token>> GetLinkTokenList();
+    const ::std::vector<Node*>& GetExtendLinkNodeList() const { return m_ExtendLinkNodeList; }
+    ::std::vector<Node*> GetLinkNodeList(bool isIncludeSelf = true);
+    ::std::vector<Token*> GetLinkTokenList();
     
     Node* GetParseNode(int index = 1, bool isAddIndex = true);
-    void AddLinkNode(::std::shared_ptr<Node> node);
-    void SetLinkNode(const ::std::vector<::std::shared_ptr<Node>>& nodeList);
-    void AddChild(::std::shared_ptr<Node> c, bool setParent = true);
-    void AddSyntax(::std::shared_ptr<Node> c);
+    void AddLinkNode(Node* node);
+    void SetLinkNode(const ::std::vector<Node*>& nodeList);
+    void AddChild(Node* c, bool setParent = true);
+    void AddSyntax(Node* c);
     
     ::std::string ToString() const;
     ::std::string ToFormatString() const;
 
 private:
-    void SetLinkNode(::std::vector<::std::shared_ptr<Node>>&& nodeList);
+    void SetLinkNode(::std::vector<Node*>&& nodeList);
 };
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

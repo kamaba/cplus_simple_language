@@ -26,17 +26,17 @@ namespace SimpleLanguage
 			virtual ~ProjectCompile() = default;
 
 			// Properties
-			bool isThreadCompile() const { return m_IsThreadCompile; }
-			void setThreadCompile(bool value) { m_IsThreadCompile = value; }
+			bool IsThreadCompile() const { return m_IsThreadCompile; }
+			void SetThreadCompile(bool value) { m_IsThreadCompile = value; }
 
-			static bool isLoaded() { return s_IsLoaded; }
-			static FileMeta* projectFileMeta() { return s_ProjectFile; }
+			static bool IsLoaded() { return s_IsLoaded; }
+			static FileMeta* ProjectFileMeta() { return s_ProjectFile; }
 
-			static int structParseCount() { return s_StructParseCount; }
-			static int buildParseCount() { return s_BuildParseCount; }
-			static int grammerParseCount() { return s_GrammerParseCount; }
-			static int parseListCount() { return s_ParseListCount; }
-			static const std::vector<FileParse*>& fileParseList() { return s_FileParseList; }
+			static int StructParseCount() { return s_StructParseCount; }
+			static int BuildParseCount() { return s_BuildParseCount; }
+			static int GrammerParseCount() { return s_GrammerParseCount; }
+			static int ParseListCount() { return s_ParseListCount; }
+			static const std::vector<FileParse*>& FileParseList() { return s_FileParseList; }
 
 			// Methods
 			static void LoadProject();
