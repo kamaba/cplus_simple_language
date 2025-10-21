@@ -14,7 +14,6 @@ namespace Compile {
 
     Token::Token()
         : m_Type(ETokenType::None)
-        , m_Lexeme("")
         , m_SourceBeginLine(0)
         , m_SourceBeginChar(0)
         , m_SourceEndLine(0)
@@ -22,17 +21,21 @@ namespace Compile {
     {
     }
 
-    Token::Token(const std::string& path, ETokenType tokenType, const std::string& lexeme, 
-                 int sourceLine, int sourceChar, const std::string& extend)
+    Token::Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
+        int sourceLine, int sourceChar, const MultiData* extend = nullptr )
         : m_Path(path)
         , m_Type(tokenType)
-        , m_Lexeme(lexeme)
         , m_SourceBeginLine(sourceLine + 1)
         , m_SourceBeginChar(sourceChar)
-        , m_Extend(extend)
         , m_SourceEndLine(0)
         , m_SourceEndChar(0)
     {
+        m_Path = path;
+        m_Lexeme = lexeme;
+        if (extend != nullptr)
+        {
+            m_Extend = *extend;
+        }
     }
 
     Token::Token(const Token& token)
@@ -46,17 +49,45 @@ namespace Compile {
         , m_SourceEndLine(token.m_SourceEndLine)
     {
     }
-
     void Token::SetSourceEnd(int endSourceLine, int endSourceChar)
     {
         m_SourceEndLine = endSourceLine;
         m_SourceEndChar = endSourceChar;
     }
 
-    void Token::SetLexeme(const std::string& lexeme, ETokenType tokenType)
+    void Token::SetLexeme(const MultiData& lexeme, ETokenType tokenType)
     {
         m_Lexeme = lexeme;
         m_Type = tokenType;
+    }
+
+    std::string Token::GetLexemeString() const
+    {
+        std::ostringstream ss;
+        switch (m_Lexeme.type)
+        {
+        case DataType::Byte:
+        {
+            ss << m_Lexeme.data.byte_val;
+        }break;
+        case DataType::Short:
+        {
+            ss << m_Lexeme.data.short_val;
+        }break;
+        case DataType::Int:
+        {
+            ss << m_Lexeme.data.int_val;
+        }break;
+        case DataType::Long:
+        {
+            ss << m_Lexeme.data.long_val;
+        }break;
+        case DataType::String:
+        {
+            ss << m_Lexeme.data.string_val;
+        }break;
+        }
+        return ss.str();
     }
 
     void Token::AddChildrenToken(Token* token)
@@ -66,7 +97,7 @@ namespace Compile {
 
     std::string Token::ToString() const
     {
-        return m_Lexeme;
+        return GetLexemeString();
     }
 
     std::string Token::ToAllString() const
@@ -79,7 +110,8 @@ namespace Compile {
     std::string Token::ToLexemeAllString() const
     {
         std::ostringstream oss;
-        oss << "Lex: " << m_Lexeme << " Path:" << m_Path << " Line: " << m_SourceBeginLine << " Pos: " << m_SourceBeginChar << "  ";
+        const char* input = this->GetLexemeString().c_str();
+        oss << "Lex: " << input << " Path:" << m_Path << " Line: " << m_SourceBeginLine << " Pos: " << m_SourceBeginChar << "  ";
         return oss.str();
     }
 
@@ -91,33 +123,35 @@ namespace Compile {
             case ETokenType::Number:
             {
                 // 这里需要根据extend字符串解析EType
-                // 简化实现，实际需要更复杂的解析逻辑
-                if (m_Extend == "Byte") etype = EType::Byte;
-                else if (m_Extend == "SByte") etype = EType::SByte;
-                else if (m_Extend == "Int16") etype = EType::Int16;
-                else if (m_Extend == "UInt16") etype = EType::UInt16;
-                else if (m_Extend == "Int32") etype = EType::Int32;
-                else if (m_Extend == "UInt32") etype = EType::UInt32;
-                else if (m_Extend == "Int64") etype = EType::Int64;
-                else if (m_Extend == "UInt64") etype = EType::UInt64;
-                else if (m_Extend == "Float32") etype = EType::Float32;
-                else if (m_Extend == "Float64") etype = EType::Float64;
+                    // 简化实现，实际需要更复杂的解析逻辑
+                std::string extend_string = m_Extend.toString();
+                if (extend_string == "Byte") etype = EType::Byte;
+                else if (extend_string == "SByte") etype = EType::SByte;
+                else if (extend_string == "Int16") etype = EType::Int16;
+                else if (extend_string == "UInt16") etype = EType::UInt16;
+                else if (extend_string == "Int32") etype = EType::Int32;
+                else if (extend_string == "UInt32") etype = EType::UInt32;
+                else if (extend_string == "Int64") etype = EType::Int64;
+                else if (extend_string == "UInt64") etype = EType::UInt64;
+                else if (extend_string == "Float32") etype = EType::Float32;
+                else if (extend_string == "Float64") etype = EType::Float64;
                 else etype = EType::Int32; // 默认
             }
             break;
             case ETokenType::Type:
             {
                 // 类似上面的解析逻辑
-                if (m_Extend == "Byte") etype = EType::Byte;
-                else if (m_Extend == "SByte") etype = EType::SByte;
-                else if (m_Extend == "Int16") etype = EType::Int16;
-                else if (m_Extend == "UInt16") etype = EType::UInt16;
-                else if (m_Extend == "Int32") etype = EType::Int32;
-                else if (m_Extend == "UInt32") etype = EType::UInt32;
-                else if (m_Extend == "Int64") etype = EType::Int64;
-                else if (m_Extend == "UInt64") etype = EType::UInt64;
-                else if (m_Extend == "Float32") etype = EType::Float32;
-                else if (m_Extend == "Float64") etype = EType::Float64;
+                std::string extend_string = m_Extend.toString();
+                if (extend_string == "Byte") etype = EType::Byte;
+                else if (extend_string == "SByte") etype = EType::SByte;
+                else if (extend_string == "Int16") etype = EType::Int16;
+                else if (extend_string == "UInt16") etype = EType::UInt16;
+                else if (extend_string == "Int32") etype = EType::Int32;
+                else if (extend_string == "UInt32") etype = EType::UInt32;
+                else if (extend_string == "Int64") etype = EType::Int64;
+                else if (extend_string == "UInt64") etype = EType::UInt64;
+                else if (extend_string == "Float32") etype = EType::Float32;
+                else if (extend_string == "Float64") etype = EType::Float64;
                 else etype = EType::Int32; // 默认
             }
             break;
@@ -147,6 +181,8 @@ namespace Compile {
     {
         std::string types = "";
         std::string val = "";
+
+        std::stringstream ss;
         
         if (m_Type == ETokenType::Number)
         {
@@ -156,73 +192,90 @@ namespace Compile {
                 case EType::Byte:
                 case EType::SByte:
                 {
-                    val = m_Lexeme;
+                    ss << m_Lexeme.data.byte_val;
+                    //val = m_Lexeme;
                 }
                 break;
                 case EType::Int16:
                 {
-                    val = m_Lexeme;
+                    ss << m_Lexeme.data.short_val << "s";
+                    //val = m_Lexeme;
                     types = "s";
                 }
                 break;
                 case EType::UInt16:
                 {
-                    val = m_Lexeme;
+                    ss << (uint16_t)m_Lexeme.data.short_val << "us";
+                    //val = m_Lexeme;
                     types = "us";
                 }
                 break;
                 case EType::Int32:
                 {
-                    val = m_Lexeme;
+                    ss << (int32_t)m_Lexeme.data.int_val << "i";
+                    //val = m_Lexeme;
                     types = "i";
                 }
                 break;
                 case EType::UInt32:
                 {
-                    val = m_Lexeme;
+                    ss << (uint32_t)m_Lexeme.data.int_val << "ui";
+                    //val = m_Lexeme;
                     types = "ui";
                 }
                 break;
                 case EType::Int64:
                 {
-                    val = m_Lexeme;
+                    ss << (int64_t)m_Lexeme.data.long_val << "uL";
+                    //val = m_Lexeme;
                     types = "uL";
                 }
                 break;
                 case EType::UInt64:
                 {
-                    val = m_Lexeme;
+                    ss << (uint64_t)m_Lexeme.data.long_val << "L";
+                    //val = m_Lexeme;
                     types = "L";
                 }
                 break;
                 case EType::Float32:
                 {
-                    val = m_Lexeme;
+                    ss << (float_t)m_Lexeme.data.float_val << "f";
+                    //val = m_Lexeme;
                     types = "f";
                 }
                 break;
                 case EType::Float64:
                 {
-                    val = m_Lexeme;
+                    ss << (double_t)m_Lexeme.data.float_val << "d";
+                    //val = m_Lexeme;
                     types = "d";
+                }
+                break;
+                case EType::String:
+                {
+                    ss << m_Lexeme.data.string_val;
+                    //val = m_Lexeme;
+                    //types = "d";
                 }
                 break;
                 default:
                 {
-                    val = m_Lexeme;
+                    //val = m_Lexeme;
                 }
                 break;
             }
-            return val + types;
         }
         else if (m_Type == ETokenType::String)
         {
-            return "\"" + m_Lexeme + "\"";
+            ss << "\"" << m_Lexeme.data.string_val << "\"";
+            //return "\"" + m_Lexeme + "\"";
         }
         else
         {
-            return m_Lexeme + types;
+            //return m_Lexeme + types;
         }
+        return ss.str();
     }
 
 } // namespace Compile

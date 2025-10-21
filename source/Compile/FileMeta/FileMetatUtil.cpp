@@ -9,14 +9,11 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-
-    using namespace Parse;
-
 std::vector<std::string> FileMetatUtil::GetLinkStringMidPeriodList(const std::vector<Token*>& tokenList) {
     std::vector<std::string> stringList;
     for (size_t i = 0; i < tokenList.size(); i++) {
         auto token = tokenList[i];
-        if (token->GetLexeme() == "" ) {
+        if (token->GetLexemeString() == "" ) {
             SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "检查到Import语句中，token内容lexeme为空!!");
             return std::vector<std::string>();
         }
@@ -26,7 +23,7 @@ std::vector<std::string> FileMetatUtil::GetLinkStringMidPeriodList(const std::ve
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "检查到Import语句中，导入名称不合规!!");
                 return std::vector<std::string>();
             }
-            stringList.push_back(token->GetLexeme());
+            stringList.push_back(token->GetLexemeString());
         }
     }
     return stringList;

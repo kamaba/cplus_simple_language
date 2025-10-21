@@ -17,31 +17,101 @@
 namespace SimpleLanguage {
 namespace Compile {
 
+    union DataUnion 
+    {
+        int8_t byte_val;
+        int16_t short_val;
+        int32_t int_val;
+        int64_t long_val;
+        float float_val;
+        double double_val;
+        const char* string_val;
+    };
+    // 类型标签枚举
+    enum class DataType {
+        Byte,    // uint8_t
+        Short,      //
+        Int,     // int
+        Long,     // long
+        String  // 字符串（存储在 char 数组中）
+    };
+    // 带标签的结构体
+    struct MultiData
+    {
+        DataType type;
+        DataUnion data;
+
+        MultiData() {};
+        // 构造函数（省略，同上一条回复）
+        MultiData(uint8_t val) : type(DataType::Byte) { data.byte_val = val; }
+        MultiData(char val) : type(DataType::Short) { data.short_val = val; }
+        /*MultiData(const std::string& val) : type(DataType::String) {
+            std::strncpy(data.str_buf, val.c_str(), sizeof(data.str_buf) - 1);
+            data.str_buf[sizeof(data.str_buf) - 1] = '\0';
+        }*/
+        MultiData(int val) : type(DataType::Int) { data.int_val = val; }
+        MultiData(long val) : type(DataType::Long) { data.long_val = val; }
+
+        // 核心方法：将内部数据转换为 std::string
+        std::string toString() const
+        {
+            std::stringstream ss;  // 用字符串流格式化不同类型
+
+            switch (type) {
+            case DataType::Byte:
+                // byte 通常按十进制或十六进制输出（这里按十进制）
+                ss << static_cast<int>(data.byte_val);  // 转换为 int 避免被当作字符
+                break;
+            case DataType::Short:
+                // char 直接输出字符本身
+                ss << data.short_val;
+                break;
+            case DataType::String:
+                // 直接将字符数组转换为 string
+                //ss << data.str_buf;
+                break;
+            case DataType::Int:
+                // int 直接输出
+                ss << data.int_val;
+                break;
+            case DataType::Long:
+                // long 直接输出
+                ss << data.long_val;
+                break;
+            default:
+                throw std::runtime_error("Unknown data type");
+            }
+
+            return ss.str();  // 返回格式化后的字符串
+        }
+    };
+
     class Token
     {
     public:
         Token();
-        Token(const std::string& path, ETokenType tokenType, const std::string& lexeme, 
-              int sourceLine, int sourceChar, const std::string& extend = "");
+        Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
+              int sourceLine, int sourceChar, const MultiData* extend = nullptr );
         Token(const Token& token);
         virtual ~Token() = default;
 
         // 属性访问器
         std::string GetPath() const { return m_Path; }
         ETokenType GetType() const { return m_Type; }
-        std::string GetLexeme() const { return m_Lexeme; }
-        std::string GetExtend() const { return m_Extend; }
+        MultiData GetLexeme() const { return m_Lexeme; }
+        MultiData GetExtend() const { return m_Extend; }
         int GetSourceBeginLine() const { return m_SourceBeginLine; }
         int GetSourceBeginChar() const { return m_SourceBeginChar; }
         int GetSourceEndLine() const { return m_SourceEndLine; }
         int GetSourceEndChar() const { return m_SourceEndChar; }
 
         // 设置方法
+        std::string GetLexemeString() const;
         void SetSourceEnd(int endSourceLine, int endSourceChar);
         void SetType(ETokenType type) { m_Type = type; }
-        void SetLexeme(const std::string& lexeme) { m_Lexeme = lexeme; }
-        void SetLexeme(const std::string& lexeme, ETokenType tokenType);
-        void SetExtend(const std::string& extend) { m_Extend = extend; }
+        void SetLexeme(const MultiData& lexeme) { m_Lexeme = lexeme; }
+        void SetLexeme(const MultiData& lexeme, ETokenType tokenType);
+        void SetExtend(const MultiData& extend) { m_Extend = extend; }
         void SetBindFilePath(const std::string& path) { m_Path = path; }
 
         // 子Token管理
@@ -58,8 +128,8 @@ namespace Compile {
     private:
         std::string m_Path;               //文件路径
         ETokenType m_Type;               //标记类型
-        std::string m_Lexeme;            //标记值
-        std::string m_Extend;            //辅助标记，可为空
+        MultiData m_Lexeme;            //标记值
+        MultiData m_Extend;            //辅助标记，可为空
         int m_SourceBeginLine;           //开始所在行
         int m_SourceBeginChar;           //开始所在列
         int m_SourceEndLine;             //结束所在行

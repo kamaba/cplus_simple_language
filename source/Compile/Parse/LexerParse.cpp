@@ -88,7 +88,7 @@ void LexerParse::AddToken(ETokenType type, const std::string& lexeme, int source
     m_Builder.clear();
 }
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, EType extend, int sourceLine, int sourceChar) {
-    m_CurrentToken = new Token( m_Path, type, lexeme, sourceLine, sourceChar, (int)extend );
+    m_CurrentToken = new Token( m_Path, type, lexeme, sourceLine, sourceChar, extend );
     m_ListTokens.push_back(m_CurrentToken);
     m_Builder.clear();
 }
@@ -102,18 +102,15 @@ void LexerParse::AddChildrenToken(Token* token) {
         m_CurrentToken->AddChildrenToken(token);
     }
 }
-
 bool LexerParse::IsHexDigit(char c) {
     if (std::isdigit(c)) return true;
     if (c >= 'a' && c <= 'f') return true;
     if (c >= 'A' && c <= 'F') return true;
     return false;
 }
-
 bool LexerParse::IsIdentifier(char ch) {
     return (ch == '_' || std::isalnum(ch));
 }
-
 void LexerParse::ReadPlus() {
     m_TempChar = ReadChar();
     if (m_TempChar == '=') {
@@ -125,7 +122,6 @@ void LexerParse::ReadPlus() {
         UndoChar();
     }
 }
-
 void LexerParse::ReadMinus() {
     m_TempChar = ReadChar();
     if (m_TempChar == '=') {
@@ -472,7 +468,7 @@ void LexerParse::ReadSharp() {
                     break;
                 }
             } while (true);
-            AddToken(ETokenType::Sharp, m_Builder, "#");
+            AddToken(ETokenType::Sharp, m_Builder, std::string("#") );
             m_Index++;
             m_SourceChar++;
             m_SourceLine++;
@@ -895,9 +891,9 @@ void LexerParse::ParseToTokenList() {
             }
 
             auto spacetoken = std::make_unique<Token>(m_Path, ETokenType::Space, "", bline, bchar);
-            spacetoken->SetSrouceEnd(m_SourceLine, m_SourceChar);
+         /*   spacetoken->SetSrouceEnd(m_SourceLine, m_SourceChar);
             spacetoken->SetExtend(num);
-            m_ListTokens.push_back(std::move(spacetoken));
+            m_ListTokens.push_back(std::move(spacetoken));*/
         } else if (m_CurChar == '\t' || m_CurChar == '\r') {
             m_Index++;
             m_SourceChar++;
@@ -1048,7 +1044,7 @@ void LexerParse::ParseToTokenList() {
                         m_Index++;
                         m_SourceChar++;
                     } else {
-                        Log::GetInstance().AddInHandleToken(m_Path, m_SourceLine, m_SourceChar, EError::UnMatchChar, 
+                        Log::AddInHandleToken(m_Path, m_SourceLine, m_SourceChar, EError::UnMatchChar, 
                             "解析错误，无法解析这种类型的字符[ " + std::string(1, m_CurChar) + " ]");
                     }
                     break;

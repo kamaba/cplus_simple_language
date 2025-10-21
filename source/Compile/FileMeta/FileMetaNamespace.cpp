@@ -39,7 +39,7 @@ FileMetaNamespace::FileMetaNamespace(Node* namespaceNode, Node* namespaceNameNod
         m_BraceEndToken = blockNode->endToken;
         m_IsSearchNamespace = false;
     }
-    m_NamespaceStateBlock = NamespaceStatementBlock::CreateStateBlock(m_NamespaceNameNode->linkTokenList());
+    m_NamespaceStateBlock = NamespaceStatementBlock::CreateStateBlock(m_NamespaceNameNode->GetLinkTokenList());
 }
 
 std::string FileMetaNamespace::Name() const {

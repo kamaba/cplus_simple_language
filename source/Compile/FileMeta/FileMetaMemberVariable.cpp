@@ -2,7 +2,7 @@
 #include "FileMeta.h"
 #include "FileMetaClass.h"
 #include "FileMetaExpress.h"
-#include "../FileMetatUtil.h"
+#include "FileMetatUtil.h"
 #include "../CompilerUtil.h"
 #include "../../Debug/Log.h"
 #include "../../Define.h"
@@ -27,8 +27,8 @@ FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, Node* brace) {
     std::vector<Node*> list2;
     for (size_t i = 0; i < brace->childList.size(); i++) {
         Node* c = brace->childList[i];
-        if (c->nodeType == SimpleLanguage::Compile::Parse::ENodeType::LineEnd || 
-            c->nodeType == SimpleLanguage::Compile::Parse::ENodeType::SemiColon) {
+        if (c->nodeType == SimpleLanguage::Compile::ENodeType::LineEnd || 
+            c->nodeType == SimpleLanguage::Compile::ENodeType::SemiColon) {
             if (list2.empty()) {
                 continue;
             }
@@ -51,12 +51,12 @@ FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, Node* _beforeNode, 
     if (dataType == EMemberDataType::NameClass) {
         // Implementation for NameClass
     } else if (dataType == EMemberDataType::KeyValue) {
-        m_Express = new FileMetaConstValueTerm(m_FileMeta, _afterNode->token());
+        m_Express = new FileMetaConstValueTerm(m_FileMeta, _afterNode->token);
     } else if (dataType == EMemberDataType::Array) {
         isParseBuild = false;
         m_Express = new FileMetaBracketTerm(m_FileMeta, _beforeNode, 1);
     } else if (dataType == EMemberDataType::ConstVariable) {
-        m_Express = new FileMetaConstValueTerm(m_FileMeta, _beforeNode->token());
+        m_Express = new FileMetaConstValueTerm(m_FileMeta, _beforeNode->token);
     }
 
     if (isParseBuild) {
@@ -68,7 +68,7 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     std::vector<Node*> bedoreNodeList;
     std::vector<Node*> afterNodeList;
 
-    if (!SimpleLanguage::Compile::FileMetatUtil::SplitNodeList(m_NodeList, bedoreNodeList, afterNodeList, m_AssignToken)) {
+    if (!FileMetatUtil::SplitNodeList(m_NodeList, bedoreNodeList, afterNodeList, m_AssignToken)) {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 解析NodeList出现错误~~~");
         return false;
     }
@@ -78,9 +78,9 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     }
 
     Node* beforeNode = new Node(nullptr);
-    beforeNode->setChildList(bedoreNodeList);
-    beforeNode->setParseIndex(0);
-    auto defineNodeList = SimpleLanguage::Core::StructParse::HandleBeforeNode(beforeNode);
+    beforeNode->childList = bedoreNodeList;
+    //beforeNode->setParseIndex(0);
+    auto defineNodeList = StructParse::HandleBeforeNode(*beforeNode);
 
     Node* nameNode = nullptr;
     Node* typeNode = nullptr;

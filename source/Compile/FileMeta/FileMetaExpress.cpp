@@ -1,10 +1,8 @@
 #include "FileMetaExpress.h"
 #include "FileMeta.h"
-#include "FileMetaTermExpress.h"
-#include "../FileMetatUtil.h"
-#include "../../Core/Log.h"
-#include "../../Core/Define.h"
-#include "../../Core/SignComputePriority.h"
+#include "FileMetatUtil.h"
+#include "../../Debug/Log.h"
+#include "../../Define.h"
 #include <algorithm>
 #include <limits>
 
@@ -12,13 +10,15 @@ namespace SimpleLanguage {
 namespace Compile {
 
 // FileMetaBaseTerm implementation
-FileMetaBaseTerm::FileMetaBaseTerm(FileMeta* fm) : m_FileMeta(fm) {
+FileMetaBaseTerm::FileMetaBaseTerm(FileMeta* fm) 
+{
+    m_FileMeta = fm;
 }
 
 FileMetaBaseTerm* FileMetaBaseTerm::Root() const {
     const FileMetaBaseTerm* current = this;
-    while (current->left() != nullptr) {
-        current = current->left();
+    while (current->GetLeft() != nullptr) {
+        current = current->GetLeft();
     }
     return const_cast<FileMetaBaseTerm*>(current);
 }
@@ -30,7 +30,7 @@ std::string FileMetaBaseTerm::ToFormatString() const {
 // FileMetaSymbolTerm implementation
 FileMetaSymbolTerm::FileMetaSymbolTerm(FileMeta* fm, Token* token) : FileMetaBaseTerm(fm), m_SymbolToken(token) {
     if (token != nullptr) {
-        m_Priority = SimpleLanguage::Core::SignComputePriority::GetPriority(token->type());
+        m_Priority = SimpleLanguage::SignComputePriority::GetPriority(token->type());
     }
 }
 
@@ -39,18 +39,18 @@ void FileMetaSymbolTerm::BuildAST() {
 }
 
 std::string FileMetaSymbolTerm::ToFormatString() const {
-    return m_SymbolToken ? m_SymbolToken->lexeme().ToString() : "";
+    return m_SymbolToken ? m_SymbolToken->GetLexemeString() : "";
 }
 
 // FileMetaConstValueTerm implementation
 FileMetaConstValueTerm::FileMetaConstValueTerm(FileMeta* fm, Token* token) 
     : FileMetaBaseTerm(fm), m_ValueToken(token) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 FileMetaConstValueTerm::FileMetaConstValueTerm(FileMeta* fm, Token* valueToken, Token* signalToken)
     : FileMetaBaseTerm(fm), m_ValueToken(valueToken), m_SignalToken(signalToken) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaConstValueTerm::BuildAST() {
@@ -60,10 +60,10 @@ void FileMetaConstValueTerm::BuildAST() {
 std::string FileMetaConstValueTerm::ToFormatString() const {
     std::ostringstream sb;
     if (m_SignalToken != nullptr) {
-        sb << m_SignalToken->lexeme().ToString();
+        sb << m_SignalToken->GetLexemeString();
     }
     if (m_ValueToken != nullptr) {
-        sb << m_ValueToken->lexeme().ToString();
+        sb << m_ValueToken->GetLexemeString();
     }
     return sb.str();
 }
@@ -81,17 +81,17 @@ std::string FileMetaCallTerm::ToFormatString() const {
     if (m_CallNode == nullptr) return "";
     
     std::ostringstream sb;
-    if (m_CallNode->token() != nullptr) {
-        sb << m_CallNode->token()->lexeme().ToString();
+    if (m_CallNode->token != nullptr) {
+        sb << m_CallNode->token->GetLexemeString();
     }
     
-    if (m_CallNode->parNode() != nullptr) {
+    if (m_CallNode->parNode != nullptr) {
         sb << "(";
         // Add parameter formatting
         sb << ")";
     }
     
-    if (m_CallNode->bracketNode() != nullptr) {
+    if (m_CallNode->bracketNode != nullptr) {
         sb << "[";
         // Add bracket content formatting
         sb << "]";
@@ -135,7 +135,7 @@ std::string FileMetaParTerm::ToFormatString() const {
 
 // FileMetaBraceTerm implementation
 FileMetaBraceTerm::FileMetaBraceTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_BraceNode(node) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaBraceTerm::BuildAST() {
@@ -170,7 +170,7 @@ std::string FileMetaBracketTerm::ToFormatString() const {
 
 // FileMetaIfSyntaxTerm implementation
 FileMetaIfSyntaxTerm::FileMetaIfSyntaxTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_IfNode(node) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaIfSyntaxTerm::BuildAST() {
@@ -190,7 +190,7 @@ std::string FileMetaIfSyntaxTerm::ToFormatString() const {
 // FileMetaThreeItemSyntaxTerm implementation
 FileMetaThreeItemSyntaxTerm::FileMetaThreeItemSyntaxTerm(FileMeta* fm, Node* node) 
     : FileMetaBaseTerm(fm), m_ThreeItemNode(node) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaThreeItemSyntaxTerm::BuildAST() {
@@ -207,7 +207,7 @@ std::string FileMetaThreeItemSyntaxTerm::ToFormatString() const {
 
 // FileMetaMatchSyntaxTerm implementation
 FileMetaMatchSyntaxTerm::FileMetaMatchSyntaxTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_MatchNode(node) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaMatchSyntaxTerm::BuildAST() {

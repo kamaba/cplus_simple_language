@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include "FileMetaMemberVariable.h"
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -30,11 +29,11 @@ public:
     virtual ~FileMetaMemberData() = default;
 
     // Properties
-    Token* nameToken() const { return m_Token; }
-    const std::vector<FileMetaMemberData*>& fileMetaMemberData() const { return m_FileMetaMemberData; }
-    FileMetaConstValueTerm* fileMetaConstValue() const { return m_FileMetaConstValue; }
-    FileMetaCallTerm* fileMetaCallTermValue() const { return m_FileMetaCallTermValue; }
-    bool isWithName() const { return m_IsWithName; }
+    Token* NameToken() const { return m_Token; }
+    const std::vector<FileMetaMemberData*>& GetFileMetaMemberData() const { return m_FileMetaMemberData; }
+    FileMetaConstValueTerm* GetFileMetaConstValue() const { return m_FileMetaConstValue; }
+    FileMetaCallTerm* GetFileMetaCallTermValue() const { return m_FileMetaCallTermValue; }
+    bool IsWithName() const { return m_IsWithName; }
     EMemberDataType DataType() const { return m_MemberDataType; }
 
     // Methods

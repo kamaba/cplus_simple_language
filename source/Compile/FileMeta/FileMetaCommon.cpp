@@ -32,7 +32,7 @@ std::string NamespaceStatementBlock::NamespaceString() const {
     if (m_NamespaceString.empty()) {
         std::ostringstream sb;
         for (size_t i = 0; i < m_TokenList.size(); i++) {
-            sb << m_TokenList[i]->GetLexeme();
+            sb << m_TokenList[i]->GetLexemeString();
             if (i != m_TokenList.size() - 1) {
                 sb << ".";
             }
@@ -46,11 +46,11 @@ const std::vector<std::string>& NamespaceStatementBlock::NamespaceStackList() co
     if (m_NamespaceStackList.empty()) {
         std::string add = "";
         for (size_t i = 0; i < m_TokenList.size(); i++) {
-            m_NamespaceStackList.push_back(add + m_TokenList[i]->GetLexeme());
+            m_NamespaceStackList.push_back(add + m_TokenList[i]->GetLexemeString());
             if (add.empty()) {
-                add = m_TokenList[i]->GetLexeme() + ".";
+                add = m_TokenList[i]->GetLexemeString() + ".";
             } else {
-                add = add + m_TokenList[i]->GetLexeme() + ".";
+                add = add + m_TokenList[i]->GetLexemeString() + ".";
             }
         }
     }
@@ -60,7 +60,7 @@ const std::vector<std::string>& NamespaceStatementBlock::NamespaceStackList() co
 const std::vector<std::string>& NamespaceStatementBlock::NamespaceList() const {
     if (m_NamespaceList.empty()) {
         for (size_t i = 0; i < m_TokenList.size(); i++) {
-            m_NamespaceList.push_back(m_TokenList[i]->GetLexeme());
+            m_NamespaceList.push_back(m_TokenList[i]->GetLexemeString());
         }
     }
     return m_NamespaceList;
@@ -215,7 +215,7 @@ bool FileMetaCallNode::IsOnlyName() const {
 
 std::string FileMetaCallNode::Name() const {
    if (m_Token != nullptr ) {
-       return m_Token->GetLexeme();
+       return m_Token->GetLexemeString();
     }
     return "";
 }
@@ -224,7 +224,7 @@ std::string FileMetaCallNode::ToFormatString() const {
     std::ostringstream sb;
 
     if (m_FileMetaParTerm != nullptr) {
-        sb << (m_Token != nullptr ? m_Token->GetLexeme() : "");
+        sb << (m_Token != nullptr ? m_Token->GetLexemeString() : "");
         sb << m_FileMetaParTerm->ToFormatString();
         if (m_FileMetaBraceTerm != nullptr) {
             sb << m_FileMetaBraceTerm->ToFormatString();
@@ -234,29 +234,29 @@ std::string FileMetaCallNode::ToFormatString() const {
     } else if (m_FileMetaBraceTerm != nullptr) {
         sb << m_FileMetaBraceTerm->ToFormatString();
     } else {
-        sb << (m_AtToken ? m_AtToken->GetLexeme() : "");
+        sb << (m_AtToken ? m_AtToken->GetLexemeString() : "");
         sb << (m_Token != nullptr ? m_Token->ToConstString() : "");
         if (m_IsArray) {
-            sb << (m_BeginBracketToken ? m_BeginBracketToken->GetLexeme() : "");
+            sb << (m_BeginBracketToken ? m_BeginBracketToken->GetLexemeString() : "");
             for (size_t i = 0; i < m_ArrayNodeList.size(); i++) {
                 sb << m_ArrayNodeList[i]->ToFormatString();
                 if (i < m_ArrayNodeList.size() - 1)
                     sb << ",";
             }
-            sb << (m_EndBracketToken ? m_EndBracketToken->GetLexeme() : "");
+            sb << (m_EndBracketToken ? m_EndBracketToken->GetLexemeString() : "");
         }
         if (m_IsTemplate) {
-            sb << (m_BeginAngleToken ? m_BeginAngleToken->GetLexeme() : "");
+            sb << (m_BeginAngleToken ? m_BeginAngleToken->GetLexemeString() : "");
             for (size_t i = 0; i < m_InputTemplateNodeList.size(); i++) {
                 sb << m_InputTemplateNodeList[i]->ToFormatString();
                 if (i < m_InputTemplateNodeList.size() - 1)
                     sb << ",";
             }
-            sb << (m_EndAngleToken ? m_EndAngleToken->GetLexeme() : "");
+            sb << (m_EndAngleToken ? m_EndAngleToken->GetLexemeString() : "");
         }
         if (m_IsCallFunction) {
-            sb << (m_BeginParToken ? m_BeginParToken->GetLexeme() : "");
-            sb << (m_EndParToken ? m_EndParToken->GetLexeme() : "");
+            sb << (m_BeginParToken ? m_BeginParToken->GetLexemeString() : "");
+            sb << (m_EndParToken ? m_EndParToken->GetLexemeString() : "");
         }
         if (m_FileMetaBraceTerm != nullptr) {
             sb << m_FileMetaBraceTerm->ToFormatString();
@@ -365,7 +365,10 @@ FileMetaClassDefine::FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode
         const auto& cl = node->bracketNode->childList;
         if (cl.empty()) {
             auto token = new Token(*frontToken);
-            token->SetLexeme("-1", SimpleLanguage::ETokenType::Number);
+            MultiData md;
+            md.type = DataType::Int;
+            md.data.int_val = -1;
+            token->SetLexeme(md, SimpleLanguage::ETokenType::Number);
             //token->SetExtend(SimpleLanguage::EType::Int32);
             m_ArrayTokenList.push_back(token);
         } else {
@@ -376,9 +379,15 @@ FileMetaClassDefine::FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode
                 if (cnode->nodeType == SimpleLanguage::Compile::ENodeType::Comma) {
                     if (isOnlyComma) {
                         auto t = new Token(*cnode->token);
-                        t->SetLexeme("-1", SimpleLanguage::ETokenType::Number);
+                        MultiData md;
+                        md.type = DataType::Int;
+                        md.data.int_val = -1;
+                        t->SetLexeme(md, SimpleLanguage::ETokenType::Number);
                         string str = "";
-                        t->SetExtend("Int32");// SimpleLanguage::EType::Int32) );
+                        MultiData exd;
+                        exd.type = DataType::String;
+                        exd.data.string_val = "Int32";
+                        t->SetExtend(exd);// SimpleLanguage::EType::Int32) );
                         m_ArrayTokenList.push_back(t);
                     }
                 } else {
@@ -397,14 +406,14 @@ std::vector<std::string> FileMetaClassDefine::StringList() const {
 std::string FileMetaClassDefine::AllName() const {
     std::ostringstream sb;
     for (size_t i = 0; i < m_TokenList.size(); i++) {
-        sb << (m_TokenList[i] ? m_TokenList[i]->GetLexeme() : "");
+        sb << (m_TokenList[i] ? m_TokenList[i]->GetLexemeString() : "");
     }
     return sb.str();
 }
 
 std::string FileMetaClassDefine::Name() const {
     if (m_ClassNameToken != nullptr) {
-        return m_ClassNameToken->GetLexeme();
+        return m_ClassNameToken->GetLexemeString();
     }
     return "";
 }
@@ -435,23 +444,23 @@ std::string FileMetaClassDefine::ToFormatString() const {
     std::ostringstream sb;
     sb << AllName();
     if (m_IsInputTemplateData) {
-        sb << (m_AngleTokenBegin ? m_AngleTokenBegin->GetLexeme() : "");
+        sb << (m_AngleTokenBegin ? m_AngleTokenBegin->GetLexemeString() : "");
         for (size_t i = 0; i < m_InputTemplateNodeList.size(); i++) {
             sb << m_InputTemplateNodeList[i]->ToFormatString();
             if (i < m_InputTemplateNodeList.size() - 1) {
                 sb << ",";
             }
         }
-        sb << (m_AngleTokenEnd ? m_AngleTokenEnd->GetLexeme() : "");
+        sb << (m_AngleTokenEnd ? m_AngleTokenEnd->GetLexemeString() : "");
     }
     if (m_IsArray) {
-        sb << (m_BracketTokenBegin ? m_BracketTokenBegin->GetLexeme() : "");
+        sb << (m_BracketTokenBegin ? m_BracketTokenBegin->GetLexemeString() : "");
         for (size_t i = 0; i < m_ArrayTokenList.size(); i++) {
-            sb << m_ArrayTokenList[i]->GetLexeme();
+            sb << m_ArrayTokenList[i]->GetLexemeString();
             if (i < m_ArrayTokenList.size() - 1)
                 sb << ",";
         }
-        sb << (m_BracketTokenEnd ? m_BracketTokenEnd->GetLexeme() : "");
+        sb << (m_BracketTokenEnd ? m_BracketTokenEnd->GetLexemeString() : "");
     }
     return sb.str();
 }
@@ -507,9 +516,9 @@ void FileMetaTemplateDefine::Parse() {
 
 std::string FileMetaTemplateDefine::ToFormatString() const {
     std::ostringstream sb;
-    sb << (m_Token ? m_Token->GetLexeme() : "");
+    sb << (m_Token ? m_Token->GetLexemeString() : "");
     if (m_InToken != nullptr) {
-        sb << " " + m_InToken->GetLexeme() + " ";
+        sb << " " + m_InToken->GetLexemeString() + " ";
     }
     if (m_InClassNameTemplateNode != nullptr) {
         sb << m_InClassNameTemplateNode->ToFormatString();

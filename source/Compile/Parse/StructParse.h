@@ -29,7 +29,8 @@ public:
         DataMemeber
     };
 
-    struct ParseCurrentNodeInfo {
+    struct ParseCurrentNodeInfo 
+    {
         EParseNodeType parseType;
         FileMeta* codeFile = nullptr;
         FileMetaNamespace* codeNamespace = nullptr;
@@ -49,23 +50,23 @@ public:
     StructParse(FileMeta& fm, Node& node);
     
     void ParseRootNodeToFileMeta();
-    std::vector<std::unique_ptr<Node>> GetAllNodeToSemiColon(Node& pnode, bool isAddSelf = false);
-    void ParseImport(Node& pnode);
-    void ParseNamespace(Node& pnode);
-    static bool CheckEnd(Node& pnode);
-    void ParseNamespaceOrTopClass(Node& pnode);
-    void ParseClassNode(Node& pnode);
-    void ParseDataBracketNode(Node& bracketNode);
-    void ParseDataNode(Node& pnode);
-    void ParseEnumNode(Node& pnode);
-    void ParseSyntax(Node& pnode);
+    std::vector<Node*> GetAllNodeToSemiColon(Node* pnode, bool isAddSelf = false);
+    void ParseImport(Node* pnode);
+    void ParseNamespace(Node* pnode);
+    static bool CheckEnd(Node* pnode);
+    void ParseNamespaceOrTopClass(Node* pnode);
+    void ParseClassNode(Node* pnode);
+    void ParseDataBracketNode(Node* bracketNode);
+    void ParseDataNode(Node* pnode);
+    void ParseEnumNode(Node* pnode);
+    void ParseSyntax(Node* pnode);
     
-    static std::vector<std::unique_ptr<Node>> HandleBeforeNode(Node& node);
-    static std::vector<std::unique_ptr<Node>> HandleExpressNode(Node& node);
-    static void DelHandleNostList(Node& node);
-    static bool IsCommonExpressNode(Node& node);
-    static void _HandleExpressNodeProcess(Node& node, Node* inputFinaleNode = nullptr);
-    static void HandleAngleExpressNode(Node& node, Node* parentNode);
+    static std::vector<Node*> HandleBeforeNode(Node* node);
+    static std::vector<Node*> HandleExpressNode(Node* node);
+    static void DelHandleNostList(Node* node);
+    static bool IsCommonExpressNode(Node* node);
+    static void _HandleExpressNodeProcess(Node* node, Node* inputFinaleNode = nullptr);
+    static void HandleAngleExpressNode(Node* node, Node* parentNode);
 
 protected:
     ParseCurrentNodeInfo* GetCurrentNodeInfo();
@@ -77,13 +78,13 @@ protected:
     void AddParseFunctionNodeInfo(FileMetaMemberFunction* fmmf, bool isPush = true);
     void AddParseSyntaxNodeInfo(FileMetaSyntax* fms, bool isAddParseCurrentNNode = false);
     
-    void AddFileMetaFunctionVariable(Node& pnode, Node* blockNode, const std::vector<std::unique_ptr<Node>>& nodeList);
-    void AddFileMetaClasss(Node* blockNode, const std::vector<std::unique_ptr<Node>>& nodeList);
-    FileMetaSyntax* HandleCreateFileMetaSyntaxByPNode(Node& pnode);
+    void AddFileMetaFunctionVariable(Node* pnode, Node* blockNode, const std::vector<Node*>& nodeList);
+    void AddFileMetaClasss(Node* blockNode, const std::vector<Node*>& nodeList);
+    FileMetaSyntax* HandleCreateFileMetaSyntaxByPNode(Node* pnode);
 
 private:
     FileMeta& m_FileMeta;
-    std::stack<std::unique_ptr<ParseCurrentNodeInfo>> m_CurrentNodeInfoStack;
+    std::stack<ParseCurrentNodeInfo*> m_CurrentNodeInfoStack;
     Node& m_RootNode;
 };
 
