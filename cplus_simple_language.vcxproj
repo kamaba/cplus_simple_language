@@ -130,7 +130,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="source\Compile\CompileManager.cpp" />
     <ClCompile Include="source\Compile\CompilerUtil.cpp" />
-    <ClCompile Include="source\Compile\FileMetatUtil.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMeta.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaBase.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaClass.cpp" />
@@ -142,6 +141,7 @@
     <ClCompile Include="source\Compile\FileMeta\FileMetaMemberVariable.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaNamespace.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaSyntax.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetatUtil.cpp" />
     <ClCompile Include="source\Compile\Parse\FileParse.cpp" />
     <ClCompile Include="source\Compile\Parse\LexerParse.cpp" />
     <ClCompile Include="source\Compile\Parse\Node.cpp" />
@@ -252,7 +252,6 @@
   <ItemGroup>
     <ClInclude Include="source\Compile\CompileManager.h" />
     <ClInclude Include="source\Compile\CompilerUtil.h" />
-    <ClInclude Include="source\Compile\FileMetatUtil.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMeta.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaBase.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaClass.h" />
@@ -264,6 +263,7 @@
     <ClInclude Include="source\Compile\FileMeta\FileMetaMemberVariable.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaNamespace.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaSyntax.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetatUtil.h" />
     <ClInclude Include="source\Compile\Parse\FileParse.h" />
     <ClInclude Include="source\Compile\Parse\LexerParse.h" />
     <ClInclude Include="source\Compile\Parse\Node.h" />

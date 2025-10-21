@@ -12,7 +12,6 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Process {
 
 class CoreCompileState : public CompileStateBase {
 public:
@@ -20,6 +19,5 @@ public:
     virtual ~CoreCompileState() = default;
 };
 
-} // namespace Process
 } // namespace Compile
 } // namespace SimpleLanguage

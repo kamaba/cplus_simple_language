@@ -59,7 +59,7 @@ namespace Compile {
         m_Type = tokenType;
     }
 
-    void Token::AddChildrenToken(std::shared_ptr<Token> token)
+    void Token::AddChildrenToken(Token* token)
     {
         m_ChildrenTokensList.push_back(token);
     }

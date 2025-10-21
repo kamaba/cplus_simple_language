@@ -19,7 +19,6 @@ namespace Compile {
 class FileMeta;
 class FileMetaClassDefine;
 class FileMetaCallLink;
-class FileMetaCallNode;
 class FileMetaTemplateDefine;
 class FileMetaBaseTerm;
 class FileMetaParTerm;

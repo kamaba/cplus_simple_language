@@ -14,7 +14,7 @@ namespace Compile {
 
     CompileManager* CompileManager::s_Instance = nullptr;
 
-    CompileManager& CompileManager::getInstance()
+    CompileManager& CompileManager::GetInstance()
     {
         if (s_Instance == nullptr)
         {
@@ -23,12 +23,12 @@ namespace Compile {
         return *s_Instance;
     }
 
-    void CompileManager::addCompileError(const std::string& str)
+    void CompileManager::AddCompileError(const std::string& str)
     {
         // 实现编译错误处理
     }
 
-    void CompileManager::addProjectCompileState(int state, int info, int error, const std::string& str)
+    void CompileManager::AddProjectCompileState(int state, int info, int error, const std::string& str)
     {
         // 实现项目编译状态处理
     }

@@ -7,34 +7,42 @@
 //****************************************************************************
 
 #include "LexerParse.h"
+#include "../Token.h"
 #include <cctype>
 #include <sstream>
 #include <algorithm>
+#include "../../Debug/Log.h"
+
+using namespace SimpleLanguage::Debug;
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
 
 LexerParse::LexerParse(const std::string& path, const std::string& buffer)
     : m_Path(path), m_Buffer(buffer), m_Length(static_cast<int>(buffer.length())),
-      m_SourceChar(0), m_SourceLine(0), m_Index(0) {
+      m_SourceChar(0), m_SourceLine(0), m_Index(0) 
+{
 }
-
-std::vector<std::unique_ptr<Token>> LexerParse::GetListTokensWidthEnd() {
-    std::vector<std::unique_ptr<Token>> withEndList;
+std::vector<Token*> LexerParse::GetListTokensWidthEnd() 
+{
+    std::vector<Token*> withEndList;
     for (auto& token : m_ListTokens) {
-        withEndList.push_back(std::make_unique<Token>(*token));
+        withEndList.push_back(new Token(*token));
     }
-    withEndList.push_back(std::make_unique<Token>(m_Path, ETokenType::Finished, END_CHAR, m_SourceLine, m_SourceChar));
+    std::string endchar;
+    endchar = (END_CHAR);
+    Token* newtoken = new Token(m_Path, ETokenType::Finished, endchar, m_SourceLine, m_SourceChar);
+    withEndList.push_back(newtoken);
     return withEndList;
 }
 
-void LexerParse::SetSourcePosition(int line, int character) {
+void LexerParse::SetSourcePosition(int line, int character)
+{
     m_SourceLine = line;
     m_SourceChar = character;
 }
-
-char LexerParse::ReadChar() {
+char LexerParse::ReadChar() 
+{
     ++m_Index;
     ++m_SourceChar;
     if (m_Index < m_Length) {
@@ -44,7 +52,6 @@ char LexerParse::ReadChar() {
     }
     return END_CHAR;
 }
-
 char LexerParse::PeekChar() {
     int index = m_Index + 1;
     if (index < m_Length) {
@@ -54,53 +61,45 @@ char LexerParse::PeekChar() {
     }
     return static_cast<char>(0);
 }
-
 void LexerParse::UndoChar() {
     if (m_Index == 0) {
-        CompileManager::GetInstance().AddCompileError("Error Cannot undo char beyond start of source.");
+        //CompileManager::GetInstance().AddCompileError("Error Cannot undo char beyond start of source.");
         return;
     }
     --m_Index;
     --m_SourceChar;
 }
-
 void LexerParse::AddLine() {
     m_SourceChar = 0;
     ++m_SourceLine;
 }
-
 void LexerParse::AddToken(ETokenType type) {
     AddToken(type, std::string(1, m_CurChar));
 }
-
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme) {
     AddToken(type, lexeme, m_SourceLine, m_SourceChar);
 }
-
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, EType extend) {
     AddToken(type, lexeme, extend, m_SourceLine, m_SourceChar);
 }
-
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, int sourceLine, int sourceChar) {
-    m_CurrentToken = std::make_unique<Token>(m_Path, type, lexeme, sourceLine, sourceChar);
+    m_CurrentToken = new Token(m_Path, type, lexeme, sourceLine, sourceChar);
     m_ListTokens.push_back(std::move(m_CurrentToken));
     m_Builder.clear();
 }
-
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, EType extend, int sourceLine, int sourceChar) {
-    m_CurrentToken = std::make_unique<Token>(m_Path, type, lexeme, sourceLine, sourceChar, extend);
-    m_ListTokens.push_back(std::move(m_CurrentToken));
+    m_CurrentToken = new Token( m_Path, type, lexeme, sourceLine, sourceChar, (int)extend );
+    m_ListTokens.push_back(m_CurrentToken);
     m_Builder.clear();
 }
-
 void LexerParse::AddChildrenToken(ETokenType type, const std::string& lexeme) {
-    auto token = std::make_unique<Token>(m_Path, type, lexeme, m_SourceLine, m_SourceChar);
-    AddChildrenToken(std::move(token));
+    auto token = new Token(m_Path, type, lexeme, m_SourceLine, m_SourceChar);
+    AddChildrenToken(token);
 }
 
-void LexerParse::AddChildrenToken(std::unique_ptr<Token> token) {
+void LexerParse::AddChildrenToken(Token* token) {
     if (m_CurrentToken != nullptr) {
-        m_CurrentToken->AddChildrenToken(std::move(token));
+        m_CurrentToken->AddChildrenToken(token);
     }
 }
 
@@ -701,7 +700,7 @@ void LexerParse::ReadNumber() {
             }
         } else if (m_TempChar == 'f') {
             if (endPoint == 0) { // 2f
-                Log::GetInstance().AddInHandleToken(m_Path, m_SourceLine, m_SourceChar, EError::None, "读取浮点形必须有小数点!!!");
+                Log::AddInHandleToken(m_Path, m_SourceLine, m_SourceChar, EError::None, "读取浮点形必须有小数点!!!");
                 AddToken(ETokenType::Number, m_Builder, EType::Float32);
                 break;
             } else if (endPoint == 1) {
@@ -1058,6 +1057,5 @@ void LexerParse::ParseToTokenList() {
     }
 }
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

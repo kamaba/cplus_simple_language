@@ -13,7 +13,6 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Process {
 
 enum class ELevelInfo {
     None = 0,
@@ -34,6 +33,5 @@ protected:
     std::chrono::system_clock::time_point dateTime = std::chrono::system_clock::now();
 };
 
-} // namespace Process
 } // namespace Compile
 } // namespace SimpleLanguage

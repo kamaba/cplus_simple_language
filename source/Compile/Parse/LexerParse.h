@@ -11,27 +11,27 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "../Token.h"
 #include "../CompileManager.h"
 #include "../../Debug/Log.h"
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
+
+    class Token;
 
 class LexerParse {
 public:
     LexerParse(const std::string& path, const std::string& buffer);
     
-    Token* GetCurrentToken() const { return m_CurrentToken.get(); }
-    const std::vector<std::unique_ptr<Token>>& GetListTokens() const { return m_ListTokens; }
-    std::vector<std::unique_ptr<Token>> GetListTokensWidthEnd();
+    Token* GetCurrentToken() const { return m_CurrentToken; }
+    const std::vector<Token*>& GetListTokens() const { return m_ListTokens; }
+    std::vector<Token*> GetListTokensWidthEnd();
     
     void SetSourcePosition(int line, int character);
     void ParseToTokenList();
 
 private:
-    static const char END_CHAR = static_cast<char>(0xFF); // 结尾字符
+    const char END_CHAR = 0xFF; // 结尾字符
     
     char ReadChar();
     char PeekChar();
@@ -44,7 +44,7 @@ private:
     void AddToken(ETokenType type, const std::string& lexeme, int sourceLine, int sourceChar);
     void AddToken(ETokenType type, const std::string& lexeme, EType extend, int sourceLine, int sourceChar);
     void AddChildrenToken(ETokenType type, const std::string& lexeme);
-    void AddChildrenToken(std::unique_ptr<Token> token);
+    void AddChildrenToken(Token* token);
     
     bool IsHexDigit(char c);
     bool IsIdentifier(char ch);
@@ -78,8 +78,8 @@ private:
     char m_CurChar;                              // 当前字符
     char m_TempChar;                             // 临时字符
     std::string m_Builder;                       // 字符串构建器
-    std::vector<std::unique_ptr<Token>> m_ListTokens;
-    std::unique_ptr<Token> m_CurrentToken;
+    std::vector<Token*> m_ListTokens;
+    Token* m_CurrentToken;
     std::string m_Buffer;
     int m_Length;
     int m_SourceLine;                            // 解析到当前的行数
@@ -88,6 +88,5 @@ private:
     std::string m_Path;
 };
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

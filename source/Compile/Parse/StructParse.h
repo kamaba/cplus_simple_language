@@ -13,13 +13,9 @@
 #include <stack>
 #include <string>
 #include "Node.h"
-#include "FileMeta.h"
-#include "Log.h"
-#include "ProjectManager.h"
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
 
 class StructParse {
 public:
@@ -91,6 +87,5 @@ private:
     Node& m_RootNode;
 };
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

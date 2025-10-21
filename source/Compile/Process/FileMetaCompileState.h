@@ -12,7 +12,6 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Process {
 
 class FileMetaCompileState : public CompileStateBase {
 public:
@@ -42,6 +41,5 @@ private:
     ELoadState m_LoadState = ELoadState::None;
 };
 
-} // namespace Process
 } // namespace Compile
 } // namespace SimpleLanguage

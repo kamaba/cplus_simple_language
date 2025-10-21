@@ -11,22 +11,15 @@
 #include <string>
 #include <functional>
 #include <memory>
-#include "../FileMeta/FileMeta.h"
-#include "LexerParse.h"
-#include "TokenParse.h"
-#include "StructParse.h"
-#include "../Process/FileCompileState.h"
-#include "ProjectManager.h"
-#include "../../Debug/Log.h"
 
 namespace SimpleLanguage {
 namespace Compile {
 
-    class FileMeta;
-    class LexerParse;
-    class TokenParse;
-    class StructParse;
-    class FileCompileState;
+class FileMeta;
+class LexerParse;
+class TokenParse;
+class StructParse;
+class FileMetaCompileState;
 
 enum class ECodeFileParseState {
     Null,
@@ -53,18 +46,18 @@ public:
     
     bool IsExists();
     bool LoadFile();
-    void StructParse();
+    void HandleStructParse();
     void CreateNamespace();
     void CombineFileMeta();
     std::string ToFormatString();
     void PrintFormatString();
 
 private:
-    std::unique_ptr<LexerParse> lexerParse;
-    std::unique_ptr<TokenParse> tokenParse;
-    std::unique_ptr<StructParse> structBuild;
-    std::unique_ptr<FileMeta> m_File;
-    FileCompileState m_FileCompileState;
+    LexerParse* lexerParse;
+    TokenParse* tokenParse;
+    StructParse* structBuild;
+    FileMeta* m_File;
+    FileMetaCompileState* m_FileCompileState;
 };
 
 } // namespace Compile

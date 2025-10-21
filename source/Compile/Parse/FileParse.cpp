@@ -7,34 +7,75 @@
 //****************************************************************************
 
 #include "FileParse.h"
+#include "LexerParse.h"
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+#include "../FileMeta/FileMeta.h"
+#include "../../Project/ProjectManager.h"
+#include "../Process/FileMetaCompileState.h"
+#include "../../Debug/Log.h"
+
+
+bool FileExists(const char* path) {
+    if (path == NULL) return false;  // 路径为空，直接返回 false
+    // 以只读方式打开文件，成功则存在
+    FILE* file = fopen(path, "r");
+    if (file != NULL) {
+        fclose(file);  // 必须关闭文件，避免资源泄漏
+        return true;
+    }
+    return false;  // 打开失败（文件不存在或无权限）
+}
+using namespace SimpleLanguage::Project;
+using namespace SimpleLanguage::Debug;
 
 namespace SimpleLanguage {
 namespace Compile {
 
 FileParse::FileParse(const std::string& path, const ParseFileParam& param)
-    : filePath(path), fileSize(0) {
-    m_File = std::make_unique<FileMeta>(filePath);
+{
+    filePath = path;
+    fileSize = 0;
+    m_File = new FileMeta(filePath);
+    m_FileCompileState = new FileMetaCompileState();
 }
 
-bool FileParse::IsExists() {
-    std::string realpath = std::filesystem::path(ProjectManager::GetInstance().GetProjectPath()) / filePath;
-    return std::filesystem::exists(realpath);
+bool FileParse::IsExists() 
+{
+    std::string addsign = "\\";
+#ifdef _WIN32
+    addsign = "\\";
+#else
+    addsign = "/"; 
+#endif
+    ::std::string realpath = ProjectManager::projectPath + addsign + filePath;
+    return FileExists(realpath.c_str());
+}
+static std::string AddPath(std::string path1, std::string path2)
+{
+
+    std::string addsign = "\\";
+#ifdef _WIN32
+    addsign = "\\";
+#else
+    addsign = "/";
+#endif
+    ::std::string realpath = path1 + addsign + path2;
 }
 
-bool FileParse::LoadFile() {
-    m_FileCompileState.SetLoadState(FileCompileState::ELoadState::LoadStart);
+bool FileParse::LoadFile() 
+{
+    m_FileCompileState->SetLoadState(FileMetaCompileState::ELoadState::LoadStart);
     
-    std::string realpath = std::filesystem::path(ProjectManager::GetInstance().GetProjectPath()) / filePath;
+    std::string realpath = AddPath(ProjectManager::projectPath, filePath );
     
     std::ifstream file(realpath, std::ios::binary);
     if (!file.is_open()) {
         return false;
     }
     
-    m_FileCompileState.SetLoadState(FileCompileState::ELoadState::Loading);
+    m_FileCompileState->SetLoadState(FileMetaCompileState::ELoadState::Loading);
     
     // 获取文件大小
     file.seekg(0, std::ios::end);
@@ -46,18 +87,20 @@ bool FileParse::LoadFile() {
     file.read(&content[0], fileSize);
     file.close();
     
-    m_FileCompileState.SetLoadState(FileCompileState::ELoadState::LoadEnd);
+    m_FileCompileState->SetLoadState(FileMetaCompileState::ELoadState::LoadEnd);
     return true;
 }
 
-void FileParse::StructParse() {
-    if (LoadFile()) {
-        lexerParse = std::make_unique<LexerParse>(filePath, content);
+void FileParse::HandleStructParse() 
+{
+    if (LoadFile())
+    {
+        lexerParse = new LexerParse(filePath, content);
         content.clear();
         
         lexerParse->ParseToTokenList();
         
-        tokenParse = std::make_unique<TokenParse>(*m_File, lexerParse->GetListTokensWidthEnd());
+        tokenParse = new TokenParse(*m_File, lexerParse->GetListTokensWidthEnd());
         
         tokenParse->BuildStruct();
         
@@ -71,7 +114,7 @@ void FileParse::StructParse() {
             structParseComplete();
         }
     } else {
-        Log::GetInstance().AddInStructFileMeta(EError::None, "读取文件出错 FileParse Parse LoadFile !!!");
+        Log::AddInStructFileMeta(EError::None, "读取文件出错 FileParse Parse LoadFile !!!");
     }
 }
 
@@ -88,7 +131,7 @@ std::string FileParse::ToFormatString() {
 }
 
 void FileParse::PrintFormatString() {
-    Log::GetInstance().AddInStructFileMeta(EError::None, m_File->ToFormatString());
+    Log::AddInStructFileMeta(EError::None, m_File->ToFormatString());
 }
 
 } // namespace Compile

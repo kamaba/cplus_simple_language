@@ -6,34 +6,23 @@
 //  Description: 
 //****************************************************************************
 
+#include "../FileMeta/FileMetaClass.h"
+#include "../FileMeta/FileMetaMemberData.h"
+#include "../FileMeta/FileMetaMemberMethod.h"
+#include "../FileMeta/FileMetaMemberVariable.h"
+#include "../FileMeta/FileMetaNamespace.h"
+#include "../FileMeta/FileMetaSyntax.h"
+#include "../FileMeta/FileMetaSyntax.h"
+#include "../../Debug/Log.h"
+#include "../../Project/ProjectManager.h"
 #include "StructParse.h"
-#include "FileMetaImportSyntax.h"
-#include "FileMetaNamespace.h"
-#include "FileMetaClass.h"
-#include "FileMetaMemberVariable.h"
-#include "FileMetaMemberData.h"
-#include "FileMetaMemberFunction.h"
-#include "FileMetaSyntax.h"
-#include "FileMetaBlockSyntax.h"
-#include "FileMetaDefineVariableSyntax.h"
-#include "FileMetaOpAssignSyntax.h"
-#include "FileMetaCallSyntax.h"
-#include "FileMetaKeyIfSyntax.h"
-#include "FileMetaKeySwitchSyntax.h"
-#include "FileMetaKeyForSyntax.h"
-#include "FileMetaConditionExpressSyntax.h"
-#include "FileMetaKeyReturnSyntax.h"
-#include "FileMetaKeyGotoLabelSyntax.h"
-#include "FileMetaKeyOnlySyntax.h"
-#include "FileMetaCallLink.h"
-#include "FileMetaClassDefine.h"
-#include "FileMetatUtil.h"
-#include "FileMetaTermExpress.h"
 #include <iostream>
+
+using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Project;
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
 
 // ParseCurrentNodeInfo 构造函数实现
 StructParse::ParseCurrentNodeInfo::ParseCurrentNodeInfo(FileMeta* cf) 
@@ -95,7 +84,7 @@ void StructParse::AddParseClassNodeInfo(FileMetaClass* fmc) {
     } else if (currentNodeInfo->parseType == EParseNodeType::Class) {
         currentNodeInfo->codeClass->AddFileMetaClass(fmc);
     } else {
-        Log::GetInstance().AddInStructFileMeta(EError::None, "错误 !!1 AddParseClassNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "错误 !!1 AddParseClassNodeInfo");
         return;
     }
     m_FileMeta.AddFileMetaAllClass(fmc);
@@ -109,7 +98,7 @@ void StructParse::AddParseVariableInfo(FileMetaMemberVariable* csv) {
     if (currentNodeInfo->parseType == EParseNodeType::Class) {
         currentNodeInfo->codeClass->AddFileMemberVariable(csv);
     } else {
-        Log::GetInstance().AddInStructFileMeta(EError::None, "错误 !!1 AddParseVariableInfo");
+        Log::AddInStructFileMeta(EError::None, "错误 !!1 AddParseVariableInfo");
         return;
     }
 }
@@ -121,7 +110,7 @@ void StructParse::AddParseDataInfo(FileMetaMemberData* fmmd) {
     } else if (currentNodeInfo->parseType == EParseNodeType::DataMemeber) {
         currentNodeInfo->codeData->AddFileMemberData(fmmd);
     } else {
-        Log::GetInstance().AddInStructFileMeta(EError::None, "错误 !!1 AddParseFunctionNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "错误 !!1 AddParseFunctionNodeInfo");
         return;
     }
 
@@ -134,7 +123,7 @@ void StructParse::AddParseFunctionNodeInfo(FileMetaMemberFunction* fmmf, bool is
     if (currentNodeInfo->parseType == EParseNodeType::Class) {
         currentNodeInfo->codeClass->AddFileMemberFunction(fmmf);
     } else {
-        Log::GetInstance().AddInStructFileMeta(EError::None, "错误 !!1 AddParseFunctionNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "错误 !!1 AddParseFunctionNodeInfo");
         return;
     }
 
@@ -151,7 +140,7 @@ void StructParse::AddParseSyntaxNodeInfo(FileMetaSyntax* fms, bool isAddParseCur
     } else if (currentNodeInfo->parseType == EParseNodeType::Statements) {
         currentNodeInfo->codeSyntax->AddFileMetaSyntax(fms);
     } else {
-        Log::GetInstance().AddInStructFileMeta(EError::None, "错误 !!1 AddParseFunctionNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "错误 !!1 AddParseFunctionNodeInfo");
         return;
     }
 
@@ -169,7 +158,7 @@ void StructParse::ParseRootNodeToFileMeta() {
         if (CheckEnd(*pnode)) {
             break;
         }
-        auto* node = m_RootNode.childList[pnode->parseIndex].get();
+        auto* node = m_RootNode.childList[pnode->parseIndex];
         if (node->nodeType == ENodeType::LineEnd) {
             pnode->parseIndex++;
             continue;
@@ -195,14 +184,14 @@ void StructParse::ParseRootNodeToFileMeta() {
                     ParseNamespaceOrTopClass(*pnode);
                     break;
                 default:
-                    Log::GetInstance().AddInStructFileMeta(EError::None, 
+                    Log::AddInStructFileMeta(EError::None, 
                         "Error 解析时 在File头部目录中出现 : " + node->token->GetLexeme());
                     break;
             }
         } else if (node->nodeType == ENodeType::IdentifierLink) {
             ParseNamespaceOrTopClass(*pnode);
         } else {
-            Log::GetInstance().AddInStructFileMeta(EError::None, 
+            Log::AddInStructFileMeta(EError::None, 
                 "Error 解析时 在File头部目录中出现2 : " + (node->token ? node->token->GetLexeme() : "null"));
         }
     }
@@ -214,11 +203,10 @@ void StructParse::ParseRootNodeToFileMeta() {
 #ifdef DEBUG
         m_FileMeta.SetDeep(0);
 #endif
-        Log::GetInstance().AddProcess(EProcess::ParseNode, EError::None, 
-            "解析Code文件结构文件成功!!! 下一步进行 解析Meta文件 \n " +
-            "解析FileMeta文件成功!!! 下一步进行 语法解析");
+        Log::AddProcess(EProcess::ParseNode, EError::None, 
+            "解析Code文件结构文件成功!!! 下一步进行 解析Meta文件 \n 解析FileMeta文件成功!!! 下一步进行 语法解析");
     } else {
-        Log::GetInstance().AddProcess(EProcess::ParseNode, EError::ParseFileError, 
+        Log::AddProcess(EProcess::ParseNode, EError::ParseFileError, 
             "解析时出现错误 ParseFile : " + std::to_string(static_cast<int>(GetCurrentNodeInfo()->parseType)));
         return;
     }
@@ -244,7 +232,7 @@ std::vector<std::unique_ptr<Node>> StructParse::GetAllNodeToSemiColon(Node& pnod
         if (nextNode == nullptr) {
             break;
         }
-        if (ProjectManager::GetInstance().IsUseForceSemiColonInLineEnd()) {
+        if (ProjectManager::isUseForceSemiColonInLineEnd ) {
             if (nextNode->nodeType == ENodeType::SemiColon) {
                 isEnd = true;
             }
@@ -280,38 +268,38 @@ void StructParse::ParseNamespace(Node& pnode) {
         }
 
         if (nextNode->nodeType == ENodeType::Brace) {
-            currentNode->blockNode = std::make_unique<Node>(*nextNode);
+            currentNode->blockNode = nextNode;
             isBlock = true;
             break;
         } else if (nextNode->nodeType == ENodeType::IdentifierLink) {
             if (namespaceNode != nullptr) {
-                Log::GetInstance().AddInStructFileMeta(EError::None, 
+                Log::AddInStructFileMeta(EError::None, 
                     "Error 在解析namespace 中，左边赋值不能有多个标识符语法!!");
             }
             namespaceNode = nextNode;
 
             if (pnode.parseIndex + 1 < static_cast<int>(pnode.childList.size())) {
-                auto* next2Node = pnode.childList[pnode.parseIndex + 1].get();
+                auto* next2Node = pnode.childList[pnode.parseIndex + 1];
                 if (next2Node && next2Node->nodeType == ENodeType::LineEnd) {
                     if (pnode.parseIndex + 2 < static_cast<int>(pnode.childList.size())) {
-                        auto* next3Node = pnode.childList[pnode.parseIndex + 2].get();
+                        auto* next3Node = pnode.childList[pnode.parseIndex + 2];
                         if (next3Node && next3Node->nodeType == ENodeType::Brace) {
-                            currentNode->blockNode = std::make_unique<Node>(*next2Node);
+                            currentNode->blockNode = next2Node;
                             isBlock = true;
                             pnode.parseIndex += 3;
                             break;
                         }
                     }
                 } else if (next2Node && next2Node->nodeType == ENodeType::Brace) {
-                    currentNode->blockNode = std::make_unique<Node>(*next2Node);
+                    currentNode->blockNode = next2Node;
                     isBlock = true;
                     pnode.parseIndex += 2;
                     break;
                 }
             }
         } else if (nextNode->nodeType == ENodeType::LineEnd) {
-            if (ProjectManager::GetInstance().IsUseForceSemiColonInLineEnd()) {
-                Log::GetInstance().AddInStructFileMeta(EError::None, 
+            if (ProjectManager::isUseForceSemiColonInLineEnd ) {
+                Log::AddInStructFileMeta(EError::None, 
                     "Error 在解析namespace 中，需要强制;号结束");
                 break;
             } else {
@@ -340,7 +328,7 @@ bool StructParse::CheckEnd(Node& pnode) {
 
 // 只解析 全局文件下的 namespace 和 全局文件class
 void StructParse::ParseNamespaceOrTopClass(Node& pnode) {
-    Node* braceNode = pnode.blockNode.get();
+    Node* braceNode = pnode.blockNode;
     std::vector<std::unique_ptr<Node>> nodeList;
     int index = pnode.parseIndex;
     Node* curNode = nullptr;
@@ -349,7 +337,7 @@ void StructParse::ParseNamespaceOrTopClass(Node& pnode) {
 
     int isClass = 0; // 0 unknows 1 class 2namespace
     for (index = pnode.parseIndex; index < static_cast<int>(pnode.childList.size());) {
-        curNode = pnode.childList[index++].get();
+        curNode = pnode.childList[index++];
         pnode.parseIndex = index;
 
         if (curNode->nodeType == ENodeType::Key) {
@@ -370,7 +358,7 @@ void StructParse::ParseNamespaceOrTopClass(Node& pnode) {
         } else if (curNode->nodeType == ENodeType::LineEnd) {
             nextNode = nullptr;
             if (index < static_cast<int>(pnode.childList.size())) {
-                nextNode = pnode.childList[index].get();
+                nextNode = pnode.childList[index];
             }
             if (nextNode && nextNode->nodeType == ENodeType::Brace) {
                 if (isClass == 0) {
@@ -388,7 +376,7 @@ void StructParse::ParseNamespaceOrTopClass(Node& pnode) {
             }
             break;
         } else {
-            Log::GetInstance().AddInStructFileMeta(EError::None, 
+            Log::AddInStructFileMeta(EError::None, 
                 "Error 解析时在解析Class时出现错误 语法--------------------" + 
                 (curNode->token ? curNode->token->ToLexemeAllString() : "null"));
         }
@@ -412,16 +400,15 @@ void StructParse::ParseNamespaceOrTopClass(Node& pnode) {
                 m_CurrentNodeInfoStack.pop();
                 ParseNamespaceOrTopClass(pnode);
             } else {
-                Log::GetInstance().AddInStructFileMeta(EError::None, 
+                Log::AddInStructFileMeta(EError::None, 
                     "Error 解析 namespace A.B{}的格式 只有一个标识符!1");
             }
         } else {
-            Log::GetInstance().AddInStructFileMeta(EError::None, 
+            Log::AddInStructFileMeta(EError::None, 
                 "Error 没有发现Class或者Namespace的关键字!");
         }
     }
 }
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

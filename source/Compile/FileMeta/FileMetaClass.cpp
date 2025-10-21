@@ -16,7 +16,7 @@
 #include "../../Debug/Log.h"
 #include "../..//Define.h"
 #include "../Parse/StructParse.h"
-#include "../FileMetatUtil.h"
+#include "../FileMeta/FileMetatUtil.h"
 #include <algorithm>
 #include <sstream>
 
@@ -49,7 +49,7 @@ bool FileMetaClass::Parse() {
     while (addCount < static_cast<int>(m_NodeList.size())) {
         Node* cnode = m_NodeList[addCount++];
 
-        if (cnode->NodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
+        if (cnode->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink) {
             if (m_SufInterfaceToken != nullptr || m_ExtendsToken != nullptr) {
                 ::std::vector<FileMetaClassDefine*> fcdList;
                 addCount = ReadClassDefineStruct(addCount - 1, m_NodeList, fcdList);
@@ -77,41 +77,41 @@ bool FileMetaClass::Parse() {
                         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, classNameTokenList[i]->GetLexeme());
                     }
                 }
-                classNameTokenList = cnode->linkTokenList();
+                classNameTokenList = cnode->GetLinkTokenList();
 
                 Node* nnode = nullptr;
                 if (addCount < static_cast<int>(m_NodeList.size())) {
                     nnode = m_NodeList[addCount];
                 }
 
-                if (nnode != nullptr && nnode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::LeftAngle) {
+                if (nnode != nullptr && nnode->nodeType == SimpleLanguage::Compile::ENodeType::LeftAngle) {
                     int cAddCount = addCount + 1;
                     bool templateInExtends = false;
                     Node* templateNode = nullptr;
                     Node* templateExtendsNode = nullptr;
                     while (cAddCount < static_cast<int>(m_NodeList.size())) {
                         auto cnode2 = m_NodeList[cAddCount++];
-                        if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::RightAngle) {
+                        if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::RightAngle) {
                             if (templateNode == nullptr) {
                                 auto ld = SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "没有找到模板定义T");
-                                ld->filePath = cnode2->token()->path();
-                                ld->sourceBeginLine = cnode2->token()->sourceBeginLine();
+                                ld->filePath = cnode2->token->GetPath();
+                                ld->sourceBeginLine = cnode2->token->GetSourceBeginLine();
                                 break;
                             }
                             auto fmtd = new FileMetaTemplateDefine(m_FileMeta, templateNode, templateExtendsNode);
                             m_TemplateDefineList.push_back(fmtd);
                             break;
-                        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
+                        } else if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::Comma) {
                             auto fmtd = new FileMetaTemplateDefine(m_FileMeta, templateNode, templateExtendsNode);
                             m_TemplateDefineList.push_back(fmtd);
                             templateNode = nullptr;
                             continue;
-                        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Key && 
-                                  cnode2->token() != nullptr && 
-                                  cnode2->token()->type() == SimpleLanguage::ETokenType::Colon) {
+                        } else if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::Key && 
+                                  cnode2->token != nullptr && 
+                                  cnode2->token->GetType() == SimpleLanguage::ETokenType::Colon) {
                             templateInExtends = true;
                             continue;
-                        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
+                        } else if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink) {
                             if (templateInExtends) {
                                 templateExtendsNode = cnode2;
                             } else {
@@ -125,31 +125,31 @@ bool FileMetaClass::Parse() {
                 }
             }
         } else {
-            auto token = cnode->token();
-            if (token->type() == SimpleLanguage::ETokenType::Public ||
-                token->type() == SimpleLanguage::ETokenType::Private ||
-                token->type() == SimpleLanguage::ETokenType::Projected ||
-                token->type() == SimpleLanguage::ETokenType::Extern) {
+            auto token = cnode->token;
+            if (token->GetType() == SimpleLanguage::ETokenType::Public ||
+                token->GetType() == SimpleLanguage::ETokenType::Private ||
+                token->GetType() == SimpleLanguage::ETokenType::Projected ||
+                token->GetType() == SimpleLanguage::ETokenType::Extern) {
                 if (permissionToken == nullptr) {
                     permissionToken = token;
                 } else {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次权限!!");
                 }
-            } else if (token->type() == SimpleLanguage::ETokenType::Const) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Const) {
                 if (m_ConstToken == nullptr) {
                     m_ConstToken = token;
                 } else {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Const!!");
                 }
-            } else if (token->type() == SimpleLanguage::ETokenType::Partial) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Partial) {
                 if (m_PartialToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
                 }
                 m_PartialToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Class) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Class) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
@@ -163,7 +163,7 @@ bool FileMetaClass::Parse() {
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
                 }
                 m_ClassToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Enum) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Enum) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
@@ -177,7 +177,7 @@ bool FileMetaClass::Parse() {
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Class!!");
                 }
                 m_EnumToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Data) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Data) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
@@ -192,13 +192,13 @@ bool FileMetaClass::Parse() {
                     }
                     m_DataToken = token;
                 }
-            } else if (token->type() == SimpleLanguage::ETokenType::Extends) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Extends) {
                 if (m_ExtendsToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Extend!!");
                 }
                 m_ExtendsToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Interface) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Interface) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error 解析过了一次Enum!!");
@@ -232,7 +232,7 @@ bool FileMetaClass::Parse() {
                     }
                     m_PreInterfaceToken = token;
                 }
-            } else if (token->type() == SimpleLanguage::ETokenType::Comma) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Comma) {
                 commaToken = token;
             } else {
                 isError = true;
@@ -303,13 +303,13 @@ int FileMetaClass::ReadClassDefineStruct(int cAddCount, const std::vector<Node*>
     while (cAddCount < static_cast<int>(m_NodeList.size())) {
         auto cnode2 = m_NodeList[cAddCount];
         
-        if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::RightAngle) {
+        if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::RightAngle) {
             if (curPST == nullptr) {
                 cAddCount++;
                 break;
             }
             if (curPST->angleNode != nullptr) {
-                curPST->angleNode->setEndToken(cnode2->token());
+                curPST->angleNode->endToken = (cnode2->token);
                 if (curPST->parentPSt == nullptr) {
                     cAddCount++;
                     break;
@@ -324,13 +324,13 @@ int FileMetaClass::ReadClassDefineStruct(int cAddCount, const std::vector<Node*>
                     curPST = curPST->parentPSt;
                 }
             }
-        } else if (cnode2->NodeType() == SimpleLanguage::ENodeType::Comma) {
+        } else if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::Comma) {
             cAddCount++;
             continue;
-        } else if (cnode2->NodeType() == SimpleLanguage::ENodeType::IdentifierLink ||
-                  (cnode2->NodeType() == SimpleLanguage::ENodeType::Key &&
-                   cnode2->GetToken() != nullptr && 
-                   cnode2->GetToken()->type() == SimpleLanguage::ETokenType::Object)) {
+        } else if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink ||
+                  (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::Key &&
+                   cnode2->token != nullptr &&
+                   cnode2->token->GetType() == SimpleLanguage::ETokenType::Object)) {
             ParseStructTemp* newpst = nullptr;
             if (curPST == nullptr) {
                 newpst = new ParseStructTemp();
@@ -344,15 +344,15 @@ int FileMetaClass::ReadClassDefineStruct(int cAddCount, const std::vector<Node*>
             
             if (cAddCount + 1 < static_cast<int>(m_NodeList.size())) {
                 auto nextNode = m_NodeList[cAddCount + 1];
-                if (nextNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::LeftAngle) {
+                if (nextNode->nodeType == SimpleLanguage::Compile::ENodeType::LeftAngle) {
                     cAddCount++;
                     newpst->angleNode = nextNode;
                     curPST = newpst;
                 }
             }
-        } else if (cnode2->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Key && 
-                  cnode2->token() != nullptr && 
-                  cnode2->token()->type() == SimpleLanguage::ETokenType::Interface) {
+        } else if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::Key && 
+                  cnode2->token != nullptr && 
+                  cnode2->token->GetType() == SimpleLanguage::ETokenType::Interface) {
             cAddCount++;
             break;
         } else {
@@ -379,7 +379,7 @@ void FileMetaClass::AddFileMemberData(FileMetaMemberData* fmmd) {
 
 FileMetaMemberData* FileMetaClass::GetFileMemberData(const std::string& name) {
     auto it = std::find_if(m_MemberDataList.begin(), m_MemberDataList.end(),
-        [&name](FileMetaMemberData* fmmd) { return fmmd->name() == name; });
+        [&name](FileMetaMemberData* fmmd) { return fmmd->Name() == name; });
     
     if (it != m_MemberDataList.end()) {
         return *it;
@@ -405,20 +405,20 @@ void FileMetaClass::AddExtendMetaNamespace(FileMetaNamespace* fmn) {
     if (m_TopLevelFileMetaNamespace != nullptr) {
         // Implementation for extending namespace
     } else {
-        auto list = fmn->namespaceStatementBlock()->namespaceList();
+        auto list = fmn->namespaceStatementBlock()->NamespaceList();
         if (list.empty()) {
             return;
         }
         if (m_NamespaceBlock != nullptr) {
-            std::string lastName = m_NamespaceBlock->namespaceList()[m_NamespaceBlock->namespaceList().size() - 1];
+            std::string lastName = m_NamespaceBlock->NamespaceList()[m_NamespaceBlock->NamespaceList().size() - 1];
             if (list[list.size() - 1] == lastName) {
-                auto namespaceNameNode = new Node(fmn->namespaceNameNode()->token());
+                auto namespaceNameNode = new Node(fmn->NamespaceNameNode()->token);
                 std::vector<Node*> extendLinkNodeList;
-                for (size_t i = 0; i < fmn->namespaceNameNode()->extendLinkNodeList().size() - 2; i++) {
-                    extendLinkNodeList.push_back(fmn->namespaceNameNode()->extendLinkNodeList()[i]);
+                for (size_t i = 0; i < fmn->NamespaceNameNode()->GetExtendLinkNodeList().size() - 2; i++) {
+                    extendLinkNodeList.push_back(fmn->NamespaceNameNode()->GetExtendLinkNodeList()[i]);
                 }
                 namespaceNameNode->SetLinkNode(extendLinkNodeList);
-                auto fmnnew = new FileMetaNamespace(fmn->namespaceNode(), namespaceNameNode);
+                auto fmnnew = new FileMetaNamespace(fmn->NamespaceNode(), namespaceNameNode);
                 m_TopLevelFileMetaNamespace = fmnnew;
             }
         }
@@ -433,18 +433,18 @@ void FileMetaClass::SetPermissionToken(Token* permissionToken) {
     m_PermissionToken = permissionToken;
 }
 
-void FileMetaClass::SetMetaClass(SimpleLanguage::Core::MetaClass* mc) {
+void FileMetaClass::SetMetaClass( MetaClass* mc) {
     m_MetaClass = mc;
 }
 
 void FileMetaClass::AddFileMetaClass(FileMetaClass* fmc) {
-    fmc->m_Deep = deep() + 1;
+    fmc->m_Deep = Deep() + 1;
     fmc->SetFileMetaClass(this);
     m_ChildrenClassList.push_back(fmc);
 }
 
 void FileMetaClass::AddInterfaceClass(FileMetaClassDefine* fmcv) {
-    m_InterfaceClassList.push_back(fmc);
+    m_InterfaceClassList.push_back(fmcv);
 }
 
 void FileMetaClass::SetFileMetaClass(FileMetaClass* fmc) {
@@ -589,9 +589,9 @@ void FileMetaClass::ParseStructTemp::AddParseStructTemplate(ParseStructTemp* pst
     pst->parentPSt = this;
 }
 void FileMetaClass::ParseStructTemp::GenFileInputTemplateNode(Node* node, FileMeta* fm) {
-    node->setAngleNode(angleNode);
+    node->angleNode = angleNode;
     for (size_t i = 0; i < angleContentNodeList.size(); i++) {
-        node->angleNode()->AddChild(angleContentNodeList[i]->nameNode);
+        node->angleNode->AddChild(angleContentNodeList[i]->nameNode);
         if (!angleContentNodeList[i]->angleContentNodeList.empty()) {
             angleContentNodeList[i]->GenFileInputTemplateNode(angleContentNodeList[i]->nameNode, fm);
         }

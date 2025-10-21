@@ -12,17 +12,18 @@
 #include <memory>
 #include <stack>
 #include <string>
-#include "Node.h"
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
+
+    class Node;
+    class Token;
 
 class TokenParse {
 public:
-    Node* GetRootNode() const { return m_RootNode.get(); }
+    Node* GetRootNode() const { return m_RootNode; }
 
-    TokenParse(FileMeta& fm, const std::vector<std::unique_ptr<Token>>& list);
+    TokenParse(FileMeta* fm, const std::vector<std::unique_ptr<Token>>& list);
     
     void BuildStruct();
     void BuildEnd();
@@ -53,16 +54,15 @@ private:
     void AddOrCompareSymbol(Token& code);
 
 private:
-    FileMeta& m_FileMeta;
-    const std::vector<std::unique_ptr<Token>>& m_TokensList;
+    FileMeta* m_FileMeta;
+    const std::vector<Token*>& m_TokensList;
     int m_TokenIndex = 0;
     int m_TokenCount = 0;
 
-    std::unique_ptr<Node> m_RootNode;
+    Node m_RootNode;
     std::stack<Node*> currentNodeStack;
     Node* currentNode = nullptr;
 };
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

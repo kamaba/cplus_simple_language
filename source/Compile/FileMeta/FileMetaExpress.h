@@ -143,7 +143,7 @@ public:
 
     Node* BracketNode() const { return m_BracketNode; }
     int BracketType() const { return m_BracketType; }
-    public Token* EndToken() { return m_BracketeEndToken;  }
+    Token* EndToken() { return m_BracketeEndToken;  }
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
 

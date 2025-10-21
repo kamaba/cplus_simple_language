@@ -45,8 +45,8 @@ namespace Compile {
         void SetBindFilePath(const std::string& path) { m_Path = path; }
 
         // 子Token管理
-        void AddChildrenToken(std::shared_ptr<Token> token);
-        const std::vector<std::shared_ptr<Token>>& GetChildrenTokens() const { return m_ChildrenTokensList; }
+        void AddChildrenToken(Token* token);
+        const std::vector<Token*>& GetChildrenTokens() const { return m_ChildrenTokensList; }
 
         // 工具方法
         std::string ToString() const;
@@ -65,7 +65,7 @@ namespace Compile {
         int m_SourceEndLine;             //结束所在行
         int m_SourceEndChar;             //结束所在行
 
-        std::vector<std::shared_ptr<Token>> m_ChildrenTokensList;
+        std::vector<Token*> m_ChildrenTokensList;
     };
 
 } // namespace Compile

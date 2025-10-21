@@ -145,7 +145,8 @@ std::string FileInputTemplateNode::ToFormatString() const {
 }
 
 // FileMetaCallNode implementation
-FileMetaCallNode::FileMetaCallNode(FileMeta* fm, Node* _node)  {
+FileMetaCallNode::FileMetaCallNode(FileMeta* fm, Node* _node)  
+{
     m_FileMeta = fm;
     m_Node = _node;
     m_IsCallFunction = false;
@@ -223,7 +224,7 @@ std::string FileMetaCallNode::ToFormatString() const {
     std::ostringstream sb;
 
     if (m_FileMetaParTerm != nullptr) {
-        sb << (token != nullptr ? token->GetLexeme() : "");
+        sb << (m_Token != nullptr ? m_Token->GetLexeme() : "");
         sb << m_FileMetaParTerm->ToFormatString();
         if (m_FileMetaBraceTerm != nullptr) {
             sb << m_FileMetaBraceTerm->ToFormatString();
@@ -234,7 +235,7 @@ std::string FileMetaCallNode::ToFormatString() const {
         sb << m_FileMetaBraceTerm->ToFormatString();
     } else {
         sb << (m_AtToken ? m_AtToken->GetLexeme() : "");
-        sb << (token != nullptr ? token->ToConstString() : "");
+        sb << (m_Token != nullptr ? m_Token->ToConstString() : "");
         if (m_IsArray) {
             sb << (m_BeginBracketToken ? m_BeginBracketToken->GetLexeme() : "");
             for (size_t i = 0; i < m_ArrayNodeList.size(); i++) {

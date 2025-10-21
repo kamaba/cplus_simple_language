@@ -12,7 +12,6 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Process {
 
 class ProjectCompileState : public CompileStateBase {
 public:
@@ -53,6 +52,5 @@ private:
     EError m_Error = EError::None;
 };
 
-} // namespace Process
 } // namespace Compile
 } // namespace SimpleLanguage

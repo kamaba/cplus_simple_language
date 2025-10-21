@@ -13,10 +13,12 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-namespace Parse {
 
 TokenParse::TokenParse(FileMeta& fm, const std::vector<std::unique_ptr<Token>>& list)
-    : m_FileMeta(fm), m_TokensList(list), m_TokenCount(static_cast<int>(list.size())) {
+{
+    m_FileMeta = &fm;
+    m_TokensList = list;
+    m_TokenCount = list.size();
     m_RootNode = std::make_unique<Node>(nullptr);
     m_RootNode->nodeType = ENodeType::Root;
     currentNode = m_RootNode.get();
@@ -34,36 +36,36 @@ void TokenParse::BuildEnd() {
 }
 
 void TokenParse::AddImportNode(Token& token) {
-    auto nnode = std::make_unique<Node>(&token);
+    auto nnode = new Node(&token);
     nnode->nodeType = ENodeType::Key;
     m_TokenIndex++;
     currentNode->AddChild(std::move(nnode));
 }
 
 void TokenParse::AddNamespaceNode(Token& token) {
-    auto nnode = std::make_unique<Node>(&token);
+    auto nnode = new Node(&token);
     nnode->nodeType = ENodeType::Key;
     m_TokenIndex++;
-    currentNode->AddChild(std::move(nnode));
+    currentNode->AddChild(nnode);
 }
 
 void TokenParse::AddIdentifier(Token& code) { // Print/Function
-    auto node = std::make_unique<Node>(&code);
+    auto node = new Node(&code);
     node->nodeType = ENodeType::IdentifierLink;
 
     if (currentNode->linkToken != nullptr) {
-        auto node2 = std::make_unique<Node>(currentNode->linkToken.get());
+        auto node2 = new Node(currentNode->linkToken);
         node2->nodeType = ENodeType::Period;
 
-        currentNode->AddLinkNode(std::move(node2));
-        currentNode->AddLinkNode(std::move(node));
+        currentNode->AddLinkNode(node2);
+        currentNode->AddLinkNode(node);
         if (currentNode->atToken != nullptr) {
             node->atToken = std::move(currentNode->atToken);
             currentNode->atToken = nullptr;
         }
         currentNode->linkToken = nullptr;
     } else {
-        currentNode->AddChild(std::move(node));
+        currentNode->AddChild(node);
     }
     m_TokenIndex++;
 }
@@ -71,20 +73,20 @@ void TokenParse::AddIdentifier(Token& code) { // Print/Function
 void TokenParse::AddAnnotation(Token& code) {
     m_TokenIndex++;
 
-    auto ntoken = std::make_unique<Token>(code);
+    auto ntoken = &code;
     ntoken->SetType(ETokenType::LineEnd);
-    auto node = std::make_unique<Node>(std::move(ntoken));
+    auto node = new Node(ntoken);
     node->nodeType = ENodeType::LineEnd;
 
-    currentNode->AddChild(std::move(node));
+    currentNode->AddChild(node);
 }
 
-std::unique_ptr<Node> TokenParse::AddKeyNode(Token& token) {
-    auto node = std::make_unique<Node>(&token);
+Node* TokenParse::AddKeyNode(Token& token) {
+    auto node = new Node(&token);
     node->nodeType = ENodeType::Key;
-    currentNode->AddChild(std::move(node));
+    currentNode->AddChild(node);
     m_TokenIndex++;
-    return std::make_unique<Node>(&token);
+    return new Node(&token);
 }
 
 std::unique_ptr<Node> TokenParse::AddAtOpSign(Token& token) {
@@ -539,6 +541,5 @@ void TokenParse::ParseDetailToken(Token& token) {
     }
 }
 
-} // namespace Parse
 } // namespace Compile
 } // namespace SimpleLanguage

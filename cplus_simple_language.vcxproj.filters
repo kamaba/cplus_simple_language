@@ -215,9 +215,6 @@
     <ClCompile Include="source\Compile\CompilerUtil.cpp">
       <Filter>source\Compile</Filter>
     </ClCompile>
-    <ClCompile Include="source\Compile\FileMetatUtil.cpp">
-      <Filter>source\Compile</Filter>
-    </ClCompile>
     <ClCompile Include="source\Compile\Token.cpp">
       <Filter>source\Compile</Filter>
     </ClCompile>
@@ -433,6 +430,9 @@
     </ClCompile>
     <ClCompile Include="source\Core\MetaMemberEnum.cpp">
       <Filter>source\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Compile\FileMeta\FileMetatUtil.cpp">
+      <Filter>source\Compile\FileMeta</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -688,9 +688,6 @@
     <ClInclude Include="source\Compile\CompilerUtil.h">
       <Filter>source\Compile</Filter>
     </ClInclude>
-    <ClInclude Include="source\Compile\FileMetatUtil.h">
-      <Filter>source\Compile</Filter>
-    </ClInclude>
     <ClInclude Include="source\Compile\Token.h">
       <Filter>source\Compile</Filter>
     </ClInclude>
@@ -819,6 +816,9 @@
     </ClInclude>
     <ClInclude Include="source\Core\MetaMemberEnum.h">
       <Filter>source\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Compile\FileMeta\FileMetatUtil.h">
+      <Filter>source\Compile\FileMeta</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

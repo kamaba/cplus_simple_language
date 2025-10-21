@@ -20,12 +20,12 @@ namespace Compile {
     class CompileManager
     {
     public:
-        static bool isInterrupt() { return false; }
+        static bool IsInterrupt() { return false; }
         
-        static CompileManager& getInstance();
+        static CompileManager& GetInstance();
         
-        void addCompileError(const std::string& str);
-        void addProjectCompileState(int state, int info, int error, const std::string& str);
+        void AddCompileError(const std::string& str);
+        void AddProjectCompileState(int state, int info, int error, const std::string& str);
 
     private:
         CompileManager() = default;
@@ -34,7 +34,7 @@ namespace Compile {
         CompileManager& operator=(const CompileManager&) = delete;
 
         static CompileManager* s_Instance;
-        std::vector<std::unique_ptr<CompileStateBase>> m_CompileStateList;
+        std::vector<CompileStateBase> m_CompileStateList;
     };
 
 } // namespace Compile

@@ -26,9 +26,9 @@ bool FileMetaParamterDefine::ParseBuildMetaParamter(const std::vector<Node*>& in
     std::vector<Node*> listDefieNode;
     std::vector<Node*> valueNodeList;
     Node* beforeNode = new Node(nullptr);
-    beforeNode->setChildList(inputNodeList);
-    beforeNode->setParseIndex(0);
-    auto nodeList = SimpleLanguage::Core::StructParse::HandleBeforeNode(beforeNode);
+    beforeNode->childList = inputNodeList;
+    beforeNode->parseIndex = 0;
+    auto nodeList = SimpleLanguage::Compile::StructParse::HandleBeforeNode(beforeNode);
     
     if (!SimpleLanguage::Compile::FileMetatUtil::SplitNodeList(nodeList, listDefieNode, valueNodeList, m_AssignToken)) {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 解析NodeList出现错误~~~");
