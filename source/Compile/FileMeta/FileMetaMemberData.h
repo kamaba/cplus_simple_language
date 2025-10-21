@@ -34,7 +34,7 @@ public:
     FileMetaConstValueTerm* GetFileMetaConstValue() const { return m_FileMetaConstValue; }
     FileMetaCallTerm* GetFileMetaCallTermValue() const { return m_FileMetaCallTermValue; }
     bool IsWithName() const { return m_IsWithName; }
-    EMemberDataType DataType() const { return m_MemberDataType; }
+    EMemberDataType GetMemberDataType() const { return m_MemberDataType; }
 
     // Methods
     void AddFileMemberData(FileMetaMemberData* fmmd);

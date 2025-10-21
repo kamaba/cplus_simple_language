@@ -14,6 +14,7 @@
 #include "../FileMeta/FileMetaNamespace.h"
 #include "../FileMeta/FileMetaSyntax.h"
 #include "../FileMeta/FileMetaSyntax.h"
+#include "Node.h"
 #include "../../Debug/Log.h"
 #include "../../Project/ProjectManager.h"
 #include "StructParse.h"
@@ -50,7 +51,7 @@ StructParse::ParseCurrentNodeInfo::ParseCurrentNodeInfo(FileMetaSyntax* nss)
     : codeSyntax(nss), parseType(EParseNodeType::Statements) {
 }
 
-StructParse::StructParse(FileMeta& fm, Node& node) 
+StructParse::StructParse(FileMeta& fm, Node* node) 
     : m_FileMeta(fm), m_RootNode(node) {
 }
 
@@ -154,12 +155,12 @@ void StructParse::AddParseSyntaxNodeInfo(FileMetaSyntax* fms, bool isAddParseCur
 void StructParse::ParseRootNodeToFileMeta() {
     AddParseFileNodeInfo();
 
-    Node* pnode = &m_RootNode;
+    Node* pnode = m_RootNode;
     while (true) {
         if (CheckEnd(pnode)) {
             break;
         }
-        auto* node = m_RootNode.childList[pnode->parseIndex];
+        auto* node = m_RootNode->childList[pnode->parseIndex];
         if (node->nodeType == ENodeType::LineEnd) {
             pnode->parseIndex++;
             continue;
@@ -330,7 +331,7 @@ bool StructParse::CheckEnd(Node* pnode) {
 // 只解析 全局文件下的 namespace 和 全局文件class
 void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
     Node* braceNode = pnode->blockNode;
-    std::vector<Node> nodeList;
+    std::vector<Node*> nodeList;
     int index = pnode->parseIndex;
     Node* curNode = nullptr;
     bool isCanAdd = false;
@@ -348,15 +349,15 @@ void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
             } else if (curNode->token->GetType() == ETokenType::Class) {
                 isClass = 1;
             }
-            nodeList.push_back(*newnode);
+            nodeList.push_back(newnode);
         } else if (curNode->nodeType == ENodeType::LeftAngle) { // Class1<T> 
-            nodeList.push_back(*newnode);
+            nodeList.push_back(newnode);
         } else if (curNode->nodeType == ENodeType::RightAngle) { // Class1<T>   Func<T>( T t );  array<int> arr1;
-            nodeList.push_back(*newnode);
+            nodeList.push_back(newnode);
         } else if (curNode->nodeType == ENodeType::Comma) {
-            nodeList.push_back(*newnode);
+            nodeList.push_back(newnode);
         } else if (curNode->nodeType == ENodeType::IdentifierLink) { // Class1
-            nodeList.push_back(*newnode);
+            nodeList.push_back(newnode);
         } else if (curNode->nodeType == ENodeType::LineEnd) {
             nextNode = nullptr;
             if (index < static_cast<int>(pnode->childList.size())) {
@@ -391,11 +392,11 @@ void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
             ParseNamespaceOrTopClass(pnode);
         } else if (isClass == 2) {
             if (nodeList.size() == 2) {
-                auto fmn = new FileMetaNamespace( &nodeList[0], &nodeList[1]);
+                auto fmn = new FileMetaNamespace( nodeList[0], &nodeList[1]);
                 AddParseNamespaceNodeInfo(fmn);
-                if (nodeList[1].blockNode != nullptr) {
+                if (nodeList[1]->blockNode != nullptr) {
                     m_FileMeta.AddFileDefineNamespace(fmn);
-                    ParseNamespaceOrTopClass(nodeList[1].blockNode);
+                    ParseNamespaceOrTopClass(nodeList[1]->blockNode);
                 } else {
                     m_FileMeta.AddFileSearchNamespace(fmn);
                 }
@@ -498,8 +499,8 @@ void StructParse::ParseDataNode(Node* pnode) {
     
     for (size_t i = 0; i < fmmd->GetFileMetaMemberData().size(); i++) {
         auto cfmmd = fmmd->GetFileMetaMemberData()[i];
-        if (cfmmd->GetDataType() == FileMetaMemberData::EMemberDataType::Data) {
-            ParseDataBracketNode(cfmmd->GetBracketNode());
+        if (cfmmd->GetMemberDataType() == FileMetaMemberData::EMemberDataType::Data) {
+            //ParseDataBracketNode(cfmmd->node);
         }
     }
     m_CurrentNodeInfoStack.pop();

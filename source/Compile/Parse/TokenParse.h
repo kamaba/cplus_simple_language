@@ -12,18 +12,19 @@
 #include <memory>
 #include <stack>
 #include <string>
+#include "../Token.h"
 
 namespace SimpleLanguage {
 namespace Compile {
 
     class Node;
-    class Token;
+    class FileMeta;
 
 class TokenParse {
 public:
     Node* GetRootNode() const { return m_RootNode; }
 
-    TokenParse(FileMeta* fm, const std::vector<std::unique_ptr<Token>>& list);
+    TokenParse(FileMeta* fm, const std::vector<Token*>& list);
     
     void BuildStruct();
     void BuildEnd();
@@ -36,9 +37,9 @@ private:
     void AddNamespaceNode(Token& token);
     void AddIdentifier(Token& code);
     void AddAnnotation(Token& code);
-    std::unique_ptr<Node> AddKeyNode(Token& token);
-    std::unique_ptr<Node> AddAtOpSign(Token& token);
-    std::unique_ptr<Node> AddSymbol(Token& token);
+    Node* AddKeyNode(Token& token);
+    Node* AddAtOpSign(Token& token);
+    Node* AddSymbol(Token& token);
     void AddPlusMinus(Token& code);
     void AddDoublePlusMinus(Token& code);
     void AddLeftToRightEqualSymbol(Token& code);
@@ -55,11 +56,11 @@ private:
 
 private:
     FileMeta* m_FileMeta;
-    const std::vector<Token*>& m_TokensList;
+    std::vector<Token*>& m_TokensList;
     int m_TokenIndex = 0;
     int m_TokenCount = 0;
 
-    Node m_RootNode;
+    Node* m_RootNode;
     std::stack<Node*> currentNodeStack;
     Node* currentNode = nullptr;
 };

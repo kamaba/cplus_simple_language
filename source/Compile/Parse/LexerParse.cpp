@@ -31,7 +31,7 @@ std::vector<Token*> LexerParse::GetListTokensWidthEnd()
     }
     std::string endchar;
     endchar = (END_CHAR);
-    Token* newtoken = new Token(m_Path, ETokenType::Finished, endchar, m_SourceLine, m_SourceChar);
+    Token* newtoken = new Token(m_Path, ETokenType::Finished, endchar, m_SourceLine, m_SourceChar );
     withEndList.push_back(newtoken);
     return withEndList;
 }
@@ -79,12 +79,16 @@ void LexerParse::AddToken(ETokenType type) {
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme) {
     AddToken(type, lexeme, m_SourceLine, m_SourceChar);
 }
+void LexerParse::AddToken(ETokenType type, const std::string& lexeme, const std::string& extend)
+{
+
+}
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, EType extend) {
     AddToken(type, lexeme, extend, m_SourceLine, m_SourceChar);
 }
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, int sourceLine, int sourceChar) {
     m_CurrentToken = new Token(m_Path, type, lexeme, sourceLine, sourceChar);
-    m_ListTokens.push_back(std::move(m_CurrentToken));
+    m_ListTokens.push_back(m_CurrentToken);
     m_Builder.clear();
 }
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, EType extend, int sourceLine, int sourceChar) {
@@ -332,7 +336,10 @@ void LexerParse::ReadString(bool isWithAtOp) {
             m_Builder += m_TempChar;
         } else if (m_TempChar == '"') {
             stringBuilder += m_Builder;
-            m_CurrentToken->SetLexeme(stringBuilder);
+            MultiData md;
+            md.type == DataType::String;
+            md.data.string_val = stringBuilder.c_str();
+            m_CurrentToken->SetLexeme(md);
             m_Index++;
             m_SourceChar++;
             break;

@@ -80,7 +80,7 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     Node* beforeNode = new Node(nullptr);
     beforeNode->childList = bedoreNodeList;
     //beforeNode->setParseIndex(0);
-    auto defineNodeList = StructParse::HandleBeforeNode(*beforeNode);
+    auto defineNodeList = StructParse::HandleBeforeNode(beforeNode);
 
     Node* nameNode = nullptr;
     Node* typeNode = nullptr;
@@ -94,7 +94,7 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 没有找到该定义名称 必须使用例: X = 104; 的格式");
         return false;
     }
-    if (!nameNode->extendLinkNodeList().empty()) {
+    if (!nameNode->GetExtendLinkNodeList().empty()) {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 没有找到该定义名称 必须使用例: X = 105; 的格式");
         return false;
     }
@@ -106,7 +106,7 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     }
 
     if (!afterNodeList.empty()) {
-        if (afterNodeList[0]->NodeType() == SimpleLanguage::Compile::Parse::ENodeType::Bracket) {
+        if (afterNodeList[0]->nodeType == SimpleLanguage::Compile::ENodeType::Bracket) {
             m_MemberDataType = EMemberDataType::Array;
             ParseBracketContrent(afterNodeList[0]);
         } else {
@@ -123,18 +123,18 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
     int type = -1;
     for (size_t index = 0; index < pnode->childList.size(); index++) {
         auto curNode = pnode->childList[index];
-        if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::LineEnd ||
-            curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::SemiColon ||
-            curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
+        if (curNode->nodeType == SimpleLanguage::Compile::ENodeType::LineEnd ||
+            curNode->nodeType == SimpleLanguage::Compile::ENodeType::SemiColon ||
+            curNode->nodeType == SimpleLanguage::Compile::ENodeType::Comma) {
             continue;
         }
-        if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
+        if (curNode->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink) {
             // aaa(){},aaa(){}
         }
-        if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Brace) {  // Class1 [{},{}]
+        if (curNode->nodeType == SimpleLanguage::Compile::ENodeType::Brace) {  // Class1 [{},{}]
             if (type == 2 || type == 3) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
+                    "Error Data数据中 []中，不支持该类型的数据" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
                 continue;
             }
 
@@ -142,10 +142,10 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
 
             auto fmmd = new FileMetaMemberVariable(m_FileMeta, curNode, nullptr, EMemberDataType::Array);
             AddFileMemberVariable(fmmd);
-        } else if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::ConstValue) {  // ["stringValue","Stvlue"]
+        } else if (curNode->nodeType == SimpleLanguage::Compile::ENodeType::ConstValue) {  // ["stringValue","Stvlue"]
             if (type == 1 || type == 3) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
+                    "Error Data数据中 []中，不支持该类型的数据" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
                 continue;
             }
 
@@ -153,10 +153,10 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
 
             auto fmmd = new FileMetaMemberVariable(m_FileMeta, curNode, nullptr, EMemberDataType::ConstVariable);
             AddFileMemberVariable(fmmd);
-        } else if (curNode != nullptr && curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Bracket) {  // [[],[]]
+        } else if (curNode != nullptr && curNode->nodeType == SimpleLanguage::Compile::ENodeType::Bracket) {  // [[],[]]
             if (type == 1 || type == 2) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
+                    "Error Data数据中 []中，不支持该类型的数据" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
                 continue;
             }
 
@@ -166,7 +166,7 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
             AddFileMemberVariable(fmmd);
         } else {
             SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                "Error Data数据中 []中，不支持该类型的数据" + (curNode->token() ? curNode->token()->ToLexemeAllString() : ""));
+                "Error Data数据中 []中，不支持该类型的数据" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
             continue;
         }
     }
@@ -185,28 +185,28 @@ bool FileMetaMemberVariable::GetNameAndTypeToken(const std::vector<Node*>& defin
     for (size_t i = 0; i < defineNodeList.size(); i++) {
         auto cnode = defineNodeList[i];
 
-        if (cnode->NodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
+        if (cnode->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink) {
             nodeList.push_back(cnode);
         } else {
             auto token = cnode->token;
-            if (token->type() == SimpleLanguage::ETokenType::Public ||
-                token->type() == SimpleLanguage::ETokenType::Projected ||
-                token->type() == SimpleLanguage::ETokenType::Extern ||
-                token->type() == SimpleLanguage::ETokenType::Private) {
+            if (token->GetType() == SimpleLanguage::ETokenType::Public ||
+                token->GetType() == SimpleLanguage::ETokenType::Projected ||
+                token->GetType() == SimpleLanguage::ETokenType::Extern ||
+                token->GetType() == SimpleLanguage::ETokenType::Private) {
                 if (permissionToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 多重定义名称的权限定义!!");
                 }
                 permissionToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Static) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Static) {
                 if (staticToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 多重定义名称的静态定义!!");
                 }
                 staticToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Type) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Type) {
                 nodeList.push_back(cnode);
-            } else if (token->type() == SimpleLanguage::ETokenType::Mut) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Mut) {
                 if (mutNode != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 多重定义名称的Mut定义!!");
@@ -252,7 +252,7 @@ void FileMetaMemberVariable::SetDeep(int _deep) {
 }
 
 std::string FileMetaMemberVariable::ToString() const {
-    return m_Token ? m_Token->GetLexeme() : "";
+    return m_Token != nullptr ? m_Token->GetLexemeString() : "";
 }
 
 std::string FileMetaMemberVariable::ToFormatString() const {

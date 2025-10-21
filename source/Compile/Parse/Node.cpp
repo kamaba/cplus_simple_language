@@ -12,9 +12,9 @@
 namespace SimpleLanguage {
 namespace Compile {
 
-Node::Node(std::shared_ptr<Token> _token) 
+Node::Node(Token& _token) 
 {
-    this->token = _token.get();
+    this->token = &_token;
 }
 
 Node::Node(Token* _token) : token(_token ) {

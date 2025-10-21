@@ -79,7 +79,7 @@ public:
 
     int parseIndex = 0;
 
-    Node(::std::shared_ptr<Token> token);
+    Node(Token& token);
     Node(Token* token);
     
     Node* GetParseCurrent();

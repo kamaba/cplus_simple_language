@@ -21,6 +21,23 @@ namespace Compile {
     {
     }
 
+    Token::Token(const std::string& path, ETokenType tokenType, const std::string& lexeme,
+        int sourceLine, int sourceChar)
+    {
+
+    }
+    Token::Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
+        int sourceLine, int sourceChar )
+        : m_Path(path)
+        , m_Type(tokenType)
+        , m_SourceBeginLine(sourceLine + 1)
+        , m_SourceBeginChar(sourceChar)
+        , m_SourceEndLine(0)
+        , m_SourceEndChar(0)
+    {
+        m_Path = path;
+        m_Lexeme = lexeme;
+    }
     Token::Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
         int sourceLine, int sourceChar, const MultiData* extend = nullptr )
         : m_Path(path)

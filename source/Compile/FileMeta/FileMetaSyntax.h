@@ -31,13 +31,13 @@ public:
     virtual ~FileMetaSyntax() = default;
 
     // Properties
-    int parseIndex() const { return m_ParseIndex; }
-    void setParseIndex(int value) { m_ParseIndex = value; }
+    int GetParseIndex() const { return m_ParseIndex; }
+    void SetParseIndex(int value) { m_ParseIndex = value; }
     
-    bool isAppendSemiColon() const { return m_IsAppendSemiColon; }
-    void setAppendSemiColon(bool value) { m_IsAppendSemiColon = value; }
+    bool IsAppendSemiColon() const { return m_IsAppendSemiColon; }
+    void SetAppendSemiColon(bool value) { m_IsAppendSemiColon = value; }
     
-    const ::std::vector<FileMetaSyntax*>& fileMetaSyntax() const { return m_FileMetaSyntax; }
+    const ::std::vector<FileMetaSyntax*>& GetFileMetaSyntax() const { return m_FileMetaSyntax; }
 
     // Methods
     bool IsNotEnd() const;
@@ -57,8 +57,8 @@ public:
     FileMetaBlockSyntax(FileMeta* fm, Token* leftBraceToken, Token* rightBraceToken);
     virtual ~FileMetaBlockSyntax() = default;
 
-    Token* leftBraceToken() const { return m_LeftBraceToken; }
-    Token* rightBraceToken() const { return m_RightBraceToken; }
+    Token* GetLeftBraceToken() const { return m_LeftBraceToken; }
+    Token* GetRightBraceToken() const { return m_RightBraceToken; }
     virtual std::string ToFormatString() const override;
 
 private:

@@ -60,7 +60,7 @@ std::string FileMetaAssignStatements::ToFormatString() const {
         if (i > 0) sb << " ";
         //sb << (m_NodeList[i]->GetToken() != nullptr ? m_NodeList[i]->GetToken()->lexeme().ToString() : "");
     }
-    if (isAppendSemiColon()) {
+    if (IsAppendSemiColon()) {
         sb << ";";
     }
     return sb.str();
@@ -78,7 +78,7 @@ std::string FileMetaDefineVarStatements::ToFormatString() const {
         if (i > 0) sb << " ";
         //sb << (m_NodeList[i]->token() ? m_NodeList[i]->token()->lexeme().ToString() : "");
     }
-    if (isAppendSemiColon()) {
+    if (IsAppendSemiColon()) {
         sb << ";";
     }
     return sb.str();
@@ -96,7 +96,7 @@ std::string FileMetaCallStatements::ToFormatString() const {
         if (i > 0) sb << " ";
         //sb << (m_NodeList[i]->token() ? m_NodeList[i]->token()->lexeme().ToString() : "");
     }
-    if (isAppendSemiColon()) {
+    if (IsAppendSemiColon()) {
         sb << ";";
     }
     return sb.str();
@@ -114,7 +114,7 @@ std::string FileMetaReturnStatements::ToFormatString() const {
     for (size_t i = 0; i < m_NodeList.size(); i++) {
         //sb << " " << (m_NodeList[i]->token() ? m_NodeList[i]->token()->lexeme().ToString() : "");
     }
-    if (isAppendSemiColon()) {
+    if (IsAppendSemiColon()) {
         sb << ";";
     }
     return sb.str();
@@ -189,7 +189,7 @@ std::string FileMetaBreakContinueGoStatements::ToFormatString() const {
         if (i > 0) sb << " ";
         //sb << (m_NodeList[i]->token() ? m_NodeList[i]->token()->lexeme().ToString() : "");
     }
-    if (isAppendSemiColon()) {
+    if (IsAppendSemiColon()) {
         sb << ";";
     }
     return sb.str();
@@ -207,7 +207,7 @@ std::string FileMetaOtherPlatformStatement::ToFormatString() const {
         if (i > 0) sb << " ";
         //sb << (m_NodeList[i]->token() ? m_NodeList[i]->token()->lexeme().ToString() : "");
     }
-    if (isAppendSemiColon()) {
+    if (IsAppendSemiColon()) {
         sb << ";";
     }
     return sb.str();

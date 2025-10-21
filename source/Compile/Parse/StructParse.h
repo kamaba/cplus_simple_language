@@ -12,10 +12,10 @@
 #include <memory>
 #include <stack>
 #include <string>
-#include "Node.h"
 
 namespace SimpleLanguage {
 namespace Compile {
+class Node;
 
 class StructParse {
 public:
@@ -47,7 +47,7 @@ public:
         ParseCurrentNodeInfo(FileMetaSyntax* nss);
     };
 
-    StructParse(FileMeta& fm, Node& node);
+    StructParse(FileMeta& fm, Node* node);
     
     void ParseRootNodeToFileMeta();
     std::vector<Node*> GetAllNodeToSemiColon(Node* pnode, bool isAddSelf = false);
@@ -85,7 +85,7 @@ protected:
 private:
     FileMeta& m_FileMeta;
     std::stack<ParseCurrentNodeInfo*> m_CurrentNodeInfoStack;
-    Node& m_RootNode;
+    Node* m_RootNode;
 };
 
 } // namespace Compile

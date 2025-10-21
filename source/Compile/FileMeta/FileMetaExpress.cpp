@@ -30,7 +30,7 @@ std::string FileMetaBaseTerm::ToFormatString() const {
 // FileMetaSymbolTerm implementation
 FileMetaSymbolTerm::FileMetaSymbolTerm(FileMeta* fm, Token* token) : FileMetaBaseTerm(fm), m_SymbolToken(token) {
     if (token != nullptr) {
-        m_Priority = SimpleLanguage::SignComputePriority::GetPriority(token->type());
+    //    m_Priority = SimpleLanguage::SignComputePriority::GetPriority(token->type());
     }
 }
 
@@ -70,7 +70,7 @@ std::string FileMetaConstValueTerm::ToFormatString() const {
 
 // FileMetaCallTerm implementation
 FileMetaCallTerm::FileMetaCallTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_CallNode(node) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaCallTerm::BuildAST() {
@@ -103,7 +103,7 @@ std::string FileMetaCallTerm::ToFormatString() const {
 // FileMetaParTerm implementation
 FileMetaParTerm::FileMetaParTerm(FileMeta* fm, Node* node, FileMetaTermExpress::EExpressType expressType)
     : FileMetaBaseTerm(fm), m_ParNode(node), m_ExpressType(expressType) {
-    m_Priority = SimpleLanguage::Core::SignComputePriority::Level1;
+    m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }
 
 void FileMetaParTerm::BuildAST() {
@@ -111,24 +111,24 @@ void FileMetaParTerm::BuildAST() {
     
     // Create expression from par node content
     std::vector<Node*> parContent;
-    for (auto child : m_ParNode->childList()) {
-        if (child->nodeType() != SimpleLanguage::Compile::Parse::ENodeType::LineEnd &&
-            child->nodeType() != SimpleLanguage::Compile::Parse::ENodeType::SemiColon) {
+    for (auto child : m_ParNode->childList) {
+        if (child->nodeType != SimpleLanguage::Compile::ENodeType::LineEnd &&
+            child->nodeType != SimpleLanguage::Compile::ENodeType::SemiColon) {
             parContent.push_back(child);
         }
     }
     
     if (!parContent.empty()) {
-        m_Express = SimpleLanguage::Compile::FileMetatUtil::CreateFileMetaExpress(m_FileMeta, parContent, m_ExpressType);
+     //   m_Express = SimpleLanguage::Compile::FileMetatUtil::CreateFileMetaExpress(m_FileMeta, parContent, m_ExpressType);
     }
 }
 
 std::string FileMetaParTerm::ToFormatString() const {
     std::ostringstream sb;
     sb << "(";
-    if (m_Express != nullptr) {
-        sb << m_Express->ToFormatString();
-    }
+    //if (m_Express != nullptr) {
+    //    sb << m_Express->ToFormatString();
+    //}
     sb << ")";
     return sb.str();
 }
@@ -254,10 +254,10 @@ void FileMetaTermExpress::BuildAST() {
                 m_Left = terms[i];
             } else {
                 auto current = m_Left;
-                while (current->right() != nullptr) {
-                    current = current->right();
+                while (current->GetRight() != nullptr) {
+                    current = current->GetRight();
                 }
-                current->setRight(terms[i]);
+                current->SetRight(terms[i]);
             }
         }
         m_Right = terms[terms.size() - 1];

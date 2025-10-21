@@ -90,6 +90,10 @@ namespace Compile {
     {
     public:
         Token();
+        Token(const std::string& path, ETokenType tokenType, const std::string& lexeme,
+            int sourceLine, int sourceChar );
+        Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
+            int sourceLine, int sourceChar);
         Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
               int sourceLine, int sourceChar, const MultiData* extend = nullptr );
         Token(const Token& token);

@@ -38,7 +38,7 @@ public:
     void SetPriority(int value) { m_Priority = value; }
     
     bool IsOnlyOne() const { return GetLeft() == nullptr && GetRight() == nullptr; }
-    const std::vector<FileMetaBaseTerm*>& fileMetaExpressList() const { return m_FileMetaExpressList; }
+    const std::vector<FileMetaBaseTerm*>& GetFileMetaExpressList() const { return m_FileMetaExpressList; }
     
     FileMetaBaseTerm* GetLeft() const { return m_Left; }
     void setLeft(FileMetaBaseTerm* value) {

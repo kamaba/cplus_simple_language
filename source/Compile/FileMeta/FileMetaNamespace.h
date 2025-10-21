@@ -8,9 +8,6 @@
 
 #pragma once
 
-#include "FileMetaBase.h"
-#include "FileMetaCommon.h"
-#include "../Parse/Node.h"
 #include "../../Define.h"
 #include <vector>
 #include <string>
@@ -37,7 +34,7 @@ public:
     Node* NamespaceNode() const { return m_NamespaceNode; }
     Node* NamespaceNameNode() const { return m_NamespaceNameNode; }
     virtual std::string Name() const override;
-    NamespaceStatementBlock* namespaceStatementBlock() const { return m_NamespaceStateBlock; }
+    NamespaceStatementBlock* GetNamespaceStatementBlock() const { return m_NamespaceStateBlock; }
     FileMetaNamespace* topLevelFileMetaNamespace = nullptr;
     std::stack<FileMetaNamespace*> NamespaceStack() const;
 

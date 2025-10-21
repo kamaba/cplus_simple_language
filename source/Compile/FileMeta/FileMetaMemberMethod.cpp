@@ -1,14 +1,11 @@
 #include "FileMetaMemberMethod.h"
 #include "FileMeta.h"
-#include "FileMetaClassDefine.h"
-#include "FileMetaTemplateDefine.h"
-#include "FileMetaBlockSyntax.h"
 #include "FileMetaSyntax.h"
-#include "../FileMetatUtil.h"
+#include "../FileMeta/FileMetatUtil.h"
 #include "../CompilerUtil.h"
-#include "../../Core/Log.h"
-#include "../../Core/Define.h"
-#include "../../Core/StructParse.h"
+#include "../../Debug/Log.h"
+#include "../../Define.h"
+#include "../Parse/StructParse.h"
 #include <algorithm>
 #include <unordered_set>
 
@@ -16,7 +13,9 @@ namespace SimpleLanguage {
 namespace Compile {
 
 // FileMetaParamterDefine implementation
-FileMetaParamterDefine::FileMetaParamterDefine(FileMeta* fileMeta, const std::vector<Node*>& list) : m_FileMeta(fileMeta) {
+FileMetaParamterDefine::FileMetaParamterDefine(FileMeta* fileMeta, const std::vector<Node*>& list) 
+{
+    m_FileMeta = fileMeta;
     ParseBuildMetaParamter(list);
 }
 
@@ -50,7 +49,7 @@ bool FileMetaParamterDefine::ParseBuildMetaParamter(const std::vector<Node*>& in
             "Error 没有找到该定义名称 必须使用例: X = 101; 的格式");
         return false;
     }
-    m_Token = nameNode->token();
+    m_Token = nameNode->token;
 
     if (typeNode != nullptr)
         m_ClassDefineRef = new FileMetaClassDefine(m_FileMeta, typeNode);
@@ -63,14 +62,14 @@ bool FileMetaParamterDefine::GetNameAndTypeNode(const std::vector<Node*>& listDe
     for (size_t i = 0; i < listDefieNode.size() - 1; i++) {
         auto curNode = listDefieNode[i];
         Node* nextNode = listDefieNode[i + 1];
-        if (nextNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Bracket) {
-            curNode->setBracketNode(nextNode);
+        if (nextNode->nodeType == SimpleLanguage::Compile::ENodeType::Bracket) {
+            curNode->bracketNode = (nextNode);
             removeNodeList.push_back(nextNode);
-        } else if (curNode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Key && 
-                  curNode->token() != nullptr && 
-                  curNode->token()->type() == SimpleLanguage::ETokenType::Params) {
+        } else if (curNode->nodeType == SimpleLanguage::Compile::ENodeType::Key && 
+                  curNode->token != nullptr && 
+                  curNode->token->GetType() == SimpleLanguage::ETokenType::Params) {
             typeNode = curNode;
-            paramstoken = curNode->token();
+            paramstoken = curNode->token;
             removeNodeList.push_back(curNode);
         }
     }
@@ -78,7 +77,7 @@ bool FileMetaParamterDefine::GetNameAndTypeNode(const std::vector<Node*>& listDe
     for (size_t i = 0; i < removeNodeList.size(); i++) {
         auto it = std::find(listDefieNode.begin(), listDefieNode.end(), removeNodeList[i]);
         if (it != listDefieNode.end()) {
-            listDefieNode.erase(it);
+            //listDefieNode.erase(it);
         }
     }
 
@@ -95,13 +94,13 @@ bool FileMetaParamterDefine::GetNameAndTypeNode(const std::vector<Node*>& listDe
 
 std::string FileMetaParamterDefine::ToFormatString() const {
     std::ostringstream sb;
-    for (int i = 0; i < deep(); i++)
+    for (int i = 0; i < Deep(); i++)
         sb << SimpleLanguage::Global::tabChar;
     if (m_ClassDefineRef != nullptr)
         sb << " " << m_ClassDefineRef->ToFormatString();
-    sb << " " << (m_Token ? m_Token->lexeme().ToString() : "");
+    sb << " " << (m_Token ? m_Token->GetLexemeString() : "");
     if (m_AssignToken != nullptr) {
-        sb << " " << m_AssignToken->lexeme().ToString();
+        sb << " " << m_AssignToken->GetLexemeString();
         sb << " " << (m_Express ? m_Express->ToFormatString() : "");
     }
     return sb.str();
@@ -152,7 +151,7 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
     std::vector<Token*> list;
     Node* funNameNode = nullptr;
     Node* node = new Node(nullptr);
-    node->setChildList(nodeList);
+    node->childList = nodeList;
     auto nodeList2 = SimpleLanguage::Core::StructParse::HandleBeforeNode(node);
     
     while (addCount < static_cast<int>(nodeList2.size())) {

@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include "../Token.h"
 #include <string>
 
 namespace SimpleLanguage {
 namespace Compile {
 // Forward declarations
 class FileMeta;
+class Token;
 
 class FileMetaBase {
 public:

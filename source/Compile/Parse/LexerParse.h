@@ -17,8 +17,7 @@
 namespace SimpleLanguage {
 namespace Compile {
 
-    class Token;
-
+class Token;
 class LexerParse {
 public:
     LexerParse(const std::string& path, const std::string& buffer);
@@ -40,6 +39,7 @@ private:
     
     void AddToken(ETokenType type);
     void AddToken(ETokenType type, const std::string& lexeme);
+    void AddToken(ETokenType type, const std::string& lexeme, const std::string& extend);
     void AddToken(ETokenType type, const std::string& lexeme, EType extend);
     void AddToken(ETokenType type, const std::string& lexeme, int sourceLine, int sourceChar);
     void AddToken(ETokenType type, const std::string& lexeme, EType extend, int sourceLine, int sourceChar);
