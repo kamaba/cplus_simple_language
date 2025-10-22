@@ -10,16 +10,30 @@
 
 #include "MetaBase.h"
 #include "../Define.h"
+#include "../Compile/FileMeta/FileMetaClass.h"
+#include "../Compile/Token.h"
+#include "MetaType.h"
+#include "MetaMemberVariable.h"
+#include "MetaMemberFunction.h"
+#include "MetaMemberFunctionTemplateNode.h"
+#include "MetaExpressNode.h"
+#include "MetaTemplate.h"
+#include "MetaInputParamCollection.h"
+#include "ClassManager.h"
+#include "CoreMetaClassManager.h"
+#include "TypeManager.h"
+#include "MetaVariableManager.h"
+#include "MethodManager.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <algorithm>
 
 namespace SimpleLanguage 
 {
 	namespace Core
 	{
-
 		enum class EClassDefineType : uint8_t
 		{
 			StructDefine = 0,
@@ -35,10 +49,13 @@ namespace SimpleLanguage
 		class MetaMemberFunctionTemplateNode;
 		class MetaExpressNode;
 		class MetaTemplate;
+		class MetaInputParamCollection;
+		class MetaGenTemplateClass;
 
 		class MetaClass : public MetaBase
 		{
 		public:
+			// 构造函数
 			MetaClass();
 			MetaClass(const std::string& name, EClassDefineType ecdt);
 			MetaClass(const std::string& name, EType type = EType::Class);
@@ -49,27 +66,28 @@ namespace SimpleLanguage
 			virtual std::string GetAllClassName() const { return m_AllName; }
 			EType GetEType() const { return m_Type; }
 			EClassDefineType GetClassDefineType() const { return m_ClassDefineType; }
-			MetaClass* getExtendClass() const { return m_ExtendClass; }
-			MetaType* getExtendClassMetaType() const { return m_ExtendClassMetaType; }
-			int getExtendLevel() const { return m_ExtendLevel; }
-			bool isInterfaceClass() const { return m_IsInterfaceClass; }
-			const std::vector<MetaClass*>& getInterfaceClass() const { return m_InterfaceClass; }
-			MetaExpressNode* getDefaultExpressNode() const { return m_DefaultExpressNode; }
+			MetaClass* GetExtendClass() const { return m_ExtendClass; }
+			MetaType* GetExtendClassMetaType() const { return m_ExtendClassMetaType; }
+			int GetExtendLevel() const { return m_ExtendLevel; }
+			bool IsInterfaceClass() const { return m_IsInterfaceClass; }
+			const std::vector<MetaClass*>& GetInterfaceClass() const { return m_InterfaceClass; }
+			MetaExpressNode* GetDefaultExpressNode() const { return m_DefaultExpressNode; }
 			const std::unordered_map<std::string, MetaMemberVariable*>& GetAllMetaMemberVariableDict() const;
 			std::vector<MetaMemberVariable*> GetAllMetaMemberVariableList() const;
-			const std::vector<MetaMemberFunction*>& getNonStaticVirtualMetaMemberFunctionList() const { return m_NonStaticVirtualMetaMemberFunctionList; }
-			const std::vector<MetaMemberFunction*>& getStaticMetaMemberFunctionList() const { return m_StaticMetaMemberFunctionList; }
-			const std::unordered_map<std::string, MetaMemberVariable*>& getMetaMemberVariableDict() const { return m_MetaMemberVariableDict; }
-			const std::unordered_map<std::string, MetaMemberFunctionTemplateNode*>& getMetaMemberFunctionTemplateNodeDict() const { return m_MetaMemberFunctionTemplateNodeDict; }
-			const std::unordered_map<std::string, MetaMemberVariable*>& getMetaExtendMemeberVariableDict() const { return m_MetaExtendMemeberVariableDict; }
-			const std::vector<MetaType*>& getBindStructTemplateMetaClassList() const { return m_BindStructTemplateMetaClassList; }
-			bool isHandleExtendVariableDirty() const { return m_IsHandleExtendVariableDirty; }
+			const std::vector<MetaMemberFunction*>& GetNonStaticVirtualMetaMemberFunctionList() const { return m_NonStaticVirtualMetaMemberFunctionList; }
+			const std::vector<MetaMemberFunction*>& GetStaticMetaMemberFunctionList() const { return m_StaticMetaMemberFunctionList; }
+			const std::unordered_map<std::string, MetaMemberVariable*>& GetMetaMemberVariableDict() const { return m_MetaMemberVariableDict; }
+			const std::unordered_map<std::string, MetaMemberFunctionTemplateNode*>& GetMetaMemberFunctionTemplateNodeDict() const { return m_MetaMemberFunctionTemplateNodeDict; }
+			const std::unordered_map<std::string, MetaMemberVariable*>& GetMetaExtendMemeberVariableDict() const { return m_MetaExtendMemeberVariableDict; }
+			const std::vector<MetaType*>& GetBindStructTemplateMetaClassList() const { return m_BindStructTemplateMetaClassList; }
+			const std::unordered_map<Compile::Token*, Compile::FileMetaClass*>& GetFileMetaClassDict() const { return m_FileMetaClassDict; }
+			bool IsHandleExtendVariableDirty() const { return m_IsHandleExtendVariableDirty; }
 
 			// 设置方法
-			void setDefaultExpressNode(MetaExpressNode* defaultExpressNode) { m_DefaultExpressNode = defaultExpressNode; }
-			void setClassDefineType(EClassDefineType ecdt) { m_ClassDefineType = ecdt; }
-			void setExtendClass(MetaClass* sec) { m_ExtendClass = sec; }
-			void setHandleExtendVariableDirty(bool dirty) { m_IsHandleExtendVariableDirty = dirty; }
+			void SetDefaultExpressNode(MetaExpressNode* defaultExpressNode) { m_DefaultExpressNode = defaultExpressNode; }
+			void SetClassDefineType(EClassDefineType ecdt) { m_ClassDefineType = ecdt; }
+			void SetExtendClass(MetaClass* sec) { m_ExtendClass = sec; }
+			void SetHandleExtendVariableDirty(bool dirty) { m_IsHandleExtendVariableDirty = dirty; }
 
 			// 虚方法
 			virtual void Parse();
@@ -86,11 +104,11 @@ namespace SimpleLanguage
 			virtual void ParseDefineComplete();
 			virtual MetaMemberVariable* GetMetaMemberVariableByName(const std::string& name);
 			virtual std::vector<MetaMemberVariable*> GetMetaMemberVariableListByFlag(bool isStatic);
-			virtual MetaMemberFunction* GetMetaDefineGetSetMemberFunctionByName(const std::string& name, void* inputParam, bool isGet, bool isSet);
-			virtual MetaMemberFunction* GetMetaMemberFunctionByNameAndInputTemplateInputParamCount(const std::string& name, int templateParamCount, void* inputParam, bool isIncludeExtendClass = true);
-			virtual MetaMemberFunction* GetMetaMemberFunctionByNameAndInputTemplateInputParam(const std::string& name, const std::vector<MetaClass*>& mtList, void* inputParam, bool isIncludeExtendClass = true);
+			virtual MetaMemberFunction* GetMetaDefineGetSetMemberFunctionByName(const std::string& name, MetaInputParamCollection* inputParam, bool isGet, bool isSet);
+			virtual MetaMemberFunction* GetMetaMemberFunctionByNameAndInputTemplateInputParamCount(const std::string& name, int templateParamCount, MetaInputParamCollection* inputParam, bool isIncludeExtendClass = true);
+			virtual MetaMemberFunction* GetMetaMemberFunctionByNameAndInputTemplateInputParam(const std::string& name, const std::vector<MetaClass*>& mtList, MetaInputParamCollection* inputParam, bool isIncludeExtendClass = true);
 			virtual MetaMemberFunction* GetMetaMemberConstructDefaultFunction();
-			virtual MetaMemberFunction* GetMetaMemberConstructFunction(void* mmpc);
+			virtual MetaMemberFunction* GetMetaMemberConstructFunction(MetaInputParamCollection* mmpc);
 			virtual MetaMemberFunction* GetFirstMetaMemberFunctionByName(const std::string& name);
 			virtual std::vector<MetaMemberFunction*> GetMemberInterfaceFunction();
 			virtual bool GetMemberInterfaceFunctionByFunc(MetaMemberFunction* func);
@@ -108,22 +126,25 @@ namespace SimpleLanguage
 			void AddDefineConstructFunction();
 			void AddDefineInstanceValue();
 			void HandleExtendClassVariable();
-			MetaMemberFunction* GetMetaMemberConstructDefaultFunction();
-			MetaMemberFunction* GetMetaMemberConstructFunction(void* mmpc);
 
 			// 模板相关方法
 			MetaType* AddMetaPreTemplateClass(MetaType* mt, bool isParse, bool& isGenMetaClass);
-			MetaClass* AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(const std::vector<MetaType*>& templateMetaTypeList);
+			MetaGenTemplateClass* AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(const std::vector<MetaType*>& templateMetaTypeList);
 			MetaType* BindStructTemplateMetaClassList(MetaType* mt);
 
 			// 格式化方法
 			std::string ToString() const;
 			std::string ToFormatString() const override;
 
+			// 模板相关属性访问器
+			bool IsTemplateClass() const { return m_IsTemplateClass; }
+			bool IsGenTemplate() const { return m_IsGenTemplate; }
+			const std::vector<MetaTemplate*>& GetMetaTemplateList() const { return m_MetaTemplateList; }
+
 		protected:
 			int m_ExtendLevel = 0;
 			EType m_Type = EType::None;
-			std::unordered_map<void*, void*> m_FileMetaClassDict; // 简化实现，实际应该是 FileMetaClass
+			std::unordered_map<Compile::Token*, Compile::FileMetaClass*> m_FileMetaClassDict;
 			MetaClass* m_ExtendClass = nullptr;
 			MetaType* m_ExtendClassMetaType = nullptr;
 			std::vector<MetaType*> m_BindStructTemplateMetaClassList;
@@ -146,12 +167,6 @@ namespace SimpleLanguage
 			std::vector<MetaTemplate*> m_MetaTemplateList;
 			bool m_IsTemplateClass = false;
 			bool m_IsGenTemplate = false;
-
-		public:
-			// 模板相关属性访问器
-			bool isTemplateClass() const { return m_IsTemplateClass; }
-			bool isGenTemplate() const { return m_IsGenTemplate; }
-			const std::vector<MetaTemplate*>& getMetaTemplateList() const { return m_MetaTemplateList; }
 		};
 
 	} // namespace Core

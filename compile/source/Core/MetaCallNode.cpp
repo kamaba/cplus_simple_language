@@ -7,8 +7,13 @@
 //****************************************************************************
 
 #include "MetaCallNode.h"
+#include "MetaType.h"
+#include "MetaClass.h"
+#include "MetaData.h"
+#include "MetaEnum.h"
 #include "../Compile/Token.h"
-#include "../Compile/CoreFileMeta/FileMetaBase.h"
+#include "../Compile/FileMeta/FileMetaBase.h"
+#include "MetaNode.h"
 #include <iostream>
 
 namespace SimpleLanguage {
@@ -35,45 +40,45 @@ std::string MetaCallNode::ToFormatString() const {
     }
     
     if (m_CallNodeType == ECallNodeType::MetaNode) {
-        result += m_MetaNode ? m_MetaNode->getName() : "";
+        result += m_MetaNode ? m_MetaNode->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::MetaType) {
-        result += m_MetaType ? m_MetaType->toFormatString() : "";
+        result += m_MetaType ? m_MetaType->ToFormatString() : "";
     } else if (m_CallNodeType == ECallNodeType::ClassName) {
-        result += m_MetaClass ? m_MetaClass->getName() : "";
+        result += m_MetaClass ? m_MetaClass->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::TypeName) {
-        result += m_MetaType ? m_MetaType->toFormatString() : "";
+        result += m_MetaType ? m_MetaType->ToFormatString() : "";
     } else if (m_CallNodeType == ECallNodeType::TemplateName) {
-        result += m_MetaClass ? m_MetaClass->getName() : "";
+        result += m_MetaClass ? m_MetaClass->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::EnumName) {
-        result += m_MetaEnum ? m_MetaEnum->getName() : "";
+        result += m_MetaEnum ? m_MetaEnum->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::EnumDefaultValue) {
-        result += m_MetaEnum ? m_MetaEnum->getName() : "";
+        result += m_MetaEnum ? m_MetaEnum->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::EnumValueArray) {
-        result += m_MetaEnum ? m_MetaEnum->getName() : "";
+        result += m_MetaEnum ? m_MetaEnum->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::DataName) {
-        result += m_MetaData ? m_MetaData->getName() : "";
+        result += m_MetaData ? m_MetaData->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::DataValue) {
-        result += m_MetaData ? m_MetaData->getName() : "";
+        result += m_MetaData ? m_MetaData->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::FunctionInnerVariableName) {
-        result += m_MetaMemberVariable ? m_MetaMemberVariable->getName() : "";
+        result += m_MetaMemberVariable ? m_MetaMemberVariable->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::VisitVariable) {
-        result += m_MetaMemberVariable ? m_MetaMemberVariable->getName() : "";
+        result += m_MetaMemberVariable ? m_MetaMemberVariable->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::IteratorVariable) {
-        result += m_MetaMemberVariable ? m_MetaMemberVariable->getName() : "";
+        result += m_MetaMemberVariable ? m_MetaMemberVariable->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::MemberVariableName) {
-        result += m_MetaMemberVariable ? m_MetaMemberVariable->getName() : "";
+        result += m_MetaMemberVariable ? m_MetaMemberVariable->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::MemberDataName) {
-        result += m_MetaMemberData ? m_MetaMemberData->getName() : "";
+        result += m_MetaMemberData ? m_MetaMemberData->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::NewClass) {
-        result += m_MetaClass ? m_MetaClass->getName() : "";
+        result += m_MetaClass ? m_MetaClass->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::NewTemplate) {
-        result += m_MetaClass ? m_MetaClass->getName() : "";
+        result += m_MetaClass ? m_MetaClass->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::NewData) {
-        result += m_MetaData ? m_MetaData->getName() : "";
+        result += m_MetaData ? m_MetaData->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::MemberFunctionName) {
-        result += m_MetaMemberFunction ? m_MetaMemberFunction->getName() : "";
+        result += m_MetaMemberFunction ? m_MetaMemberFunction->GetName() : "";
     } else if (m_CallNodeType == ECallNodeType::ConstValue) {
-        result += m_MetaExpressNode ? m_MetaExpressNode->toFormatString() : "";
+        result += m_MetaExpressNode ? m_MetaExpressNode->ToFormatString() : "";
     } else if (m_CallNodeType == ECallNodeType::This) {
         result += "this";
     } else if (m_CallNodeType == ECallNodeType::Base) {
@@ -87,11 +92,11 @@ std::string MetaCallNode::ToTokenString() const {
     std::string result;
     
     if (m_Token != nullptr) {
-        result = m_Token->getLexeme().toString();
+        result = m_Token->GetLexemeString();
     }
     
     if (m_NextMetaCallNode != nullptr) {
-        result += m_NextMetaCallNode->toTokenString();
+        result += m_NextMetaCallNode->ToTokenString();
     }
     
     return result;
@@ -101,7 +106,7 @@ void MetaCallNode::Parse() {
     // 解析逻辑
     if (m_Token != nullptr) {
         // 根据 token 类型设置相应的标志
-        std::string tokenValue = m_Token->getLexeme().toString();
+        std::string tokenValue = m_Token->GetLexemeString();
         
         if (tokenValue == "static") {
             m_IsStatic = true;

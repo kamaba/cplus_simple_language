@@ -19,7 +19,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 class RangeIteratorMetaClass : public MetaClass {
 public:
@@ -97,6 +96,5 @@ public:
     }
 };
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

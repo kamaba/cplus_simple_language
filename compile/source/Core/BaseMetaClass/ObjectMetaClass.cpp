@@ -12,7 +12,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 ObjectMetaClass::ObjectMetaClass() : MetaClass(DefaultObject::Object.ToString()) {
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -80,6 +79,5 @@ MetaClass* ObjectMetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

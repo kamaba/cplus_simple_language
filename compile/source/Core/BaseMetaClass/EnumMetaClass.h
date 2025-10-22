@@ -16,7 +16,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 class EnumMetaClass : public MetaClass {
 public:
@@ -44,6 +43,5 @@ public:
     }
 };
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

@@ -15,7 +15,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 class ByteMetaClass : public MetaClass {
 public:
@@ -47,6 +46,5 @@ public:
     }
 };
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

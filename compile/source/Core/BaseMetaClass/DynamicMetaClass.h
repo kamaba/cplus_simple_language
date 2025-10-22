@@ -19,7 +19,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 class DynamicMetaClass : public MetaClass {
 public:
@@ -99,6 +98,5 @@ public:
     }
 };
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

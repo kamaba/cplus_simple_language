@@ -15,7 +15,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 class NullMetaClass : public MetaClass {
 public:
@@ -30,6 +29,5 @@ public:
     }
 };
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

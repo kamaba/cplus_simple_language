@@ -13,7 +13,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 DynamicMetaData::DynamicMetaData() : MetaClass(DefaultObject::Data.ToString()) {
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -85,6 +84,5 @@ MetaClass* DynamicMetaData::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

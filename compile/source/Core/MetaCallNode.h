@@ -11,10 +11,12 @@
 #include "MetaBase.h"
 #include "../Define.h"
 #include "../Compile/Token.h"
-#include "../Compile/CoreFileMeta/FileMetaBase.h"
 #include <string>
 #include <vector>
 #include <memory>
+#include "../Compile/FileMeta/FileMetaBase.h"
+
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -492,11 +494,11 @@ public:
     void setOmega(bool isOmega) { m_IsOmega = isOmega; }
 
     // 方法
-    virtual std::string toFormatString() const override;
-    virtual std::string toTokenString() const;
-    virtual void parse();
-    virtual void calcReturnType();
-    virtual MetaCallNode* clone() const;
+    virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const;
+    virtual void Parse();
+    virtual void CalcReturnType();
+    virtual MetaCallNode* Clone() const;
 
 private:
     ECallNodeSign m_CallNodeSign = ECallNodeSign::Null;

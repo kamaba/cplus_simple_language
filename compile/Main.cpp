@@ -4,7 +4,7 @@
 #include <iostream>
 #include "source/Project/ProjectManager.h"
 
-using namespace SimpleLanguage::Parse;
+using namespace SimpleLanguage::Project;
 
 int main( const char* args )
 {

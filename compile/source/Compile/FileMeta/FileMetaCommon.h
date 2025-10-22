@@ -37,7 +37,7 @@ public:
     std::string NamespaceString() const;
     const std::vector<std::string>& NamespaceStackList() const;
     const std::vector<std::string>& NamespaceList() const;
-    const std::vector<Token*>& TokenList() const { return m_TokenList; }
+    const std::vector<Token*>& GetTokenList() const { return m_TokenList; }
 
     static NamespaceStatementBlock* CreateStateBlock(const std::vector<Token*>& token);
     std::string ToString() const;

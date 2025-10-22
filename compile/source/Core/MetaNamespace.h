@@ -21,8 +21,14 @@ namespace Core {
         MetaNamespace(const std::string& name);
         virtual ~MetaNamespace() = default;
 
+        bool GetIsNowAllowCreateName() { return m_IsNotAllowCreateName; }
+        void SetIsNowAllowCreateName(bool isAllow) { m_IsNotAllowCreateName = isAllow; }  
+
         void SetMetaNode(MetaNode* node) { m_MetaNode = node; }
         std::string ToFormatString() const override;
+
+    private:
+        bool m_IsNotAllowCreateName = false;
     };
 
 } // namespace Core

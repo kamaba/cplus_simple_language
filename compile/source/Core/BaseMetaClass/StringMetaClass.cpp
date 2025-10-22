@@ -11,7 +11,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 StringMetaClass::StringMetaClass() : MetaClass(DefaultObject::String.ToString()) {
     std::type_info& type = typeid(std::string);
@@ -26,6 +25,5 @@ MetaClass* StringMetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

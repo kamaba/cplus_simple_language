@@ -12,6 +12,8 @@
 #include "../Debug/Log.h"
 #include <iostream>
 
+using namespace SimpleLanguage::Debug;
+
 namespace SimpleLanguage {
 namespace Core {
 

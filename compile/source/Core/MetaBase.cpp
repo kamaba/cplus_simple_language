@@ -16,7 +16,6 @@ namespace Core {
     {
         m_RefFromType = RefFromType::Local;
     }
-
     MetaBase::MetaBase(const MetaBase& mb)
         : m_Name(mb.m_Name)
         , m_AllName(mb.m_AllName)
@@ -25,13 +24,9 @@ namespace Core {
         , m_MetaNode(mb.m_MetaNode)
     {
     }
-
-    std::string MetaBase::getPathName() const
-    {
-        if (m_MetaNode) {
-            return m_MetaNode->getAllName();
-        }
-        return "";
+    ::std::string MetaBase::GetPathName() const
+    { 
+        return m_MetaNode != nullptr ? m_MetaNode->GetAllName() : "";
     }
 
 } // namespace Core

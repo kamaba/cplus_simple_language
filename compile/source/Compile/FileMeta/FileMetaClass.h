@@ -36,31 +36,42 @@ namespace SimpleLanguage
 
 		class FileMetaClass : public FileMetaBase 
 		{
+			// ParseStructTemp helper class
+			class ParseStructTemp {
+			public:
+				ParseStructTemp* parentPSt = nullptr;
+				Node* nameNode = nullptr;
+				Node* angleNode = nullptr;
+				::std::vector<ParseStructTemp*> angleContentNodeList;
+
+				void AddParseStructTemplate(ParseStructTemp* pst);
+				void GenFileInputTemplateNode(Node* node, FileMeta* fm);
+			};
 		public:
 			FileMetaClass(FileMeta* fm, const ::std::vector<Node*>& listNode);
 			virtual ~FileMetaClass() = default;
 
 			// Properties
-			bool innerClass() const { return m_InnerClass; }
-			void setInnerClass(bool value) { m_InnerClass = value; }
+			bool InnerClass() const { return m_InnerClass; }
+			void SetInnerClass(bool value) { m_InnerClass = value; }
 
-			bool isConst() const { return m_ConstToken != nullptr; }
-			bool isStatic() const { return m_StaticToken != nullptr; }
-			bool isEnum() const { return m_EnumToken != nullptr; }
-			bool isData() const { return m_DataToken != nullptr; }
-			bool isPartial() const { return m_PartialToken != nullptr; }
+			bool IsConst() const { return m_ConstToken != nullptr; }
+			bool IsStatic() const { return m_StaticToken != nullptr; }
+			bool IsEnum() const { return m_EnumToken != nullptr; }
+			bool IsData() const { return m_DataToken != nullptr; }
+			bool IsPartial() const { return m_PartialToken != nullptr; }
 
-			Token* preInterfaceToken() const { return m_PreInterfaceToken; }
-			MetaClass* metaClass() const { return m_MetaClass; }
-			FileMetaClassDefine* fileMetaExtendClass() const { return m_FileMetaExtendClass; }
-			const ::std::vector<FileMetaClassDefine*>& interfaceClassList() const { return m_InterfaceClassList; }
-			FileMetaNamespace* topLevelFileMetaNamespace() const { return m_TopLevelFileMetaNamespace; }
-			FileMetaClass* topLevelFileMetaClass() const { return m_TopLevelFileMetaClass; }
-			const ::std::vector<FileMetaTemplateDefine*>& templateDefineList() const { return m_TemplateDefineList; }
-			NamespaceStatementBlock* namespaceBlock() const { return m_NamespaceBlock; }
-			const ::std::vector<FileMetaMemberVariable*>& memberVariableList() const { return m_MemberVariableList; }
-			const ::std::vector<FileMetaMemberFunction*>& memberFunctionList() const { return m_MemberFunctionList; }
-			const ::std::vector<FileMetaMemberData*>& memberDataList() const { return m_MemberDataList; }
+			Token* PreInterfaceToken() const { return m_PreInterfaceToken; }
+			MetaClass* GetMetaClass() const { return m_MetaClass; }
+			FileMetaClassDefine* GetFileMetaExtendClass() const { return m_FileMetaExtendClass; }
+			const ::std::vector<FileMetaClassDefine*>& GetInterfaceClassList() const { return m_InterfaceClassList; }
+			FileMetaNamespace* GetTopLevelFileMetaNamespace() const { return m_TopLevelFileMetaNamespace; }
+			FileMetaClass* GetTopLevelFileMetaClass() const { return m_TopLevelFileMetaClass; }
+			const ::std::vector<FileMetaTemplateDefine*>& GetTemplateDefineList() const { return m_TemplateDefineList; }
+			NamespaceStatementBlock* GetNamespaceBlock() const { return m_NamespaceBlock; }
+			const ::std::vector<FileMetaMemberVariable*>& GetMemberVariableList() const { return m_MemberVariableList; }
+			const ::std::vector<FileMetaMemberFunction*>& GetMemberFunctionList() const { return m_MemberFunctionList; }
+			const ::std::vector<FileMetaMemberData*>& GetMemberDataList() const { return m_MemberDataList; }
 
 			// Methods
 			void AddFileMemberData(FileMetaMemberData* fmmd);
@@ -109,18 +120,6 @@ namespace SimpleLanguage
 			::std::vector<Node*> m_NodeList;
 			::std::ostringstream stringBuilder;
 			bool m_InnerClass = false;
-
-			// ParseStructTemp helper class
-			class ParseStructTemp {
-			public:
-				ParseStructTemp* parentPSt = nullptr;
-				Node* nameNode = nullptr;
-				Node* angleNode = nullptr;
-				::std::vector<ParseStructTemp*> angleContentNodeList;
-
-				void AddParseStructTemplate(ParseStructTemp* pst);
-				void GenFileInputTemplateNode(Node* node, FileMeta* fm);
-			};
 		};
 	} // namespace Compile
 } // namespace SimpleLanguage

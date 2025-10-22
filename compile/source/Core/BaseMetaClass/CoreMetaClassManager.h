@@ -32,8 +32,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
-
 enum class DefaultObject {
     Void,
     Null,
@@ -277,6 +275,5 @@ public:
     MetaClass* GetArrayIteratorMetaClass() const { return arrayIteratorMetaClass; }
 };
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

@@ -10,12 +10,13 @@
 
 #include <map>
 #include <string>
-#include "MetaModule.h"
-#include "MetaNode.h"
 #include "../Debug/Log.h"
 
 namespace SimpleLanguage {
 namespace Core {
+
+class MetaModule;
+class MetaNode;
 
 class ModuleManager {
 public:

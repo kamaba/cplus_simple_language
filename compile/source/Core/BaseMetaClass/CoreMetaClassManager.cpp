@@ -25,7 +25,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 std::unique_ptr<CoreMetaClassManager> CoreMetaClassManager::s_Instance = nullptr;
 
@@ -209,6 +208,5 @@ MetaNode* CoreMetaClassManager::GetCoreMetaClass(const std::string& name) {
     return ModuleManager::GetInstance().GetCoreModule()->GetMetaNode()->GetChildrenMetaNodeByName(name1);
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

@@ -11,7 +11,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 EnumMetaClass::EnumMetaClass() : MetaClass(DefaultObject::Enum.ToString()) {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
@@ -36,6 +35,5 @@ MetaClass* EnumMetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

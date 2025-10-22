@@ -10,7 +10,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 Int16MetaClass::Int16MetaClass() : MetaClass(DefaultObject::Int16.ToString()) {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
@@ -99,6 +98,5 @@ MetaClass* UInt64MetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

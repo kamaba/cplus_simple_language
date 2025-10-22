@@ -11,7 +11,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 BooleanMetaClass::BooleanMetaClass() : MetaClass(DefaultObject::Boolean.ToString()) {
     m_Type = EType::Boolean;
@@ -27,6 +26,5 @@ MetaClass* BooleanMetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

@@ -11,7 +11,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 VoidMetaClass::VoidMetaClass() : MetaClass(DefaultObject::Void.ToString()) {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
@@ -27,6 +26,5 @@ MetaClass* VoidMetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

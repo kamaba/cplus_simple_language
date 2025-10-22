@@ -17,6 +17,9 @@
 #include "../Debug/Log.h"
 #include <iostream>
 
+using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Project;
+
 namespace SimpleLanguage {
 namespace Core {
 
@@ -46,8 +49,8 @@ MetaNode* NamespaceManager::SearchTopLevelFileMetaNamespace(SimpleLanguage::Comp
     MetaNode* findNode = parentNode;
     if (fns->topLevelFileMetaNamespace != nullptr) {
         findNode = SearchTopLevelFileMetaNamespace(fns->topLevelFileMetaNamespace, findNode);
-        for (size_t i = 0; i < fns->namespaceStatementBlock()->tokenList().size(); i++) {
-            std::string name = fns->namespaceStatementBlock()->tokenList()[i]->lexeme().ToString();
+        for (size_t i = 0; i < fns->GetNamespaceStatementBlock()->GetTokenList().size(); i++) {
+            std::string name = fns->GetNamespaceStatementBlock()->GetTokenList()[i]->GetLexemeString();
             MetaNode* findNode2 = findNode->GetChildrenMetaNodeByName(name);
             if (findNode2 == nullptr) {
                 break;
@@ -60,8 +63,8 @@ MetaNode* NamespaceManager::SearchTopLevelFileMetaNamespace(SimpleLanguage::Comp
 
 MetaNode* NamespaceManager::GetParentChildrenNode(SimpleLanguage::Compile::FileMetaNamespace* fns, MetaNode* parentNode) {
     MetaNode* findNode = parentNode;
-    for (size_t i = 0; i < fns->namespaceStatementBlock()->tokenList().size(); i++) {
-        std::string name = fns->namespaceStatementBlock()->tokenList()[i]->lexeme().ToString();
+    for (size_t i = 0; i < fns->GetNamespaceStatementBlock()->GetTokenList().size(); i++) {
+        std::string name = fns->GetNamespaceStatementBlock()->GetTokenList()[i]->GetLexemeString();
         MetaNode* findNode2 = findNode->GetChildrenMetaNodeByName(name);
         if (findNode2 == nullptr) {
             break;
@@ -115,8 +118,8 @@ void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::FileMe
         parentNode = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
     }
     //fns.metaNamespaceList.Clear();
-    for (size_t i = 0; i < fns->namespaceStatementBlock()->TokenList().size(); i++) {
-        std::string name = fns->namespaceStatementBlock()->TokenList()[i]->GetLexeme();
+    for (size_t i = 0; i < fns->GetNamespaceStatementBlock()->GetTokenList().size(); i++) {
+        std::string name = fns->GetNamespaceStatementBlock()->GetTokenList()[i]->GetLexemeString();
         parentNode = parentNode->GetChildrenMetaNodeByName(name);
         bool isCreate = true;
         if (parentNode != nullptr) {
@@ -131,8 +134,8 @@ void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::FileMe
         if (isCreate) {
             MetaNamespace* mn = new MetaNamespace(name);
             if (ProjectManager::useDefineNamespaceType != EUseDefineType::NoUseProjectConfigNamespace) {
-                mn->isNotAllowCreateName = true;
-                Log::AddInStructMeta(EError::None, "Error 在使用namespace 时，在项目定义中，没有找到相关的定义!!  位置:" + fns->namespaceStatementBlock()->tokenList()[i]->ToLexemeAllString());
+                mn->SetIsNowAllowCreateName( true );
+                Log::AddInStructMeta(EError::None, "Error 在使用namespace 时，在项目定义中，没有找到相关的定义!!  位置:" + fns->GetNamespaceStatementBlock()->GetTokenList()[i]->ToLexemeAllString());
             }
             parentNode = parentNode->AddMetaNamespace(mn);
         }
@@ -155,14 +158,14 @@ MetaNode* NamespaceManager::FindFinalMetaNamespaceByNSBlock(SimpleLanguage::Comp
     if (root == nullptr) {
         root = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
     }
-    for (size_t i = 0; i < nsb->TokenList().size(); i++) {
-        std::string name = nsb->TokenList()[i]->GetLexeme();
+    for (size_t i = 0; i < nsb->GetTokenList().size(); i++) {
+        std::string name = nsb->GetTokenList()[i]->GetLexemeString();
         MetaNode* findNode2 = root->GetChildrenMetaNodeByName(name);
         if (findNode2 == nullptr) {
             break;
         }
         root = findNode2;
-        if (i == nsb->TokenList().size() - 1) {
+        if (i == nsb->GetTokenList().size() - 1) {
             if (findNode2->GetMetaNamespace() != nullptr) {
                 return findNode2;
             }

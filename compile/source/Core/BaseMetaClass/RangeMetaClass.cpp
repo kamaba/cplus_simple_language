@@ -13,7 +13,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 RangeIteratorMetaClass::RangeIteratorMetaClass() : MetaClass(DefaultObject::Class.ToString()) {
     m_Type = EType::Class;
@@ -85,6 +84,5 @@ MetaClass* RangeMetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

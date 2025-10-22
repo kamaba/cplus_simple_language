@@ -12,7 +12,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 Float32MetaClass::Float32MetaClass() : MetaClass(DefaultObject::Float32.ToString()) {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
@@ -99,6 +98,5 @@ MetaClass* Float64MetaClass::CreateMetaClass() {
     return mc;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage

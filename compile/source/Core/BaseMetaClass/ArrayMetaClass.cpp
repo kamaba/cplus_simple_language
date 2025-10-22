@@ -15,7 +15,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace SelfMeta {
 
 IEnumerableMetaClass::IEnumerableMetaClass() : MetaClass(DefaultObject::Array.ToString()) {
     m_Type = EType::Array;
@@ -124,6 +123,5 @@ int ArrayMetaClass::SetArrayLength(uint32_t v) {
     return -1;
 }
 
-} // namespace SelfMeta
 } // namespace Core
 } // namespace SimpleLanguage
