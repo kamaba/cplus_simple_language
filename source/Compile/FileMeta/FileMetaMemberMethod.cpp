@@ -152,13 +152,13 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
     Node* funNameNode = nullptr;
     Node* node = new Node(nullptr);
     node->childList = nodeList;
-    auto nodeList2 = SimpleLanguage::Core::StructParse::HandleBeforeNode(node);
+    auto nodeList2 = SimpleLanguage::Compile::StructParse::HandleBeforeNode(node);
     
     while (addCount < static_cast<int>(nodeList2.size())) {
         auto cnode = nodeList2[addCount++];
 
-        if (cnode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::IdentifierLink) {
-            if (cnode->parNode() != nullptr) {
+        if (cnode->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink) {
+            if (cnode->parNode != nullptr) {
                 if (funNameNode != nullptr) {
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::UnMatchChar, 
                         "Error 已有函数实体，不能同时出现两个函数实体!");
@@ -168,48 +168,48 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
                 returnClassNameNode = cnode;
             }
         } else {
-            auto token = cnode->token();
-            if (token->type() == SimpleLanguage::ETokenType::Public ||
-                token->type() == SimpleLanguage::ETokenType::Private ||
-                token->type() == SimpleLanguage::ETokenType::Projected ||
-                token->type() == SimpleLanguage::ETokenType::Extern) {
+            auto token = cnode->token;
+            if (token->GetType() == SimpleLanguage::ETokenType::Public ||
+                token->GetType() == SimpleLanguage::ETokenType::Private ||
+                token->GetType() == SimpleLanguage::ETokenType::Projected ||
+                token->GetType() == SimpleLanguage::ETokenType::Extern) {
                 if (permissionToken == nullptr) {
                     permissionToken = token;
                 } else {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 解析过了一次权限!!");
                 }
-            } else if (token->type() == SimpleLanguage::ETokenType::Override) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Override) {
                 if (virtualToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 解析过了一次Override!!");
                 }
                 virtualToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Static) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Static) {
                 staticToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Get) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Get) {
                 if (getToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error 解析类型多个get");
                 }
                 getToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Set) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Set) {
                 if (setToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error 解析类型多个set");
                 }
                 setToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Type || 
-                      token->type() == SimpleLanguage::ETokenType::Void) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Type ||
+                      token->GetType() == SimpleLanguage::ETokenType::Void) {
                 returnClassNameNode = cnode;
-            } else if (token->type() == SimpleLanguage::ETokenType::Interface) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Interface) {
                 if (interfaceToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
                         "Error 解析interface已使用过一次，不允许重复使用!!");
                 }
                 interfaceToken = token;
-            } else if (token->type() == SimpleLanguage::ETokenType::Final) {
+            } else if (token->GetType() == SimpleLanguage::ETokenType::Final) {
                 if (finalToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error 解析类型多个final");
@@ -226,17 +226,17 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
     
     if (funNameNode == nullptr) {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-            "Eror 没有找到合适的函数类型: 位置: " + (nodeList.empty() ? "" : (nodeList[0]->token() ? nodeList[0]->token()->ToLexemeAllString() : "")));
+            "Eror 没有找到合适的函数类型: 位置: " + (nodeList.empty() ? "" : (nodeList[0]->token != nullptr ? nodeList[0]->token->ToLexemeAllString() : "")));
         return false;
     }
 
-    ParseParam(funNameNode->parNode());
-    ParseTemplate(funNameNode->angleNode());
+    ParseParam(funNameNode->parNode);
+    ParseTemplate(funNameNode->angleNode);
 
-    m_Token = funNameNode->token();
+    m_Token = funNameNode->token;
     if (m_BlockNode != nullptr) {
-        m_LeftBraceToken = m_BlockNode->token();
-        m_RightBraceToken = m_BlockNode->endToken();
+        m_LeftBraceToken = m_BlockNode->token;
+        m_RightBraceToken = m_BlockNode->endToken;
         m_FileMetaBlockSyntax = new FileMetaBlockSyntax(m_FileMeta, m_LeftBraceToken, m_RightBraceToken);
     }
     if (isError) {
@@ -260,9 +260,9 @@ void FileMetaMemberFunction::ParseParam(Node* parNode) {
     std::vector<std::vector<Node*>> tparamList;
     std::vector<Node*> tempList;
 
-    for (size_t i = 0; i < parNode->childList().size(); i++) {
-        auto pnode = parNode->childList()[i];
-        if (pnode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
+    for (size_t i = 0; i < parNode->childList.size(); i++) {
+        auto pnode = parNode->childList[i];
+        if (pnode->nodeType == SimpleLanguage::Compile::ENodeType::Comma) {
             tparamList.push_back(tempList);
             tempList.clear();
         } else {
@@ -277,7 +277,7 @@ void FileMetaMemberFunction::ParseParam(Node* parNode) {
     for (size_t i = 0; i < tparamList.size(); i++) {
         auto nodelist = tparamList[i];
         auto cdp = new FileMetaParamterDefine(m_FileMeta, nodelist);
-        if (nameSet.find(cdp->name()) != nameSet.end()) {
+        if (nameSet.find(cdp->Name()) != nameSet.end()) {
             SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 参数名称有重名!!!");
         }
         AddMetaParamter(cdp);
@@ -288,14 +288,14 @@ void FileMetaMemberFunction::ParseTemplate(Node* node) {
     if (node == nullptr) return;
 
     std::vector<Node*> tempList;
-    for (size_t i = 0; i < node->childList().size(); i++) {
-        auto cnode = node->childList()[i];
-        if (cnode->nodeType() == SimpleLanguage::Compile::Parse::ENodeType::Comma) {
+    for (size_t i = 0; i < node->childList.size(); i++) {
+        auto cnode = node->childList[i];
+        if (cnode->nodeType == SimpleLanguage::Compile::ENodeType::Comma) {
             continue;
         } else {
             auto cdp = new FileMetaTemplateDefine(m_FileMeta, cnode);
             auto it = std::find_if(m_MetaTemplatesList.begin(), m_MetaTemplatesList.end(),
-                [&cdp](FileMetaTemplateDefine* fmtd) { return fmtd->name() == cdp->name(); });
+                [&cdp](FileMetaTemplateDefine* fmtd) { return fmtd->Name() == cdp->Name(); });
             if (it != m_MetaTemplatesList.end()) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 参数名称有重名!!!");
                 continue;
@@ -314,24 +314,24 @@ void FileMetaMemberFunction::SetDeep(int _deep) {
 
 std::string FileMetaMemberFunction::ToFormatString() const {
     std::ostringstream sb;
-    for (int i = 0; i < deep(); i++)
+    for (int i = 0; i < Deep(); i++)
         sb << SimpleLanguage::Global::tabChar;
 
-    SimpleLanguage::Core::EPermission permis = SimpleLanguage::Compile::CompilerUtil::GetPerMissionByString(
-        m_PermissionToken ? m_PermissionToken->lexeme().ToString() : "");
-    if (permis == SimpleLanguage::Core::EPermission::Null) {
+    SimpleLanguage::EPermission permis = SimpleLanguage::Compile::CompilerUtil::GetPerMissionByString(
+        m_PermissionToken ? m_PermissionToken->GetLexemeString() : "");
+    if (permis == SimpleLanguage::EPermission::Null) {
         sb << "_public";
     } else {
         sb << SimpleLanguage::Compile::CompilerUtil::ToFormatString(permis);
     }
     if (m_StaticToken != nullptr) {
-        sb << " " << m_StaticToken->lexeme().ToString();
+        sb << " " << m_StaticToken->GetLexeme().ToString();
     }
     if (m_InterfaceToken != nullptr) {
-        sb << " " << m_InterfaceToken->lexeme().ToString();
+        sb << " " << m_InterfaceToken->GetLexeme().ToString();
     }
     if (m_OverrideToken != nullptr) {
-        sb << " " << m_OverrideToken->lexeme().ToString();
+        sb << " " << m_OverrideToken->GetLexeme().ToString();
     }
     if (m_DefineMetaClass != nullptr) {
         sb << " " << m_DefineMetaClass->ToFormatString();
@@ -346,7 +346,7 @@ std::string FileMetaMemberFunction::ToFormatString() const {
         }
         sb << ">";
     }
-    sb << " " << (token() ? token()->lexeme().ToString() : "") << "(";
+    sb << " " << (m_Token != nullptr ? m_Token->GetLexeme().ToString() : "") << "(";
     for (size_t i = 0; i < m_MetaParamtersList.size(); i++) {
         sb << m_MetaParamtersList[i]->ToFormatString();
         if (i < m_MetaParamtersList.size() - 1)

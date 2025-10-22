@@ -2,7 +2,7 @@
 #include "FileMeta.h"
 #include "FileMetaNamespace.h"
 #include "FileMetaClass.h"
-#include "../FileMetatUtil.h"
+#include "FileMetatUtil.h"
 #include "../../Debug/Log.h"
 #include "../../Define.h"
 #include <algorithm>
@@ -61,7 +61,7 @@ std::string FileMetaImportSyntax::ToFormatString() const {
         sb << m_NamespaceStatement->ToFormatString();
     }
     if (m_AsToken != nullptr && m_AsNameToken != nullptr) {
-        sb << " as " << m_AsNameToken->GetLexeme();
+        sb << " as " << m_AsNameToken->GetLexemeString();
     }
     return sb.str();
 }

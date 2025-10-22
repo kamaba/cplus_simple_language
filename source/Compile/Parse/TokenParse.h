@@ -20,14 +20,14 @@ namespace Compile {
     class Node;
     class FileMeta;
 
-class TokenParse {
+class TokenParse 
+{
 public:
-    Node* GetRootNode() const { return m_RootNode; }
-
     TokenParse(FileMeta* fm, const std::vector<Token*>& list);
-    
+
     void BuildStruct();
     void BuildEnd();
+    Node* GetRootNode() const { return m_RootNode; }
 
 private:
     void ParseToken();
@@ -56,13 +56,13 @@ private:
 
 private:
     FileMeta* m_FileMeta;
-    std::vector<Token*>& m_TokensList;
+    const std::vector<Token*>& m_TokensList;
     int m_TokenIndex = 0;
     int m_TokenCount = 0;
 
     Node* m_RootNode;
-    std::stack<Node*> currentNodeStack;
-    Node* currentNode = nullptr;
+    std::stack<Node*> m_CurrentNodeStack;
+    Node* m_CurrentNode = nullptr;
 };
 
 } // namespace Compile

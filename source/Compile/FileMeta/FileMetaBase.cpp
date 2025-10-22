@@ -8,6 +8,7 @@
 
 #include "FileMetaBase.h"
 #include "FileMeta.h"
+#include "../Token.h"
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -20,7 +21,7 @@ FileMetaBase::FileMetaBase() {
 
 std::string FileMetaBase::Name() const {
     if (m_Token != nullptr) {
-        return m_Token->GetLexeme();
+        return m_Token->GetLexemeString();
     }
     return "";
 }

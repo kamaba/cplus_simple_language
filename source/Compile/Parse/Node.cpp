@@ -141,9 +141,9 @@ std::string Node::ToString() const {
     ::std::ostringstream sb;
 
     if (nodeType == ENodeType::IdentifierLink) {
-        sb << (token != nullptr ? token->GetLexeme() : "");
+        sb << (token != nullptr ? token->GetLexemeString() : "");
         for (const auto& node : m_ExtendLinkNodeList) {
-            sb << (node->token != nullptr ? node->token->GetLexeme() : "");
+            sb << (node->token != nullptr ? node->token->GetLexemeString() : "");
             if (node->parNode != nullptr) {
                 sb << node->parNode->ToFormatString();
             }
@@ -156,63 +156,63 @@ std::string Node::ToString() const {
         }
     } else if (nodeType == ENodeType::ConstValue) {
         if (token != nullptr && token->GetType() == ETokenType::String) {
-            sb << "\"" << token->GetLexeme() << "\"";
+            sb << "\"" << token->GetLexemeString() << "\"";
         } else {
-            sb << (token != nullptr ? token->GetLexeme() : "");
+            sb << (token != nullptr ? token->GetLexemeString() : "");
         }
         for (const auto& node : m_ExtendLinkNodeList) {
-            sb << (node->token != nullptr ? node->token->GetLexeme() : "");
+            sb << (node->token != nullptr ? node->token->GetLexemeString() : "");
             if (node->parNode != nullptr) {
                 sb << node->parNode->ToFormatString();
             }
         }
     } else if (nodeType == ENodeType::Brace) {
-        sb << (token != nullptr ? token->GetLexeme() : "");
+        sb << (token != nullptr ? token->GetLexemeString() : "");
         if (parNode != nullptr) {
             sb << parNode->ToFormatString();
         }
         for (const auto& child : childList) {
             sb << child->ToFormatString() << " ";
         }
-        sb << (endToken != nullptr ? endToken->GetLexeme() : "");
+        sb << (endToken != nullptr ? endToken->GetLexemeString() : "");
     } else if (nodeType == ENodeType::Bracket) {
-        sb << (token != nullptr ? token->GetLexeme() : "") << " ";
+        sb << (token != nullptr ? token->GetLexemeString() : "") << " ";
         for (const auto& child : childList) {
             sb << child->ToFormatString() << " ";
         }
-        sb << (endToken != nullptr ? endToken->GetLexeme() : "");
+        sb << (endToken != nullptr ? endToken->GetLexemeString() : "");
         for (const auto& node : m_ExtendLinkNodeList) {
-            sb << (node->token != nullptr ? node->token->GetLexeme() : "");
+            sb << (node->token != nullptr ? node->token->GetLexemeString() : "");
             if (node->parNode != nullptr) {
                 sb << node->parNode->ToFormatString();
             }
         }
     } else if (nodeType == ENodeType::Par) {
-        sb << (token != nullptr ? token->GetLexeme() : "") << " ";
+        sb << (token != nullptr ? token->GetLexemeString() : "") << " ";
         for (const auto& child : childList) {
             sb << child->ToFormatString();
         }
-        sb << (endToken != nullptr ? endToken->GetLexeme() : "");
+        sb << (endToken != nullptr ? endToken->GetLexemeString() : "");
         for (const auto& node : m_ExtendLinkNodeList) {
-            sb << (node->token != nullptr ? node->token->GetLexeme() : "");
+            sb << (node->token != nullptr ? node->token->GetLexemeString() : "");
             if (node->parNode != nullptr) {
                 sb << node->parNode->ToFormatString();
             }
         }
     } else if (nodeType == ENodeType::LeftAngle) {
-        sb << (token != nullptr ? token->GetLexeme() : "") << " ";
+        sb << (token != nullptr ? token->GetLexemeString() : "") << " ";
         for (const auto& child : childList) {
             sb << child->ToFormatString();
         }
-        sb << (endToken != nullptr ? endToken->GetLexeme() : "");
+        sb << (endToken != nullptr ? endToken->GetLexemeString() : "");
     } else if (nodeType == ENodeType::RightAngle) {
-        sb << (token != nullptr ? token->GetLexeme() : "") << " ";
+        sb << (token != nullptr ? token->GetLexemeString() : "") << " ";
         for (const auto& child : childList) {
             sb << child->ToFormatString();
         }
-        sb << (endToken != nullptr ? endToken->GetLexeme() : "");
+        sb << (endToken != nullptr ? endToken->GetLexemeString() : "");
     } else if (nodeType == ENodeType::Key) {
-        sb << (token != nullptr ? token->GetLexeme() : "");
+        sb << (token != nullptr ? token->GetLexemeString() : "");
         if (blockNode != nullptr) {
             sb << " " << blockNode->ToFormatString();
         }
@@ -221,13 +221,13 @@ std::string Node::ToString() const {
         }
         if (!m_ExtendLinkNodeList.empty()) {
             for (const auto& node : m_ExtendLinkNodeList) {
-                sb << (node->token != nullptr ? node->token->GetLexeme() : "");
+                sb << (node->token != nullptr ? node->token->GetLexemeString() : "");
             }
         }
     } else if (nodeType == ENodeType::LineEnd) {
         // 不添加任何内容
     } else {
-        sb << (token != nullptr ? token->GetLexeme() : "") << " ";
+        sb << (token != nullptr ? token->GetLexemeString() : "") << " ";
         for (const auto& child : childList) {
             sb << child->ToFormatString();
         }

@@ -16,6 +16,8 @@
 namespace SimpleLanguage {
 namespace Compile {
 class Node;
+class FileMetaMemberVariable;
+class FileMetaMemberFunction;
 
 class StructParse {
 public:

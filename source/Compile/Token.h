@@ -29,10 +29,16 @@ namespace Compile {
     };
     // 类型标签枚举
     enum class DataType {
+        SByte,  //
         Byte,    // uint8_t
         Short,      //
+        UShort, 
         Int,     // int
+        UInt,
         Long,     // long
+        ULong,
+        Float,      //float
+        Double,     //Double
         String  // 字符串（存储在 char 数组中）
     };
     // 带标签的结构体
@@ -43,17 +49,20 @@ namespace Compile {
 
         MultiData() {};
         // 构造函数（省略，同上一条回复）
+        MultiData(int8_t val) : type(DataType::SByte) { data.byte_val = val; }
         MultiData(uint8_t val) : type(DataType::Byte) { data.byte_val = val; }
-        MultiData(char val) : type(DataType::Short) { data.short_val = val; }
-        /*MultiData(const std::string& val) : type(DataType::String) {
-            std::strncpy(data.str_buf, val.c_str(), sizeof(data.str_buf) - 1);
-            data.str_buf[sizeof(data.str_buf) - 1] = '\0';
-        }*/
-        MultiData(int val) : type(DataType::Int) { data.int_val = val; }
-        MultiData(long val) : type(DataType::Long) { data.long_val = val; }
-
+        MultiData(int16_t val) : type(DataType::Short) { data.short_val = val; }
+        MultiData(uint16_t val) : type(DataType::UShort) { data.short_val = val; }
+        MultiData(int32_t val) : type(DataType::Int) { data.int_val = val; }
+        MultiData(uint32_t val) : type(DataType::UInt) { data.int_val = val; }
+        MultiData(int64_t val) : type(DataType::Long) { data.long_val = val; }
+        MultiData(uint16_t val) : type(DataType::ULong) { data.long_val = val; }
+        MultiData(float_t val) : type(DataType::Float) { data.float_val = val; }
+        MultiData(double_t val) : type(DataType::Double) { data.double_val = val; }
+        MultiData(const std::string& val) : type(DataType::String) {data.string_val = val.c_str();}
+        MultiData(const char* cchar) :type(DataType::String) { data.string_val = cchar; }
         // 核心方法：将内部数据转换为 std::string
-        std::string toString() const
+        std::string ToString() const
         {
             std::stringstream ss;  // 用字符串流格式化不同类型
 
@@ -62,21 +71,37 @@ namespace Compile {
                 // byte 通常按十进制或十六进制输出（这里按十进制）
                 ss << static_cast<int>(data.byte_val);  // 转换为 int 避免被当作字符
                 break;
+            case DataType::SByte:
+                // byte 通常按十进制或十六进制输出（这里按十进制）
+                ss << static_cast<int>(data.byte_val);  // 转换为 int 避免被当作字符
+                break;
             case DataType::Short:
                 // char 直接输出字符本身
                 ss << data.short_val;
                 break;
-            case DataType::String:
-                // 直接将字符数组转换为 string
-                //ss << data.str_buf;
+            case DataType::UShort:
+                // char 直接输出字符本身
+                ss << (uint16_t)data.short_val;
                 break;
             case DataType::Int:
-                // int 直接输出
+                // char 直接输出字符本身
                 ss << data.int_val;
                 break;
+            case DataType::UInt:
+                // char 直接输出字符本身
+                ss << (uint32_t)data.int_val;
+                break;
             case DataType::Long:
-                // long 直接输出
+                // char 直接输出字符本身
                 ss << data.long_val;
+                break;
+            case DataType::ULong:
+                // char 直接输出字符本身
+                ss << (uint64_t)data.long_val;
+                break;
+            case DataType::String:
+                // 直接将字符数组转换为 string
+                ss << data.string_val;
                 break;
             default:
                 throw std::runtime_error("Unknown data type");
@@ -91,11 +116,11 @@ namespace Compile {
     public:
         Token();
         Token(const std::string& path, ETokenType tokenType, const std::string& lexeme,
-            int sourceLine, int sourceChar );
+            int sourceLine, int sourceChar, EType extendType );
         Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
             int sourceLine, int sourceChar);
         Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,
-              int sourceLine, int sourceChar, const MultiData* extend = nullptr );
+              int sourceLine, int sourceChar, const MultiData* extend );
         Token(const Token& token);
         virtual ~Token() = default;
 

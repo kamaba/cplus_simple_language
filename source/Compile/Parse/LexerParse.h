@@ -11,8 +11,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "../CompileManager.h"
-#include "../../Debug/Log.h"
+#include "../../Define.h"
 
 namespace SimpleLanguage {
 namespace Compile {

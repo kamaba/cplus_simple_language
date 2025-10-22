@@ -16,15 +16,14 @@
 namespace SimpleLanguage {
 namespace Compile {
 
-TokenParse::TokenParse(FileMeta* fm, const std::vector<Token*> list)
+TokenParse::TokenParse(FileMeta* fm, const std::vector<Token*>& list):m_TokensList(list)
 {
-    m_TokensList = list;
     m_FileMeta = fm;
     m_TokenCount = list.size();
-    m_RootNode = nullptr;
+    m_RootNode = new Node( new Token() );
     m_RootNode->nodeType = ENodeType::Root;
-    currentNode = m_RootNode;
-    currentNodeStack.push(m_RootNode);
+    m_CurrentNode = m_RootNode;
+    m_CurrentNodeStack.push(m_RootNode);
 }
 
 void TokenParse::BuildStruct() {
@@ -41,33 +40,33 @@ void TokenParse::AddImportNode(Token& token) {
     auto nnode = new Node(&token);
     nnode->nodeType = ENodeType::Key;
     m_TokenIndex++;
-    currentNode->AddChild(std::move(nnode));
+    m_CurrentNode->AddChild(std::move(nnode));
 }
 
 void TokenParse::AddNamespaceNode(Token& token) {
     auto nnode = new Node(&token);
     nnode->nodeType = ENodeType::Key;
     m_TokenIndex++;
-    currentNode->AddChild(nnode);
+    m_CurrentNode->AddChild(nnode);
 }
 
 void TokenParse::AddIdentifier(Token& code) { // Print/Function
     auto node = new Node(&code);
     node->nodeType = ENodeType::IdentifierLink;
 
-    if (currentNode->linkToken != nullptr) {
-        auto node2 = new Node(currentNode->linkToken);
+    if (m_CurrentNode->linkToken != nullptr) {
+        auto node2 = new Node(m_CurrentNode->linkToken);
         node2->nodeType = ENodeType::Period;
 
-        currentNode->AddLinkNode(node2);
-        currentNode->AddLinkNode(node);
-        if (currentNode->atToken != nullptr) {
-            node->atToken = std::move(currentNode->atToken);
-            currentNode->atToken = nullptr;
+        m_CurrentNode->AddLinkNode(node2);
+        m_CurrentNode->AddLinkNode(node);
+        if (m_CurrentNode->atToken != nullptr) {
+            node->atToken = std::move(m_CurrentNode->atToken);
+            m_CurrentNode->atToken = nullptr;
         }
-        currentNode->linkToken = nullptr;
+        m_CurrentNode->linkToken = nullptr;
     } else {
-        currentNode->AddChild(node);
+        m_CurrentNode->AddChild(node);
     }
     m_TokenIndex++;
 }
@@ -80,20 +79,20 @@ void TokenParse::AddAnnotation(Token& code) {
     auto node = new Node(ntoken);
     node->nodeType = ENodeType::LineEnd;
 
-    currentNode->AddChild(node);
+    m_CurrentNode->AddChild(node);
 }
 
 Node* TokenParse::AddKeyNode(Token& token) {
     auto node = new Node(&token);
     node->nodeType = ENodeType::Key;
-    currentNode->AddChild(node);
+    m_CurrentNode->AddChild(node);
     m_TokenIndex++;
     return new Node(&token);
 }
 
 Node* TokenParse::AddAtOpSign(Token& token) {
-    if (currentNode->linkToken != nullptr) {
-        currentNode->atToken = new Token(token);
+    if (m_CurrentNode->linkToken != nullptr) {
+        m_CurrentNode->atToken = new Token(token);
     } else {
         std::cout << "现在@符必须使用.@方式!!" << std::endl;
     }
@@ -104,7 +103,7 @@ Node* TokenParse::AddAtOpSign(Token& token) {
 Node* TokenParse::AddSymbol(Token& token) {
     auto node = new Node(token);
     node->nodeType = ENodeType::Symbol;
-    currentNode->AddChild(node);
+    m_CurrentNode->AddChild(node);
     m_TokenIndex++;
     return new Node(&token);
 }
@@ -185,7 +184,7 @@ void TokenParse::ParseToken() {
 }
 
 void TokenParse::ParseDetailToken(Token& token) {
-    if (currentNode == nullptr) {
+    if (m_CurrentNode == nullptr) {
         std::cout << "Error CurrentNode is NULL!!" << token.ToLexemeAllString() << std::endl;
         return;
     }
@@ -202,21 +201,21 @@ void TokenParse::ParseDetailToken(Token& token) {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::Brace;
                 m_TokenIndex++;
-                currentNodeStack.push(node);
+                m_CurrentNodeStack.push(node);
                 
-                currentNode->AddChild(node);
-                currentNode = currentNodeStack.top();
+                m_CurrentNode->AddChild(node);
+                m_CurrentNode = m_CurrentNodeStack.top();
             }
             break;
         case ETokenType::RightBrace: // }
             {
-                auto cnode = currentNodeStack.top();
-                currentNodeStack.pop();
+                auto cnode = m_CurrentNodeStack.top();
+                m_CurrentNodeStack.pop();
 
                 if (cnode->nodeType == ENodeType::Brace) {
                     cnode->endToken = new Token(token);
                     m_TokenIndex++;
-                    currentNode = cnode->parent;
+                    m_CurrentNode = cnode->parent;
                 } else {
                     std::cout << "Error 不对称{}" << std::endl;
                 }
@@ -227,14 +226,14 @@ void TokenParse::ParseDetailToken(Token& token) {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::LeftAngle;
                 m_TokenIndex++;
-                currentNode->AddChild(node);
+                m_CurrentNode->AddChild(node);
             }
             break;
         case ETokenType::Greater: // >
             {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::RightAngle;
-                currentNode->AddChild(node);
+                m_CurrentNode->AddChild(node);
                 m_TokenIndex++;
             }
             break;
@@ -243,20 +242,20 @@ void TokenParse::ParseDetailToken(Token& token) {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::Par;
                 m_TokenIndex++;
-                currentNodeStack.push(node);
+                m_CurrentNodeStack.push(node);
 
-                currentNode->AddChild(node);
-                currentNode = currentNodeStack.top();
+                m_CurrentNode->AddChild(node);
+                m_CurrentNode = m_CurrentNodeStack.top();
             }
             break;
         case ETokenType::RightPar: // )
             {
-                auto cnode = currentNodeStack.top();
-                currentNodeStack.pop();
+                auto cnode = m_CurrentNodeStack.top();
+                m_CurrentNodeStack.pop();
                 if (cnode != nullptr && cnode->nodeType == ENodeType::Par) {
                     cnode->endToken = new Token(token);
                     m_TokenIndex++;
-                    currentNode = cnode->parent;
+                    m_CurrentNode = cnode->parent;
                 } else {
                     std::cout << "Error 不对称()" << std::endl;
                 }
@@ -267,20 +266,20 @@ void TokenParse::ParseDetailToken(Token& token) {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::Bracket;
                 m_TokenIndex++;
-                currentNodeStack.push(node);
+                m_CurrentNodeStack.push(node);
 
-                currentNode->AddChild(node);
-                currentNode = currentNodeStack.top();
+                m_CurrentNode->AddChild(node);
+                m_CurrentNode = m_CurrentNodeStack.top();
             }
             break;
         case ETokenType::RightBracket: // ]
             {
-                auto cnode = currentNodeStack.top();
-                currentNodeStack.pop();
+                auto cnode = m_CurrentNodeStack.top();
+                m_CurrentNodeStack.pop();
                 if (cnode != nullptr && cnode->nodeType == ENodeType::Bracket) {
                     cnode->endToken = new Token(token);
                     m_TokenIndex++;
-                    currentNode = cnode->parent;
+                    m_CurrentNode = cnode->parent;
                 } else {
                     std::cout << "Error 不对称[]" << std::endl;
                 }
@@ -288,7 +287,7 @@ void TokenParse::ParseDetailToken(Token& token) {
             break;
         case ETokenType::Period: // .
             {
-                currentNode->linkToken = new Token(token);
+                m_CurrentNode->linkToken = new Token(token);
                 m_TokenIndex++;
             }
             break;
@@ -296,7 +295,7 @@ void TokenParse::ParseDetailToken(Token& token) {
             {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::Comma;
-                currentNode->AddChild(node);
+                m_CurrentNode->AddChild(node);
                 m_TokenIndex++;
             }
             break;
@@ -314,7 +313,7 @@ void TokenParse::ParseDetailToken(Token& token) {
             {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::SemiColon;
-                currentNode->AddChild(std::move(node));
+                m_CurrentNode->AddChild(node);
                 m_TokenIndex++;
             }
             break;
@@ -322,7 +321,7 @@ void TokenParse::ParseDetailToken(Token& token) {
             {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::LineEnd;
-                currentNode->AddChild(node);
+                m_CurrentNode->AddChild(node);
                 m_TokenIndex++;
             }
             break;
@@ -330,7 +329,7 @@ void TokenParse::ParseDetailToken(Token& token) {
             {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::Assign;
-                currentNode->AddChild(node);
+                m_CurrentNode->AddChild(node);
                 m_TokenIndex++;
             }
             break;
@@ -430,19 +429,19 @@ void TokenParse::ParseDetailToken(Token& token) {
             {
                 auto node = new Node(&token);
                 node->nodeType = ENodeType::ConstValue;
-                if (currentNode->linkToken != nullptr) {
+                if (m_CurrentNode->linkToken != nullptr) {
                     //auto node2 = currentNode->linkToken;
                     //node2->nodeType = ENodeType::Period;
 
                     //currentNode->AddLinkNode(node2);
-                    currentNode->AddLinkNode(node);
-                    currentNode->linkToken = nullptr;
-                    if (currentNode->atToken != nullptr) {
-                        node->atToken = std::move(currentNode->atToken);
-                        currentNode->atToken = nullptr;
+                    m_CurrentNode->AddLinkNode(node);
+                    m_CurrentNode->linkToken = nullptr;
+                    if (m_CurrentNode->atToken != nullptr) {
+                        node->atToken = m_CurrentNode->atToken;
+                        m_CurrentNode->atToken = nullptr;
                     }
                 } else {
-                    currentNode->AddChild(std::move(node));
+                    m_CurrentNode->AddChild(node);
                 }
                 m_TokenIndex++;
             }

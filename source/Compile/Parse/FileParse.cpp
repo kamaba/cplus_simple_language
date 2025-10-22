@@ -100,11 +100,11 @@ void FileParse::HandleStructParse()
         
         lexerParse->ParseToTokenList();
         
-        tokenParse = new TokenParse(*m_File, lexerParse->GetListTokensWidthEnd());
+        tokenParse = new TokenParse( m_File, lexerParse->GetListTokensWidthEnd());
         
         tokenParse->BuildStruct();
         
-        structBuild = std::make_unique<StructParse>(*m_File, tokenParse->GetRootNode());
+        structBuild = new StructParse(m_File, tokenParse->GetRootNode());
         
         structBuild->ParseRootNodeToFileMeta();
         

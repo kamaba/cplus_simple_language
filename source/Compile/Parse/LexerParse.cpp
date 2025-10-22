@@ -87,7 +87,7 @@ void LexerParse::AddToken(ETokenType type, const std::string& lexeme, EType exte
     AddToken(type, lexeme, extend, m_SourceLine, m_SourceChar);
 }
 void LexerParse::AddToken(ETokenType type, const std::string& lexeme, int sourceLine, int sourceChar) {
-    m_CurrentToken = new Token(m_Path, type, lexeme, sourceLine, sourceChar);
+    m_CurrentToken = new Token(m_Path, type, MultiData(lexeme), sourceLine, sourceChar);
     m_ListTokens.push_back(m_CurrentToken);
     m_Builder.clear();
 }

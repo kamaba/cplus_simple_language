@@ -22,7 +22,7 @@ namespace Compile {
     }
 
     Token::Token(const std::string& path, ETokenType tokenType, const std::string& lexeme,
-        int sourceLine, int sourceChar)
+        int sourceLine, int sourceChar, EType extendType )
     {
 
     }
@@ -80,31 +80,7 @@ namespace Compile {
 
     std::string Token::GetLexemeString() const
     {
-        std::ostringstream ss;
-        switch (m_Lexeme.type)
-        {
-        case DataType::Byte:
-        {
-            ss << m_Lexeme.data.byte_val;
-        }break;
-        case DataType::Short:
-        {
-            ss << m_Lexeme.data.short_val;
-        }break;
-        case DataType::Int:
-        {
-            ss << m_Lexeme.data.int_val;
-        }break;
-        case DataType::Long:
-        {
-            ss << m_Lexeme.data.long_val;
-        }break;
-        case DataType::String:
-        {
-            ss << m_Lexeme.data.string_val;
-        }break;
-        }
-        return ss.str();
+        return m_Lexeme.ToString();
     }
 
     void Token::AddChildrenToken(Token* token)
@@ -141,7 +117,7 @@ namespace Compile {
             {
                 // 这里需要根据extend字符串解析EType
                     // 简化实现，实际需要更复杂的解析逻辑
-                std::string extend_string = m_Extend.toString();
+                std::string extend_string = m_Extend.ToString();
                 if (extend_string == "Byte") etype = EType::Byte;
                 else if (extend_string == "SByte") etype = EType::SByte;
                 else if (extend_string == "Int16") etype = EType::Int16;
@@ -158,7 +134,7 @@ namespace Compile {
             case ETokenType::Type:
             {
                 // 类似上面的解析逻辑
-                std::string extend_string = m_Extend.toString();
+                std::string extend_string = m_Extend.ToString();
                 if (extend_string == "Byte") etype = EType::Byte;
                 else if (extend_string == "SByte") etype = EType::SByte;
                 else if (extend_string == "Int16") etype = EType::Int16;

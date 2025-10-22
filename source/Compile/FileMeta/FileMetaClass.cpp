@@ -74,7 +74,7 @@ bool FileMetaClass::Parse() {
                 if (!classNameTokenList.empty()) {
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructClassNameRepeat, "Error 字符两次赋值 107");
                     for (size_t i = 0; i < classNameTokenList.size(); i++) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, classNameTokenList[i]->GetLexeme());
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, classNameTokenList[i]->GetLexemeString());
                     }
                 }
                 classNameTokenList = cnode->GetLinkTokenList();
@@ -405,7 +405,7 @@ void FileMetaClass::AddExtendMetaNamespace(FileMetaNamespace* fmn) {
     if (m_TopLevelFileMetaNamespace != nullptr) {
         // Implementation for extending namespace
     } else {
-        auto list = fmn->namespaceStatementBlock()->NamespaceList();
+        auto list = fmn->GetNamespaceStatementBlock()->NamespaceList();
         if (list.empty()) {
             return;
         }
