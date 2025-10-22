@@ -18,8 +18,8 @@ namespace Compile {
 
 class SignComputePriority {
 public:
-    static const int Level1 = 1;                         // (a+b) [] . ä¼˜å…ˆæ“ä½œï¼Œå¯¹è±¡æ“ä½œç­‰
-    static const int Level2_LinkOp = 2;                  // -è´Ÿå· (int)å¼ºè½¬ ++x x++ -- ! ~ 
+    static const int Level1 = 1;                         // (a+b) [] . ÓÅÏÈ²Ù×÷£¬¶ÔÏó²Ù×÷µÈ
+    static const int Level2_LinkOp = 2;                  // -¸ººÅ (int)Ç¿×ª ++x x++ -- ! ~ 
     static const int Level3_Hight_Compute = 3;          // / * % 
     static const int Level3_Low_Compute = 4;            // + - 
     static const int Level5_BitMoveOp = 5;              // << >> 
@@ -64,18 +64,18 @@ public:
 
     Token* token = nullptr;              // 
     Token* endToken = nullptr;           // )}]
-    Node* parent = nullptr;                              // çˆ¶èŠ‚ç‚¹
-    Node* parNode = nullptr;             // (å°æ‹¬å·çš„èŠ‚ç‚¹
-    Node* blockNode = nullptr;           // {å¤§æ‹¬å·çš„èŠ‚ç‚¹
-    Node* bracketNode = nullptr;         // [ä¸­æ‹¬å·çš„èŠ‚ç‚¹
+    Node* parent = nullptr;                              // ¸¸½Úµã
+    Node* parNode = nullptr;             // (Ğ¡À¨ºÅµÄ½Úµã
+    Node* blockNode = nullptr;           // {´óÀ¨ºÅµÄ½Úµã
+    Node* bracketNode = nullptr;         // [ÖĞÀ¨ºÅµÄ½Úµã
     Node* angleNode = nullptr;
-    Token* linkToken = nullptr;                    // .èŠ‚ç‚¹
-    Token* atToken = nullptr;                      // $èŠ‚ç‚¹
-    Node* lastNode = nullptr;            // æœ€åå¤„ç†çš„èŠ‚ç‚¹
+    Token* linkToken = nullptr;                    // .½Úµã
+    Token* atToken = nullptr;                      // $½Úµã
+    Node* lastNode = nullptr;            // ×îºó´¦ÀíµÄ½Úµã
 
     ENodeType nodeType = ENodeType::None;
     ::std::vector<Node*> m_ExtendLinkNodeList;
-    ::std::vector<Node*> childList;       // å­å†…å®¹èŠ‚ç‚¹
+    ::std::vector<Node*> childList;       // ×ÓÄÚÈİ½Úµã
 
     int parseIndex = 0;
 

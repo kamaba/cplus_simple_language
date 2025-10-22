@@ -36,7 +36,7 @@ IRMetaVariable::IRMetaVariable(MetaVariable* mv, int index) {
         m_IRMetaVariableFrom = IRMetaVariableFrom::Global;
     }
     else {
-        Log::AddGenIR(EError::None, "IRMetaVariable 娌℃湁鎵惧埌瀵瑰簲鐨刦rom ");
+        Log::AddGenIR(EError::None, "IRMetaVariable 没有找到对应的from ");
     }
     
     m_IRMetaType = new IRMetaType(mv->GetMetaDefineType());

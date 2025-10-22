@@ -17,7 +17,7 @@ FileMetaImportSyntax::FileMetaImportSyntax(const std::vector<Node*>& _nodeList) 
 
 bool FileMetaImportSyntax::ParseImportSyntax() {
     if (m_NodeList.size() < 2) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error importå¿…é¡»æœ‰2ä¸ªèŠ‚ç‚¹!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error import±ØÐëÓÐ2¸ö½Úµã!!");
         return false;
     }
     

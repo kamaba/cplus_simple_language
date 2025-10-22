@@ -26,7 +26,7 @@ using namespace SimpleLanguage::Project;
 namespace SimpleLanguage {
 namespace Compile {
 
-// ParseCurrentNodeInfo æ„é€ å‡½æ•°å®ç°
+// ParseCurrentNodeInfo ¹¹Ôìº¯ÊıÊµÏÖ
 StructParse::ParseCurrentNodeInfo::ParseCurrentNodeInfo(FileMeta* cf) 
     : codeFile(cf), parseType(EParseNodeType::File) {
 }
@@ -51,7 +51,7 @@ StructParse::ParseCurrentNodeInfo::ParseCurrentNodeInfo(FileMetaSyntax* nss)
     : codeSyntax(nss), parseType(EParseNodeType::Statements) {
 }
 
-StructParse::StructParse(FileMeta& fm, Node* node) 
+StructParse::StructParse(FileMeta* fm, Node* node) 
     : m_FileMeta(fm), m_RootNode(node) {
 }
 
@@ -61,7 +61,7 @@ StructParse::ParseCurrentNodeInfo* StructParse::GetCurrentNodeInfo() {
 }
 
 void StructParse::AddParseFileNodeInfo() {
-    auto pcni =new ParseCurrentNodeInfo(&m_FileMeta);
+    auto pcni =new ParseCurrentNodeInfo(m_FileMeta);
     m_CurrentNodeInfoStack.push(pcni);
 }
 
@@ -86,10 +86,10 @@ void StructParse::AddParseClassNodeInfo(FileMetaClass* fmc) {
     } else if (currentNodeInfo->parseType == EParseNodeType::Class) {
         currentNodeInfo->codeClass->AddFileMetaClass(fmc);
     } else {
-        Log::AddInStructFileMeta(EError::None, "é”™è¯¯ !!1 AddParseClassNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "´íÎó !!1 AddParseClassNodeInfo");
         return;
     }
-    m_FileMeta.AddFileMetaAllClass(fmc);
+    m_FileMeta->AddFileMetaAllClass(fmc);
 
     auto pcni = new ParseCurrentNodeInfo(fmc);
     m_CurrentNodeInfoStack.push(pcni);
@@ -100,7 +100,7 @@ void StructParse::AddParseVariableInfo(FileMetaMemberVariable* csv) {
     if (currentNodeInfo->parseType == EParseNodeType::Class) {
         currentNodeInfo->codeClass->AddFileMemberVariable(csv);
     } else {
-        Log::AddInStructFileMeta(EError::None, "é”™è¯¯ !!1 AddParseVariableInfo");
+        Log::AddInStructFileMeta(EError::None, "´íÎó !!1 AddParseVariableInfo");
         return;
     }
 }
@@ -112,7 +112,7 @@ void StructParse::AddParseDataInfo(FileMetaMemberData* fmmd) {
     } else if (currentNodeInfo->parseType == EParseNodeType::DataMemeber) {
         currentNodeInfo->codeData->AddFileMemberData(fmmd);
     } else {
-        Log::AddInStructFileMeta(EError::None, "é”™è¯¯ !!1 AddParseFunctionNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "´íÎó !!1 AddParseFunctionNodeInfo");
         return;
     }
 
@@ -125,7 +125,7 @@ void StructParse::AddParseFunctionNodeInfo(FileMetaMemberFunction* fmmf, bool is
     if (currentNodeInfo->parseType == EParseNodeType::Class) {
         currentNodeInfo->codeClass->AddFileMemberFunction(fmmf);
     } else {
-        Log::AddInStructFileMeta(EError::None, "é”™è¯¯ !!1 AddParseFunctionNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "´íÎó !!1 AddParseFunctionNodeInfo");
         return;
     }
 
@@ -142,7 +142,7 @@ void StructParse::AddParseSyntaxNodeInfo(FileMetaSyntax* fms, bool isAddParseCur
     } else if (currentNodeInfo->parseType == EParseNodeType::Statements) {
         currentNodeInfo->codeSyntax->AddFileMetaSyntax(fms);
     } else {
-        Log::AddInStructFileMeta(EError::None, "é”™è¯¯ !!1 AddParseFunctionNodeInfo");
+        Log::AddInStructFileMeta(EError::None, "´íÎó !!1 AddParseFunctionNodeInfo");
         return;
     }
 
@@ -187,14 +187,14 @@ void StructParse::ParseRootNodeToFileMeta() {
                     break;
                 default:
                     Log::AddInStructFileMeta(EError::None, 
-                        "Error è§£ææ—¶ åœ¨Fileå¤´éƒ¨ç›®å½•ä¸­å‡ºç° : " + node->token->GetLexemeString());
+                        "Error ½âÎöÊ± ÔÚFileÍ·²¿Ä¿Â¼ÖĞ³öÏÖ : " + node->token->GetLexemeString());
                     break;
             }
         } else if (node->nodeType == ENodeType::IdentifierLink) {
             ParseNamespaceOrTopClass(pnode);
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error è§£ææ—¶ åœ¨Fileå¤´éƒ¨ç›®å½•ä¸­å‡ºç°2 : " + (node->token ? node->token->GetLexemeString() : "null"));
+                "Error ½âÎöÊ± ÔÚFileÍ·²¿Ä¿Â¼ÖĞ³öÏÖ2 : " + (node->token ? node->token->GetLexemeString() : "null"));
         }
     }
 
@@ -206,10 +206,10 @@ void StructParse::ParseRootNodeToFileMeta() {
         m_FileMeta.SetDeep(0);
 #endif
         Log::AddProcess(EProcess::ParseNode, EError::None, 
-            "è§£æCodeæ–‡ä»¶ç»“æ„æ–‡ä»¶æˆåŠŸ!!! ä¸‹ä¸€æ­¥è¿›è¡Œ è§£æMetaæ–‡ä»¶ \n è§£æFileMetaæ–‡ä»¶æˆåŠŸ!!! ä¸‹ä¸€æ­¥è¿›è¡Œ è¯­æ³•è§£æ");
+            "½âÎöCodeÎÄ¼ş½á¹¹ÎÄ¼ş³É¹¦!!! ÏÂÒ»²½½øĞĞ ½âÎöMetaÎÄ¼ş \n ½âÎöFileMetaÎÄ¼ş³É¹¦!!! ÏÂÒ»²½½øĞĞ Óï·¨½âÎö");
     } else {
         Log::AddProcess(EProcess::ParseNode, EError::ParseFileError, 
-            "è§£ææ—¶å‡ºç°é”™è¯¯ ParseFile : " + std::to_string(static_cast<int>(GetCurrentNodeInfo()->parseType)));
+            "½âÎöÊ±³öÏÖ´íÎó ParseFile : " + std::to_string(static_cast<int>(GetCurrentNodeInfo()->parseType)));
         return;
     }
 }
@@ -255,7 +255,7 @@ std::vector<Node*> StructParse::GetAllNodeToSemiColon(Node* pnode, bool isAddSel
 void StructParse::ParseImport(Node* pnode) {
     auto nodeList = GetAllNodeToSemiColon(pnode);
     auto ist = std::make_unique<FileMetaImportSyntax>(nodeList);
-    m_FileMeta.AddFileImportSyntax(ist.get());
+    m_FileMeta->AddFileImportSyntax(ist.get());
 }
 
 void StructParse::ParseNamespace(Node* pnode) {
@@ -276,7 +276,7 @@ void StructParse::ParseNamespace(Node* pnode) {
         } else if (nextNode->nodeType == ENodeType::IdentifierLink) {
             if (namespaceNode != nullptr) {
                 Log::AddInStructFileMeta(EError::None, 
-                    "Error åœ¨è§£ænamespace ä¸­ï¼Œå·¦è¾¹èµ‹å€¼ä¸èƒ½æœ‰å¤šä¸ªæ ‡è¯†ç¬¦è¯­æ³•!!");
+                    "Error ÔÚ½âÎönamespace ÖĞ£¬×ó±ß¸³Öµ²»ÄÜÓĞ¶à¸ö±êÊ¶·ûÓï·¨!!");
             }
             namespaceNode = nextNode;
 
@@ -302,7 +302,7 @@ void StructParse::ParseNamespace(Node* pnode) {
         } else if (nextNode->nodeType == ENodeType::LineEnd) {
             if (ProjectManager::isUseForceSemiColonInLineEnd ) {
                 Log::AddInStructFileMeta(EError::None, 
-                    "Error åœ¨è§£ænamespace ä¸­ï¼Œéœ€è¦å¼ºåˆ¶;å·ç»“æŸ");
+                    "Error ÔÚ½âÎönamespace ÖĞ£¬ĞèÒªÇ¿ÖÆ;ºÅ½áÊø");
                 break;
             } else {
                 break;
@@ -314,13 +314,13 @@ void StructParse::ParseNamespace(Node* pnode) {
     
     auto fmn = new FileMetaNamespace(currentNode, namespaceNode);
 
-    if (isBlock) { // æ˜¯å¦ä½¿ç”¨ namespace N{}çš„æ ¼å¼ è¿˜æ˜¯ä½¿ç”¨{}æ ¼å¼ï¼Œè¿™é‡Œä¸ºå—çº§æ¨¡å¼
-        m_FileMeta.AddFileDefineNamespace(fmn);
+    if (isBlock) { // ÊÇ·ñÊ¹ÓÃ namespace N{}µÄ¸ñÊ½ »¹ÊÇÊ¹ÓÃ{}¸ñÊ½£¬ÕâÀïÎª¿é¼¶Ä£Ê½
+        m_FileMeta->AddFileDefineNamespace(fmn);
         AddParseNamespaceNodeInfo(fmn);
         ParseNamespaceOrTopClass(currentNode->blockNode);
         m_CurrentNodeInfoStack.pop();
     } else {
-        m_FileMeta.AddFileSearchNamespace(fmn);
+        m_FileMeta->AddFileSearchNamespace(fmn);
     }
 }
 
@@ -328,7 +328,7 @@ bool StructParse::CheckEnd(Node* pnode) {
     return pnode->parseIndex >= static_cast<int>(pnode->childList.size());
 }
 
-// åªè§£æ å…¨å±€æ–‡ä»¶ä¸‹çš„ namespace å’Œ å…¨å±€æ–‡ä»¶class
+// Ö»½âÎö È«¾ÖÎÄ¼şÏÂµÄ namespace ºÍ È«¾ÖÎÄ¼şclass
 void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
     Node* braceNode = pnode->blockNode;
     std::vector<Node*> nodeList;
@@ -380,7 +380,7 @@ void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
             break;
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error è§£ææ—¶åœ¨è§£æClassæ—¶å‡ºç°é”™è¯¯ è¯­æ³•--------------------" + 
+                "Error ½âÎöÊ±ÔÚ½âÎöClassÊ±³öÏÖ´íÎó Óï·¨--------------------" + 
                 (curNode->token ? curNode->token->ToLexemeAllString() : "null"));
         }
     }
@@ -392,23 +392,23 @@ void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
             ParseNamespaceOrTopClass(pnode);
         } else if (isClass == 2) {
             if (nodeList.size() == 2) {
-                auto fmn = new FileMetaNamespace( nodeList[0], &nodeList[1]);
+                auto fmn = new FileMetaNamespace( nodeList[0], nodeList[1] );
                 AddParseNamespaceNodeInfo(fmn);
                 if (nodeList[1]->blockNode != nullptr) {
-                    m_FileMeta.AddFileDefineNamespace(fmn);
+                    m_FileMeta->AddFileDefineNamespace(fmn);
                     ParseNamespaceOrTopClass(nodeList[1]->blockNode);
                 } else {
-                    m_FileMeta.AddFileSearchNamespace(fmn);
+                    m_FileMeta->AddFileSearchNamespace(fmn);
                 }
                 m_CurrentNodeInfoStack.pop();
                 ParseNamespaceOrTopClass(pnode);
             } else {
                 Log::AddInStructFileMeta(EError::None, 
-                    "Error è§£æ namespace A.B{}çš„æ ¼å¼ åªæœ‰ä¸€ä¸ªæ ‡è¯†ç¬¦!1");
+                    "Error ½âÎö namespace A.B{}µÄ¸ñÊ½ Ö»ÓĞÒ»¸ö±êÊ¶·û!1");
             }
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error æ²¡æœ‰å‘ç°Classæˆ–è€…Namespaceçš„å…³é”®å­—!");
+                "Error Ã»ÓĞ·¢ÏÖClass»òÕßNamespaceµÄ¹Ø¼ü×Ö!");
         }
     }
 }
@@ -450,7 +450,7 @@ void StructParse::ParseClassNode(Node* pnode) {
             ParseSyntax(pnode);
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error è§£ææ—¶ åœ¨Classå†…éƒ¨å‡ºç°ä¸æ”¯æŒçš„è¯­æ³• : " + (node->token ? node->token->GetLexemeString() : "null"));
+                "Error ½âÎöÊ± ÔÚClassÄÚ²¿³öÏÖ²»Ö§³ÖµÄÓï·¨ : " + (node->token ? node->token->GetLexemeString() : "null"));
             pnode->parseIndex++;
         }
     }
@@ -476,17 +476,17 @@ void StructParse::ParseDataBracketNode(Node* bracketNode) {
                 ParseDataNode(bracketNode);
             } else {
                 Log::AddInStructFileMeta(EError::None, 
-                    "Error åœ¨Dataçš„Bracketä¸­å‡ºç°ä¸æ”¯æŒçš„å…³é”®å­— : " + node->token->GetLexemeString());
+                    "Error ÔÚDataµÄBracketÖĞ³öÏÖ²»Ö§³ÖµÄ¹Ø¼ü×Ö : " + node->token->GetLexemeString());
                 bracketNode->parseIndex++;
             }
         } else if (node->nodeType == ENodeType::IdentifierLink) {
             auto nodeList = GetAllNodeToSemiColon(bracketNode);
-            auto cfmmd = new FileMetaMemberData(&m_FileMeta, nodeList);
+            auto cfmmd = new FileMetaMemberData(m_FileMeta, nodeList);
             AddParseDataInfo(cfmmd);
             m_CurrentNodeInfoStack.pop();
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error åœ¨Dataçš„Bracketä¸­å‡ºç°ä¸æ”¯æŒçš„è¯­æ³•");
+                "Error ÔÚDataµÄBracketÖĞ³öÏÖ²»Ö§³ÖµÄÓï·¨");
             bracketNode->parseIndex++;
         }
     }
@@ -494,7 +494,7 @@ void StructParse::ParseDataBracketNode(Node* bracketNode) {
 
 void StructParse::ParseDataNode(Node* pnode) {
     auto nodeList = GetAllNodeToSemiColon(pnode);
-    auto fmmd = new FileMetaMemberData(&m_FileMeta, nodeList);
+    auto fmmd = new FileMetaMemberData(m_FileMeta, nodeList);
     AddParseDataInfo(fmmd);
     
     for (size_t i = 0; i < fmmd->GetFileMetaMemberData().size(); i++) {
@@ -508,7 +508,7 @@ void StructParse::ParseDataNode(Node* pnode) {
 
 void StructParse::ParseEnumNode(Node* pnode) {
     auto nodeList = GetAllNodeToSemiColon(pnode);
-    auto fmmv = new FileMetaMemberVariable(&m_FileMeta, nodeList);
+    auto fmmv = new FileMetaMemberVariable(m_FileMeta, nodeList);
     AddParseVariableInfo(fmmv);
 }
 
@@ -525,12 +525,12 @@ std::vector<Node*> StructParse::HandleBeforeNode(Node* node) {
         return result;
     }
     
-    // å¤åˆ¶èŠ‚ç‚¹åˆ—è¡¨
+    // ¸´ÖÆ½ÚµãÁĞ±í
     for (size_t i = 0; i < node->childList.size(); i++) {
         result.push_back(node->childList[i]);
     }
     
-    // å¤„ç†è¡¨è¾¾å¼èŠ‚ç‚¹
+    // ´¦Àí±í´ïÊ½½Úµã
     _HandleExpressNodeProcess(node);
     
     return result;
@@ -542,10 +542,10 @@ std::vector<Node*> StructParse::HandleExpressNode(Node* node) {
         return result;
     }
     
-    // å¤„ç†è¡¨è¾¾å¼èŠ‚ç‚¹
+    // ´¦Àí±í´ïÊ½½Úµã
     _HandleExpressNodeProcess(node);
     
-    // è¿”å›å¤„ç†åçš„èŠ‚ç‚¹åˆ—è¡¨
+    // ·µ»Ø´¦ÀíºóµÄ½ÚµãÁĞ±í
     if (!node->childList.empty()) {
         for (size_t i = 0; i < node->childList.size(); i++) {
             result.push_back(node->childList[i]);
@@ -560,11 +560,11 @@ void StructParse::DelHandleNostList(Node* node) {
         return;
     }
     
-    // æ¸…ç†ä¸éœ€è¦çš„èŠ‚ç‚¹
+    // ÇåÀí²»ĞèÒªµÄ½Úµã
     for (size_t i = 0; i < node->childList.size(); i++) {
         Node* child = node->childList[i];
         if (child != nullptr) {
-            // é€’å½’æ¸…ç†å­èŠ‚ç‚¹
+            // µİ¹éÇåÀí×Ó½Úµã
             DelHandleNostList(child);
         }
     }
@@ -575,7 +575,7 @@ bool StructParse::IsCommonExpressNode(Node* node) {
         return false;
     }
     
-    // æ£€æŸ¥æ˜¯å¦æ˜¯å¸¸è§çš„è¡¨è¾¾å¼èŠ‚ç‚¹ç±»å‹
+    // ¼ì²éÊÇ·ñÊÇ³£¼ûµÄ±í´ïÊ½½ÚµãÀàĞÍ
     switch (node->nodeType) {
         case ENodeType::IdentifierLink:
         case ENodeType::Key:
@@ -595,16 +595,16 @@ void StructParse::_HandleExpressNodeProcess(Node* node, Node* inputFinaleNode) {
         return;
     }
     
-    // å¤„ç†è¡¨è¾¾å¼èŠ‚ç‚¹
+    // ´¦Àí±í´ïÊ½½Úµã
     for (size_t i = 0; i < node->childList.size(); i++) {
         Node* child = node->childList[i];
         if (child != nullptr) {
-            // å¤„ç†è§’åº¦è¡¨è¾¾å¼èŠ‚ç‚¹
+            // ´¦Àí½Ç¶È±í´ïÊ½½Úµã
             if (child->nodeType == ENodeType::LeftAngle || child->nodeType == ENodeType::RightAngle) {
                 HandleAngleExpressNode(child, node);
             }
             
-            // é€’å½’å¤„ç†å­èŠ‚ç‚¹
+            // µİ¹é´¦Àí×Ó½Úµã
             _HandleExpressNodeProcess(child, inputFinaleNode);
         }
     }
@@ -615,19 +615,19 @@ void StructParse::HandleAngleExpressNode(Node* node, Node* parentNode) {
         return;
     }
     
-    // å¤„ç†è§’åº¦è¡¨è¾¾å¼èŠ‚ç‚¹ï¼ˆå¦‚æ¨¡æ¿å‚æ•° <T>ï¼‰
+    // ´¦Àí½Ç¶È±í´ïÊ½½Úµã£¨ÈçÄ£°å²ÎÊı <T>£©
     if (node->nodeType == ENodeType::LeftAngle) {
-        // å¤„ç†å·¦è§’åº¦æ‹¬å·
+        // ´¦Àí×ó½Ç¶ÈÀ¨ºÅ
         for (size_t i = 0; i < node->childList.size(); i++) {
             Node* child = node->childList[i];
             if (child != nullptr && child->nodeType == ENodeType::IdentifierLink) {
-                // å¤„ç†æ¨¡æ¿å‚æ•°
-                // è¿™é‡Œå¯ä»¥æ·»åŠ æ¨¡æ¿å‚æ•°çš„å¤„ç†é€»è¾‘
+                // ´¦ÀíÄ£°å²ÎÊı
+                // ÕâÀï¿ÉÒÔÌí¼ÓÄ£°å²ÎÊıµÄ´¦ÀíÂß¼­
             }
         }
     } else if (node->nodeType == ENodeType::RightAngle) {
-        // å¤„ç†å³è§’åº¦æ‹¬å·
-        // è¿™é‡Œå¯ä»¥æ·»åŠ æ¨¡æ¿å‚æ•°ç»“æŸçš„å¤„ç†é€»è¾‘
+        // ´¦ÀíÓÒ½Ç¶ÈÀ¨ºÅ
+        // ÕâÀï¿ÉÒÔÌí¼ÓÄ£°å²ÎÊı½áÊøµÄ´¦ÀíÂß¼­
     }
 }
 
@@ -636,23 +636,23 @@ void StructParse::AddFileMetaFunctionVariable(Node* pnode, Node* blockNode, cons
         return;
     }
     
-    // åˆ›å»ºFileMetaMemberFunctionå¯¹è±¡
-    auto fmmf = new FileMetaMemberFunction(&m_FileMeta, nodeList);
+    // ´´½¨FileMetaMemberFunction¶ÔÏó
+    auto fmmf = new FileMetaMemberFunction(m_FileMeta, nullptr, nodeList);
     
-    // æ·»åŠ åˆ°è§£ææ ˆ
+    // Ìí¼Óµ½½âÎöÕ»
     AddParseFunctionNodeInfo(fmmf, true);
     
-    // å¦‚æœæœ‰å—èŠ‚ç‚¹ï¼Œè§£æå‡½æ•°ä½“
+    // Èç¹ûÓĞ¿é½Úµã£¬½âÎöº¯ÊıÌå
     if (blockNode != nullptr) {
         ParseSyntax(blockNode);
     }
     
-    // ä»æ ˆä¸­å¼¹å‡º
+    // ´ÓÕ»ÖĞµ¯³ö
     m_CurrentNodeInfoStack.pop();
 }
 
 void StructParse::AddFileMetaClasss(Node* blockNode, const std::vector<Node*>& nodeList) {
-    auto fmc = new FileMetaClass(&m_FileMeta, nodeList);
+    auto fmc = new FileMetaClass(m_FileMeta, nodeList);
     AddParseClassNodeInfo(fmc);
     if (blockNode != nullptr) {
         ParseClassNode(blockNode);
@@ -666,31 +666,31 @@ FileMetaSyntax* StructParse::HandleCreateFileMetaSyntaxByPNode(Node* pnode) {
         return nullptr;
     }
     
-    // æ£€æŸ¥ç¬¬ä¸€ä¸ªèŠ‚ç‚¹çš„ç±»å‹æ¥å†³å®šåˆ›å»ºä»€ä¹ˆç±»å‹çš„è¯­å¥
+    // ¼ì²éµÚÒ»¸ö½ÚµãµÄÀàĞÍÀ´¾ö¶¨´´½¨Ê²Ã´ÀàĞÍµÄÓï¾ä
     Node* firstNode = nodeList[0];
     if (firstNode->nodeType == ENodeType::Key && firstNode->token != nullptr) {
         switch (firstNode->token->GetType()) {
             case ETokenType::If:
-                return new FileMetaIfStatements(&m_FileMeta, nodeList);
+                return new FileMetaIfStatements(m_FileMeta, nodeList);
             case ETokenType::While:
             case ETokenType::DoWhile:
-                return new FileMetaWhileDoWhileStatements(&m_FileMeta, nodeList);
+                return new FileMetaWhileDoWhileStatements(m_FileMeta, nodeList);
             case ETokenType::Switch:
-                return new FileMetaSwitchStatements(&m_FileMeta, nodeList);
+                return new FileMetaSwitchStatements(m_FileMeta, nodeList);
             case ETokenType::Return:
-                return new FileMetaReturnStatements(&m_FileMeta, nodeList);
+                return new FileMetaReturnStatements(m_FileMeta, nodeList);
             case ETokenType::Break:
             case ETokenType::Continue:
             case ETokenType::Goto:
-                return new FileMetaBreakContinueGoStatements(&m_FileMeta, nodeList);
+                return new FileMetaBreakContinueGoStatements(m_FileMeta, nodeList);
             default:
-                // å…¶ä»–å…³é”®å­—ä½œä¸ºæ™®é€šè¯­å¥å¤„ç†
-                return new FileMetaCallStatements(&m_FileMeta, nodeList);
+                // ÆäËû¹Ø¼ü×Ö×÷ÎªÆÕÍ¨Óï¾ä´¦Àí
+                return new FileMetaCallStatements(m_FileMeta, nodeList);
         }
     }
     
-    // é»˜è®¤ä½œä¸ºè°ƒç”¨è¯­å¥å¤„ç†
-    return new FileMetaCallStatements(&m_FileMeta, nodeList);
+    // Ä¬ÈÏ×÷Îªµ÷ÓÃÓï¾ä´¦Àí
+    return new FileMetaCallStatements(m_FileMeta, nodeList);
 }
 
 } // namespace Compile

@@ -8,6 +8,8 @@
 
 #include "FileParse.h"
 #include "LexerParse.h"
+#include "TokenParse.h"
+#include "StructParse.h"
 #include <fstream>
 #include <iostream>
 #include <filesystem>
@@ -15,17 +17,17 @@
 #include "../../Project/ProjectManager.h"
 #include "../Process/FileMetaCompileState.h"
 #include "../../Debug/Log.h"
-
+#include <stdio.h>
+#include <fstream>
 
 bool FileExists(const char* path) {
-    if (path == NULL) return false;  // è·¯å¾„ä¸ºç©ºï¼Œç›´æ¥è¿”å› false
-    // ä»¥åªè¯»æ–¹å¼æ‰“å¼€æ–‡ä»¶ï¼ŒæˆåŠŸåˆ™å­˜åœ¨
-    FILE* file = fopen(path, "r");
-    if (file != NULL) {
-        fclose(file);  // å¿…é¡»å…³é—­æ–‡ä»¶ï¼Œé¿å…èµ„æºæ³„æ¼
+    if (path == NULL) return false;  // Â·¾¶Îª¿Õ£¬Ö±½Ó·µ»Ø false
+    // ÒÔÖ»¶Á·½Ê½´ò¿ªÎÄ¼ş£¬³É¹¦Ôò´æÔÚ
+    std::ifstream file(path);
+    if (file.bad() == false) {
         return true;
     }
-    return false;  // æ‰“å¼€å¤±è´¥ï¼ˆæ–‡ä»¶ä¸å­˜åœ¨æˆ–æ— æƒé™ï¼‰
+    return false;  // ´ò¿ªÊ§°Ü£¨ÎÄ¼ş²»´æÔÚ»òÎŞÈ¨ÏŞ£©
 }
 using namespace SimpleLanguage::Project;
 using namespace SimpleLanguage::Debug;
@@ -77,12 +79,12 @@ bool FileParse::LoadFile()
     
     m_FileCompileState->SetLoadState(FileMetaCompileState::ELoadState::Loading);
     
-    // è·å–æ–‡ä»¶å¤§å°
+    // »ñÈ¡ÎÄ¼ş´óĞ¡
     file.seekg(0, std::ios::end);
     fileSize = file.tellg();
     file.seekg(0, std::ios::beg);
     
-    // è¯»å–æ–‡ä»¶å†…å®¹
+    // ¶ÁÈ¡ÎÄ¼şÄÚÈİ
     content.resize(fileSize);
     file.read(&content[0], fileSize);
     file.close();
@@ -114,7 +116,7 @@ void FileParse::HandleStructParse()
             structParseComplete();
         }
     } else {
-        Log::AddInStructFileMeta(EError::None, "è¯»å–æ–‡ä»¶å‡ºé”™ FileParse Parse LoadFile !!!");
+        Log::AddInStructFileMeta(EError::None, "¶ÁÈ¡ÎÄ¼ş³ö´í FileParse Parse LoadFile !!!");
     }
 }
 

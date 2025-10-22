@@ -7,8 +7,8 @@
 //****************************************************************************
 
 #include "MetaCallLink.h"
-#include "../Compile/CoreFileMeta/FileMetaCallLink.h"
-#include "../Compile/CoreFileMeta/FileMetaCallNode.h"
+#include "../Compile/FileMeta/FileMetaCallLink.h"
+#include "../Compile/FileMeta/FileMetaCallNode.h"
 #include "../Compile/AllowUseSettings.h"
 #include <iostream>
 
@@ -19,7 +19,7 @@ MetaCallLink::MetaCallLink(FileMetaCallLink* fmcl, MetaClass* metaClass, MetaBlo
     m_FileMetaCallLink = fmcl;
     m_OwnerMetaClass = metaClass;
     m_OwnerMetaBlockStatements = mbs;
-    createCallLinkNode(frontDefineMt, mv);
+    CreateCallLinkNode(frontDefineMt, mv);
 }
 
 void MetaCallLink::CreateCallLinkNode(MetaType* frontDefineMt, MetaVariable* mv) {
@@ -44,40 +44,40 @@ void MetaCallLink::CreateCallLinkNode(MetaType* frontDefineMt, MetaVariable* mv)
 
 void MetaCallLink::Parse(AllowUseSettings* auc) {
     m_AllowUseSettings = auc;
-    parseCallNodeList(auc);
-    createVisitNodeList();
-    parseVisitNodeList(auc);
-    createFinalCallNode();
-    parseFinalCallNode(auc);
+    ParseCallNodeList(auc);
+    CreateVisitNodeList();
+    ParseVisitNodeList(auc);
+    CreateFinalCallNode();
+    ParseFinalCallNode(auc);
 }
 
 void MetaCallLink::ParseCallNodeList(AllowUseSettings* auc) {
     for (auto& callNode : m_CallNodeList) {
         if (callNode != nullptr) {
-            callNode->parse();
+            callNode->Parse();
         }
     }
 }
 
 void MetaCallLink::CalcReturnType() {
-    calcCallNodeListReturnType();
-    calcVisitNodeListReturnType();
-    calcFinalCallNodeReturnType();
+    CalcCallNodeListReturnType();
+    CalcVisitNodeListReturnType();
+    CalcFinalCallNodeReturnType();
 }
 
 void MetaCallLink::CalcCallNodeListReturnType() {
     for (auto& callNode : m_CallNodeList) {
         if (callNode != nullptr) {
-            callNode->calcReturnType();
+            callNode->CalcReturnType();
         }
     }
 }
 
 void MetaCallLink::CreateVisitNodeList() {
-    // 鍒涘缓璁块棶鑺傜偣鍒楄〃
+    // 创建访问节点列表
     for (auto& callNode : m_CallNodeList) {
         if (callNode != nullptr) {
-            // 杩欓噷闇�瑕佹牴鎹疄闄呯殑 MetaVisitNode 绫绘潵鍒涘缓
+            // 这里需要根据实际的 MetaVisitNode 类来创建
             // MetaVisitNode* visitNode = new MetaVisitNode(callNode);
             // m_VisitNodeList.push_back(visitNode);
         }
@@ -145,14 +145,14 @@ std::string MetaCallLink::ToTokenString() const {
 MetaCallLink* MetaCallLink::Clone() const {
     MetaCallLink* cloned = new MetaCallLink(m_FileMetaCallLink, m_OwnerMetaClass, m_OwnerMetaBlockStatements, nullptr, nullptr);
     
-    // 鍏嬮殕璋冪敤鑺傜偣鍒楄〃
+    // 克隆调用节点列表
     for (auto& callNode : m_CallNodeList) {
         if (callNode != nullptr) {
             cloned->m_CallNodeList.push_back(callNode->clone());
         }
     }
     
-    // 鍏嬮殕璁块棶鑺傜偣鍒楄〃
+    // 克隆访问节点列表
     for (auto& visitNode : m_VisitNodeList) {
         if (visitNode != nullptr) {
             // cloned->m_VisitNodeList.push_back(visitNode->clone());

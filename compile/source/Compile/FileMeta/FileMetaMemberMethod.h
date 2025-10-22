@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <unordered_set>
+#include "FileMetaBase.h"
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -14,6 +15,9 @@ class FileMetaClassDefine;
 class FileMetaTemplateDefine;
 class FileMetaBlockSyntax;
 class FileMetaBaseTerm;
+class FileMetaSyntax;
+class Token;
+class Node;
 
 class FileMetaParamterDefine : public FileMetaBase {
 public:

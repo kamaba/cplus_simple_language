@@ -27,11 +27,11 @@ int MetaExpressNode::CalcParseLevel(int level) {
 }
 
 void MetaExpressNode::CalcReturnType() {
-    // 鍩虹被榛樿瀹炵幇涓虹┖
+    // 基类默认实现为空
 }
 
 void MetaExpressNode::Parse(AllowUseSettings* auc) {
-    // 鍩虹被榛樿瀹炵幇涓虹┖
+    // 基类默认实现为空
 }
 
 MetaClass* MetaExpressNode::GetReturnMetaClass() {

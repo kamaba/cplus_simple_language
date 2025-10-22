@@ -16,8 +16,8 @@
 #include <sstream>
 
 namespace SimpleLanguage {
-    class Compile::Token;
-    class Core::MetaBase;
+    namespace Compile { class Token; }
+    namespace Core { class MetaBase; }
 namespace Debug {
 
 enum class EError {
@@ -67,13 +67,13 @@ class LogData {
 public:
     enum class EErrorType {
         None,
-        InitProject,    // åˆå§‹åŒ–å·¥ç¨‹
-        HandleToken,    // è¯†åˆ«token
-        HandleNode,     // è¯†åˆ«node
-        StructFileMeta, // æ„å»ºFileMetaæ–‡ä»¶
-        StructMeta,     // æ„å»ºå…ƒæ•°æ®
-        GenIR,          // ç”ŸæˆIR
-        VM,             // ä½¿ç”¨VM
+        InitProject,    // ³õÊ¼»¯¹¤³Ì
+        HandleToken,    // Ê¶±ğtoken
+        HandleNode,     // Ê¶±ğnode
+        StructFileMeta, // ¹¹½¨FileMetaÎÄ¼ş
+        StructMeta,     // ¹¹½¨ÔªÊı¾İ
+        GenIR,          // Éú³ÉIR
+        VM,             // Ê¹ÓÃVM
         Process
     };
 
@@ -81,10 +81,10 @@ public:
     EErrorType errorType = EErrorType::None;
     std::string message;
     std::string filePath;
-    int sourceBeginLine = 0;    // å¼€å§‹æ‰€åœ¨è¡Œ
-    int sourceBeginChar = 0;   // å¼€å§‹æ‰€åœ¨åˆ—
-    int sourceEndLine = 0;      // ç»“æŸæ‰€åœ¨è¡Œ
-    int sourceEndChar = 0;      // ç»“æŸæ‰€åœ¨åˆ—
+    int sourceBeginLine = 0;    // ¿ªÊ¼ËùÔÚĞĞ
+    int sourceBeginChar = 0;   // ¿ªÊ¼ËùÔÚÁĞ
+    int sourceEndLine = 0;      // ½áÊøËùÔÚĞĞ
+    int sourceEndChar = 0;      // ½áÊøËùÔÚÁĞ
     std::string demo;
     std::string advan;
     std::chrono::system_clock::time_point time;
@@ -116,19 +116,19 @@ private:
 
 public:
     static void AddCodeFileLog(LogData* data);
-    static void AddInInitProject(Token* token, EError err, const std::string& msg);
+    static void AddInInitProject(Compile::Token* token, EError err, const std::string& msg);
     static LogData* AddProcess(EProcess proc, EError err, const std::string& msg);
     static LogData* AddInHandleToken(const std::string& path, int sbl, int sel, EError err, const std::string& msg);
-    static LogData* AddInHandleNode(Token* token, EError err, const std::string& msg);
+    static LogData* AddInHandleNode(Compile::Token* token, EError err, const std::string& msg);
     static LogData* AddInStructFileMeta(EError err, const std::string& msg);
-    static LogData* AddInStructFileMeta(EError err, const std::string& msg, Token* token);
+    static LogData* AddInStructFileMeta(EError err, const std::string& msg, Compile::Token* token);
     static LogData* AddInStructMeta(EError err, const std::string& msg);
-    static LogData* AddInStructMeta(EError err, const std::string& msg, Token* token);
+    static LogData* AddInStructMeta(EError err, const std::string& msg, Compile::Token* token);
     static LogData* AddGenIR(EError err, const std::string& msg);
     static LogData* AddVM(EError err, const std::string& msg);
     
 private:
-    static void AddLog(Token* token, EError err, const std::string& msg);
+    static void AddLog(Compile::Token* token, EError err, const std::string& msg);
 
 public:
     static void PrintLog();

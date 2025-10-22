@@ -13,7 +13,7 @@
 
 namespace SimpleLanguage {
 
-    //å‰ç½®æƒé™
+    //Ç°ÖÃÈ¨ÏŞ
     enum class EPermission : uint8_t
     {
         Null = 0,
@@ -23,7 +23,7 @@ namespace SimpleLanguage {
         Private = 4
     };
 
-    //å‰ç½®ç±»å‹
+    //Ç°ÖÃÀàĞÍ
     enum class EType : uint8_t
     {
         None = 0,
@@ -54,7 +54,7 @@ namespace SimpleLanguage {
         Float2 = 25
     };
 
-    //tokenç±»å‹
+    //tokenÀàĞÍ
     enum class ETokenType : uint16_t
     {
         /// <summary>  </summary>
@@ -121,31 +121,31 @@ namespace SimpleLanguage {
         Divide = 29,
         /// <summary> /= </summary>
         DivideAssign = 30,
-        /// <summary> % æ¨¡è¿ç®— </summary>
+        /// <summary> % Ä£ÔËËã </summary>
         Modulo = 31,
         /// <summary> %= </summary>
         ModuloAssign = 32,
-        /// <summary> | æˆ–è¿ç®— </summary>
+        /// <summary> | »òÔËËã </summary>
         InclusiveOr = 33,
         /// <summary> |= </summary>
         InclusiveOrAssign = 34,
         /// <summary> || </summary>
         Or = 35,
-        /// <summary> & å¹¶è¿ç®— </summary>
+        /// <summary> & ²¢ÔËËã </summary>
         Combine = 36,
         /// <summary> &= </summary>
         CombineAssign = 37,
         /// <summary> && </summary>
         And = 38,
-        /// <summary> ^ å¼‚æˆ– </summary>
+        /// <summary> ^ Òì»ò </summary>
         XOR = 39,
         /// <summary> ^= </summary>
         XORAssign = 40,
-        /// <summary>  ~ å–åæ“ä½œ </summary>
+        /// <summary>  ~ È¡·´²Ù×÷ </summary>
         Negative = 41,
-        /// <summary> << å·¦ç§» </summary>
+        /// <summary> << ×óÒÆ </summary>
         Shi = 42,
-        /// <summary> >> å³ç§» </summary>
+        /// <summary> >> ÓÒÒÆ </summary>
         Shr = 43,
         /// <summary> # </summary>
         Sharp = 44,
@@ -299,7 +299,7 @@ namespace SimpleLanguage {
         Boolean = 117,
         /// <summary> complex </summary>
         Complex = 118,
-        /// <summary> æ ‡è¯†ç¬¦ </summary>
+        /// <summary> ±êÊ¶·û </summary>
         Identifier = 119,
 
         Float2 = 120, Float3 = 121, Float4 = 122,
@@ -318,7 +318,7 @@ namespace SimpleLanguage {
         Matrix2x3 = 145, Matrix3x2 = 146, Matrix3x3 = 147,
         Matrix4x2 = 148, Matrix2x4 = 149, Matrix3x4 = 150, Matrix4x3 = 151, Matrix4x4 = 152,
 
-        /// <summary> ç»“æŸ </summary>
+        /// <summary> ½áÊø </summary>
         Finished = 153
     };
 
@@ -350,8 +350,8 @@ namespace SimpleLanguage {
     class SignComputePriority
     {
     public:
-        static const int Level1 = 1;                         //(a+b) [] . ä¼˜å…ˆæ“ä½œï¼Œå¯¹è±¡æ“ä½œç­‰
-        static const int Level2_LinkOp = 2;                        // -è´Ÿå· (int)å¼ºè½¬ ++x x++ -- ! ~ 
+        static const int Level1 = 1;                         //(a+b) [] . ÓÅÏÈ²Ù×÷£¬¶ÔÏó²Ù×÷µÈ
+        static const int Level2_LinkOp = 2;                        // -¸ººÅ (int)Ç¿×ª ++x x++ -- ! ~ 
         static const int Level3_Hight_Compute = 3;                 // / * % 
         static const int Level3_Low_Compute = 4;                   // + - 
         static const int Level5_BitMoveOp = 5;              // << >> 

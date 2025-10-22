@@ -8,59 +8,54 @@
 
 #pragma once
 
-#include "MetaCallNode.h"
-#include "../Compile/CoreFileMeta/FileMetaCallLink.h"
-#include "../Compile/CoreFileMeta/FileMetaCallNode.h"
-#include "../Compile/CoreFileMeta/FileMetaBase.h"
-#include "../Compile/AllowUseSettings.h"
-#include "MetaClass.h"
-#include "Statements/MetaBlockStatements.h"
-#include "MetaType.h"
-#include "MetaVariable.h"
 #include <string>
 #include <vector>
 #include <memory>
 
+
+class SimpleLanguage::Compile::FileMetaCallLink;
+
 namespace SimpleLanguage {
 namespace Core {
 
-// 鍓嶅悜澹版槑
+// 前向声明
 class MetaVisitNode;
 class MetaClass;
 class MetaBlockStatements;
 class MetaType;
 class MetaVariable;
 class AllowUseSettings;
+class MetaCallNode;
 
 class MetaCallLink {
 public:
-    MetaCallLink(FileMetaCallLink* fmcl, MetaClass* metaClass, MetaBlockStatements* mbs, MetaType* frontDefineMt, MetaVariable* mv);
+    MetaCallLink(SimpleLanguage::Compile::FileMetaCallLink* fmcl, MetaClass* metaClass, MetaBlockStatements* mbs, MetaType* frontDefineMt, MetaVariable* mv);
     ~MetaCallLink() = default;
 
-    // 灞炴�ц闂櫒
-    MetaVisitNode* getFinalCallNode() const { return m_FinalCallNode; }
-    const std::vector<MetaVisitNode*>& getCallNodeList() const { return m_VisitNodeList; }
-    AllowUseSettings* getAllowUseSettings() const { return m_AllowUseSettings; }
+    // 属性访问器
+    MetaVisitNode* GetFinalCallNode() const { return m_FinalCallNode; }
+    const std::vector<MetaVisitNode*>& GetCallNodeList() const { return m_VisitNodeList; }
+    AllowUseSettings* GetAllowUseSettings() const { return m_AllowUseSettings; }
 
-    // 鏂规硶
-    void parse(AllowUseSettings* auc);
-    void calcReturnType();
-    std::string toFormatString() const;
-    std::string toTokenString() const;
-    MetaCallLink* clone() const;
+    // 方法
+    void Parse(AllowUseSettings* auc);
+    void CalcReturnType();
+    std::string ToFormatString() const;
+    std::string ToTokenString() const;
+    MetaCallLink* Clone() const;
 
 private:
-    void createCallLinkNode(MetaType* frontDefineMt, MetaVariable* mv);
-    void parseCallNodeList(AllowUseSettings* auc);
-    void calcCallNodeListReturnType();
-    void createVisitNodeList();
-    void parseVisitNodeList(AllowUseSettings* auc);
-    void calcVisitNodeListReturnType();
-    void createFinalCallNode();
-    void parseFinalCallNode(AllowUseSettings* auc);
-    void calcFinalCallNodeReturnType();
+    void CreateCallLinkNode(MetaType* frontDefineMt, MetaVariable* mv);
+    void ParseCallNodeList(AllowUseSettings* auc);
+    void CalcCallNodeListReturnType();
+    void CreateVisitNodeList();
+    void ParseVisitNodeList(AllowUseSettings* auc);
+    void CalcVisitNodeListReturnType();
+    void CreateFinalCallNode();
+    void ParseFinalCallNode(AllowUseSettings* auc);
+    void CalcFinalCallNodeReturnType();
 
-    FileMetaCallLink* m_FileMetaCallLink = nullptr;
+    SimpleLanguage::Compile::FileMetaCallLink* m_FileMetaCallLink = nullptr;
     MetaClass* m_OwnerMetaClass = nullptr;
     MetaBlockStatements* m_OwnerMetaBlockStatements = nullptr;
     std::vector<MetaCallNode*> m_CallNodeList;

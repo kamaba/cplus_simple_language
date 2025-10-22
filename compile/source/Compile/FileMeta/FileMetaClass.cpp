@@ -17,6 +17,7 @@
 #include "../..//Define.h"
 #include "../Parse/StructParse.h"
 #include "../FileMeta/FileMetatUtil.h"
+#include "../../Core/MetaClass.h"
 #include <algorithm>
 #include <sstream>
 
@@ -31,7 +32,7 @@ FileMetaClass::FileMetaClass(FileMeta* fm, const ::std::vector<Node*>& listNode)
 
 bool FileMetaClass::Parse() {
     if (m_NodeList.empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error é”™è¯¯ !!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ´íÎó !!!");
         return false;
     }
 
@@ -55,24 +56,24 @@ bool FileMetaClass::Parse() {
                 addCount = ReadClassDefineStruct(addCount - 1, m_NodeList, fcdList);
                 if (m_ExtendsToken != nullptr && m_SufInterfaceToken == nullptr) {
                     if (m_FileMetaExtendClass != nullptr) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error å·²æœ‰ç»§æ‰¿ç±»,è¯·å‹¿å¤šé‡ç»§æ‰¿!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ÒÑÓĞ¼Ì³ĞÀà,ÇëÎğ¶àÖØ¼Ì³Ğ!");
                     }
                     if (fcdList.empty()) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ç»§æ‰¿å…³é”®å­—åè¾¹æ²¡æœ‰ç›¸åº”çš„å†…å®¹!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ¼Ì³Ğ¹Ø¼ü×Öºó±ßÃ»ÓĞÏàÓ¦µÄÄÚÈİ!");
                     }
                     if (fcdList.size() > 1) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ç»§æ‰¿åªèƒ½å•ç»§æ‰¿ï¼Œä¸èƒ½å¤šç»§æ‰¿!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ¼Ì³ĞÖ»ÄÜµ¥¼Ì³Ğ£¬²»ÄÜ¶à¼Ì³Ğ!!");
                     }
                     m_FileMetaExtendClass = fcdList[0];
                 } else if (m_SufInterfaceToken != nullptr) {
                     if (fcdList.empty()) {
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "æ¥å£å…³é”®å­—åè¾¹æ²¡æœ‰ç›¸åº”çš„å†…å®¹!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "½Ó¿Ú¹Ø¼ü×Öºó±ßÃ»ÓĞÏàÓ¦µÄÄÚÈİ!");
                     }
                     m_InterfaceClassList.insert(m_InterfaceClassList.end(), fcdList.begin(), fcdList.end());
                 }
             } else {
                 if (!classNameTokenList.empty()) {
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructClassNameRepeat, "Error å­—ç¬¦ä¸¤æ¬¡èµ‹å€¼ 107");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructClassNameRepeat, "Error ×Ö·ûÁ½´Î¸³Öµ 107");
                     for (size_t i = 0; i < classNameTokenList.size(); i++) {
                         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, classNameTokenList[i]->GetLexemeString());
                     }
@@ -93,7 +94,7 @@ bool FileMetaClass::Parse() {
                         auto cnode2 = m_NodeList[cAddCount++];
                         if (cnode2->nodeType == SimpleLanguage::Compile::ENodeType::RightAngle) {
                             if (templateNode == nullptr) {
-                                auto ld = SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "æ²¡æœ‰æ‰¾åˆ°æ¨¡æ¿å®šä¹‰T");
+                                auto ld = SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Ã»ÓĞÕÒµ½Ä£°å¶¨ÒåT");
                                 ld->filePath = cnode2->token->GetPath();
                                 ld->sourceBeginLine = cnode2->token->GetSourceBeginLine();
                                 break;
@@ -118,7 +119,7 @@ bool FileMetaClass::Parse() {
                                 templateNode = cnode2;
                             }
                         } else {
-                            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ä¸æ”¯æŒå…¶å®ƒæ ¼å¼ åœ¨ç±»åç»­çš„æ¨¡æ¿é™å®šä¸­!");
+                            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ²»Ö§³ÖÆäËü¸ñÊ½ ÔÚÀàºóĞøµÄÄ£°åÏŞ¶¨ÖĞ!");
                         }
                     }
                     addCount = cAddCount;
@@ -134,101 +135,101 @@ bool FileMetaClass::Parse() {
                     permissionToken = token;
                 } else {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡æƒé™!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎÈ¨ÏŞ!!");
                 }
             } else if (token->GetType() == SimpleLanguage::ETokenType::Const) {
                 if (m_ConstToken == nullptr) {
                     m_ConstToken = token;
                 } else {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Const!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎConst!!");
                 }
             } else if (token->GetType() == SimpleLanguage::ETokenType::Partial) {
                 if (m_PartialToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Class!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎClass!!");
                 }
                 m_PartialToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Class) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎEnum!!");
                 }
                 if (m_DataToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡data!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´Îdata!!");
                 }
                 if (m_ClassToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Class!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎClass!!");
                 }
                 m_ClassToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Enum) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎEnum!!");
                 }
                 if (m_DataToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡data!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´Îdata!!");
                 }
                 if (m_ClassToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Class!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎClass!!");
                 }
                 m_EnumToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Data) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎEnum!!");
                 } else {
                     if (m_DataToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡data!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´Îdata!!");
                     }
                     if (m_ClassToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Class!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎClass!!");
                     }
                     m_DataToken = token;
                 }
             } else if (token->GetType() == SimpleLanguage::ETokenType::Extends) {
                 if (m_ExtendsToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Extend!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎExtend!!");
                 }
                 m_ExtendsToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Interface) {
                 if (m_EnumToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡Enum!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´ÎEnum!!");
                 }
                 if (m_DataToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æè¿‡äº†ä¸€æ¬¡data!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎö¹ıÁËÒ»´Îdata!!");
                 }
-                if (!classNameTokenList.empty()) {    //åç½®
+                if (!classNameTokenList.empty()) {    //ºóÖÃ
                     if (m_PreInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æç±»æ—¶ï¼Œå·²å‘ç°ç”¨è¿‡interfaceæ ‡è®°ï¼Œä¸å¯é‡å¤ä½¿ç”¨è¯¥æ ‡è®°");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎöÀàÊ±£¬ÒÑ·¢ÏÖÓÃ¹ıinterface±ê¼Ç£¬²»¿ÉÖØ¸´Ê¹ÓÃ¸Ã±ê¼Ç");
                     }
                     if (m_SufInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æç±»æ—¶ï¼Œå·²å‘ç°ç”¨è¿‡interfaceæ ‡è®°ï¼Œä¸å¯é‡å¤ä½¿ç”¨è¯¥æ ‡è®°");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎöÀàÊ±£¬ÒÑ·¢ÏÖÓÃ¹ıinterface±ê¼Ç£¬²»¿ÉÖØ¸´Ê¹ÓÃ¸Ã±ê¼Ç");
                     }
                     m_SufInterfaceToken = token;
                 } else {
                     if (m_ClassToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æinterfaceä¸classä¸å¯ä»¥å‘¨æ—¶å‡ºç°!!");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎöinterfaceÓëclass²»¿ÉÒÔÖÜÊ±³öÏÖ!!");
                     }
                     if (m_PreInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æç±»æ—¶ï¼Œå·²å‘ç°ç”¨è¿‡interfaceæ ‡è®°ï¼Œä¸å¯é‡å¤ä½¿ç”¨è¯¥æ ‡è®°");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎöÀàÊ±£¬ÒÑ·¢ÏÖÓÃ¹ıinterface±ê¼Ç£¬²»¿ÉÖØ¸´Ê¹ÓÃ¸Ã±ê¼Ç");
                     }
                     if (m_SufInterfaceToken != nullptr) {
                         isError = true;
-                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æç±»æ—¶ï¼Œå·²å‘ç°ç”¨è¿‡interfaceæ ‡è®°ï¼Œä¸å¯é‡å¤ä½¿ç”¨è¯¥æ ‡è®°");
+                        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎöÀàÊ±£¬ÒÑ·¢ÏÖÓÃ¹ıinterface±ê¼Ç£¬²»¿ÉÖØ¸´Ê¹ÓÃ¸Ã±ê¼Ç");
                     }
                     m_PreInterfaceToken = token;
                 }
@@ -236,7 +237,7 @@ bool FileMetaClass::Parse() {
                 commaToken = token;
             } else {
                 isError = true;
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error æœ‰å…¶å®ƒæœªçŸ¥ç±»å‹åœ¨classä¸­");
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart,"ErrorÓĞÆäËüÎ´ÖªÀàĞÍÔÚclassÖĞ");
                 break;
             }
         }
@@ -245,42 +246,42 @@ bool FileMetaClass::Parse() {
 
     if (m_EnumToken != nullptr) {
         if (m_PreInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enumæ–¹å¼ï¼Œä¸enumåŒçº§ï¼Œä¸å…è®¸åŒæ—¶å‡ºç°");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum·½Ê½£¬ÓëenumÍ¬¼¶£¬²»ÔÊĞíÍ¬Ê±³öÏÖ");
             return false;
         }
         if (m_SufInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enumæ–¹å¼ï¼Œä¸æ”¯æŒæ¥å£æ–¹å¼");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum·½Ê½£¬²»Ö§³Ö½Ó¿Ú·½Ê½");
             SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "");
             return false;
         }
         if (permissionToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enumæ–¹å¼ï¼Œä¸æ”¯æŒæƒé™çš„ä½¿ç”¨!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum·½Ê½£¬²»Ö§³ÖÈ¨ÏŞµÄÊ¹ÓÃ!!");
             return false;
         }
         if (m_PartialToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enumæ–¹å¼ï¼Œä¸æ”¯æŒpartialçš„ä½¿ç”¨!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum·½Ê½£¬²»Ö§³ÖpartialµÄÊ¹ÓÃ!!");
             return false;
         }
     } else if (m_DataToken != nullptr) {
         if (m_PreInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enumæ–¹å¼ï¼Œä¸dataåŒçº§ï¼Œä¸å…è®¸åŒæ—¶å‡ºç°");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum·½Ê½£¬ÓëdataÍ¬¼¶£¬²»ÔÊĞíÍ¬Ê±³öÏÖ");
             return false;
         }
         if (m_SufInterfaceToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enumæ–¹å¼ï¼Œä¸æ”¯æŒæ¥å£æ–¹å¼");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Enum·½Ê½£¬²»Ö§³Ö½Ó¿Ú·½Ê½");
             return false;
         }
         if (permissionToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Dataæ–¹å¼ï¼Œä¸æ”¯æŒæƒé™çš„ä½¿ç”¨!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Data·½Ê½£¬²»Ö§³ÖÈ¨ÏŞµÄÊ¹ÓÃ!!");
             return false;
         }
         if (m_PartialToken != nullptr) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Dataæ–¹å¼ï¼Œä¸æ”¯æŒpartialçš„ä½¿ç”¨!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error Data·½Ê½£¬²»Ö§³ÖpartialµÄÊ¹ÓÃ!!");
             return false;
         }
     } else {
         if (classNameTokenList.empty()) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error è§£æç±»å‹åç§°é”™è¯¯!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::StructFileMetaStart, "Error ½âÎöÀàĞÍÃû³Æ´íÎó!!");
         }
     }
     
@@ -356,7 +357,7 @@ int FileMetaClass::ReadClassDefineStruct(int cAddCount, const std::vector<Node*>
             cAddCount++;
             break;
         } else {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ä¸æ”¯æŒå…¶å®ƒæ ¼å¼ åœ¨ç±»åç»­çš„æ¨¡æ¿é™å®šä¸­!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ²»Ö§³ÖÆäËü¸ñÊ½ ÔÚÀàºóĞøµÄÄ£°åÏŞ¶¨ÖĞ!");
         }
         cAddCount++;
     }
@@ -433,7 +434,7 @@ void FileMetaClass::SetPermissionToken(Token* permissionToken) {
     m_PermissionToken = permissionToken;
 }
 
-void FileMetaClass::SetMetaClass( MetaClass* mc) {
+void FileMetaClass::SetMetaClass( Core::MetaClass* mc) {
     m_MetaClass = mc;
 }
 

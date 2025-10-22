@@ -25,12 +25,12 @@ namespace Compile {
 
     void CompileManager::AddCompileError(const std::string& str)
     {
-        // å®ç°ç¼–è¯‘é”™è¯¯å¤„ç†
+        // ÊµÏÖ±àÒë´íÎó´¦Àí
     }
 
     void CompileManager::AddProjectCompileState(int state, int info, int error, const std::string& str)
     {
-        // å®ç°é¡¹ç›®ç¼–è¯‘çŠ¶æ€å¤„ç†
+        // ÊµÏÖÏîÄ¿±àÒë×´Ì¬´¦Àí
     }
 
 } // namespace Compile

@@ -25,9 +25,9 @@ private:
 };
 
 enum class EUseDefineType {
-    NoUseProjectConfigNamespace,        // ä¸ä½¿ç”¨é¡¹ç›®å†…éƒ¨é…ç½®
-    LimitUseProjectConfigNamespace,     // é™åˆ¶ä½¿ç”¨é…ç½®åçš„å‘½åç©ºé—´ ç±»è‡ªç”±åˆ›ä½œ
-    LimitUseProjectConfigNamespaceAndClass, // é™åˆ¶ä½¿ç”¨é…ç½®åçš„å‘½åç©ºé—´ä¸ç±»
+    NoUseProjectConfigNamespace,        // ²»Ê¹ÓÃÏîÄ¿ÄÚ²¿ÅäÖÃ
+    LimitUseProjectConfigNamespace,     // ÏŞÖÆÊ¹ÓÃÅäÖÃºóµÄÃüÃû¿Õ¼ä Àà×ÔÓÉ´´×÷
+    LimitUseProjectConfigNamespaceAndClass, // ÏŞÖÆÊ¹ÓÃÅäÖÃºóµÄÃüÃû¿Õ¼äÓëÀà
 };
 
 class ProjectManager {

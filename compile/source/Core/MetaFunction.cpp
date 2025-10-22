@@ -261,7 +261,7 @@ std::string MetaFunction::ToString() const {
 }
 
 std::string MetaFunction::ToFormatString() const {
-    return ToStatementString();
+    return MetaBase::ToFormatString();
 }
 
 } // namespace Core

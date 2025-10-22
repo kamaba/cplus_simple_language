@@ -19,16 +19,16 @@ namespace Core {
 
 class MetaGenTemplateClass : public MetaClass {
 public:
-    // æž„é€ å‡½æ•°
+    // ¹¹Ôìº¯Êý
     MetaGenTemplateClass(MetaClass* mtc, const std::vector<MetaGenTemplate*>& list);
     virtual ~MetaGenTemplateClass() = default;
 
-    // å±žæ€§è®¿é—®å™¨
+    // ÊôÐÔ·ÃÎÊÆ÷
     MetaClass* GetMetaTemplateClass() const { return m_MetaTemplateClass; }
     const std::vector<MetaGenTemplate*>& GetMetaGenTemplateList() const { return m_MetaGenTemplateList; }
     virtual bool IsGenTemplate() const override { return true; }
 
-    // æ–¹æ³•
+    // ·½·¨
     void UpdateRegsterGenMetaClass();
     virtual void SetDeep(int deep) override;
     MetaType* GetGenTemplateByIndex(int index);

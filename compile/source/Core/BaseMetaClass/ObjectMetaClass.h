@@ -20,7 +20,7 @@ namespace Core {
 
 class ObjectMetaClass : public MetaClass {
 public:
-    ObjectMetaClass() : MetaClass(DefaultObject::Object.ToString()) {
+    ObjectMetaClass() : MetaClass("Object") {
         m_ClassDefineType = EClassDefineType::InnerDefine;
     }
     

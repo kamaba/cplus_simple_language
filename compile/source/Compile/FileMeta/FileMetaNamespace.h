@@ -13,6 +13,7 @@
 #include <string>
 #include <stack>
 #include <sstream>
+#include "FileMetaBase.h"
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -20,8 +21,8 @@ namespace Compile {
 // Forward declarations
 class FileMeta;
 class FileMetaClass;
-class FileMetaNamespace;
 class NamespaceStatementBlock;
+class Node;
 
 class FileMetaNamespace : public FileMetaBase {
 public:

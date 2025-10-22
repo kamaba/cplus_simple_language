@@ -32,20 +32,20 @@ namespace Core {
         MetaType(const MetaType& mt);
         virtual ~MetaType() = default;
 
-        // 灞炴�ц闂櫒
+        // 属性访问器
         EMetaTypeType GetEType() const { return m_EType; }
         MetaClass* GetMetaClass() const { return m_MetaClass; }
         const std::vector<MetaType*>& GetTemplateMetaTypeList() const { return m_TemplateMetaTypeList; }
         bool IsTemplate() const { return m_IsTemplate; }
         bool IsIncludeTemplate() const { return m_IsIncludeTemplate; }
 
-        // 璁剧疆鏂规硶
+        // 设置方法
         void SetMetaClass(MetaClass* metaClass) { m_MetaClass = metaClass; }
         void SetEType(EMetaTypeType eType) { m_EType = eType; }
         void SetTemplate(bool isTemplate) { m_IsTemplate = isTemplate; }
         void SetIncludeTemplate(bool include) { m_IsIncludeTemplate = include; }
 
-        // 鏂规硶
+        // 方法
         std::string ToFormatString() const;
         bool IsIncludeClassTemplate(MetaClass* metaClass) const;
         static bool EqualMetaDefineType(const MetaType* v, const MetaType* mt);

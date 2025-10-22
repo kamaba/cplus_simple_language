@@ -10,7 +10,7 @@ int main( const char* args )
 {
     std::cout << "Hello World!\n";
     CommandInputArgs* inputArgs = new CommandInputArgs("");
-    ProjectManager.Run("../../../test/BaseTest", inputArgs);
+    ProjectManager::Run("../../../test/BaseTest", inputArgs);
 
     system("pause");
 }

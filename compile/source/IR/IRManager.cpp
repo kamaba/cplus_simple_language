@@ -47,7 +47,7 @@ EIROpCode IRManager::GetConstIROpCode(EType etype) {
 void IRManager::TranslateIR() {
     ParseClass();
 
-    // åŠ¨æ€è§£æå‡ºæ¥çš„å‡½æ•°
+    // ¶¯Ì¬½âÎö³öÀ´µÄº¯Êı
     auto dynamicMmfDict4 = MethodManager::GetInstance().GetMetaDynamicFunctionList();
     for (auto v : dynamicMmfDict4) {
         IRMethod* irm = TranslateIRByFunction(v);
@@ -96,11 +96,11 @@ IRMethod* IRManager::TranslateIRByFunction(MetaFunction* mf) {
 }
 
 void IRManager::ParseClass() {
-    // è§£æç±»çš„å®ç°
+    // ½âÎöÀàµÄÊµÏÖ
 }
 
 void IRManager::ParseIRMethod() {
-    // è§£æIRæ–¹æ³•çš„å®ç°
+    // ½âÎöIR·½·¨µÄÊµÏÖ
 }
 
 void IRManager::AddIRData(IRData* irdata) {
@@ -118,11 +118,11 @@ void IRManager::AddIRDataList(const std::vector<IRData*>& list) {
 }
 
 void IRManager::PrintIR() {
-    std::cout << "----------IR å¼€å§‹---------------------" << std::endl;
+    std::cout << "----------IR ¿ªÊ¼---------------------" << std::endl;
     for (auto ld : m_IRDataList) {
         std::cout << ld->ToString() << std::endl;
     }
-    std::cout << "----------IR ç»“æŸ---------------------" << std::endl;
+    std::cout << "----------IR ½áÊø---------------------" << std::endl;
 }
 
 } // namespace IR

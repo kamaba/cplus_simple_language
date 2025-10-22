@@ -12,8 +12,12 @@
 #include "../Token.h"
 #include <vector>
 #include <string>
+#include "FileMetaBase.h"
 
 namespace SimpleLanguage {
+    namespace Core {
+        class MetaNode;
+    }
 namespace Compile {
 // Forward declarations
 class FileMeta;
@@ -162,7 +166,7 @@ public:
     const std::vector<FileInputTemplateNode*>& InputTemplateNodeList() const { return m_InputTemplateNodeList; }
     const std::vector<Token*>& ArrayTokenList() const { return m_ArrayTokenList; }
 
-    SimpleLanguage::Core::MetaNode* GetChildrenMetaNode(SimpleLanguage::Core::MetaNode* mb);
+    Core::MetaNode* GetChildrenMetaNode(Core::MetaNode* mb);
     std::string ToString() const;
     std::string ToTokenString() const;
     std::string ToFormatString() const;

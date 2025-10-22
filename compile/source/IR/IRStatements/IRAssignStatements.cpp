@@ -25,7 +25,7 @@ void IRAssignStatements::ParseIRStatements(MetaAssignStatements* ms) {
         }
 
         if (finalMVN == nullptr) {
-            Log::AddGenIR(EError::None, "æ²¡æœ‰æœ€ç»ˆè¡¨è¾¾å¼ï¼Œé”™è¯¯å¤„ç†");
+            Log::AddGenIR(EError::None, "Ã»ÓÐ×îÖÕ±í´ïÊ½£¬´íÎó´¦Àí");
             return;
         }
         
@@ -34,18 +34,18 @@ void IRAssignStatements::ParseIRStatements(MetaAssignStatements* ms) {
             m_IRStatements.push_back(m_IRExpress);
 
             if (finalMVN->GetVisitType() == MetaVisitNode::EVisitType::Variable) {
-                // è¿™ç§æ˜¯ Obja.Objb = new()çš„æ–¹å¼
-                // å¤„ç†å˜é‡èµ‹å€¼é€»è¾‘
+                // ÕâÖÖÊÇ Obja.Objb = new()µÄ·½Ê½
+                // ´¦Àí±äÁ¿¸³ÖµÂß¼­
             }
         }
     } else {
-        // å¤„ç†éžæ–°è¯­å¥çš„èµ‹å€¼é€»è¾‘
+        // ´¦Àí·ÇÐÂÓï¾äµÄ¸³ÖµÂß¼­
         if (ms->GetFinalMetaExpress() != nullptr) {
             m_IRExpress = new IRExpress(m_IrMethod, ms->GetFinalMetaExpress());
             m_IRStatements.push_back(m_IRExpress);
         }
         
-        // å¤„ç†å­˜å‚¨å˜é‡é€»è¾‘
+        // ´¦Àí´æ´¢±äÁ¿Âß¼­
         if (ms->GetMetaVariable() != nullptr) {
             m_StoreVariable = IRStoreVariable::CreateIRStoreVariable(
                 new IRMetaType(ms->GetMetaVariable()->GetMetaDefineType()),

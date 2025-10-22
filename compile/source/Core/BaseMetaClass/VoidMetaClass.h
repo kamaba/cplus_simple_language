@@ -9,17 +9,17 @@
 #pragma once
 
 #include "../MetaClass.h"
-#include "../MetaConstExpressNode.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 #include "CoreMetaClassManager.h"
-#include "ClassManager.h"
-#include "ModuleManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
 class VoidMetaClass : public MetaClass {
 public:
-    VoidMetaClass() : MetaClass(DefaultObject::Void.ToString()) {
+    VoidMetaClass() : MetaClass("Void") {
         SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
         m_ClassDefineType = EClassDefineType::InnerDefine;
         MetaConstExpressNode* mcen = new MetaConstExpressNode(EType::Null, "null");

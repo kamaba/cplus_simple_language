@@ -22,20 +22,20 @@ namespace Core {
     {
     public:
         MetaDefineParam();
-        MetaDefineParam(MetaMemberFunction* ownerFunction, void* param); // ç®€åŒ–å®žçŽ°
+        MetaDefineParam(MetaMemberFunction* ownerFunction, void* param); // ¼ò»¯ÊµÏÖ
         virtual ~MetaDefineParam() = default;
 
-        // å±žæ€§è®¿é—®å™¨
+        // ÊôÐÔ·ÃÎÊÆ÷
         MetaMemberFunction* GetOwnerFunction() const { return m_OwnerFunction; }
         MetaType* GetMetaDefineType() const { return m_MetaDefineType; }
         MetaVariable* GetMetaVariable() const { return m_MetaVariable; }
 
-        // è®¾ç½®æ–¹æ³•
+        // ÉèÖÃ·½·¨
         void SetOwnerFunction(MetaMemberFunction* ownerFunction) { m_OwnerFunction = ownerFunction; }
         void SetMetaDefineType(MetaType* metaDefineType) { m_MetaDefineType = metaDefineType; }
         void SetMetaVariable(MetaVariable* metaVariable) { m_MetaVariable = metaVariable; }
 
-        // æ–¹æ³•
+        // ·½·¨
         void ParseMetaDefineType();
         void CreateExpress();
         void Parse();

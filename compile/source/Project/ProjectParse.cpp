@@ -21,13 +21,13 @@ ProjectParse::ProjectParse(FileMeta* fm, ProjectData* pd)
 
 void ProjectParse::ParseProject() {
     if (m_FileMetaData == nullptr) {
-        ::std::cout << "Error 娌℃湁瑙ｆ瀽鎴愬姛Config.sp鏂囦欢!!" << ::std::endl;
+        ::std::cout << "Error 没有解析成功Config.sp文件!!" << ::std::endl;
         return;
     }
     
     FileMetaClass* fmc = m_FileMetaData->GetFileMetaClassByName("ProjectConfig");
     if (fmc == nullptr) {
-        ::std::cout << "Error 椤圭洰閰嶇疆鏂囦欢涓病鏈夋壘鍒癙rojectConfig!!" << ::std::endl;
+        ::std::cout << "Error 项目配置文件中没有找到ProjectConfig!!" << ::std::endl;
         return;
     }
     
@@ -70,7 +70,7 @@ void ProjectParse::BuildDefineNameStructNode(DefineStruct* ds, MetaNode* parentM
             }
         } else if (parentMb->IsMetaClass()) {
             if (ds->type() == DefineStruct::EDefineStructType::Namespace) {
-                std::cout << "Error 涓嶈兘鍦╟lass涓紝娣诲姞namespace!" << std::endl;
+                std::cout << "Error 不能在class中，添加namespace!" << std::endl;
                 return;
             } else if (ds->type() == DefineStruct::EDefineStructType::Class) {
                 MetaClass* mc = new MetaClass(ds->name(), SimpleLanguage::Core::EType::Class);

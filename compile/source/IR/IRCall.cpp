@@ -94,7 +94,7 @@ void IRCallFunction::Parse(MetaMethodCall* mfc) {
     
     if (callMethodIndex == -1) {
         if (m_IRRuntimeMethod == nullptr) {
-            Log::AddVM(EError::None, "------------娌℃湁鎵惧埌璋冪敤鐨勬柟娉曚綋!!");
+            Log::AddVM(EError::None, "------------没有找到调用的方法体!!");
             return;
         }
 
@@ -142,7 +142,7 @@ void IRCallFunction::Parse(MetaMethodCall* mfc) {
 
 void* IRCallFunction::InvokeCSharp(void* target, void** csParamObjs) {
     if (m_MethodInfo == nullptr) {
-        std::cout << "error 鎵ц鏃跺彂鐜扮郴缁熺┖鍑芥暟" << std::endl;
+        std::cout << "error 执行时发现系统空函数" << std::endl;
         return nullptr;
     }
     // Note: This would need reflection implementation in C++

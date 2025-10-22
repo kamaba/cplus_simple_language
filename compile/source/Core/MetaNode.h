@@ -26,7 +26,7 @@ namespace Core {
         Enum = 4
     };
 
-    // å‰å‘å£°æ˜
+    // Ç°ÏòÉùÃ÷
     class MetaModule;
     class MetaNamespace;
     class MetaData;
@@ -44,7 +44,7 @@ namespace Core {
         MetaNode(MetaClass* mc);
         virtual ~MetaNode() = default;
 
-        // å±æ€§è®¿é—®å™¨
+        // ÊôĞÔ·ÃÎÊÆ÷
         std::string GetName() const { return m_Name; }
         int GetDeep() const { return m_Deep; }
         int GetRealDeep() const { return m_Deep - m_AnchorDeep; }
@@ -67,8 +67,7 @@ namespace Core {
         const std::unordered_map<int, MetaClass*>& GetMetaTemplateClassDict() const { return m_MetaTemplateClassDict; }
         const std::unordered_map<std::string, MetaNode*>& GetChildrenMetaNodeDict() const { return m_ChildrenMetaNodeDict; }
 
-        // æ–¹æ³•
-        std::string GetAllName() const;
+        // ·½·¨
         MetaNode* AddMetaNamespace(MetaNamespace* namespaceName);
         MetaNode* AddMetaEnum(MetaEnum* me);
         MetaNode* AddMetaData(MetaData* me);
@@ -94,13 +93,13 @@ namespace Core {
         EStructNodeType m_EStructNodeType = EStructNodeType::Namespace;
         MetaModule* m_MetaModule = nullptr;
         MetaNamespace* m_MetaNamespace = nullptr;
-        // æ¨¡æ¿ä¸ªæ•°ç±»
+        // Ä£°å¸öÊıÀà
         std::unordered_map<int, MetaClass*> m_MetaTemplateClassDict;
         MetaData* m_MetaData = nullptr;
         MetaEnum* m_MetaEnum = nullptr;
         std::string m_Name = "";
         std::string m_AllName = "";
-        // å­èŠ‚ç‚¹
+        // ×Ó½Úµã
         std::unordered_map<std::string, MetaNode*> m_ChildrenMetaNodeDict;
     };
 

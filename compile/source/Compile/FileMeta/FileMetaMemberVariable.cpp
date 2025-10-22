@@ -19,7 +19,7 @@ FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, const std::vector<N
 }
 
 FileMetaMemberVariable::FileMetaMemberVariable(FileMeta* fm, Node* brace) {
-    // åˆ†æž {}ä¸­çš„å†…å®¹ï¼Œä¸€èˆ¬ç”¨äºŽè§£æžåŒ¿åå‡½æ•°
+    // ·ÖÎö {}ÖÐµÄÄÚÈÝ£¬Ò»°ãÓÃÓÚ½âÎöÄäÃûº¯Êý
 
     m_FileMeta = fm;
     m_Token = brace->token;
@@ -69,11 +69,11 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     std::vector<Node*> afterNodeList;
 
     if (!FileMetatUtil::SplitNodeList(m_NodeList, bedoreNodeList, afterNodeList, m_AssignToken)) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error è§£æžNodeListå‡ºçŽ°é”™è¯¯~~~");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ½âÎöNodeList³öÏÖ´íÎó~~~");
         return false;
     }
     if (bedoreNodeList.empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error listDefieNode ä¸èƒ½ä¸ºç©º~");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error listDefieNode ²»ÄÜÎª¿Õ~");
         return false;
     }
 
@@ -86,16 +86,16 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
     Node* typeNode = nullptr;
     Node* mutNode = nullptr;
     if (!GetNameAndTypeToken(defineNodeList, typeNode, mutNode, nameNode, m_PermissionToken, m_StaticToken)) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error æ²¡æœ‰æ‰¾åˆ°è¯¥å®šä¹‰åç§° å¿…é¡»ä½¿ç”¨ä¾‹: X = 103; çš„æ ¼å¼");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error Ã»ÓÐÕÒµ½¸Ã¶¨ÒåÃû³Æ ±ØÐëÊ¹ÓÃÀý: X = 103; µÄ¸ñÊ½");
         return false;
     }
 
     if (nameNode == nullptr) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error æ²¡æœ‰æ‰¾åˆ°è¯¥å®šä¹‰åç§° å¿…é¡»ä½¿ç”¨ä¾‹: X = 104; çš„æ ¼å¼");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error Ã»ÓÐÕÒµ½¸Ã¶¨ÒåÃû³Æ ±ØÐëÊ¹ÓÃÀý: X = 104; µÄ¸ñÊ½");
         return false;
     }
     if (!nameNode->GetExtendLinkNodeList().empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error æ²¡æœ‰æ‰¾åˆ°è¯¥å®šä¹‰åç§° å¿…é¡»ä½¿ç”¨ä¾‹: X = 105; çš„æ ¼å¼");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error Ã»ÓÐÕÒµ½¸Ã¶¨ÒåÃû³Æ ±ØÐëÊ¹ÓÃÀý: X = 105; µÄ¸ñÊ½");
         return false;
     }
     m_Token = nameNode->token;
@@ -112,7 +112,7 @@ bool FileMetaMemberVariable::ParseBuildMetaVariable() {
         } else {
             m_MemberDataType = EMemberDataType::ConstVariable;
             m_Express = SimpleLanguage::Compile::FileMetatUtil::CreateFileMetaExpress(m_FileMeta, afterNodeList, 
-                FileMetaTermExpress::EExpressType::MemberVariable);
+                EExpressType::MemberVariable);
         }
     }
 
@@ -134,7 +134,7 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
         if (curNode->nodeType == SimpleLanguage::Compile::ENodeType::Brace) {  // Class1 [{},{}]
             if (type == 2 || type == 3) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error Dataæ•°æ®ä¸­ []ä¸­ï¼Œä¸æ”¯æŒè¯¥ç±»åž‹çš„æ•°æ®" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
+                    "Error DataÊý¾ÝÖÐ []ÖÐ£¬²»Ö§³Ö¸ÃÀàÐÍµÄÊý¾Ý" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
                 continue;
             }
 
@@ -145,7 +145,7 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
         } else if (curNode->nodeType == SimpleLanguage::Compile::ENodeType::ConstValue) {  // ["stringValue","Stvlue"]
             if (type == 1 || type == 3) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error Dataæ•°æ®ä¸­ []ä¸­ï¼Œä¸æ”¯æŒè¯¥ç±»åž‹çš„æ•°æ®" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
+                    "Error DataÊý¾ÝÖÐ []ÖÐ£¬²»Ö§³Ö¸ÃÀàÐÍµÄÊý¾Ý" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
                 continue;
             }
 
@@ -156,7 +156,7 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
         } else if (curNode != nullptr && curNode->nodeType == SimpleLanguage::Compile::ENodeType::Bracket) {  // [[],[]]
             if (type == 1 || type == 2) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error Dataæ•°æ®ä¸­ []ä¸­ï¼Œä¸æ”¯æŒè¯¥ç±»åž‹çš„æ•°æ®" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
+                    "Error DataÊý¾ÝÖÐ []ÖÐ£¬²»Ö§³Ö¸ÃÀàÐÍµÄÊý¾Ý" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
                 continue;
             }
 
@@ -166,7 +166,7 @@ void FileMetaMemberVariable::ParseBracketContrent(Node* pnode) {
             AddFileMemberVariable(fmmd);
         } else {
             SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                "Error Dataæ•°æ®ä¸­ []ä¸­ï¼Œä¸æ”¯æŒè¯¥ç±»åž‹çš„æ•°æ®" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
+                "Error DataÊý¾ÝÖÐ []ÖÐ£¬²»Ö§³Ö¸ÃÀàÐÍµÄÊý¾Ý" + (curNode->token != nullptr ? curNode->token->ToLexemeAllString() : ""));
             continue;
         }
     }
@@ -195,13 +195,13 @@ bool FileMetaMemberVariable::GetNameAndTypeToken(const std::vector<Node*>& defin
                 token->GetType() == SimpleLanguage::ETokenType::Private) {
                 if (permissionToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error å¤šé‡å®šä¹‰åç§°çš„æƒé™å®šä¹‰!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ¶àÖØ¶¨ÒåÃû³ÆµÄÈ¨ÏÞ¶¨Òå!!");
                 }
                 permissionToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Static) {
                 if (staticToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error å¤šé‡å®šä¹‰åç§°çš„é™æ€å®šä¹‰!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ¶àÖØ¶¨ÒåÃû³ÆµÄ¾²Ì¬¶¨Òå!!");
                 }
                 staticToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Type) {
@@ -209,12 +209,12 @@ bool FileMetaMemberVariable::GetNameAndTypeToken(const std::vector<Node*>& defin
             } else if (token->GetType() == SimpleLanguage::ETokenType::Mut) {
                 if (mutNode != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error å¤šé‡å®šä¹‰åç§°çš„Mutå®šä¹‰!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ¶àÖØ¶¨ÒåÃû³ÆµÄMut¶¨Òå!!");
                 }
                 mutNode = cnode;
             } else {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error è§£æžå˜é‡ä¸­ï¼Œä¸å…è®¸çš„ç±»åž‹å­˜åœ¨!!" + token->ToLexemeAllString());
+                    "Error ½âÎö±äÁ¿ÖÐ£¬²»ÔÊÐíµÄÀàÐÍ´æÔÚ!!" + token->ToLexemeAllString());
             }
         }
     }
@@ -316,7 +316,7 @@ std::string FileMetaMemberVariable::ToFormatString() const {
         sb << " " << name() << " = ";
         sb << (m_Express ? m_Express->ToFormatString() : "");
     } else {
-        sb << "æ²¡æœ‰å·®åˆ«MemberDataType";
+        sb << "Ã»ÓÐ²î±ðMemberDataType";
     }*/
     return sb.str();
 }

@@ -58,7 +58,7 @@ void IRMethod::Parse() {
     auto mmf = mf;
     MetaBlockStatements* mbs = mmf->metaBlockStatements;
     if (mbs == nullptr) {
-        std::cout << "----------------  Info ç©ºå‡½æ•°!! --------------------" << std::endl;
+        std::cout << "----------------  Info ¿Õº¯Êý!! --------------------" << std::endl;
         return;
     }
     

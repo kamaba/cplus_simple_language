@@ -37,7 +37,7 @@ void MetaAssignManager::CreateMetaVariable() {
         if (retMc == CoreMetaClassManager::GetInstance().GetBooleanMetaClass()) {
             m_JudgmentValueMetaVariable = mcen->GetMetaVariable();
         } else {
-            Log::AddInStructMeta(EError::None, "Error ËøîÂõûÁöÑÂà§Êñ≠ËØ≠Âè•: " + mcen->ToTokenString() + "   Âπ∂ÈùûÊòØbooleanÁ±ªÂûã!");
+            Log::AddInStructMeta(EError::None, "Error ∑µªÿµƒ≈–∂œ”Ôæ‰: " + mcen->ToTokenString() + "   ≤¢∑« «boolean¿‡–Õ!");
         }
     } else if (auto mconen = dynamic_cast<MetaConstExpressNode*>(m_ExpressNode)) {
         Log::AddInStructMeta(EError::None, "Error -------------------------------------------");
@@ -45,7 +45,7 @@ void MetaAssignManager::CreateMetaVariable() {
         if (moen->isEqualType) {
             // m_JudgmentValueMetaVariable = CreateOptimizeAfterExpress;
         } else {
-            // Log::AddInStructMeta(EError::None, "Error ËøîÂõûÁöÑÂà§Êñ≠ËØ≠Âè•: " + mcen->ToTokenString() + "   Âπ∂ÈùûÊòØbooleanÁ±ªÂûã!");
+            // Log::AddInStructMeta(EError::None, "Error ∑µªÿµƒ≈–∂œ”Ôæ‰: " + mcen->ToTokenString() + "   ≤¢∑« «boolean¿‡–Õ!");
         }
     } else {
         Log::AddInStructMeta(EError::None, "Error -------------------------------------------");
@@ -156,7 +156,7 @@ void MetaAssignStatements::Parse() {
             m_AutoAddExpressOpSign = ELeftRightOpSign::Minus;
             break;
         default:
-            Log::AddInStructMeta(EError::None, "Error ËµãÂÄºËØ≠Âè•Ëß£ÊûêÁ¨¶Âè∑ÊöÇ‰∏çÊîØÊåÅ: " + std::to_string(static_cast<int>(ett)));
+            Log::AddInStructMeta(EError::None, "Error ∏≥÷µ”Ôæ‰Ω‚Œˆ∑˚∫≈‘›≤ª÷ß≥÷: " + std::to_string(static_cast<int>(ett)));
             break;
     }
     
@@ -181,19 +181,19 @@ void MetaAssignStatements::Parse() {
     if (!m_IsSetStatements) {
         m_MetaVariable = m_LeftMetaExpress->GetMetaVariable();
         if (m_MetaVariable == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error ÂèòÈáèÊ≤°ÊúâÂèëÁé∞" + m_LeftMetaExpress->ToTokenString());
+            Log::AddInStructMeta(EError::None, "Error ±‰¡ø√ª”–∑¢œ÷" + m_LeftMetaExpress->ToTokenString());
             return;
         }
         if (m_MetaVariable->IsConst()) {
-            Log::AddInStructMeta(EError::None, "Error Á±ªÂûã‰∏∫ConstÁ±ªÂûãÔºå‰∏çÂÖÅËÆ∏‰ΩøÁî®ËµãÂÄº!!");
+            Log::AddInStructMeta(EError::None, "Error ¿‡–ÕŒ™Const¿‡–Õ£¨≤ª‘ –Ì π”√∏≥÷µ!!");
         }
         
         m_Name = m_MetaVariable->GetName();
         if (m_MetaVariable->IsGlobal()) {
             if (GetOwnerMetaClass()->GetName() == "Project") {
-                // ÂÖÅËÆ∏ÂÖ®Â±ÄÂèòÈáèËµãÂÄº
+                // ‘ –Ì»´æ÷±‰¡ø∏≥÷µ
             } else {
-                Log::AddInStructMeta(EError::None, "Error Âè™ËÉΩÂú®ProjectÂ∑•Á®ã‰∏ãÁöÑÂáΩÊï∞‰∏≠ÔºåÁªôÂÖ®Â±ÄÂèòÈáèËµãÂÄº!!");
+                Log::AddInStructMeta(EError::None, "Error ÷ªƒ‹‘⁄Projectπ§≥Ãœ¬µƒ∫Ø ˝÷–£¨∏¯»´æ÷±‰¡ø∏≥÷µ!!");
                 return;
             }
         }
@@ -213,7 +213,7 @@ void MetaAssignStatements::Parse() {
         m_ExpressNode = ExpressManager::CreateExpressNodeByCEP(cep);
         
         if (m_ExpressNode == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error Ëß£ÊûêÊñ∞Âª∫ÂèòÈáèËØ≠Âè•Êó∂ÔºåË°®ËææÂºèËß£Êûê‰∏∫Á©∫!!");
+            Log::AddInStructMeta(EError::None, "Error Ω‚Œˆ–¬Ω®±‰¡ø”Ôæ‰ ±£¨±Ì¥Ô ΩΩ‚ŒˆŒ™ø’!!");
             return;
         }
     } else {
@@ -232,7 +232,7 @@ void MetaAssignStatements::Parse() {
     }
     
     if (m_FinalMetaExpress == nullptr) {
-        Log::AddInStructMeta(EError::None, "Error Á±ª: " + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") + "Ê≤°ÊúâÊâæÂà∞ÂèòÈáè:[" + (m_FileMetaOpAssignSyntax ? m_FileMetaOpAssignSyntax->GetExpress()->ToFormatString() : "") + "]ÁöÑÂÆö‰πâ!!! 69 ");
+        Log::AddInStructMeta(EError::None, "Error ¿‡: " + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") + "√ª”–’“µΩ±‰¡ø:[" + (m_FileMetaOpAssignSyntax ? m_FileMetaOpAssignSyntax->GetExpress()->ToFormatString() : "") + "]µƒ∂®“Â!!! 69 ");
         return;
     }
     
@@ -242,7 +242,7 @@ void MetaAssignStatements::Parse() {
     
     MetaType* expressRetMetaDefineType = m_FinalMetaExpress->GetReturnMetaDefineType();
     if (expressRetMetaDefineType == nullptr) {
-        Log::AddInStructMeta(EError::None, "Error Ëß£ÊûêÊñ∞Âª∫ÂèòÈáèËØ≠Âè•Êó∂ÔºåË°®ËææÂºèËøîÂõûÁ±ªÂûã‰∏∫Á©∫!!__3");
+        Log::AddInStructMeta(EError::None, "Error Ω‚Œˆ–¬Ω®±‰¡ø”Ôæ‰ ±£¨±Ì¥Ô Ω∑µªÿ¿‡–ÕŒ™ø’!!__3");
         return;
     }
     
@@ -250,7 +250,7 @@ void MetaAssignStatements::Parse() {
         MetaType* mdt = m_MetaVariable->GetRealMetaType();
         
         if (expressRetMetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetNullMetaClass()) {
-            // ÂÖÅËÆ∏nullËµãÂÄº
+            // ‘ –Ìnull∏≥÷µ
         } else {
             ClassManager::EClassRelation relation = ClassManager::EClassRelation::No;
             MetaClass* curClass = mdt->GetMetaClass();
@@ -271,29 +271,29 @@ void MetaAssignStatements::Parse() {
             }
             
             std::stringstream sb;
-            sb << "Warning Âú®Á±ª: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaClass()->GetAllClassName() : "") 
-               << " ÂáΩÊï∞: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaFunction()->GetName() : "") << "‰∏≠  ";
+            sb << "Warning ‘⁄¿‡: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaClass()->GetAllClassName() : "") 
+               << " ∫Ø ˝: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaFunction()->GetName() : "") << "÷–  ";
             if (curClass != nullptr) {
-                sb << " ÂÆö‰πâÁ±ª : " << curClass->GetAllClassName();
+                sb << " ∂®“Â¿‡ : " << curClass->GetAllClassName();
             }
-            sb << " ÂêçÁß∞‰∏∫: " << (m_Name ? m_Name->ToString() : "");
-            sb << "‰∏éÂêéËæπËµãÂÄºËØ≠Âè•‰∏≠ ";
+            sb << " √˚≥∆Œ™: " << (m_Name ? m_Name->ToString() : "");
+            sb << "”Î∫Û±ﬂ∏≥÷µ”Ôæ‰÷– ";
             if (compareClass != nullptr) {
-                sb << "Ë°®ËææÂºèÁ±ª‰∏∫: " << compareClass->GetAllClassName();
+                sb << "±Ì¥Ô Ω¿‡Œ™: " << compareClass->GetAllClassName();
             }
             
             if (relation == ClassManager::EClassRelation::No) {
-                sb << "Á±ªÂûã‰∏çÁõ∏ÂêåÔºåÂèØËÉΩ‰ºöÊúâÂº∫ËΩ¨ÔºåÂº∫ËΩ¨ÂêéÂèØËÉΩÈªòËÆ§ÂÄº‰∏∫null";
+                sb << "¿‡–Õ≤ªœ‡Õ¨£¨ø…ƒ‹ª·”–«ø◊™£¨«ø◊™∫Ûø…ƒ‹ƒ¨»œ÷µŒ™null";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
             } else if (relation == ClassManager::EClassRelation::Similar) {
-                sb << "Êï∞Â≠óÁ±ªÂûãÁõ∏‰ººÔºåÂèØËÉΩ‰ºöÊúâÂº∫ËΩ¨‰ºöÊúâÁ≤æÂ∫¶ÁöÑ‰∏¢Â§±!";
+                sb << " ˝◊÷¿‡–Õœ‡À∆£¨ø…ƒ‹ª·”–«ø◊™ª·”–æ´∂»µƒ∂™ ß!";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
             } else if (relation == ClassManager::EClassRelation::Same) {
-                // Á±ªÂûãÁõ∏ÂêåÔºåÊó†ÈúÄËΩ¨Êç¢
+                // ¿‡–Õœ‡Õ¨£¨Œﬁ–Ë◊™ªª
             } else if (relation == ClassManager::EClassRelation::Parent) {
-                sb << "Á±ªÂûã‰∏çÁõ∏ÂêåÔºåÂèØËÉΩ‰ºöÊúâÂº∫ËΩ¨Ôºå ËøîÂõûÂÄºÊòØÁà∂Á±ªÂûãÂêëÂ≠êÁ±ªÂûãËΩ¨Êç¢ÔºåÂ≠òÂú®ÈîôËØØËΩ¨Êç¢!!";
+                sb << "¿‡–Õ≤ªœ‡Õ¨£¨ø…ƒ‹ª·”–«ø◊™£¨ ∑µªÿ÷µ «∏∏¿‡–ÕœÚ◊”¿‡–Õ◊™ªª£¨¥Ê‘⁄¥ÌŒÛ◊™ªª!!";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
             } else if (relation == ClassManager::EClassRelation::Child) {
@@ -301,13 +301,13 @@ void MetaAssignStatements::Parse() {
                     m_MetaVariable->SetMetaDefineType(expressRetMetaDefineType);
                 }
             } else {
-                sb << "Ë°®ËææÂºèÈîôËØØÔºåÊàñËÄÖÊòØÂÆö‰πâÁ±ªÂûãÈîôËØØ";
+                sb << "±Ì¥Ô Ω¥ÌŒÛ£¨ªÚ’ﬂ «∂®“Â¿‡–Õ¥ÌŒÛ";
                 Log::AddInStructMeta(EError::None, sb.str());
             }
         }
     } else {
         MetaInputParam* mip = new MetaInputParam(m_ExpressNode);
-        // Â§ÑÁêÜsetterÂáΩÊï∞Ë∞ÉÁî®
+        // ¥¶¿Ìsetter∫Ø ˝µ˜”√
     }
 }
 

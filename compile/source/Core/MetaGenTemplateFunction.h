@@ -20,17 +20,17 @@ namespace Core {
 
 class MetaGenTemplateFunction : public MetaMemberFunction {
 public:
-    // æž„é€ å‡½æ•°
+    // ¹¹Ôìº¯Êý
     MetaGenTemplateFunction(MetaMemberFunction* mmc, const std::vector<MetaGenTemplate*>& list);
     MetaGenTemplateFunction(const MetaGenTemplateFunction& mgtf);
     MetaGenTemplateFunction(MetaClass* mc, const std::string& _name);
     virtual ~MetaGenTemplateFunction() = default;
 
-    // å±žæ€§è®¿é—®å™¨
+    // ÊôÐÔ·ÃÎÊÆ÷
     MetaMemberFunction* GetSourceTemplateFunctionMetaMemberFunction() const { return m_SourceTemplateFunctionMetaMemberFunction; }
     const std::vector<MetaGenTemplate*>& GetMetaGenTemplateList() const { return m_MetaGenTemplateList; }
 
-    // æ–¹æ³•
+    // ·½·¨
     bool MatchInputTemplateInsance(const std::vector<MetaClass*>& instMcList);
     void UpdateGenMemberFunctionByTemplateClass(MetaMemberFunction* mmf);
     MetaGenTemplate* GetMetaGenTemplate(const std::string& name);

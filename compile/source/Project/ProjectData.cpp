@@ -14,7 +14,7 @@ namespace Project {
 CompileFileData::CompileFileDataUnit::CompileFileDataUnit(MetaMemberData* mmd) {
     std::string findPath = mmd->GetString("path", true);
     if (findPath.empty()) {
-        std::cout << "Error ProjectConfig ä¸­çš„CompileFileDataç¼ºå°‘pathå­—æ®µ!!" << std::endl;
+        std::cout << "Error ProjectConfig ÖÐµÄCompileFileDataÈ±ÉÙpath×Ö¶Î!!" << std::endl;
         return;
     }
     m_Path = findPath;
@@ -86,7 +86,7 @@ DefineStruct* DefineStruct::Parse(MetaMemberData* mmd) {
                 } else if (usetype == "class") {
                     m_Type = EDefineStructType::Class;
                 } else {
-                    std::cout << "Error æœªè¯†åˆ«çš„" << usetype << std::endl;
+                    std::cout << "Error Î´Ê¶±ðµÄ" << usetype << std::endl;
                     continue;
                 }
             } else if (cmmd->Name() == "child") {
@@ -165,7 +165,7 @@ void ProjectData::ParseFileMetaDataMemeberData(FileMetaClass* fmc) {
     }
     int ct = this->metaMemberDataDict().size();
     if (!fmc->memberVariableList().empty() || !fmc->memberFunctionList().empty()) {
-        std::cout << "Error Dataä¸­ä¸å…è®¸æœ‰Variable å’Œ Function!!" << std::endl;
+        std::cout << "Error DataÖÐ²»ÔÊÐíÓÐVariable ºÍ Function!!" << std::endl;
     }
 }
 
@@ -237,8 +237,8 @@ void ProjectData::ParseGlobalVariable() {
 
     MetaMemberData* mb = ProjectManager::globalData->GetMemberDataByName(fmd->name());
     if (mb != nullptr) {
-        std::cout << "Error ProjectParse ParseGlobalVariableä¸­å‘çŽ°é‡å¤: " << allClassName << " ä½ç½®: " 
-                  << (fmd->token() ? fmd->token()->ToLexemeAllString() : "") << "å…ƒç»„!!" << std::endl;
+        std::cout << "Error ProjectParse ParseGlobalVariableÖÐ·¢ÏÖÖØ¸´: " << allClassName << " Î»ÖÃ: " 
+                  << (fmd->token() ? fmd->token()->ToLexemeAllString() : "") << "Ôª×é!!" << std::endl;
         return;
     }
     

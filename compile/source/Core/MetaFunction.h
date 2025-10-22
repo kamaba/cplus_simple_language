@@ -16,7 +16,15 @@
 
 namespace SimpleLanguage {
 namespace Core {
-
+    class MetaVariable;
+    class MetaStatements;
+    class MetaClass;
+    class MetaDefineParam;
+    class MetaDefineParamCollection;
+    class MetaBlockStatements;
+    class MetaDefineTemplateCollection;
+    class MetaTemplate;
+    class MetaInputTemplateCollection;
 enum class EMethodCallType : uint8_t {
     Local = 0,
     CSharp = 1,
@@ -36,14 +44,14 @@ public:
 
 class MetaFunction : public MetaBase {
 public:
-    // æ„é€ å‡½æ•°
+    // ¹¹Ôìº¯Êı
     MetaFunction(MetaClass* mc);
     MetaFunction(const MetaFunction& mf);
     virtual ~MetaFunction() = default;
 
     virtual void SetDeep(int deep);
 
-    // å±æ€§è®¿é—®å™¨
+    // ÊôĞÔ·ÃÎÊÆ÷
     MetaType* GetMetaDefineType() const;
     Compile::Token* GetPingToken() const;
     virtual bool IsStatic() const { return m_IsStatic; }
@@ -58,13 +66,13 @@ public:
     MetaBlockStatements* GetMetaBlockStatements() const { return m_MetaBlockStatements; }
     MetaDefineTemplateCollection* GetMetaMemberTemplateCollection() const { return m_MetaMemberTemplateCollection; }
 
-    // è®¾ç½®æ–¹æ³•
+    // ÉèÖÃ·½·¨
     virtual void SetOwnerMetaClass(MetaClass* ownerclass);
     void SetReturnMetaClass(MetaClass* metaClass);
     void SetMethodCallType(EMethodCallType type) { m_MethodCallType = type; }
     void SetVirtualFunctionName(const std::string& name) { m_VirtualFunctionName = name; }
 
-    // æ–¹æ³•
+    // ·½·¨
     void AddFrontMetaStatements(MetaStatements* state);
     std::vector<MetaVariable*> GetCalcMetaVariableList(bool isIncludeArgument = false);
     LabelData* GetLabelDataById(const std::string& label);
@@ -80,12 +88,12 @@ public:
     virtual bool IsEqualMetaTemplateCollectionAndMetaParamCollection(MetaInputTemplateCollection* mitc, MetaDefineParamCollection* mpc);
     virtual std::string ToStatementString();
 
-    // æ ¼å¼åŒ–æ–¹æ³•
+    // ¸ñÊ½»¯·½·¨
     virtual std::string ToString() const;
     virtual std::string ToFormatString() const override;
 
 protected:
-    // å±æ€§
+    // ÊôĞÔ
     MetaClass* m_OwnerMetaClass = nullptr;
     MetaBlockStatements* m_MetaBlockStatements = nullptr;
     MetaVariable* m_ThisMetaVariable = nullptr;

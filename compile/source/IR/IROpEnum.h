@@ -48,7 +48,7 @@ enum class EIROpCode : unsigned char {
     StoreGlobal,
     StoreReturn,
 
-    // è¿ç®—æŒ‡ä»¤
+    // ÔËËãÖ¸Áî
     Add,                   // +
     Add_Un,
     Minus,                  // -

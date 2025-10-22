@@ -61,7 +61,7 @@ void MetaBlockStatements::SetNextStatements(MetaStatements* ms) {
 
 MetaStatements* MetaBlockStatements::FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements() {
     if (m_OwnerMetaStatements != nullptr) {
-        // æ£€æŸ¥æ˜¯å¦ä¸ºforæˆ–whileè¯­å¥
+        // ¼ì²éÊÇ·ñÎªfor»òwhileÓï¾ä
         if (auto forStmt = dynamic_cast<MetaForStatements*>(m_OwnerMetaStatements)) {
             return m_OwnerMetaStatements;
         }
@@ -106,7 +106,7 @@ bool MetaBlockStatements::AddMetaVariable(MetaVariable* mv) {
         Token* token = m_FileMetaBlockSyntax ? m_FileMetaBlockSyntax->GetToken() : nullptr;
         std::cout << "error Class: [" << (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") 
                   << "] Method: [" << (m_OwnerMetaFunction ? m_OwnerMetaFunction->GetFunctionAllName() : "") << "]"
-                  << "å·²å®šä¹‰è¿‡äº†å˜é‡åç§°!!! MBS:" << (token ? token->ToLexemeAllString() : "") 
+                  << "ÒÑ¶¨Òå¹ıÁË±äÁ¿Ãû³Æ!!! MBS:" << (token ? token->ToLexemeAllString() : "") 
                   << " var:" << mv->ToFormatString() << std::endl;
         return false;
     }
@@ -160,8 +160,8 @@ bool MetaBlockStatements::GetIsMetaVariable(const std::string& name, bool isFrom
     if (m_MetaVariableDict.find(name) != m_MetaVariableDict.end()) {
         return true;
     }
-    if (m_ParentBlockStatements != nullptr && isFromParent) {
-        return m_ParentBlockStatements->GetIsMetaVariable(name);
+    if (GetParentBlockStatements() != nullptr && isFromParent) {
+        return GetParentBlockStatements()->GetIsMetaVariable(name);
     }
     return false;
 }
@@ -180,8 +180,8 @@ MetaVariable* MetaBlockStatements::GetMetaVariableByName(const std::string& name
         return it->second;
     }
     
-    if (m_ParentBlockStatements != nullptr && isFromParent) {
-        return m_ParentBlockStatements->GetMetaVariableByName(name, isFromParent);
+    if (GetParentBlockStatements() != nullptr && isFromParent) {
+        return GetParentBlockStatements()->GetMetaVariableByName(name, isFromParent);
     }
     return nullptr;
 }
@@ -196,7 +196,7 @@ void MetaBlockStatements::SetMetaMemberParamCollection(MetaDefineParamCollection
 
 std::string MetaBlockStatements::ToFormatString() {
     std::string result;
-    for (int i = 0; i < m_RealDeep; i++) {
+    for (int i = 0; i < GetRealDeep(); i++) {
         result += Global::GetTabChar();
     }
     result += "{\n";
@@ -205,7 +205,7 @@ std::string MetaBlockStatements::ToFormatString() {
         result += m_NextMetaStatements->ToFormatString() + "\n";
     }
     
-    for (int i = 0; i < m_RealDeep; i++) {
+    for (int i = 0; i < GetRealDeep(); i++) {
         result += Global::GetTabChar();
     }
     result += "}";

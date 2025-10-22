@@ -23,17 +23,17 @@ namespace Core {
 
 class TypeManager {
 public:
-    // å•ä¾‹æ¨¡å¼
+    // µ¥ÀıÄ£Ê½
     static TypeManager& GetInstance() {
         static TypeManager instance;
         return instance;
     }
 
-    // ç¦ç”¨æ‹·è´æ„é€ å’Œèµ‹å€¼
+    // ½ûÓÃ¿½±´¹¹ÔìºÍ¸³Öµ
     TypeManager(const TypeManager&) = delete;
     TypeManager& operator=(const TypeManager&) = delete;
 
-    // æ–¹æ³•å£°æ˜
+    // ·½·¨ÉùÃ÷
     bool UpdateMetaTypeByGenClassAndFunction(MetaType* mt, MetaGenTemplateClass* mgtc, MetaGenTempalteFunction* mgtf);
     MetaType* GetMetaTemplateClassAndRegisterExptendTemplateClassInstance(MetaClass* curMc, Compile::FileMetaClassDefine* fmcd);
     MetaType* GetMetaTypeByInputTemplateList(MetaClass* ownerMc, MetaNode* getmc, const std::vector<Compile::FileInputTemplateNode*>& inputTemplateNodeList, std::vector<MetaType*>* list = nullptr);
@@ -44,7 +44,7 @@ public:
     MetaType* RegisterTemplateDefineMetaTemplateFunction(MetaClass* findMc, MetaClass* regMc, MetaMemberFunction* findFun, Compile::FileInputTemplateNode* fmtd, bool isParse = false);
 
 private:
-    // ç§æœ‰æ„é€ å‡½æ•°
+    // Ë½ÓĞ¹¹Ôìº¯Êı
     TypeManager() = default;
     ~TypeManager() = default;
 };

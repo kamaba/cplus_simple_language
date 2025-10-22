@@ -9,15 +9,13 @@
 #pragma once
 
 #include "MetaClass.h"
-#include "MetaMemberData.h"
-#include "../Compile/FileMeta/FileMetaClass.h"
-#include "../Compile/Token.h"
 #include <unordered_map>
 #include <vector>
 #include <string>
 
 namespace SimpleLanguage {
 namespace Core {
+    class MetaMemberData;
 
     class MetaData : public MetaClass
     {

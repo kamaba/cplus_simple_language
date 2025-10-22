@@ -14,13 +14,13 @@ std::vector<std::string> FileMetatUtil::GetLinkStringMidPeriodList(const std::ve
     for (size_t i = 0; i < tokenList.size(); i++) {
         auto token = tokenList[i];
         if (token->GetLexemeString() == "" ) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "æ£€æŸ¥åˆ°Importè¯­å¥ä¸­ï¼Œtokenå†…å®¹lexemeä¸ºç©º!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "¼ì²éµ½ImportÓï¾äÖĞ£¬tokenÄÚÈİlexemeÎª¿Õ!!");
             return std::vector<std::string>();
         }
         if (token->GetType() != SimpleLanguage::ETokenType::Period) {
             //if (!SimpleLanguage::Core::GrammerUtil::IdentifierCheck( token->GetLexeme() ) 
             {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "æ£€æŸ¥åˆ°Importè¯­å¥ä¸­ï¼Œå¯¼å…¥åç§°ä¸åˆè§„!!");
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "¼ì²éµ½ImportÓï¾äÖĞ£¬µ¼ÈëÃû³Æ²»ºÏ¹æ!!");
                 return std::vector<std::string>();
             }
             stringList.push_back(token->GetLexemeString());
@@ -82,7 +82,7 @@ bool FileMetatUtil::SplitNodeList(const std::vector<Node*>& nodeList, std::vecto
     }
     if (isEqual) {
         if (afterNodeList.empty()) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "è§£æNodeStructVariableæ—¶æœ‰=å·ï¼Œä½†æ²¡æœ‰å€¼å†…å®¹ " + (assignToken ? assignToken->ToLexemeAllString() : ""));
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "½âÎöNodeStructVariableÊ±ÓĞ=ºÅ£¬µ«Ã»ÓĞÖµÄÚÈİ " + (assignToken ? assignToken->ToLexemeAllString() : ""));
             return false;
         }
     }
@@ -92,7 +92,7 @@ bool FileMetatUtil::SplitNodeList(const std::vector<Node*>& nodeList, std::vecto
     return true;
 }
 
-FileMetaBaseTerm* FileMetatUtil::CreateFileOneTerm(FileMeta* fm, Node* node, FileMetaTermExpress::EExpressType expressType) {
+FileMetaBaseTerm* FileMetatUtil::CreateFileOneTerm(FileMeta* fm, Node* node, EExpressType expressType) {
     FileMetaBaseTerm* fmbt = nullptr;
     if (node->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink ||
         (node->nodeType == SimpleLanguage::Compile::ENodeType::Key && 
@@ -119,15 +119,15 @@ FileMetaBaseTerm* FileMetatUtil::CreateFileOneTerm(FileMeta* fm, Node* node, Fil
         fmbt = new FileMetaBracketTerm(fm, node);
         fmbt->SetPriority(SimpleLanguage::Compile::SignComputePriority::Level1 );
     } else {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error CreateFileOneTerm å•1è¡¨è¾¾å¼ï¼Œæ²¡æœ‰æ‰¾åˆ°è¯¥ç±»å‹: " + 
-            (node->token ? std::to_string(static_cast<int>(node->token->GetType())) : "null") + " ä½ç½®: " + 
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error CreateFileOneTerm µ¥1±í´ïÊ½£¬Ã»ÓĞÕÒµ½¸ÃÀàĞÍ: " + 
+            (node->token ? std::to_string(static_cast<int>(node->token->GetType())) : "null") + " Î»ÖÃ: " + 
             (node->token ? node->token->ToLexemeAllString() : ""));
     }
     return fmbt;
 }
 
 FileMetaBaseTerm* FileMetatUtil::CreateFileMetaExpress(FileMeta* fm, const std::vector<Node*>& nodeList, 
-                                                       FileMetaTermExpress::EExpressType expressType) {
+                                                       EExpressType expressType) {
     if (nodeList.empty())
         return nullptr;
 
@@ -138,7 +138,7 @@ FileMetaBaseTerm* FileMetatUtil::CreateFileMetaExpress(FileMeta* fm, const std::
         fmbt = new FileMetaTermExpress(fm, nodeList, expressType);
     }
     if (fmbt == nullptr) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ç”Ÿæˆè¡¨è¾¾å¼é”™è¯¯!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error Éú³É±í´ïÊ½´íÎó!!");
         return nullptr;
     }
     fmbt->BuildAST();

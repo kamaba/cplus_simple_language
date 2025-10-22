@@ -29,7 +29,7 @@ namespace VM {
 
     private:
         ClassObject* m_Object = nullptr;
-        std::vector<uint8_t> m_Data;   /*  m_Data  ç»“æž„  bitå½¢ï¼Œåªæœ‰è¿ç®—æ—¶è¦ç”¨ 1-> byte 2->sbyte   3-> int16  4-> uint16    */
+        std::vector<uint8_t> m_Data;   /*  m_Data  ½á¹¹  bitÐÎ£¬Ö»ÓÐÔËËãÊ±ÒªÓÃ 1-> byte 2->sbyte   3-> int16  4-> uint16    */
         std::vector<int16_t> m_Type;
         std::vector<SObject*> m_MemberObjectArray;
         std::vector<IRMetaVariable*> m_IRMetaVariableList;

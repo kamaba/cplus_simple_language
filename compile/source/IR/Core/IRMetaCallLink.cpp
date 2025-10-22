@@ -157,7 +157,7 @@ void IRMetaCallLink::ParseToIRDataListByIRManager(IRManager* irManager, const st
                 IRLoadVariable* irVar = IRLoadVariable::CreateLoadVariable(irmt, irmc, m_IRMethod, mv);
                 irList.push_back(irVar);
             } else {
-                Log::AddGenIR(EError::None, "Error VM IRMetaCall è¯¥ä½ç½®ä¸åº”è¯¥æœ‰éžé™æ€å˜é‡");
+                Log::AddGenIR(EError::None, "Error VM IRMetaCall ¸ÃÎ»ÖÃ²»Ó¦¸ÃÓÐ·Ç¾²Ì¬±äÁ¿");
             }
         }
         else if (cnode->GetVisitType() == MetaVisitNode::EVisitType::MethodCall) {

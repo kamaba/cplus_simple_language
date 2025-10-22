@@ -155,12 +155,12 @@ public:
 private:
     void Parse() {
         if (m_FileMetaKeyIfSyntax->GetIfExpressSyntax() == nullptr) {
-            std::cout << "Error 娌℃湁if璇彞!!" << std::endl;
+            std::cout << "Error 没有if语句!!" << std::endl;
         }
         
         MetaType* mdt = nullptr;
         if (m_MetaVariable == nullptr) {
-            // 鑷姩鍒涘缓鍙橀噺
+            // 自动创建变量
         } else {
             mdt = m_MetaVariable->GetMetaDefineType();
         }

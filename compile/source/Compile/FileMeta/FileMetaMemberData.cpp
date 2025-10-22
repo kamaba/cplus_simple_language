@@ -20,6 +20,11 @@ FileMetaMemberData::FileMetaMemberData(FileMeta* fm, Node* node, bool isWithName
         m_FileMetaCallTermValue = new FileMetaCallTerm(m_FileMeta, node);
     }
 }
+FileMetaMemberData::FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& frontList)
+{
+    std::vector<Node*> backList;
+    FileMetaMemberData(fm, frontList, nullptr, backList, false, EMemberDataType::Class);
+}
 
 FileMetaMemberData::FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& frontList, Node* assignNode, 
                                        const std::vector<Node*>& backList, bool isWithName, EMemberDataType dataType)
@@ -31,7 +36,7 @@ FileMetaMemberData::FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& f
             m_Token = frontList[0]->token;
         } else {
             SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                "Error 甯︾潃鍚嶇ОFileMetaMemberData 浣嗘病鏈夊彂鐜扮浉鍏崇殑token");
+                "Error 带着名称FileMetaMemberData 但没有发现相关的token");
         }
     }
     

@@ -80,7 +80,7 @@ void IRExpress::CreateIRDataOne(MetaExpressNode* node) {
         IRNew* irnew = new IRNew(m_IRMethod, irmc);
         m_IRDataList.insert(m_IRDataList.end(), irnew->GetIRDataList().begin(), irnew->GetIRDataList().end());
     } else {
-        std::cout << "Error IRè¡¨è¾¾å¼é”™è¯¯!!" << std::endl;
+        std::cout << "Error IR±í´ïÊ½´íÎó!!" << std::endl;
     }
 }
 
@@ -152,7 +152,7 @@ IRData* IRExpress::CreateLeftAndRightIRData(ELeftRightOpSign opSign) {
             data->opCode = EIROpCode::And;
             break;
         default:
-            std::cout << "Error æœªæ”¯æŒè¡¨è¾¾å¼ä¸­çš„IRä»£ç " << static_cast<int>(opSign) << std::endl;
+            std::cout << "Error Î´Ö§³Ö±í´ïÊ½ÖÐµÄIR´úÂë" << static_cast<int>(opSign) << std::endl;
             break;
     }
     return data;

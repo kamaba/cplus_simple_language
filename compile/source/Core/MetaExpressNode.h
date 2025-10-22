@@ -23,7 +23,7 @@ namespace Core {
         MetaExpressNode();
         virtual ~MetaExpressNode() = default;
 
-        // è™šæ–¹æ³•
+        // Ðé·½·¨
         virtual void CalcReturnType() {}
         virtual MetaType* GetReturnMetaDefineType() const { return nullptr; }
         virtual std::string ToFormatString() const override { return ""; }

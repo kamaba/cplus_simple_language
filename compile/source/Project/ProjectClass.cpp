@@ -53,7 +53,7 @@ void ProjectClass::RunTest() {
     }
     MetaMemberFunction* mmf = project->GetFirstMetaMemberFunctionByName("Test");
     if (mmf == nullptr) {
-        std::cout << "Error project.Mainå‡½æ•°!!" << std::endl;
+        std::cout << "Error project.Mainº¯Êý!!" << std::endl;
         return;
     }
     // Implementation for running test
@@ -62,12 +62,12 @@ void ProjectClass::RunTest() {
 void ProjectClass::RunMain() {
     MetaClass* projectEntoer = ClassManager::instance().GetClassByName("S.Project", 0);
     if (projectEntoer == nullptr) {
-        std::cout << "Error æ²¡æœ‰æ‰¾åˆ°Project!!" << std::endl;
+        std::cout << "Error Ã»ÓÐÕÒµ½Project!!" << std::endl;
         return;
     }
     MetaMemberFunction* mmf = projectEntoer->GetFirstMetaMemberFunctionByName("Main");
     if (mmf == nullptr) {
-        std::cout << "Error æ²¡æœ‰æ‰¾åˆ°Project.Mainå‡½æ•°!!" << std::endl;
+        std::cout << "Error Ã»ÓÐÕÒµ½Project.Mainº¯Êý!!" << std::endl;
         return;
     }
     auto irmethod = IRManager::instance().GetIRMethod(mmf->functionAllName());
@@ -98,7 +98,7 @@ void ProjectClass::AddDefineNamespace(MetaNode* parentRoot, DefineStruct* dns, b
                 }
             } else {
                 if (!(cfindNode->isMetaNamespace())) {
-                    Log::AddInStructMeta(SimpleLanguage::Debug::EError::None, "Error è§£æžnamespaceæ·»åŠ å‘½åç©ºé—´èŠ‚ç‚¹æ—¶ï¼Œå‘çŽ°å·²æœ‰å®šä¹‰ç±»!!");
+                    Log::AddInStructMeta(SimpleLanguage::Debug::EError::None, "Error ½âÎönamespaceÌí¼ÓÃüÃû¿Õ¼ä½ÚµãÊ±£¬·¢ÏÖÒÑÓÐ¶¨ÒåÀà!!");
                     return;
                 }
                 nodeNS = cfindNode->metaNamespace();

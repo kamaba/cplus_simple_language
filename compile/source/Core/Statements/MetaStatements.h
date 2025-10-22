@@ -12,7 +12,7 @@
 #include "../MetaClass.h"
 #include "../MetaFunction.h"
 #include "../MetaVariable.h"
-#include "../MetaBlockStatements.h"
+#include "MetaBlockStatements.h"
 #include <string>
 
 namespace SimpleLanguage {

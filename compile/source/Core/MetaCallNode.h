@@ -53,7 +53,7 @@ enum class ECallNodeType : uint8_t {
     Base = 22
 };
 
-// 鍓嶅悜澹版槑
+// 前向声明
 class MetaClass;
 class MetaType;
 class MetaNode;
@@ -71,7 +71,7 @@ public:
     MetaCallNode(const std::string& name, ECallNodeType type);
     virtual ~MetaCallNode() = default;
 
-    // 灞炴�ц闂櫒
+    // 属性访问器
     ECallNodeSign getCallNodeSign() const { return m_CallNodeSign; }
     ECallNodeType getCallNodeType() const { return m_CallNodeType; }
     MetaClass* getMetaClass() const { return m_MetaClass; }
@@ -282,7 +282,7 @@ public:
     bool isPsi() const { return m_IsPsi; }
     bool isOmega() const { return m_IsOmega; }
 
-    // 璁剧疆鏂规硶
+    // 设置方法
     void setCallNodeSign(ECallNodeSign sign) { m_CallNodeSign = sign; }
     void setCallNodeType(ECallNodeType type) { m_CallNodeType = type; }
     void setMetaClass(MetaClass* metaClass) { m_MetaClass = metaClass; }
@@ -493,7 +493,7 @@ public:
     void setPsi(bool isPsi) { m_IsPsi = isPsi; }
     void setOmega(bool isOmega) { m_IsOmega = isOmega; }
 
-    // 鏂规硶
+    // 方法
     virtual std::string ToFormatString() const override;
     virtual std::string ToTokenString() const;
     virtual void Parse();

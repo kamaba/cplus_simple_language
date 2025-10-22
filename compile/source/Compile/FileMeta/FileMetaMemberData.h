@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "FileMetaBase.h"
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -13,6 +14,7 @@ class FileMetaConstValueTerm;
 class FileMetaCallTerm;
 class MetaMemberData;
 class Node;
+class Token;
 
 class FileMetaMemberData : public FileMetaBase {
 public:
@@ -24,11 +26,11 @@ public:
     };
 
     FileMetaMemberData(FileMeta* fm, Node* node, bool isWithName, EMemberDataType dataType);
+    FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& frontList);
     FileMetaMemberData(FileMeta* fm, const std::vector<Node*>& frontList, Node* assignNode,
                        const std::vector<Node*>& backList, bool isWithName, EMemberDataType dataType);
     virtual ~FileMetaMemberData() = default;
 
-    // Properties
     Token* NameToken() const { return m_Token; }
     const std::vector<FileMetaMemberData*>& GetFileMetaMemberData() const { return m_FileMetaMemberData; }
     FileMetaConstValueTerm* GetFileMetaConstValue() const { return m_FileMetaConstValue; }

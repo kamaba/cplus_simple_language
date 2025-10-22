@@ -54,7 +54,7 @@ private:
         
         if (m_IsForIn) {
             if (m_FileMetaKeyForSyntax->GetConditionExpress() == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error for in expressåè¾¹æ²¡æœ‰è¡¨è¾¾å¼!!");
+                Log::AddInStructMeta(EError::None, "Error for in expressºó±ßÃ»ÓĞ±í´ïÊ½!!");
             }
             
             m_ForInContent = nullptr;
@@ -74,7 +74,7 @@ private:
             auto mcallEn = dynamic_cast<MetaCallLinkExpressNode*>(m_ConditionExpress);
             auto mnoen = dynamic_cast<MetaNewObjectExpressNode*>(m_ConditionExpress);
             if (mcallEn == nullptr && mnoen == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error For in è¡¨è¾¾å¼ï¼Œåº”è¯¥æ˜¯ä¸ªæ•°ç»„å½¢å¼");
+                Log::AddInStructMeta(EError::None, "Error For in ±í´ïÊ½£¬Ó¦¸ÃÊÇ¸öÊı×éĞÎÊ½");
                 return;
             }
             
@@ -89,7 +89,7 @@ private:
             
             MetaType* mdt = m_ForInContent->GetMetaDefineType();
             if (!mdt->IsCanForIn()) {
-                Log::AddInStructMeta(EError::None, "Error For in è¡¨è¾¾å¼ï¼Œåº”è¯¥æ˜¯ä¸ªæ•°ç»„å½¢å¼!");
+                Log::AddInStructMeta(EError::None, "Error For in ±í´ïÊ½£¬Ó¦¸ÃÊÇ¸öÊı×éĞÎÊ½!");
                 return;
             }
             
@@ -100,14 +100,14 @@ private:
             
             auto fmcd = dynamic_cast<FileMetaCallSyntax*>(m_FileMetaKeyForSyntax->GetFileMetaClassDefine());
             if (fmcd == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error For x in Xå¿…é¡»æœ‰!!");
+                Log::AddInStructMeta(EError::None, "Error For x in X±ØĞëÓĞ!!");
                 return;
             }
             
             std::string dname = fmcd->GetVariableRef()->GetName();
             auto dmv = m_ThenMetaStatements->GetMetaVariableByName(dname);
             if (dmv != nullptr) {
-                Log::AddInStructMeta(EError::None, "Error åœ¨ for .. in ä¸­ï¼Œä¸å…è®¸ä»for å¤–è¾¹å®šä¹‰éå†å˜é‡!!");
+                Log::AddInStructMeta(EError::None, "Error ÔÚ for .. in ÖĞ£¬²»ÔÊĞí´Ófor Íâ±ß¶¨Òå±éÀú±äÁ¿!!");
                 return;
             } else {
                 m_ForMetaVariable = new MetaIteratorVariable(dname, GetOwnerMetaClass(), m_OwnerMetaBlockStatements, 
@@ -150,7 +150,7 @@ private:
             }
             
             if (m_ForMetaVariable == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error æ²¡æœ‰æ‰¾åˆ°ç›¸åº”çš„å˜é‡!!");
+                Log::AddInStructMeta(EError::None, "Error Ã»ÓĞÕÒµ½ÏàÓ¦µÄ±äÁ¿!!");
             }
             m_ThenMetaStatements->UpdateMetaVariableDict(m_ForMetaVariable);
             
@@ -168,7 +168,7 @@ private:
             }
         }
         
-        // å¿…é¡»æ”¾åˆ°æœ€åï¼Œå› ä¸ºå‰è¾¹æœ‰å˜é‡éœ€è¦å»ºç«‹
+        // ±ØĞë·Åµ½×îºó£¬ÒòÎªÇ°±ßÓĞ±äÁ¿ĞèÒª½¨Á¢
         MetaMemberFunction::CreateMetaSyntax(m_FileMetaKeyForSyntax->GetExecuteBlockSyntax(), m_ThenMetaStatements);
     }
 
@@ -313,7 +313,7 @@ public:
         std::string result;
         
         std::string sb2;
-        // æ¡ä»¶è¡¨è¾¾å¼çš„å¤„ç†é€»è¾‘
+        // Ìõ¼ş±í´ïÊ½µÄ´¦ÀíÂß¼­
         
         result += "{";
         result += "\n";

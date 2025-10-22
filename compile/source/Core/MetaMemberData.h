@@ -9,21 +9,7 @@
 #pragma once
 
 #include "MetaVariable.h"
-#include "MetaExpressNode.h"
-#include "MetaType.h"
-#include "MetaData.h"
-#include "../Compile/FileMeta/FileMetaMemberData.h"
-#include "../Compile/FileMeta/FileMetaOpAssignSyntax.h"
-#include "MetaExpressNode/MetaConstExpressNode.h"
-#include "MetaExpressNode/MetaCallLinkExpressNode.h"
-#include "MetaExpressNode/MetaNewObjectExpressNode.h"
-#include "MetaVariableManager.h"
-#include "../Debug/Log.h"
-#include "CoreMetaClassManager.h"
-#include "ExpressManager.h"
-#include "AllowUseSettings.h"
-#include "CreateExpressParam.h"
-#include "Global.h"
+
 #include <unordered_map>
 #include <string>
 #include <sstream>

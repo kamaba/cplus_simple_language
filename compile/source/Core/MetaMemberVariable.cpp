@@ -13,11 +13,7 @@
 #include "TypeManager.h"
 #include "ExpressManager.h"
 #include "ClassManager.h"
-#include "AllowUseSettings.h"
-#include "../Compile/CoreFileMeta/FileMetaMemberVariable.h"
-#include "../Compile/CoreFileMeta/FileMetaParTerm.h"
-#include "../Compile/CoreFileMeta/FileMetaCallTerm.h"
-#include "../Compile/CoreFileMeta/FileMetaBraceTerm.h"
+#include "../Compile/FileMeta/FileMetaMemberVariable.h"
 #include "../Compile/CompilerUtil.h"
 #include "../Debug/Log.h"
 #include "../Global.h"
@@ -26,7 +22,7 @@
 namespace SimpleLanguage {
 namespace Core {
 
-// é™æ€æˆå‘˜åˆå§‹åŒ–
+// ¾²Ì¬³ÉÔ±³õÊ¼»¯
 int MetaMemberVariable::s_ConstLevel = 10000000;
 int MetaMemberVariable::s_IsHaveRetStaticLevel = 100000000;
 int MetaMemberVariable::s_NoHaveRetStaticLevel = 200000000;
@@ -75,7 +71,7 @@ MetaMemberVariable::MetaMemberVariable(MetaClass* mc, const std::string& name, M
 
 MetaMemberVariable::MetaMemberVariable(MetaClass* mc, void* fmmv) : MetaVariable() {
     m_FileMetaMemeberVariable = fmmv;
-    // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ FileMetaMemberVariable ç»“æ„æ¥è®¾ç½®
+    // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ FileMetaMemberVariable ½á¹¹À´ÉèÖÃ
     // m_Name = fmmv->name;
     // AddPingToken(fmmv->nameToken);
     m_Index = mc->GetMetaMemberVariableDict().size();
@@ -91,7 +87,7 @@ MetaMemberVariable::MetaMemberVariable(MetaClass* mc, void* fmmv) : MetaVariable
 
 void MetaMemberVariable::ParseDefineMetaType() {
     if (m_FileMetaMemeberVariable != nullptr) {
-        // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ FileMetaMemberVariable ç»“æ„æ¥å¤„ç†
+        // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ FileMetaMemberVariable ½á¹¹À´´¦Àí
         // m_DefineMetaType = TypeManager::GetInstance().GetMetaTemplateClassAndRegisterExptendTemplateClassInstance(m_OwnerMetaClass, m_FileMetaMemeberVariable->classDefineRef);
         // if (m_DefineMetaType->IsTemplate() || m_DefineMetaType->GetEType() == EMetaTypeType::TemplateClassWithTemplate) {
         //     m_RealMetaType = new MetaType(m_DefineMetaType);
@@ -141,7 +137,7 @@ void MetaMemberVariable::CalcParseLevel() {
 
 void MetaMemberVariable::CreateExpress() {
     if (m_FileMetaMemeberVariable != nullptr) {
-        // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ FileMetaMemberVariable ç»“æ„æ¥å¤„ç†
+        // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ FileMetaMemberVariable ½á¹¹À´´¦Àí
         // if (this->m_FileMetaMemeberVariable->DataType == FileMetaMemberVariable::EMemberDataType::Array) {
         //     m_Express = CreateExpressNodeInClassMetaVariable();
         // }
@@ -151,7 +147,7 @@ void MetaMemberVariable::CreateExpress() {
     }
     if (m_Express == nullptr) {
         auto ld = Log::AddInStructMeta(EError::MemberNeedExpress, 
-            "Error [" + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() + "." + m_Name : m_Name) + "]é…ç½®æˆå‘˜å˜é‡æ—¶ï¼Œå¿…é¡»éœ€è¦æœ‰ç­‰å·åŠåç»­çš„è¡¨è¾¾å¼!!");
+            "Error [" + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() + "." + m_Name : m_Name) + "]ÅäÖÃ³ÉÔ±±äÁ¿Ê±£¬±ØĞëĞèÒªÓĞµÈºÅ¼°ºóĞøµÄ±í´ïÊ½!!");
         ld->demo = "T t";
         ld->advan = "T t = null";
     }
@@ -172,7 +168,7 @@ void MetaMemberVariable::CalcReturnType() {
         m_Express = m_DefineMetaType->GetDefaultExpressNode();
     }
     if (m_Express == nullptr && m_DefineMetaType == nullptr) {
-        Log::AddInStructMeta(EError::None, "Error è¡¨è¾¾å¼ä¸ºç©º æˆ–è€… è¡¨è¾¾ç¤ºå¿…é¡»æœ‰è¿”å›å€¼");
+        Log::AddInStructMeta(EError::None, "Error ±í´ïÊ½Îª¿Õ »òÕß ±í´ïÊ¾±ØĞëÓĞ·µ»ØÖµ");
     }
 }
 
@@ -212,14 +208,14 @@ MetaExpressNode* MetaMemberVariable::SimulateExpressRun(MetaExpressNode* node) {
 }
 
 MetaExpressNode* MetaMemberVariable::CreateExpressNodeInClassMetaVariable() {
-    // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ FileMetaMemberVariable ç»“æ„æ¥å¤„ç†
+    // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ FileMetaMemberVariable ½á¹¹À´´¦Àí
     // auto express = this->m_FileMetaMemeberVariable?.express;
     // if (express == nullptr) return nullptr;
     
     // auto root = express->root;
     // if (root == nullptr) return nullptr;
     
-    // åˆ›å»ºè¡¨è¾¾å¼å‚æ•°çš„é€»è¾‘
+    // ´´½¨±í´ïÊ½²ÎÊıµÄÂß¼­
     CreateExpressParam* cep = new CreateExpressParam();
     cep->SetOwnerMetaClass(GetOwnerMetaClass());
     cep->SetMetaType(m_DefineMetaType);
@@ -251,9 +247,9 @@ void MetaMemberVariable::ParseChildMemberData() {
         return;
     }
     
-    // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ FileMetaMemberVariable ç»“æ„æ¥å¤„ç†
+    // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ FileMetaMemberVariable ½á¹¹À´´¦Àí
     // int count = m_FileMetaMemeberVariable->fileMetaMemberVariable.size();
-    // å¤„ç†å­æˆå‘˜æ•°æ®çš„é€»è¾‘
+    // ´¦Àí×Ó³ÉÔ±Êı¾İµÄÂß¼­
 }
 
 std::string MetaMemberVariable::ToFormatString() const {
@@ -282,8 +278,8 @@ std::string MetaMemberVariable::ToFormatString() const {
 
 std::string MetaMemberVariable::ToTokenString() const {
     std::stringstream sb;
-    // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ FileMetaMemberVariable ç»“æ„æ¥å¤„ç†
-    // sb << m_FileMetaMemeberVariable->nameToken->GetSourceBeginLine() << " ä¸çˆ¶ç±»çš„Tokenä½ç½®: " << m_FileMetaMemeberVariable->nameToken->GetSourceBeginLine();
+    // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ FileMetaMemberVariable ½á¹¹À´´¦Àí
+    // sb << m_FileMetaMemeberVariable->nameToken->GetSourceBeginLine() << " Óë¸¸ÀàµÄTokenÎ»ÖÃ: " << m_FileMetaMemeberVariable->nameToken->GetSourceBeginLine();
     return sb.str();
 }
 
@@ -302,7 +298,7 @@ void MetaMemberVariable::CalcDefineClassType() {
                 auto dmct = m_Express->GetReturnMetaDefineType();
                 if (dmct != nullptr) {
                     if (dmct->GetMetaClass() == GetOwnerMetaClass()) {
-                        Log::AddInStructMeta(EError::None, "Error è‡ªå·±ç±»å†…éƒ¨ä¸å…è®¸åŒ…å« è‡ªå·±çš„å®ä½“ï¼Œå¿…é¡»èµ‹å€¼ä¸ºnull");
+                        Log::AddInStructMeta(EError::None, "Error ×Ô¼ºÀàÄÚ²¿²»ÔÊĞí°üº¬ ×Ô¼ºµÄÊµÌå£¬±ØĞë¸³ÖµÎªnull");
                         return;
                     }
                     m_RealMetaType = dmct;
@@ -324,7 +320,7 @@ void MetaMemberVariable::CalcDefineClassType() {
             else {
                 expressRetMetaDefineType = m_Express->GetReturnMetaDefineType();
                 if (expressRetMetaDefineType == nullptr) {
-                    Log::AddInStructMeta(EError::None, "Error è¡¨è¾¾å¼ä¸­è¿”å›å®šä¹‰ç±»å‹ä¸ºç©º " + m_Express->ToTokenString());
+                    Log::AddInStructMeta(EError::None, "Error ±í´ïÊ½ÖĞ·µ»Ø¶¨ÒåÀàĞÍÎª¿Õ " + m_Express->ToTokenString());
                     return;
                 }
 
@@ -334,44 +330,44 @@ void MetaMemberVariable::CalcDefineClassType() {
 
             std::stringstream sb;
             if (curClass != nullptr) {
-                sb << " å®šä¹‰ç±» : " << curClass->GetAllClassName();
+                sb << " ¶¨ÒåÀà : " << curClass->GetAllClassName();
             }
             if (!defineName.empty()) {
-                sb << " åç§°ä¸º: " << defineName;
+                sb << " Ãû³ÆÎª: " << defineName;
             }
-            sb << "ä¸åè¾¹èµ‹å€¼è¯­å¥ä¸­ ";
+            sb << "Óëºó±ß¸³ÖµÓï¾äÖĞ ";
             if (compareClass != nullptr) {
-                sb << "è¡¨è¾¾å¼ç±»ä¸º: " << compareClass->GetAllClassName();
+                sb << "±í´ïÊ½ÀàÎª: " << compareClass->GetAllClassName();
             }
             
             if (relation == ClassManager::EClassRelation::No) {
-                sb << "ç±»å‹ä¸ç›¸åŒï¼Œå¯èƒ½ä¼šæœ‰å¼ºè½¬ï¼Œå¼ºè½¬åå¯èƒ½é»˜è®¤å€¼ä¸ºnull";
+                sb << "ÀàĞÍ²»ÏàÍ¬£¬¿ÉÄÜ»áÓĞÇ¿×ª£¬Ç¿×ªºó¿ÉÄÜÄ¬ÈÏÖµÎªnull";
                 Log::AddInStructMeta(EError::None, sb.str());
             }
             else if (relation == ClassManager::EClassRelation::Same) {
                 if (!(constExpressNode != nullptr && constExpressNode->GetEType() == EType::Null)) {
                     if (expressRetMetaDefineType->GetMetaClass() == GetOwnerMetaClass() && !IsStatic()) {
-                        Log::AddInStructMeta(EError::None, "Error è‡ªå·±ç±»å†…éƒ¨ä¸å…è®¸åŒ…å« è‡ªå·±çš„å®ä½“ï¼Œå¿…é¡»èµ‹å€¼ä¸ºnull");
+                        Log::AddInStructMeta(EError::None, "Error ×Ô¼ºÀàÄÚ²¿²»ÔÊĞí°üº¬ ×Ô¼ºµÄÊµÌå£¬±ØĞë¸³ÖµÎªnull");
                         return;
                     }
                     SetRealMetaType(expressRetMetaDefineType);
                 }
             }
             else if (relation == ClassManager::EClassRelation::Parent) {
-                sb << "ç±»å‹ä¸ç›¸åŒï¼Œå¯èƒ½ä¼šæœ‰å¼ºè½¬ï¼Œ è¿”å›å€¼æ˜¯çˆ¶ç±»å‹å‘å­ç±»å‹è½¬æ¢ï¼Œå­˜åœ¨é”™è¯¯è½¬æ¢!!";
+                sb << "ÀàĞÍ²»ÏàÍ¬£¬¿ÉÄÜ»áÓĞÇ¿×ª£¬ ·µ»ØÖµÊÇ¸¸ÀàĞÍÏò×ÓÀàĞÍ×ª»»£¬´æÔÚ´íÎó×ª»»!!";
                 Log::AddInStructMeta(EError::None, sb.str());
             }
             else if (relation == ClassManager::EClassRelation::Child) {
                 if (compareClass != nullptr) {
                     if (expressRetMetaDefineType->GetMetaClass() == GetOwnerMetaClass()) {
-                        Log::AddInStructMeta(EError::None, "Error è‡ªå·±ç±»å†…éƒ¨ä¸å…è®¸åŒ…å« è‡ªå·±çš„å®ä½“ï¼Œå¿…é¡»èµ‹å€¼ä¸ºnull");
+                        Log::AddInStructMeta(EError::None, "Error ×Ô¼ºÀàÄÚ²¿²»ÔÊĞí°üº¬ ×Ô¼ºµÄÊµÌå£¬±ØĞë¸³ÖµÎªnull");
                         return;
                     }
                     SetRealMetaType(expressRetMetaDefineType);
                 }
             }
             else {
-                sb << "è¡¨è¾¾å¼é”™è¯¯ï¼Œæˆ–è€…æ˜¯å®šä¹‰ç±»å‹é”™è¯¯";
+                sb << "±í´ïÊ½´íÎó£¬»òÕßÊÇ¶¨ÒåÀàĞÍ´íÎó";
                 Log::AddInStructMeta(EError::None, sb.str());
             }
         }

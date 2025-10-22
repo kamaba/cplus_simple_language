@@ -92,12 +92,12 @@ public:
                 
                 if (m_FileMetaKeyCaseSyntax->GetVariableToken() != nullptr) {
                     if (matchTypeClass == nullptr) {
-                        std::cout << "Error è§£æžcaseä¸­ï¼Œå‰è¾¹çš„ç±»åž‹æ²¡æœ‰æ‰¾åˆ°!" << m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString() << std::endl;
+                        std::cout << "Error ½âÎöcaseÖÐ£¬Ç°±ßµÄÀàÐÍÃ»ÓÐÕÒµ½!" << m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString() << std::endl;
                         return;
                     }
                     std::string token2name = m_FileMetaKeyCaseSyntax->GetVariableToken()->GetLexeme()->ToString();
                     if (thenMetaStatements->GetIsMetaVariable(token2name)) {
-                        std::cout << "Error å·²æœ‰å®šä¹‰å˜é‡åç§°!!" << m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString() << std::endl;
+                        std::cout << "Error ÒÑÓÐ¶¨Òå±äÁ¿Ãû³Æ!!" << m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString() << std::endl;
                         return;
                     }
                     MetaType* mdt = new MetaType(matchTypeClass);
@@ -116,13 +116,13 @@ public:
                         constExpressList.push_back(constExpress);
                     }
                 } else {
-                    std::cout << "Error è§£æžcase ä¸­ï¼Œå†…å®¹ä¸ºç©º!!" << std::endl;
+                    std::cout << "Error ½âÎöcase ÖÐ£¬ÄÚÈÝÎª¿Õ!!" << std::endl;
                     return;
                 }
             }
             
             if (switchCaseType == SwitchCaseType::None) {
-                std::cout << "Error è§£æžCaseå¤±è´¥!!" << std::endl;
+                std::cout << "Error ½âÎöCaseÊ§°Ü!!" << std::endl;
                 return;
             }
             thenMetaStatements->SetTRMetaVariable(m_TrMetaVariable);
@@ -132,7 +132,7 @@ public:
                     constExpressList[i]->CalcReturnType();
                 }
             } else if (switchCaseType == SwitchCaseType::ClassType) {
-                // å¤„ç†ç±»åž‹åŒ¹é…
+                // ´¦ÀíÀàÐÍÆ¥Åä
             }
         }
 
@@ -233,7 +233,7 @@ private:
             m_MetaCallLink->CalcReturnType();
             matchMV = m_MetaCallLink->ExecuteGetMetaVariable();
             auto mv = m_OwnerMetaBlockStatements->GetMetaVariableByName(matchMV->GetName());
-            if (mv == matchMV) { // å¦‚æžœç›´æŽ¥è°ƒç”¨å…¶å®ƒåœ°æ–¹çš„metavariableï¼Œéœ€è¦ç”Ÿæˆä¸€ä¸ªä¸´æ—¶çš„metavariable
+            if (mv == matchMV) { // Èç¹ûÖ±½Óµ÷ÓÃÆäËüµØ·½µÄmetavariable£¬ÐèÒªÉú³ÉÒ»¸öÁÙÊ±µÄmetavariable
                 m_MatchType = SwitchMatchType::ConstValue;
             }
         }
@@ -272,7 +272,7 @@ public:
         result += "switch ";
         
         if (m_MatchType == SwitchMatchType::None) {
-            // æ— åŒ¹é…ç±»åž‹
+            // ÎÞÆ¥ÅäÀàÐÍ
         } else if (m_MatchType == SwitchMatchType::ConstValue) {
             result += matchMV ? matchMV->GetName() : "";
         } else if (m_MatchType == SwitchMatchType::ClassType) {

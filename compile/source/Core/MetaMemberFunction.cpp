@@ -22,58 +22,58 @@
 namespace SimpleLanguage {
 namespace Core {
 
-    // MetaMemberFunctionTemplateNode å®ç°
+    // MetaMemberFunctionTemplateNode ÊµÏÖ
     MetaMemberFunctionTemplateNode::MetaMemberFunctionTemplateNode()
     {
     }
 
     void MetaMemberFunctionTemplateNode::SetDeep(int deep)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
     MetaMemberFunction* MetaMemberFunctionTemplateNode::IsSameMetaMemeberFunction(MetaMemberFunction* mmf)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
     bool MetaMemberFunctionTemplateNode::AddMetaMemberFunction(MetaMemberFunction* mmf)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return true;
     }
 
     void MetaMemberFunctionTemplateNode::ParseMemberFunctionDefineMetaType()
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
-    // MetaMemberFunctionNode å®ç°
+    // MetaMemberFunctionNode ÊµÏÖ
     MetaMemberFunctionNode::MetaMemberFunctionNode()
     {
     }
 
     void MetaMemberFunctionNode::SetDeep(int deep)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
     MetaMemberFunction* MetaMemberFunctionNode::IsSameMetaMemeberFunction(MetaMemberFunction* mmf)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
     bool MetaMemberFunctionNode::AddMetaMemberFunction(MetaMemberFunction* mmf)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return true;
     }
 
     void MetaMemberFunctionNode::ParseMemberFunctionDefineMetaType()
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
     std::vector<MetaMemberFunction*> MetaMemberFunctionNode::GetMetaMemberFunctionListByParamCount(int count)
@@ -86,7 +86,7 @@ namespace Core {
         return std::vector<MetaMemberFunction*>();
     }
 
-    // MetaMemberFunction å®ç°
+    // MetaMemberFunction ÊµÏÖ
     MetaMemberFunction::MetaMemberFunction()
     {
     }
@@ -100,7 +100,7 @@ namespace Core {
         : m_OwnerMetaClass(mc)
         , m_FileMetaMemberFunction(fmmf)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
     MetaMemberFunction::MetaMemberFunction(MetaClass* mc, const std::string& name)
@@ -149,14 +149,14 @@ namespace Core {
 
     void* MetaMemberFunction::GetToken() const
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
     bool MetaMemberFunction::IsEqualWithMMFByNameAndParam(MetaMemberFunction* mmf)
     {
         if (mmf->GetName() != m_Name) return false;
-        // ç®€åŒ–å®ç°ï¼Œå®é™…éœ€è¦æ¯”è¾ƒå‚æ•°
+        // ¼ò»¯ÊµÏÖ£¬Êµ¼ÊĞèÒª±È½Ï²ÎÊı
         return true;
     }
 
@@ -178,19 +178,19 @@ namespace Core {
 
     void* MetaMemberFunction::AddGenTemplateMemberFunctionByMetaTypeList(MetaClass* mc, const std::vector<MetaType*>& list)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
     void* MetaMemberFunction::AddGenTemplateMemberFunctionBySelf(MetaClass* mc, const std::vector<MetaClass*>& list)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
     void* MetaMemberFunction::GetGenTemplateFunction(const std::vector<MetaClass*>& mcList)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
@@ -203,23 +203,23 @@ namespace Core {
 
     void MetaMemberFunction::ParseDefineMetaType()
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
     void MetaMemberFunction::CreateMetaExpress()
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
     bool MetaMemberFunction::ParseMetaExpress()
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return true;
     }
 
     void MetaMemberFunction::ParseStatements()
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
     }
 
     void MetaMemberFunction::UpdateVritualFunctionName()
@@ -241,26 +241,26 @@ namespace Core {
 
     MetaType* MetaMemberFunction::AddMetaPreTemplateFunction(MetaType* mt, bool& isGenMetaClass)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         isGenMetaClass = false;
         return mt;
     }
 
     MetaType* MetaMemberFunction::FindBindStructTemplateFunctionMtList(MetaType* mt)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
     MetaType* MetaMemberFunction::FindBindStructTemplateFunctionAndClassMtList(MetaType* mt)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
     MetaStatements* MetaMemberFunction::CreateMetaSyntax(void* rootMs, MetaBlockStatements* currentBlockStatements)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
@@ -268,7 +268,7 @@ namespace Core {
                                                        MetaStatements*& beforeStatements,
                                                        void* childFms)
     {
-        // ç®€åŒ–å®ç°
+        // ¼ò»¯ÊµÏÖ
         return nullptr;
     }
 
@@ -356,7 +356,7 @@ namespace Core {
         
         if (!IsStatic())
         {
-            // åˆ›å»º this å˜é‡
+            // ´´½¨ this ±äÁ¿
             // m_ThisMetaVariable = new MetaVariable(m_OwnerMetaClass->getAllClassName() + "." + m_Name + ".this", MetaVariable::EVariableFrom::Argument, nullptr, m_OwnerMetaClass, mt);
         }
         

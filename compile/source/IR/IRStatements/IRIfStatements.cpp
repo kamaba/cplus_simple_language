@@ -51,7 +51,7 @@ void IRIfStatements::MetaIRElseIfStatements::ParseIRStatements(IRMethod* _irMeth
     irbs->ParseAllIRStatements(mires->thenMetaStatements);
     thenStatList.insert(thenStatList.end(), irbs->GetIRStatements().begin(), irbs->GetIRStatements().end());
 
-    // {}浠ｇ爜鎵ц缁撴潫鍚庣殑浣嶇疆
+    // {}代码执行结束后的位置
     ifEndBrach = new IRBranch(_irMethod, EIROpCode::Br, nullptr);
     thenStatList.push_back(ifEndBrach);
 }

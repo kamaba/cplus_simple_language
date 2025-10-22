@@ -29,7 +29,7 @@ public:
     void ParseToTokenList();
 
 private:
-    const char END_CHAR = 0xFF; // ç»“å°¾å­—ç¬¦
+    const char END_CHAR = 0xFF; // ½áÎ²×Ö·û
     
     char ReadChar();
     char PeekChar();
@@ -48,7 +48,7 @@ private:
     bool IsHexDigit(char c);
     bool IsIdentifier(char ch);
     
-    // å„ç§ç¬¦å·çš„è¯»å–æ–¹æ³•
+    // ¸÷ÖÖ·ûºÅµÄ¶ÁÈ¡·½·¨
     void ReadPlus();
     void ReadMinus();
     void ReadMultiply();
@@ -74,15 +74,15 @@ private:
     void ReadIdentifier();
 
 private:
-    char m_CurChar;                              // å½“å‰å­—ç¬¦
-    char m_TempChar;                             // ä¸´æ—¶å­—ç¬¦
-    std::string m_Builder;                       // å­—ç¬¦ä¸²æ„å»ºå™¨
+    char m_CurChar;                              // µ±Ç°×Ö·û
+    char m_TempChar;                             // ÁÙÊ±×Ö·û
+    std::string m_Builder;                       // ×Ö·û´®¹¹½¨Æ÷
     std::vector<Token*> m_ListTokens;
     Token* m_CurrentToken;
     std::string m_Buffer;
     int m_Length;
-    int m_SourceLine;                            // è§£æåˆ°å½“å‰çš„è¡Œæ•°
-    int m_SourceChar;                            // è§£æåˆ°å½“å‰è¡Œä¸­çš„ä½ç½®
+    int m_SourceLine;                            // ½âÎöµ½µ±Ç°µÄĞĞÊı
+    int m_SourceChar;                            // ½âÎöµ½µ±Ç°ĞĞÖĞµÄÎ»ÖÃ
     int m_Index;
     std::string m_Path;
 };

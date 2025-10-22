@@ -103,9 +103,9 @@ std::string MetaCallNode::ToTokenString() const {
 }
 
 void MetaCallNode::Parse() {
-    // è§£æžé€»è¾‘
+    // ½âÎöÂß¼­
     if (m_Token != nullptr) {
-        // æ ¹æ® token ç±»åž‹è®¾ç½®ç›¸åº”çš„æ ‡å¿—
+        // ¸ù¾Ý token ÀàÐÍÉèÖÃÏàÓ¦µÄ±êÖ¾
         std::string tokenValue = m_Token->GetLexemeString();
         
         if (tokenValue == "static") {
@@ -499,7 +499,7 @@ void MetaCallNode::Parse() {
 }
 
 void MetaCallNode::CalcReturnType() {
-    // è®¡ç®—è¿”å›žç±»åž‹
+    // ¼ÆËã·µ»ØÀàÐÍ
     if (m_MetaClass != nullptr) {
         m_IsClass = true;
     } else if (m_MetaType != nullptr) {

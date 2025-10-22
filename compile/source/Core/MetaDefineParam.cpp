@@ -24,23 +24,23 @@ MetaDefineParam::MetaDefineParam(MetaMemberFunction* ownerFunction, void* param)
     m_OwnerFunction = ownerFunction;
     m_MetaDefineType = nullptr;
     m_MetaVariable = nullptr;
-    // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ param ç±»å‹æ¥å¤„ç†
+    // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ param ÀàĞÍÀ´´¦Àí
 }
 
 void MetaDefineParam::ParseMetaDefineType() {
-    // è§£æå…ƒå®šä¹‰ç±»å‹çš„é€»è¾‘
+    // ½âÎöÔª¶¨ÒåÀàĞÍµÄÂß¼­
 }
 
 void MetaDefineParam::CreateExpress() {
-    // åˆ›å»ºè¡¨è¾¾å¼çš„é€»è¾‘
+    // ´´½¨±í´ïÊ½µÄÂß¼­
 }
 
 void MetaDefineParam::Parse() {
-    // è§£æçš„é€»è¾‘
+    // ½âÎöµÄÂß¼­
 }
 
 void MetaDefineParam::CalcReturnType() {
-    // è®¡ç®—è¿”å›ç±»å‹çš„é€»è¾‘
+    // ¼ÆËã·µ»ØÀàĞÍµÄÂß¼­
 }
 
 } // namespace Core

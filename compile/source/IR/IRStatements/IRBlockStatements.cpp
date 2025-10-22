@@ -95,9 +95,9 @@ void IRBlockStatements::ParseAllIRStatements(MetaBlockStatements* ms) {
             ircs->ParseIRStatements(mcs2);
             m_IRStatements.insert(m_IRStatements.end(), ircs->GetIRStatements().begin(), ircs->GetIRStatements().end());
         } else if (auto mops = dynamic_cast<MetaOtherPlatformStatements*>(nextmbs)) {
-            std::cout << "------------------æ²¡æœ‰è§£æžIRçš„è¯­å¥ç±»åž‹------------" << std::endl;
+            std::cout << "------------------Ã»ÓÐ½âÎöIRµÄÓï¾äÀàÐÍ------------" << std::endl;
         } else {
-            std::cout << "------------------æ²¡æœ‰è§£æžIRçš„è¯­å¥ç±»åž‹------------" << std::endl;
+            std::cout << "------------------Ã»ÓÐ½âÎöIRµÄÓï¾äÀàÐÍ------------" << std::endl;
         }
         nextmbs = nextmbs->nextMetaStatements;
     }

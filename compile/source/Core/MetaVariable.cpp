@@ -54,7 +54,7 @@ void MetaVariable::SetOwnerMetaClass(MetaClass* ownerclass) {
 }
 
 MetaClass* MetaVariable::GetOwnerClassTemplateClass() const {
-    // è¿™é‡Œéœ€è¦æ ¹æ®å®é™…çš„ MetaGenTemplateClass ç»“æ„æ¥å¤„ç†
+    // ÕâÀïĞèÒª¸ù¾İÊµ¼ÊµÄ MetaGenTemplateClass ½á¹¹À´´¦Àí
     // if (auto mgtc = dynamic_cast<MetaGenTemplateClass*>(m_OwnerMetaClass)) {
     //     return mgtc->GetMetaTemplateClass();
     // }

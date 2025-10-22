@@ -107,7 +107,7 @@ namespace VM {
                 }
                 BoolObject* boolObj = dynamic_cast<BoolObject*>(obj);
                 if (boolObj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疊oolean绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Boolean类型!!" << std::endl;
                     return;
                 }
                 boolObj->SetValue(svalue.int8Value == 1);
@@ -125,7 +125,7 @@ namespace VM {
                 }
                 ByteObject* byteObj = dynamic_cast<ByteObject*>(obj);
                 if (byteObj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疊yte绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Byte类型!!" << std::endl;
                     return;
                 }
                 byteObj->SetValue(svalue.int8Value);
@@ -143,7 +143,7 @@ namespace VM {
                 }
                 SByteObject* byteObj = dynamic_cast<SByteObject*>(obj);
                 if (byteObj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疭Byte绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是SByte类型!!" << std::endl;
                     return;
                 }
                 byteObj->SetValue(svalue.sint8Value);
@@ -161,7 +161,7 @@ namespace VM {
                 }
                 Int16Object* int16Obj = dynamic_cast<Int16Object*>(obj);
                 if (int16Obj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 int16Obj->SetValue(svalue.int16Value);
@@ -179,7 +179,7 @@ namespace VM {
                 }
                 UInt16Object* uint16Obj = dynamic_cast<UInt16Object*>(obj);
                 if (uint16Obj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 uint16Obj->SetValue(svalue.uint16Value);
@@ -198,7 +198,7 @@ namespace VM {
                 }
                 Int32Object* int32Obj = dynamic_cast<Int32Object*>(obj);
                 if (int32Obj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 int32Obj->SetValue(svalue.int32Value);
@@ -216,7 +216,7 @@ namespace VM {
                 }
                 UInt32Object* uint32Obj = dynamic_cast<UInt32Object*>(obj);
                 if (uint32Obj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 uint32Obj->SetValue(svalue.uint32Value);
@@ -234,7 +234,7 @@ namespace VM {
                 }
                 Int64Object* int64Obj = dynamic_cast<Int64Object*>(obj);
                 if (int64Obj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 int64Obj->SetValue(svalue.int64Value);
@@ -252,7 +252,7 @@ namespace VM {
                 }
                 UInt64Object* uint64Obj = dynamic_cast<UInt64Object*>(obj);
                 if (uint64Obj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 uint64Obj->SetValue(svalue.uint64Value);
@@ -275,7 +275,7 @@ namespace VM {
                 }
                 StringObject* stringObj = dynamic_cast<StringObject*>(obj);
                 if (stringObj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 stringObj->SetValue(svalue.stringValue);
@@ -293,7 +293,7 @@ namespace VM {
                 }
                 FloatObject* floatObj = dynamic_cast<FloatObject*>(obj);
                 if (floatObj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 floatObj->SetValue(svalue.floatValue);
@@ -311,7 +311,7 @@ namespace VM {
                 }
                 DoubleObject* doubleObj = dynamic_cast<DoubleObject*>(obj);
                 if (doubleObj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疘nt32绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Int32类型!!" << std::endl;
                     return;
                 }
                 doubleObj->SetValue(svalue.doubleValue);
@@ -342,7 +342,7 @@ namespace VM {
                 }
                 ClassObject* classObj = dynamic_cast<ClassObject*>(obj);
                 if (classObj == nullptr) {
-                    std::cout << "璇ョ被鍨嬩笉鏄疌lass绫诲瀷!!" << std::endl;
+                    std::cout << "该类型不是Class类型!!" << std::endl;
                     return;
                 }
                 classObj->SetValue(svalue.sobject);

@@ -177,7 +177,7 @@ void MetaMemberData::ParseDefineMetaType() {
             cep.parsefrom = EParseFrom::StatementRightExpress;
             m_Express = ExpressManager::CreateExpressNode(cep);
             if (m_Express == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error æ²¡æœ‰è§£æåˆ°Expressçš„å†…å®¹ åœ¨MetaMemberData é‡Œè¾¹ 372");
+                Log::AddInStructMeta(EError::None, "Error Ã»ÓĞ½âÎöµ½ExpressµÄÄÚÈİ ÔÚMetaMemberData Àï±ß 372");
             }
         }
     }
@@ -191,7 +191,7 @@ bool MetaMemberData::ParseMetaExpress() {
         m_Express->CalcReturnType();
         m_DefineMetaType = m_Express->GetReturnMetaDefineType();
         if (m_DefineMetaType == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error åœ¨ç”ŸæˆDataæ—¶ï¼Œæ²¡æœ‰æ‰¾åˆ°." + m_FileMetaMemeberData->GetFileMetaCallTermValue()->ToTokenString());
+            Log::AddInStructMeta(EError::None, "Error ÔÚÉú³ÉDataÊ±£¬Ã»ÓĞÕÒµ½." + m_FileMetaMemeberData->GetFileMetaCallTermValue()->ToTokenString());
             return false;
         }
         if (m_DefineMetaType->IsData()) {
@@ -220,7 +220,7 @@ void MetaMemberData::CopyByMetaData(MetaData* md) {
     MetaData* curMD = dynamic_cast<MetaData*>(m_OwnerMetaClass);
     for (const auto& v : md->GetMetaMemberDataDict()) {
         if (v.second->IsIncludeMetaData(curMD)) {
-            Log::AddInStructMeta(EError::None, "Error å½“å‰æœ‰å¾ªç¯å¼•ç”¨æ•°é‡ç°è±¡ï¼Œè¯·æŸ¥æ­£!!" + md->GetAllClassName());
+            Log::AddInStructMeta(EError::None, "Error µ±Ç°ÓĞÑ­»·ÒıÓÃÊıÁ¿ÏÖÏó£¬Çë²éÕı!!" + md->GetAllClassName());
             continue;
         }
         auto newMMD = v.second->Copy();
@@ -254,7 +254,7 @@ void MetaMemberData::ParseChildMemberData() {
             if (AddMetaMemberData(mmd)) {
                 mmd->ParseChildMemberData();
             } else {
-                Log::AddInStructMeta(EError::None, "Error ParseChildMemberData å‘½åæœ‰é‡å!!" + mmd->GetName());
+                Log::AddInStructMeta(EError::None, "Error ParseChildMemberData ÃüÃûÓĞÖØÃû!!" + mmd->GetName());
             }
         }
     } else if (m_Express != nullptr) {
@@ -285,7 +285,7 @@ void MetaMemberData::ParseChildMemberData() {
                 if (addMmd == nullptr) continue;
 
                 if (m_MetaMemberDataDict.find(addMmd->GetName()) != m_MetaMemberDataDict.end()) {
-                    Log::AddInStructMeta(EError::None, "Error é‡å¤çš„MetaMemberDataçš„åç§° åœ¨484");
+                    Log::AddInStructMeta(EError::None, "Error ÖØ¸´µÄMetaMemberDataµÄÃû³Æ ÔÚ484");
                     continue;
                 }
                 m_MetaMemberDataDict[addMmd->GetName()] = addMmd;
@@ -293,7 +293,7 @@ void MetaMemberData::ParseChildMemberData() {
         } else if (cne != nullptr) {
             MetaMemberData* addMmd = new MetaMemberData(this, m_Name, 0, cne);
             if (m_MetaMemberDataDict.find(addMmd->GetName()) != m_MetaMemberDataDict.end()) {
-                Log::AddInStructMeta(EError::None, "Error é‡å¤çš„MetaMemberDataçš„åç§° åœ¨410");
+                Log::AddInStructMeta(EError::None, "Error ÖØ¸´µÄMetaMemberDataµÄÃû³Æ ÔÚ410");
             }
             m_MetaMemberDataDict[addMmd->GetName()] = addMmd;
         }
@@ -377,7 +377,7 @@ std::string MetaMemberData::ToFormatString2(bool isDynamic) {
         }
         break;
         default: {
-            Log::AddInStructMeta(EError::None, "error æš‚ä¸æ”¯æŒå…¶å®ƒç±»å‹ 1");
+            Log::AddInStructMeta(EError::None, "error Ôİ²»Ö§³ÖÆäËüÀàĞÍ 1");
         }
         break;
     }
@@ -421,7 +421,7 @@ std::string MetaMemberData::ToString() {
         }
         break;
         default: {
-            Log::AddInStructMeta(EError::None, "error æš‚ä¸æ”¯æŒå…¶å®ƒç±»å‹ 1");
+            Log::AddInStructMeta(EError::None, "error Ôİ²»Ö§³ÖÆäËüÀàĞÍ 1");
         }
         break;
     }

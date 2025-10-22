@@ -22,7 +22,7 @@ namespace Core {
         Javascript = 2
     };
 
-    // å‰å‘å£°æ˜
+    // Ç°ÏòÉùÃ÷
     class MetaNode;
 
     class MetaBase
@@ -32,7 +32,7 @@ namespace Core {
         MetaBase(const MetaBase& mb);
         virtual ~MetaBase() = default;
 
-        // å±æ€§è®¿é—®å™¨
+        // ÊôĞÔ·ÃÎÊÆ÷
         int GetDeep() const { return m_Deep; }
         int GetRealDeep() const { return m_Deep - m_AnchorDeep; }
         EPermission GetPermission() const { return m_Permission; }
@@ -41,14 +41,14 @@ namespace Core {
         MetaNode* GetMetaNode() const { return m_MetaNode; }
         virtual ::std::string GetPathName() const; 
 
-        // è®¾ç½®æ–¹æ³•
+        // ÉèÖÃ·½·¨
         void SetRefFromType(RefFromType type) { m_RefFromType = type; }
         void SetName(const std::string& name) { m_Name = name; }
         virtual void SetAnchorDeep(int addep) { m_AnchorDeep = addep; }
         virtual void SetDeep(int deep) { m_Deep = deep; }
         void SetMetaNode(MetaNode* mn) { m_MetaNode = mn; }
 
-        // è™šæ–¹æ³•
+        // Ğé·½·¨
         virtual std::string GetFormatString() const { return ""; }
         virtual std::string ToFormatString() const { return ""; }
         virtual std::string ToString() const { return "";}

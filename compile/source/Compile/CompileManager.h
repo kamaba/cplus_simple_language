@@ -10,11 +10,12 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 namespace SimpleLanguage {
 namespace Compile {
 
-    // å‰å‘å£°æ˜
+    // Ç°ÏòÉùÃ÷
     class CompileStateBase;
 
     class CompileManager

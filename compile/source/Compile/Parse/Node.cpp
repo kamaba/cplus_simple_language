@@ -125,7 +125,7 @@ std::string Node::ToString() const {
             sb << (token != nullptr ? token->ToString() : "Key");
             break;
         case ENodeType::LineEnd:
-            sb << "æ¢è¡Œ\n";
+            sb << "»»ÐÐ\n";
             break;
         case ENodeType::SemiColon:
             sb << ";\n";
@@ -225,7 +225,7 @@ std::string Node::ToString() const {
             }
         }
     } else if (nodeType == ENodeType::LineEnd) {
-        // ä¸æ·»åŠ ä»»ä½•å†…å®¹
+        // ²»Ìí¼ÓÈÎºÎÄÚÈÝ
     } else {
         sb << (token != nullptr ? token->GetLexemeString() : "") << " ";
         for (const auto& child : childList) {

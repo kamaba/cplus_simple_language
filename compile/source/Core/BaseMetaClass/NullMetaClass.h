@@ -18,7 +18,7 @@ namespace Core {
 
 class NullMetaClass : public MetaClass {
 public:
-    NullMetaClass() : MetaClass(DefaultObject::Null.ToString()) {
+    NullMetaClass() : MetaClass("Null") {
         m_ClassDefineType = EClassDefineType::InnerDefine;
     }
     

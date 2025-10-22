@@ -158,7 +158,7 @@ namespace VM {
                 break;
             }
             default: {
-                std::cout << "Error å¼‚å¸¸ç±»å‹åœ¨ConvertByETypeä¸­" << std::endl;
+                std::cout << "Error Òì³£ÀàĞÍÔÚConvertByETypeÖĞ" << std::endl;
                 break;
             }
         }
@@ -674,7 +674,7 @@ namespace VM {
                 else if (sign == 4)
                     floatValue = std::fmod(floatValue, svalFloat);
                 else {
-                    std::cout << "Error ä¸æ”¯æŒFloat çš„è¿™ç§ç±»å‹çš„æ“ä½œ" << std::endl;
+                    std::cout << "Error ²»Ö§³ÖFloat µÄÕâÖÖÀàĞÍµÄ²Ù×÷" << std::endl;
                 }
                 break;
             }
@@ -691,7 +691,7 @@ namespace VM {
                 else if (sign == 4)
                     doubleValue = std::fmod(doubleValue, svalDouble);
                 else {
-                    std::cout << "Error ä¸æ”¯æŒDouble çš„è¿™ç§ç±»å‹çš„æ“ä½œ" << std::endl;
+                    std::cout << "Error ²»Ö§³ÖDouble µÄÕâÖÖÀàĞÍµÄ²Ù×÷" << std::endl;
                 }
                 break;
             }

@@ -43,7 +43,7 @@ void ProjectCompile::LoadProject() {
     ::std::filesystem::path directory(ProjectManager::projectPath);
 
     if (!::std::filesystem::exists(directory)) {
-        std::cout << "Error é¡¹ç›®åŠ è½½è·¯å¾„ä¸æ­£ç¡®!!" << std::endl;
+        std::cout << "Error ÏîÄ¿¼ÓÔØÂ·¾¶²»ÕýÈ·!!" << std::endl;
     }
 
     std::vector<std::string> paths;
@@ -54,11 +54,11 @@ void ProjectCompile::LoadProject() {
     }
     
     if (paths.empty()) {
-        std::cout << "Error é¡¹ç›®åŠ è½½è·¯å¾„æ²¡æœ‰æ‰¾åˆ°spæ–‡ä»¶!!" << std::endl;
+        std::cout << "Error ÏîÄ¿¼ÓÔØÂ·¾¶Ã»ÓÐÕÒµ½spÎÄ¼þ!!" << std::endl;
     }
 
     if (!::std::filesystem::exists(paths[0])) {
-        std::cout << "Error é¡¹ç›®åŠ è½½è·¯å¾„ä¸æ­£ç¡®!!" << std::endl;
+        std::cout << "Error ÏîÄ¿¼ÓÔØÂ·¾¶²»ÕýÈ·!!" << std::endl;
         return;
     }
     
@@ -133,7 +133,7 @@ bool ProjectCompile::CheckFileList() {
     for (size_t i = 0; i < s_FileParseList.size(); i++) {
         if (!s_FileParseList[i]->IsExists()) {
             isSuccess = false;
-            std::cout << "æ²¡æœ‰æ‰¾åˆ°è¦ç¼–è¯‘çš„æ–‡ä»¶: " << s_FileParseList[i]->filePath() << std::endl;
+            std::cout << "Ã»ÓÐÕÒµ½Òª±àÒëµÄÎÄ¼þ: " << s_FileParseList[i]->filePath() << std::endl;
             break;
         }
     }
@@ -213,9 +213,9 @@ void ProjectCompile::CompileFileAllEnd() {
 
     Log::PrintLog();
 
-    std::cout << "-------------------------è§£æžå®ŒæˆåŽçš„æ ¼å¼è¾“å‡º å¼€å§‹--------------------------" << std::endl;
+    std::cout << "-------------------------½âÎöÍê³ÉºóµÄ¸ñÊ½Êä³ö ¿ªÊ¼--------------------------" << std::endl;
     std::cout << ModuleManager::instance().selfModule()->metaNode()->ToFormatString() << std::endl;
-    std::cout << "-------------------------è§£æžå®ŒæˆåŽçš„æ ¼å¼è¾“å‡º ç»“æŸ--------------------------" << std::endl;
+    std::cout << "-------------------------½âÎöÍê³ÉºóµÄ¸ñÊ½Êä³ö ½áÊø--------------------------" << std::endl;
 }
 
 } // namespace Project

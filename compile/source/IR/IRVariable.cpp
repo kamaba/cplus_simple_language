@@ -37,7 +37,7 @@ IRLoadVariable* IRLoadVariable::CreateLoadVariable(IRMetaType* irmt, IRMetaClass
             index = irmc->GetMetaMemberVariableIndexByHashCode(mv->GetHashCode());
         }
         if (index == -1) {
-            Log::AddGenIR(EError::None, "娌℃湁鎵惧埌瀵瑰簲鎴愬憳鍙橀噺鐨処ndex");
+            Log::AddGenIR(EError::None, "没有找到对应成员变量的Index");
             return nullptr;
         }
         if (mv->isStatic) {
@@ -85,7 +85,7 @@ IRLoadVariable::IRLoadVariable(IRMetaType* irmt, IRMethod* _irMethod, int id, IR
         m_Data->index = id;
         m_IRDataList.push_back(m_Data);
     } else {
-        Log::AddVM(EError::None, "SVM Error 娌℃湁鎵惧埌鍔犺浇鍙橀噺鐨勬潵婧愮被鍨嬶紒");
+        Log::AddVM(EError::None, "SVM Error 没有找到加载变量的来源类型！");
     }
 }
 
@@ -160,7 +160,7 @@ IRStoreVariable::IRStoreVariable(IRMetaType* irmt, IRMethod* _irMethod, int id, 
         m_Data->index = id;
         m_IRDataList.push_back(m_Data);
     } else {
-        Log::AddVM(EError::None, "SVM Error 娌℃湁鎵惧埌鍔犺浇鍙橀噺鐨勬潵婧愮被鍨嬶紒");
+        Log::AddVM(EError::None, "SVM Error 没有找到加载变量的来源类型！");
     }
 }
 

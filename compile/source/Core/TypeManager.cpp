@@ -70,7 +70,7 @@ bool TypeManager::UpdateMetaTypeByGenClassAndFunction(MetaType* mt, MetaGenTempl
                 mt->SetMetaTemplate(nullptr);
                 findfn = gmgt->GetMetaType()->GetMetaClass();
             } else {
-                Log::AddInStructMeta(EError::None, "æ²¡æœ‰æ‰¾åˆ°æ¨¡æ¿ä¸­å®šä¹‰çš„æ¨¡æ¿å†…å®¹!" + mt->GetMetaTemplate()->GetName());
+                Log::AddInStructMeta(EError::None, "Ã»ÓĞÕÒµ½Ä£°åÖĞ¶¨ÒåµÄÄ£°åÄÚÈİ!" + mt->GetMetaTemplate()->GetName());
             }
         }
     } else {
@@ -87,7 +87,7 @@ MetaType* TypeManager::GetMetaTemplateClassAndRegisterExptendTemplateClassInstan
     if (getmc == nullptr) {
         auto mt = curMc->GetMetaTemplateByName(fmcd->StringList()[0]);
         if (mt == nullptr) {
-            Log::AddInStructMeta(EError::None, "æ²¡æœ‰æ‰¾åˆ°æ¨¡æ¿ç±»ä¸­ï¼Œå¯¹åº”çš„æ¨¡æ¿ï¼Œåç§°ä¸º" + fmcd->GetStringList()[0] + "è¯·ä»”ç»†æ£€æŸ¥æ¨¡æ¿çš„å‘½åä¸ä½¿ç”¨æ¨¡æ¿å‘½åæ˜¯å¦å¯¹åº”", fmcd->GetClassNameToken());
+            Log::AddInStructMeta(EError::None, "Ã»ÓĞÕÒµ½Ä£°åÀàÖĞ£¬¶ÔÓ¦µÄÄ£°å£¬Ãû³ÆÎª" + fmcd->GetStringList()[0] + "Çë×ĞÏ¸¼ì²éÄ£°åµÄÃüÃûÓëÊ¹ÓÃÄ£°åÃüÃûÊÇ·ñ¶ÔÓ¦", fmcd->GetClassNameToken());
         } else {
             auto retmt = new MetaType(mt);
             return retmt;
@@ -115,7 +115,7 @@ MetaType* TypeManager::GetMetaTypeByInputTemplateList(MetaClass* ownerMc, MetaNo
     auto mt = new MetaType();
     mt->SetTemplateMetaClass(findfn);
     
-    // è¿™é‡Œï¼Œè¦æ³¨å†Œå®ä½“æ¨¡æ¿ç±»
+    // ÕâÀï£¬Òª×¢²áÊµÌåÄ£°åÀà
     for (size_t i = 0; i < inputTemplateNodeList.size(); i++) {
         MetaType* mt2 = GetAndRegisterTemplateDefineMetaTemplateClass(ownerMc, findfn, inputTemplateNodeList[i]);
         mt->AddTemplateMetaType(mt2);
@@ -132,7 +132,7 @@ MetaType* TypeManager::GetAndRegisterTemplateDefineMetaTemplateClass(MetaClass* 
     if (newmn != nullptr) {
         auto findfn = newmn->GetMetaClassByTemplateCount(fmtd->GetInputTemplateCount());
         if (findfn == nullptr) {
-            Log::AddInStructMeta(EError::None, "æ²¡æœ‰å‘ç°" + fmtd->GetNameList()[0] + "æ‰¾åˆ°çš„ç±»!");
+            Log::AddInStructMeta(EError::None, "Ã»ÓĞ·¢ÏÖ" + fmtd->GetNameList()[0] + "ÕÒµ½µÄÀà!");
             return nullptr;
         }
         
@@ -159,12 +159,12 @@ MetaType* TypeManager::GetAndRegisterTemplateDefineMetaTemplateClass(MetaClass* 
         if (fmtd->GetNameList().size() == 1) {
             auto mt = ownerMc->GetMetaTemplateByName(fmtd->GetNameList()[0]);
             if (mt == nullptr) {
-                Log::AddInStructMeta(EError::None, "æ²¡æœ‰æ‰¾åˆ°æ¨¡æ¿ç±»ä¸­ï¼Œå¯¹åº”çš„æ¨¡æ¿ï¼Œè¯·ä»”ç»†æ£€æŸ¥æ¨¡æ¿çš„å‘½åä¸ä½¿ç”¨æ¨¡æ¿å‘½åæ˜¯å¦å¯¹åº”", cnode ? cnode->GetToken() : nullptr);
+                Log::AddInStructMeta(EError::None, "Ã»ÓĞÕÒµ½Ä£°åÀàÖĞ£¬¶ÔÓ¦µÄÄ£°å£¬Çë×ĞÏ¸¼ì²éÄ£°åµÄÃüÃûÓëÊ¹ÓÃÄ£°åÃüÃûÊÇ·ñ¶ÔÓ¦", cnode ? cnode->GetToken() : nullptr);
             } else {
                 return new MetaType(mt);
             }
         } else {
-            Log::AddInStructMeta(EError::None, "ä½¿ç”¨æ¨¡æ¿ç±»ä¸­ä½¿ç”¨.è¿æ¥ç¬¦å·ï¼Œæ¨¡æ¿ä¸­ä¸å…è®¸ä½¿ç”¨.");
+            Log::AddInStructMeta(EError::None, "Ê¹ÓÃÄ£°åÀàÖĞÊ¹ÓÃ.Á¬½Ó·ûºÅ£¬Ä£°åÖĞ²»ÔÊĞíÊ¹ÓÃ.");
         }
     }
     return nullptr;
@@ -186,7 +186,7 @@ MetaType* TypeManager::GetMetaTypeByTemplateFunction(MetaClass* curMc, MetaMembe
             }
             return new MetaType(mt);
         } else {
-            Log::AddInStructMeta(EError::None, "æ²¡æœ‰æ‰¾åˆ°" + fmcd->StringList()[0] + " çš„ç›¸å…³ç±»!");
+            Log::AddInStructMeta(EError::None, "Ã»ÓĞÕÒµ½" + fmcd->StringList()[0] + " µÄÏà¹ØÀà!");
         }
     } else {
         return GetMetaTypeByTemplateList(curMc, getmc, findFun, fmcd->GetInputTemplateNodeList());
@@ -224,7 +224,7 @@ MetaType* TypeManager::HandleInputTemplateNodeList(MetaClass* findfn, MetaClass*
     }
     
     mt->SetTemplateMetaClass(regMc);
-    // è¿™é‡Œï¼Œè¦æ³¨å†Œå®ä½“æ¨¡æ¿ç±»
+    // ÕâÀï£¬Òª×¢²áÊµÌåÄ£°åÀà
     for (size_t i = 0; i < inputTemplateNodeList.size(); i++) {
         auto t = RegisterTemplateDefineMetaTemplateFunction(findfn, regMc, findFun, inputTemplateNodeList[i], isParse);
         mt->AddTemplateMetaType(t);
@@ -242,7 +242,7 @@ MetaType* TypeManager::RegisterTemplateDefineMetaTemplateFunction(MetaClass* fin
         auto findfn = newmc->GetMetaClassByTemplateCount(fmtd->GetInputTemplateCount());
 
         if (findfn == nullptr) {
-            Log::AddInStructMeta(EError::None, "æ²¡æœ‰æ‰¾åˆ°ç›¸å¯¹åº”çš„æ¨¡æ¿ç±»!!");
+            Log::AddInStructMeta(EError::None, "Ã»ÓĞÕÒµ½Ïà¶ÔÓ¦µÄÄ£°åÀà!!");
             return nullptr;
         }
         

@@ -151,7 +151,7 @@ void MetaClass::ParseExtendsRelation() {
     }
 
     if (this->m_ExtendClassMetaType != nullptr) {
-        Log::AddInStructMeta(EError::None, "å·²ç»‘å®šè¿‡äº†ç»§æ‰¿ç±» : " + GetExtendClass()->GetName());
+        Log::AddInStructMeta(EError::None, "ÒÑ°ó¶¨¹ıÁË¼Ì³ĞÀà : " + GetExtendClass()->GetName());
         return;
     }
     for (const auto& pair : m_FileMetaClassDict) {
@@ -160,7 +160,7 @@ void MetaClass::ParseExtendsRelation() {
             continue;
         }
         if (this->m_ExtendClassMetaType != nullptr) {
-            Log::AddInStructMeta(EError::None, "å·²ç»‘å®šè¿‡äº†ç»§æ‰¿ç±» : " + mc->GetMetaClass()->GetExtendClass()->GetName());
+            Log::AddInStructMeta(EError::None, "ÒÑ°ó¶¨¹ıÁË¼Ì³ĞÀà : " + mc->GetMetaClass()->GetExtendClass()->GetName());
             continue;
         }
 
@@ -168,7 +168,7 @@ void MetaClass::ParseExtendsRelation() {
         if (getmt != nullptr) {
             this->m_ExtendClassMetaType = getmt;
         } else {
-            Log::AddInStructMeta(EError::None, "æ²¡æœ‰å‘ç°ç»§æ‰¿ç±»çš„ç±»å‹!!! " + mc->GetMetaClass()->GetExtendClass()->GetName());
+            Log::AddInStructMeta(EError::None, "Ã»ÓĞ·¢ÏÖ¼Ì³ĞÀàµÄÀàĞÍ!!! " + mc->GetMetaClass()->GetExtendClass()->GetName());
         }
     }
 
@@ -191,7 +191,7 @@ void MetaClass::ParseInterfaceRelation() {
 
             MetaType* getmt = TypeManager::GetInstance().GetMetaTemplateClassAndRegisterExptendTemplateClassInstance(this, icd);
             if (getmt == nullptr) {
-                Log::AddInStructMeta(EError::None, "æ²¡æœ‰æ‰¾åˆ°æ¥å£ç›¸å…³çš„å®šä¹‰ç±»!!");
+                Log::AddInStructMeta(EError::None, "Ã»ÓĞÕÒµ½½Ó¿ÚÏà¹ØµÄ¶¨ÒåÀà!!");
                 continue;
             }
             m_InterfaceMetaType.push_back(getmt);
@@ -214,7 +214,7 @@ void MetaClass::HandleExtendMemberVariable() {
         for (const auto& pair : m_ExtendClass->m_MetaExtendMemeberVariableDict) {
             auto c = pair.second;
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
-                auto ld = Log::AddInStructMeta(EError::None, "Error ç»§æ‰¿çš„ç±»123:" + m_AllName + " åœ¨ç»§æ‰¿çš„çˆ¶ç±»" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " ä¸­å·²åŒ…å«:" + c->GetName() + " ");
+                auto ld = Log::AddInStructMeta(EError::None, "Error ¼Ì³ĞµÄÀà123:" + m_AllName + " ÔÚ¼Ì³ĞµÄ¸¸Àà" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " ÖĞÒÑ°üº¬:" + c->GetName() + " ");
                 // ld->valDict.Add(EMetaType.MetaClass, this);
                 // ld->valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
                 // ld->valDict.Add(EMetaType.MetaMemberVariable, c);
@@ -225,7 +225,7 @@ void MetaClass::HandleExtendMemberVariable() {
         for (const auto& pair : m_ExtendClass->m_MetaMemberVariableDict) {
             auto c = pair.second;
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
-                auto ld = Log::AddInStructMeta(EError::None, "Error ç»§æ‰¿çš„ç±»123:" + m_AllName + " åœ¨ç»§æ‰¿çš„çˆ¶ç±»" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " ä¸­å·²åŒ…å«:" + c->GetName() + " ");
+                auto ld = Log::AddInStructMeta(EError::None, "Error ¼Ì³ĞµÄÀà123:" + m_AllName + " ÔÚ¼Ì³ĞµÄ¸¸Àà" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " ÖĞÒÑ°üº¬:" + c->GetName() + " ");
                 // ld->valDict.Add(EMetaType.MetaClass, this);
                 // ld->valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
                 // ld->valDict.Add(EMetaType.MetaMemberVariable, c);
@@ -235,7 +235,7 @@ void MetaClass::HandleExtendMemberVariable() {
         }
         for (auto c : this->m_FileCollectMetaMemberVariable) {
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
-                Log::AddInStructMeta(EError::None, "Error ç»§æ‰¿çš„ç±»321:" + m_AllName + " åœ¨ç»§æ‰¿çš„çˆ¶ç±»" + m_ExtendClass->m_AllName + " ä¸­å·²åŒ…å«:" + c->GetName() + " ");
+                Log::AddInStructMeta(EError::None, "Error ¼Ì³ĞµÄÀà321:" + m_AllName + " ÔÚ¼Ì³ĞµÄ¸¸Àà" + m_ExtendClass->m_AllName + " ÖĞÒÑ°üº¬:" + c->GetName() + " ");
                 continue;
             }
             this->m_MetaMemberVariableDict[c->GetName()] = c;
@@ -402,7 +402,7 @@ void MetaClass::ParseDefineComplete() {
         }
         auto defaultFunction = GetMetaMemberConstructDefaultFunction();
         if (defaultFunction == nullptr) {
-            Log::AddInStructMeta(EError::None, "æ²¡æœ‰æ‰¾å‘ç°é»˜è®¤æ„é€ å‡½æ•°");
+            Log::AddInStructMeta(EError::None, "Ã»ÓĞÕÒ·¢ÏÖÄ¬ÈÏ¹¹Ôìº¯Êı");
             return;
         }
         m_DefaultExpressNode = new MetaNewObjectExpressNode(mdt, this, defaultFunction->GetMetaBlockStatements());
@@ -441,7 +441,7 @@ void MetaClass::AddInterfaceClass(MetaClass* aic) {
     if (std::find(m_InterfaceClass.begin(), m_InterfaceClass.end(), aic) == m_InterfaceClass.end()) {
         m_InterfaceClass.push_back(aic);
     } else {
-        Log::AddInStructMeta(EError::None, "é‡å¤æ·»åŠ æ¥å£");
+        Log::AddInStructMeta(EError::None, "ÖØ¸´Ìí¼Ó½Ó¿Ú");
     }
 }
 

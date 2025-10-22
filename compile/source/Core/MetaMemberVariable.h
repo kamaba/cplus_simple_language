@@ -9,10 +9,9 @@
 #pragma once
 
 #include "MetaVariable.h"
-#include "../MetaExpressNode/MetaExpressBase.h"
-#include "../Compile/CoreFileMeta/FileMetaMemberVariable.h"
+#include "MetaExpressNode/MetaExpressBase.h"
+#include "../Compile/FileMeta/FileMetaMemberVariable.h"
 #include "../Debug/Log.h"
-#include "../Global.h"
 #include <string>
 #include <vector>
 
@@ -20,11 +19,11 @@ namespace SimpleLanguage {
 namespace Core {
 
 enum class EFromType : uint8_t {
-    Code = 1,         // å†™çš„.sä»£ç 
-    Manual = 2,       // æ‰‹åŠ¨ï¼Œé€šè¿‡c#ä»£ç 
+    Code = 1,         // Ğ´µÄ.s´úÂë
+    Manual = 2,       // ÊÖ¶¯£¬Í¨¹ıc#´úÂë
     CodeAndManual = 3,
-    CSharp = 4,       // é€šè¿‡c#çš„dllæ–‡ä»¶ï¼Œæˆ–è€…æ˜¯ç¼–è¯‘å®Œçš„ä»£ç çš„è¯†åˆ«
-    ManualAndCSharp = 6,  // æ‰‹åŠ¨æ³¨å…¥çš„c#ä»£ç è¿›é€»è¾‘è§£æ
+    CSharp = 4,       // Í¨¹ıc#µÄdllÎÄ¼ş£¬»òÕßÊÇ±àÒëÍêµÄ´úÂëµÄÊ¶±ğ
+    ManualAndCSharp = 6,  // ÊÖ¶¯×¢ÈëµÄc#´úÂë½øÂß¼­½âÎö
     All = 7
 };
 
@@ -37,15 +36,15 @@ private:
     bool m_IsInnerDefine = false;
     MetaMemberVariable* m_SourceMetaMemberVariable = nullptr;
     
-    // æ„é€ å‡½æ•°æ”¯æŒæ ‡å¿—
-    bool m_IsSupportConstructionFunctionOnlyBraceType = true;  // æ˜¯å¦æ”¯æŒæ„é€ å‡½æ•°ä½¿ç”¨ ä»…{}å½¢å¼
-    bool m_IsSupportConstructionFunctionConnectBraceType = true;  // æ˜¯å¦æ”¯æŒæ„é€ å‡½æ•°åç§°åè¾¹åŠ {}å½¢å¼
-    bool m_IsSupportConstructionFunctionOnlyParType = true;  // æ˜¯å¦æ”¯æŒæ„é€ å‡½æ•°ä½¿ç”¨ ä»…()å½¢å¼
-    bool m_IsSupportInExpressUseStaticMetaMemeberFunction = true;  // æ˜¯å¦åœ¨æˆå‘˜æ”¯æŒé™æ€å‡½æ•°çš„
-    bool m_IsSupportInExpressUseStaticMetaVariable = true;  // æ˜¯å¦åœ¨æˆå‘˜ä¸­æ”¯æŒé™æ€å˜é‡
-    bool m_IsSupportInExpressUseCurrentClassNotStaticMemberMetaVariable = true;  // æ˜¯å¦æ”¯æŒåœ¨è¡¨è¾¾å¼ä¸­ä½¿ç”¨æœ¬ç±»æˆ–çˆ¶ç±»ä¸­çš„éé™æ€å˜é‡
+    // ¹¹Ôìº¯ÊıÖ§³Ö±êÖ¾
+    bool m_IsSupportConstructionFunctionOnlyBraceType = true;  // ÊÇ·ñÖ§³Ö¹¹Ôìº¯ÊıÊ¹ÓÃ ½ö{}ĞÎÊ½
+    bool m_IsSupportConstructionFunctionConnectBraceType = true;  // ÊÇ·ñÖ§³Ö¹¹Ôìº¯ÊıÃû³Æºó±ß¼Ó{}ĞÎÊ½
+    bool m_IsSupportConstructionFunctionOnlyParType = true;  // ÊÇ·ñÖ§³Ö¹¹Ôìº¯ÊıÊ¹ÓÃ ½ö()ĞÎÊ½
+    bool m_IsSupportInExpressUseStaticMetaMemeberFunction = true;  // ÊÇ·ñÔÚ³ÉÔ±Ö§³Ö¾²Ì¬º¯ÊıµÄ
+    bool m_IsSupportInExpressUseStaticMetaVariable = true;  // ÊÇ·ñÔÚ³ÉÔ±ÖĞÖ§³Ö¾²Ì¬±äÁ¿
+    bool m_IsSupportInExpressUseCurrentClassNotStaticMemberMetaVariable = true;  // ÊÇ·ñÖ§³ÖÔÚ±í´ïÊ½ÖĞÊ¹ÓÃ±¾Àà»ò¸¸ÀàÖĞµÄ·Ç¾²Ì¬±äÁ¿
     
-    // é™æ€çº§åˆ«å¸¸é‡
+    // ¾²Ì¬¼¶±ğ³£Á¿
     static int s_ConstLevel;
     static int s_IsHaveRetStaticLevel;
     static int s_NoHaveRetStaticLevel;
@@ -55,7 +54,7 @@ private:
     int m_ParseLevel = -1;
 
 public:
-    // æ„é€ å‡½æ•°
+    // ¹¹Ôìº¯Êı
     MetaMemberVariable();
     MetaMemberVariable(const MetaMemberVariable& mmv);
     MetaMemberVariable(MetaClass* mc, const std::string& name);
@@ -63,7 +62,7 @@ public:
     MetaMemberVariable(MetaClass* mc, void* fmmv);  // FileMetaMemberVariable*
     virtual ~MetaMemberVariable() = default;
 
-    // å±æ€§è®¿é—®å™¨
+    // ÊôĞÔ·ÃÎÊÆ÷
     MetaMemberVariable* GetSourceMetaMemberVariable() const { return m_SourceMetaMemberVariable; }
     EFromType GetFromType() const { return m_FromType; }
     int GetIndex() const { return m_Index; }
@@ -72,7 +71,7 @@ public:
     bool IsInnerDefine() const { return m_IsInnerDefine; }
     void* GetFileMetaMemeberVariable() const { return m_FileMetaMemeberVariable; }
     
-    // è®¾ç½®æ–¹æ³•
+    // ÉèÖÃ·½·¨
     void SetSourceMetaMemberVariable(MetaMemberVariable* mmv) { m_SourceMetaMemberVariable = mmv; }
     void SetFromType(EFromType fromType) { m_FromType = fromType; }
     void SetIndex(int index) { m_Index = index; }
@@ -81,14 +80,14 @@ public:
     void SetInnerDefine(bool innerDefine) { m_IsInnerDefine = innerDefine; }
     void SetFileMetaMemeberVariable(void* fmmv) { m_FileMetaMemeberVariable = fmmv; }
     
-    // è™šæ–¹æ³•é‡å†™
+    // Ğé·½·¨ÖØĞ´
     virtual void ParseDefineMetaType() override;
     virtual int CalcParseLevelBeCall(int level);
     virtual void CalcParseLevel();
     virtual bool ParseMetaExpress() override;
     virtual std::string ToFormatString() const override;
     
-    // å…¬å…±æ–¹æ³•
+    // ¹«¹²·½·¨
     void CreateExpress();
     void CalcReturnType();
     int CompareTo(const MetaMemberVariable* mmv) const;
@@ -97,7 +96,7 @@ public:
     void ParseChildMemberData();
     std::string ToTokenString() const;
     
-    // é™æ€æ–¹æ³•
+    // ¾²Ì¬·½·¨
     static int GetConstLevel() { return s_ConstLevel; }
     static int GetIsHaveRetStaticLevel() { return s_IsHaveRetStaticLevel; }
     static int GetNoHaveRetStaticLevel() { return s_NoHaveRetStaticLevel; }

@@ -46,13 +46,13 @@ MetaMemberEnum::MetaMemberEnum(MetaClass* mc, FileMetaMemberVariable* fmmv) {
     m_Index = mc->GetMetaMemberVariableDict().size();
     m_FromType = EFromType::Code;
     m_DefineMetaType = new MetaType(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
-    m_IsStatic = true; // enum æˆå‘˜å…¨éƒ¨ä¸ºstatic
+    m_IsStatic = true; // enum ³ÉÔ±È«²¿Îªstatic
     m_VariableFrom = EVariableFrom::Static;
     if (fmmv->GetStaticToken() != nullptr) {
-        Log::AddInStructMeta(EError::None, "Error ENumä¸­ï¼Œä¸å…è®¸æœ‰é™æ€å…³é”®å­—ï¼Œè€Œæ˜¯å…¨éƒ¨æ˜¯é™æ€å…³é”®å­—!!");
+        Log::AddInStructMeta(EError::None, "Error ENumÖĞ£¬²»ÔÊĞíÓĞ¾²Ì¬¹Ø¼ü×Ö£¬¶øÊÇÈ«²¿ÊÇ¾²Ì¬¹Ø¼ü×Ö!!");
     }
     if (m_FileMetaMemeberVariable->GetPermissionToken() != nullptr) {
-        Log::AddInStructMeta(EError::None, "Error Enumä¸­ï¼Œä¸å…è®¸ä½¿ç”¨public/privateç­‰æƒé™å…³é”®å­—!!");
+        Log::AddInStructMeta(EError::None, "Error EnumÖĞ£¬²»ÔÊĞíÊ¹ÓÃpublic/privateµÈÈ¨ÏŞ¹Ø¼ü×Ö!!");
         m_Permission = CompilerUtil::GetPerMissionByString(m_FileMetaMemeberVariable->GetPermissionToken()->GetLexeme().ToString());
     }
 
@@ -72,7 +72,7 @@ void MetaMemberEnum::ParseDefineMetaType() {
             m_Express = ExpressManager::CreateExpressNodeByCEP(cep);
 
             if (m_Express == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error æ²¡æœ‰è§£æåˆ°Expressçš„å†…å®¹ åœ¨MetaMemberData é‡Œè¾¹ 372");
+                Log::AddInStructMeta(EError::None, "Error Ã»ÓĞ½âÎöµ½ExpressµÄÄÚÈİ ÔÚMetaMemberData Àï±ß 372");
             }
         }
     }
@@ -117,7 +117,7 @@ std::string MetaMemberEnum::ToFormatString() {
 std::string MetaMemberEnum::ToTokenString() {
     std::stringstream sb;
 
-    sb << m_FileMetaMemeberVariable->GetNameToken()->GetSourceBeginLine() << " ä¸çˆ¶ç±»çš„Tokenä½ç½®: "
+    sb << m_FileMetaMemeberVariable->GetNameToken()->GetSourceBeginLine() << " Óë¸¸ÀàµÄTokenÎ»ÖÃ: "
        << m_FileMetaMemeberVariable->GetNameToken()->GetSourceBeginLine();
 
     return sb.str();
@@ -148,7 +148,7 @@ MetaExpressNode* MetaMemberEnum::CreateExpressNodeInClassMetaVariable() {
                         return mnoen;
                     }
                 } else {
-                    Log::AddInStructMeta(EError::None, "Error ç°åœ¨é…ç½®ä¸­ï¼Œä¸æ”¯æŒæˆå‘˜å˜é‡ä¸­ä½¿ç”¨ç±»çš„()æ„é€ æ–¹å¼!!");
+                    Log::AddInStructMeta(EError::None, "Error ÏÖÔÚÅäÖÃÖĞ£¬²»Ö§³Ö³ÉÔ±±äÁ¿ÖĞÊ¹ÓÃÀàµÄ()¹¹Ôì·½Ê½!!");
                 }
             } else if (fmbt != nullptr) {
                 MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(fmbt, m_DefineMetaType, ownerMetaClass, nullptr, nullptr);
@@ -157,7 +157,7 @@ MetaExpressNode* MetaMemberEnum::CreateExpressNodeInClassMetaVariable() {
                 if (fmct->GetCallLink()->GetCallNodeList().size() > 0) {
                     auto finalNode = fmct->GetCallLink()->GetCallNodeList()[fmct->GetCallLink()->GetCallNodeList().size() - 1];
                     if (finalNode->GetFileMetaBraceTerm() != nullptr && !m_IsSupportConstructionFunctionConnectBraceType) {
-                        Log::AddInStructMeta(EError::None, "Error åœ¨ç±»å˜é‡ä¸­ï¼Œä¸å…è®¸ ä½¿ç”¨Class()åå¸¦{}çš„èµ‹å€¼æ–¹å¼!!" + fmbt->GetToken()->ToLexemeAllString());
+                        Log::AddInStructMeta(EError::None, "Error ÔÚÀà±äÁ¿ÖĞ£¬²»ÔÊĞí Ê¹ÓÃClass()ºó´ø{}µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                         return nullptr;
                     }
                 }
@@ -167,16 +167,16 @@ MetaExpressNode* MetaMemberEnum::CreateExpressNodeInClassMetaVariable() {
             }
         } else {
             if (fmpt != nullptr) {
-                Log::AddInStructMeta(EError::None, "Error åœ¨ç±»æ²¡æœ‰å®šä¹‰çš„å˜é‡ä¸­ï¼Œä¸å…è®¸ ä½¿ç”¨()çš„èµ‹å€¼æ–¹å¼!!" + fmbt->GetToken()->ToLexemeAllString());
+                Log::AddInStructMeta(EError::None, "Error ÔÚÀàÃ»ÓĞ¶¨ÒåµÄ±äÁ¿ÖĞ£¬²»ÔÊĞí Ê¹ÓÃ()µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                 return nullptr;
             } else if (fmbt != nullptr) {
-                Log::AddInStructMeta(EError::None, "Error åœ¨ç±»æ²¡æœ‰å®šä¹‰çš„å˜é‡ä¸­ï¼Œä¸å…è®¸ ä½¿ç”¨{}çš„èµ‹å€¼æ–¹å¼!!" + fmbt->GetToken()->ToLexemeAllString());
+                Log::AddInStructMeta(EError::None, "Error ÔÚÀàÃ»ÓĞ¶¨ÒåµÄ±äÁ¿ÖĞ£¬²»ÔÊĞí Ê¹ÓÃ{}µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                 return nullptr;
             } else if (fmct != nullptr) {
                 if (fmct->GetCallLink()->GetCallNodeList().size() > 0) {
                     auto finalNode = fmct->GetCallLink()->GetCallNodeList()[fmct->GetCallLink()->GetCallNodeList().size() - 1];
                     if (finalNode->GetFileMetaBraceTerm() != nullptr && !m_IsSupportConstructionFunctionConnectBraceType) {
-                        Log::AddInStructMeta(EError::None, "Error åœ¨ç±»å˜é‡ä¸­ï¼Œä¸å…è®¸ ä½¿ç”¨Class()åå¸¦{}çš„èµ‹å€¼æ–¹å¼!!" + fmbt->GetToken()->ToLexemeAllString());
+                        Log::AddInStructMeta(EError::None, "Error ÔÚÀà±äÁ¿ÖĞ£¬²»ÔÊĞí Ê¹ÓÃClass()ºó´ø{}µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                         return nullptr;
                     }
                 }

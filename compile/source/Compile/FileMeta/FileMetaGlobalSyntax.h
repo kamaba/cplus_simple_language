@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Define.h"
+#include "FileMetaBase.h"
 #include <vector>
 #include <string>
 #include <sstream>
@@ -13,6 +14,9 @@ namespace Compile {
 class FileMeta;
 class NamespaceStatementBlock;
 class Node;
+class Token;
+class FileMetaNamespace;
+class FileMetaClass;
 
 class FileMetaImportSyntax : public FileMetaBase {
 public:

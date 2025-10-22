@@ -28,9 +28,9 @@ public:
     static bool IsSymbol(Token* token);
     static bool SplitNodeList(const std::vector<Node*>& nodeList, std::vector<Node*>& preNodeList, 
                               std::vector<Node*>& afterNodeList, Token*& assignToken);
-    static FileMetaBaseTerm* CreateFileOneTerm(FileMeta* fm, Node* node, FileMetaTermExpress::EExpressType expressType);
+    static FileMetaBaseTerm* CreateFileOneTerm(FileMeta* fm, Node* node, EExpressType expressType);
     static FileMetaBaseTerm* CreateFileMetaExpress(FileMeta* fm, const std::vector<Node*>& nodeList, 
-                                                   FileMetaTermExpress::EExpressType expressType);
+                                                   EExpressType expressType);
 
 private:
     FileMetatUtil() = default;

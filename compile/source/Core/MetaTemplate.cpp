@@ -8,9 +8,8 @@
 
 #include "MetaTemplate.h"
 #include "MetaClass.h"
-#include "MetaType.h"
-#include "MetaMethodCall.h"
-#include "../Compile/FileMeta/FileMetaTemplateDefine.h"
+#include "MetaType.h""
+#include "../Compile/FileMeta/FileMetaCommon.h"
 #include "../Debug/Log.h"
 #include "ClassManager.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
@@ -61,7 +60,7 @@ namespace Core {
         return m_ExtendsMetaClass != nullptr;
     }
 
-    std::string MetaTemplate::ToFormatString() {
+    std::string MetaTemplate::ToFormatString() const {
         std::stringstream sb;
         sb << m_Name;
         if (m_ExtendsMetaClass != nullptr) {

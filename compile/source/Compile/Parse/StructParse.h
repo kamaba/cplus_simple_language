@@ -18,6 +18,11 @@ namespace Compile {
 class Node;
 class FileMetaMemberVariable;
 class FileMetaMemberFunction;
+class FileMeta;
+class FileMetaSyntax;
+class FileMetaMemberData;
+class FileMetaNamespace;
+class FileMetaClass;
 
 class StructParse {
 public:
@@ -49,7 +54,7 @@ public:
         ParseCurrentNodeInfo(FileMetaSyntax* nss);
     };
 
-    StructParse(FileMeta& fm, Node* node);
+    StructParse(FileMeta* fm, Node* node);
     
     void ParseRootNodeToFileMeta();
     std::vector<Node*> GetAllNodeToSemiColon(Node* pnode, bool isAddSelf = false);
@@ -85,7 +90,7 @@ protected:
     FileMetaSyntax* HandleCreateFileMetaSyntaxByPNode(Node* pnode);
 
 private:
-    FileMeta& m_FileMeta;
+    FileMeta* m_FileMeta;
     std::stack<ParseCurrentNodeInfo*> m_CurrentNodeInfoStack;
     Node* m_RootNode;
 };

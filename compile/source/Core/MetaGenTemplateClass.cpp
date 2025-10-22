@@ -44,7 +44,7 @@ MetaGenTemplateClass::MetaGenTemplateClass(MetaClass* mtc, const std::vector<Met
 }
 
 void MetaGenTemplateClass::UpdateRegsterGenMetaClass() {
-    // è¿™ä¸ªè¿‡ç¨‹æ˜¯ ç»‘å®š åŸæ¥æ³¨å†Œè¿‡æ¥çš„Tçš„å·²æœ‰çš„ç±»
+    // Õâ¸ö¹ı³ÌÊÇ °ó¶¨ Ô­À´×¢²á¹ıÀ´µÄTµÄÒÑÓĞµÄÀà
     for (size_t i = 0; i < this->m_MetaTemplateClass->GetBindStructTemplateMetaClassList().size(); i++) {
         m_MetaTemplateClass->GetBindStructTemplateMetaClassList()[i]->UpdateMetaGenTemplate(m_MetaGenTemplateList);
     }
@@ -307,7 +307,7 @@ std::string MetaGenTemplateClass::ToFormatString() const {
     }
 
     for (const auto& v : m_MetaMemberFunctionTemplateNodeDict) {
-        // è¿™é‡Œå¯ä»¥æ·»åŠ å‡½æ•°æ¨¡æ¿èŠ‚ç‚¹çš„æ ¼å¼åŒ–é€»è¾‘
+        // ÕâÀï¿ÉÒÔÌí¼Óº¯ÊıÄ£°å½ÚµãµÄ¸ñÊ½»¯Âß¼­
     }
 
     stringBuilder << std::endl;

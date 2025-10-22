@@ -272,7 +272,7 @@ void LexerParse::ReadAt() {
     if (std::isdigit(ch) || std::isalpha(ch)) {
         AddToken(ETokenType::At, "@");
     } else {
-        // Debug.Write("Error ä¸å…è®¸@åè¾¹åŠ å…¶å®ƒç¬¦å·!!");
+        // Debug.Write("Error ²»ÔÊĞí@ºó±ß¼ÓÆäËü·ûºÅ!!");
     }
 }
 
@@ -328,11 +328,11 @@ void LexerParse::ReadString(bool isWithAtOp) {
                     break;
                 }
                 default:
-                    // Debug.Write("Error è¯»å­—ç¬¦çš„æ—¶å€™ï¼Œä¸æ”¯æŒå½“å‰çš„ç¬¦å·!! : |" + m_CurChar);
+                    // Debug.Write("Error ¶Á×Ö·ûµÄÊ±ºò£¬²»Ö§³Öµ±Ç°µÄ·ûºÅ!! : |" + m_CurChar);
                     break;
             }
         } else if (m_TempChar == '\n') {
-            // Debug.Write("Error NotInterrupt è¯»å­—ç¬¦çš„æ—¶å€™ï¼Œä¸å…è®¸æ¢è¡Œï¼Œè¯·ä½¿ç”¨/r/t ä¸€ç±»çš„æ¢è¡Œç¬¦!!");
+            // Debug.Write("Error NotInterrupt ¶Á×Ö·ûµÄÊ±ºò£¬²»ÔÊĞí»»ĞĞ£¬ÇëÊ¹ÓÃ/r/t Ò»ÀàµÄ»»ĞĞ·û!!");
             m_Builder += m_TempChar;
         } else if (m_TempChar == '"') {
             stringBuilder += m_Builder;
@@ -361,7 +361,7 @@ void LexerParse::SharpLevel(int topLevel) {
         if (index < m_Length) {
             schar = m_Buffer[index];
         } else {
-            // Debug.Write("è¯»å–Sharpä¸­[]å†…å®¹å‡ºé”™!!!");
+            // Debug.Write("¶ÁÈ¡SharpÖĞ[]ÄÚÈİ³ö´í!!!");
             break;
         }
 
@@ -396,7 +396,7 @@ void LexerParse::SharpLevel(int topLevel) {
     
     while (true) {
         if (offset >= m_Length) {
-            // Debug.Write("æ³¨é‡Šæ²¡æœ‰ç»“å°¾!!");
+            // Debug.Write("×¢ÊÍÃ»ÓĞ½áÎ²!!");
             break;
         }
         
@@ -449,7 +449,7 @@ void LexerParse::ReadDollar() {
     } else if (std::isdigit(ch) || std::isalpha(ch)) {
         AddToken(ETokenType::Dollar, "$");
     } else {
-        // Debug.Write("Error ä¸å…è®¸@åè¾¹åŠ å…¶å®ƒç¬¦å·!!");
+        // Debug.Write("Error ²»ÔÊĞí@ºó±ß¼ÓÆäËü·ûºÅ!!");
     }
 }
 
@@ -703,7 +703,7 @@ void LexerParse::ReadNumber() {
             }
         } else if (m_TempChar == 'f') {
             if (endPoint == 0) { // 2f
-                Log::AddInHandleToken(m_Path, m_SourceLine, m_SourceChar, EError::None, "è¯»å–æµ®ç‚¹å½¢å¿…é¡»æœ‰å°æ•°ç‚¹!!!");
+                Log::AddInHandleToken(m_Path, m_SourceLine, m_SourceChar, EError::None, "¶ÁÈ¡¸¡µãĞÎ±ØĞëÓĞĞ¡Êıµã!!!");
                 AddToken(ETokenType::Number, m_Builder, EType::Float32);
                 break;
             } else if (endPoint == 1) {
@@ -791,7 +791,7 @@ void LexerParse::ReadNumber() {
                 if (std::isalpha(m_TempChar)) {
                     char frontChar = m_Builder[m_Builder.length() - 1];
                     if (frontChar == '.') {
-                        // Debug.Write("Error ä¸å…è®¸ç›´æ¥ä½¿ç”¨ number.functionçš„æ–¹å¼ï¼Œè€Œæ˜¯å¿…é¡»ä½¿ç”¨æ•°æ®è¯†åˆ«ç¬¦æ‰å¯ä»¥ä½¿ç”¨ï¼Œä¾‹: 2.0f.ToString()");
+                        // Debug.Write("Error ²»ÔÊĞíÖ±½ÓÊ¹ÓÃ number.functionµÄ·½Ê½£¬¶øÊÇ±ØĞëÊ¹ÓÃÊı¾İÊ¶±ğ·û²Å¿ÉÒÔÊ¹ÓÃ£¬Àı: 2.0f.ToString()");
                         m_Builder.pop_back();
                         AddToken(ETokenType::Number, m_Builder, EType::Int32);
                         AddToken(ETokenType::Period, std::string(1, frontChar));
@@ -825,7 +825,7 @@ void LexerParse::ReadNumberOrHexOrOctOrBinNumber() {
             if (IsHexDigit(m_TempChar)) {
                 m_Builder += m_TempChar;
             } else if (m_TempChar == '_') {
-                // å¿½ç•¥ä¸‹åˆ’çº¿
+                // ºöÂÔÏÂ»®Ïß
             } else {
                 if (m_Builder.empty()) {
                     m_Builder = "0";
@@ -840,7 +840,7 @@ void LexerParse::ReadNumberOrHexOrOctOrBinNumber() {
             if (m_TempChar >= '0' && m_TempChar <= '7') {
                 m_Builder += m_TempChar;
             } else if (m_TempChar == '_') {
-                // å¿½ç•¥ä¸‹åˆ’çº¿
+                // ºöÂÔÏÂ»®Ïß
             } else {
                 if (m_Builder.empty()) {
                     m_Builder = "0";
@@ -855,7 +855,7 @@ void LexerParse::ReadNumberOrHexOrOctOrBinNumber() {
             if (m_TempChar == '1' || m_TempChar == '0') {
                 m_Builder += m_TempChar;
             } else if (m_TempChar == '_') {
-                // å¿½ç•¥ä¸‹åˆ’çº¿
+                // ºöÂÔÏÂ»®Ïß
             } else {
                 if (m_Builder.empty()) {
                     m_Builder = "0";
@@ -1052,7 +1052,7 @@ void LexerParse::ParseToTokenList() {
                         m_SourceChar++;
                     } else {
                         Log::AddInHandleToken(m_Path, m_SourceLine, m_SourceChar, EError::UnMatchChar, 
-                            "è§£æé”™è¯¯ï¼Œæ— æ³•è§£æè¿™ç§ç±»å‹çš„å­—ç¬¦[ " + std::string(1, m_CurChar) + " ]");
+                            "½âÎö´íÎó£¬ÎŞ·¨½âÎöÕâÖÖÀàĞÍµÄ×Ö·û[ " + std::string(1, m_CurChar) + " ]");
                     }
                     break;
             }

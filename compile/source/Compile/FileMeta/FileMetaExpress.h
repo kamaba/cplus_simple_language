@@ -2,7 +2,6 @@
 
 #include "FileMetaBase.h"
 #include "../Token.h"
-#include "../Parse/Node.h"
 #include "../../Define.h"
 #include "../../Debug/Log.h"
 #include <vector>
@@ -13,6 +12,7 @@ namespace SimpleLanguage {
 namespace Compile {
 
 // Forward declarations
+class Node;
 class FileMeta;
 class FileMetaTermExpress;
 class FileMetaSymbolTerm;
@@ -24,6 +24,12 @@ class FileMetaBracketTerm;
 class FileMetaIfSyntaxTerm;
 class FileMetaThreeItemSyntaxTerm;
 class FileMetaMatchSyntaxTerm;
+
+enum class EExpressType {
+    Common,
+    MemberVariable,
+    ParamVariable,
+};
 
 class FileMetaBaseTerm : public FileMetaBase {
 public:
@@ -108,19 +114,19 @@ private:
 
 class FileMetaParTerm : public FileMetaBaseTerm {
 public:
-    FileMetaParTerm(FileMeta* fm, Node* node, FileMetaTermExpress::EExpressType expressType);
+    FileMetaParTerm(FileMeta* fm, Node* node, EExpressType expressType);
     virtual ~FileMetaParTerm() = default;
 
     Node* ParNode() const { return m_ParNode; }
     Token* EndToken() const { return m_EndToken; }
-    FileMetaTermExpress::EExpressType ExpressType() const { return m_ExpressType; }
+    EExpressType ExpressType() const { return m_ExpressType; }
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
 
 private:
     Node* m_ParNode = nullptr;
     Token* m_EndToken = nullptr;
-    FileMetaTermExpress::EExpressType m_ExpressType;
+    EExpressType m_ExpressType;
 };
 
 class FileMetaBraceTerm : public FileMetaBaseTerm {
@@ -194,11 +200,6 @@ private:
 
 class FileMetaTermExpress : public FileMetaBaseTerm {
 public:
-    enum class EExpressType {
-        Common,
-        MemberVariable,
-        ParamVariable,
-    };
 
     FileMetaTermExpress(FileMeta* fm, const std::vector<Node*>& nodeList, EExpressType expressType);
     virtual ~FileMetaTermExpress() = default;

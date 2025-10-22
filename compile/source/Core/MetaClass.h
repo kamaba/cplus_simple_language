@@ -18,6 +18,11 @@
 
 namespace SimpleLanguage 
 {
+	namespace Compile
+	{
+		class FileMetaClass;
+		class Token;
+	}
 	namespace Core
 	{
 		enum class EClassDefineType : uint8_t
@@ -27,7 +32,7 @@ namespace SimpleLanguage
 			CodeDefine = 2
 		};
 
-		// å‰å‘å£°æ˜
+		// Ç°ÏòÉùÃ÷
 		class MetaNode;
 		class MetaType;
 		class MetaMemberVariable;
@@ -41,7 +46,7 @@ namespace SimpleLanguage
 		class MetaClass : public MetaBase
 		{
 		public:
-			// æ„é€ å‡½æ•°
+			// ¹¹Ôìº¯Êı
 			MetaClass();
 			MetaClass(const std::string& name, EClassDefineType ecdt);
 			MetaClass(const std::string& name, EType type = EType::Class);
@@ -50,7 +55,7 @@ namespace SimpleLanguage
 
 			void SetDeep(int deep) override;
 
-			// å±æ€§è®¿é—®å™¨
+			// ÊôĞÔ·ÃÎÊÆ÷
 			virtual std::string GetAllClassName() const { return m_AllName; }
 			EType GetEType() const { return m_Type; }
 			EClassDefineType GetClassDefineType() const { return m_ClassDefineType; }
@@ -71,13 +76,13 @@ namespace SimpleLanguage
 			const std::unordered_map<Compile::Token*, Compile::FileMetaClass*>& GetFileMetaClassDict() const { return m_FileMetaClassDict; }
 			bool IsHandleExtendVariableDirty() const { return m_IsHandleExtendVariableDirty; }
 
-			// è®¾ç½®æ–¹æ³•
+			// ÉèÖÃ·½·¨
 			void SetDefaultExpressNode(MetaExpressNode* defaultExpressNode) { m_DefaultExpressNode = defaultExpressNode; }
 			void SetClassDefineType(EClassDefineType ecdt) { m_ClassDefineType = ecdt; }
 			void SetExtendClass(MetaClass* sec) { m_ExtendClass = sec; }
 			void SetHandleExtendVariableDirty(bool dirty) { m_IsHandleExtendVariableDirty = dirty; }
 
-			// è™šæ–¹æ³•
+			// Ğé·½·¨
 			virtual void Parse();
 			virtual void ParseInnerVariable();
 			virtual void ParseInnerFunction();
@@ -103,7 +108,7 @@ namespace SimpleLanguage
 			virtual std::string ToDefineTypeString() const;
 			virtual std::string GetFormatString(bool isShowNamespace) const;
 
-			// å…¶ä»–æ–¹æ³•
+			// ÆäËû·½·¨
 			void UpdateClassAllName();
 			void CalcExtendLevel();
 			bool IsParseMetaClass(MetaClass* parentClass, bool isIncludeSelf = true);
@@ -115,16 +120,16 @@ namespace SimpleLanguage
 			void AddDefineInstanceValue();
 			void HandleExtendClassVariable();
 
-			// æ¨¡æ¿ç›¸å…³æ–¹æ³•
+			// Ä£°åÏà¹Ø·½·¨
 			MetaType* AddMetaPreTemplateClass(MetaType* mt, bool isParse, bool& isGenMetaClass);
 			MetaGenTemplateClass* AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(const std::vector<MetaType*>& templateMetaTypeList);
 			MetaType* BindStructTemplateMetaClassList(MetaType* mt);
 
-			// æ ¼å¼åŒ–æ–¹æ³•
+			// ¸ñÊ½»¯·½·¨
 			std::string ToString() const override;
 			std::string ToFormatString() const override;
 
-			// æ¨¡æ¿ç›¸å…³å±æ€§è®¿é—®å™¨
+			// Ä£°åÏà¹ØÊôĞÔ·ÃÎÊÆ÷
 			bool IsTemplateClass() const { return m_IsTemplateClass; }
 			virtual bool IsGenTemplate() const { return m_IsGenTemplate; }
 			const std::vector<MetaTemplate*>& GetMetaTemplateList() const { return m_MetaTemplateList; }
@@ -151,7 +156,7 @@ namespace SimpleLanguage
 			bool m_IsInterfaceClass = false;
 			bool m_IsHandleExtendVariableDirty = false;
 
-			// æ¨¡æ¿ç›¸å…³
+			// Ä£°åÏà¹Ø
 			std::vector<MetaTemplate*> m_MetaTemplateList;
 			bool m_IsTemplateClass = false;
 			bool m_IsGenTemplate = false;

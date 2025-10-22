@@ -31,9 +31,9 @@ void TokenParse::BuildStruct() {
 }
 
 void TokenParse::BuildEnd() {
-    std::cout << "---------------File:" << m_FileMeta->GetPath() << "  TokenèŠ‚ç‚¹  å¼€å§‹:-------------------------" << std::endl;
+    std::cout << "---------------File:" << m_FileMeta->GetPath() << "  Token½Úµã  ¿ªÊ¼:-------------------------" << std::endl;
     std::cout << m_RootNode->ToFormatString() << std::endl;
-    std::cout << "---------------File:" << m_FileMeta->GetPath() << "  TokenèŠ‚ç‚¹  ç»“æŸ:-------------------------" << std::endl;
+    std::cout << "---------------File:" << m_FileMeta->GetPath() << "  Token½Úµã  ½áÊø:-------------------------" << std::endl;
 }
 
 void TokenParse::AddImportNode(Token& token) {
@@ -94,7 +94,7 @@ Node* TokenParse::AddAtOpSign(Token& token) {
     if (m_CurrentNode->linkToken != nullptr) {
         m_CurrentNode->atToken = new Token(token);
     } else {
-        std::cout << "çŽ°åœ¨@ç¬¦å¿…é¡»ä½¿ç”¨.@æ–¹å¼!!" << std::endl;
+        std::cout << "ÏÖÔÚ@·û±ØÐëÊ¹ÓÃ.@·½Ê½!!" << std::endl;
     }
     m_TokenIndex++;
     return nullptr;
@@ -217,7 +217,7 @@ void TokenParse::ParseDetailToken(Token& token) {
                     m_TokenIndex++;
                     m_CurrentNode = cnode->parent;
                 } else {
-                    std::cout << "Error ä¸å¯¹ç§°{}" << std::endl;
+                    std::cout << "Error ²»¶Ô³Æ{}" << std::endl;
                 }
             }
             break;
@@ -257,7 +257,7 @@ void TokenParse::ParseDetailToken(Token& token) {
                     m_TokenIndex++;
                     m_CurrentNode = cnode->parent;
                 } else {
-                    std::cout << "Error ä¸å¯¹ç§°()" << std::endl;
+                    std::cout << "Error ²»¶Ô³Æ()" << std::endl;
                 }
             }
             break;
@@ -281,7 +281,7 @@ void TokenParse::ParseDetailToken(Token& token) {
                     m_TokenIndex++;
                     m_CurrentNode = cnode->parent;
                 } else {
-                    std::cout << "Error ä¸å¯¹ç§°[]" << std::endl;
+                    std::cout << "Error ²»¶Ô³Æ[]" << std::endl;
                 }
             }
             break;
@@ -537,7 +537,7 @@ void TokenParse::ParseDetailToken(Token& token) {
         default:
             {
                 std::cout << "Line:" << token.GetSourceBeginLine() << " Source: " << token.GetSourceBeginChar() << std::endl;
-                throw std::exception("ä¸æ”¯æŒçš„è¯­æ³•");
+                throw std::exception("²»Ö§³ÖµÄÓï·¨");
             }
     }
 }

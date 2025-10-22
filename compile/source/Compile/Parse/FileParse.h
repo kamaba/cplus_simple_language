@@ -29,7 +29,7 @@ enum class ECodeFileParseState {
 };
 
 struct ParseFileParam {
-    // 绌虹殑鍙傛暟缁撴瀯
+    // 空的参数结构
 };
 
 class FileParse {

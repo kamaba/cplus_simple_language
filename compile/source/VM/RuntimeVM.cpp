@@ -42,7 +42,7 @@ namespace VM {
     }
 
     void RuntimeVM::Init() {
-        // å‚æ•°åˆ—è¡¨ argument variable table
+        // ²ÎÊıÁĞ±í argument variable table
         if (m_IRMethod != nullptr) {
             m_ReturnObjectArray.resize(m_IRMethod->GetMethodReturnVariableList().size());
             for (size_t i = 0; i < m_IRMethod->GetMethodReturnVariableList().size(); i++) {
@@ -61,7 +61,7 @@ namespace VM {
                 Log::AddVM(EError::None, "Argu_" + std::to_string(i) + "_Value: [" + m_ArgumentObjectArray[i]->ToString() + "]");
             }
 
-            // å±€éƒ¨å˜é‡åˆ—è¡¨ local variable table
+            // ¾Ö²¿±äÁ¿ÁĞ±í local variable table
             m_LocalVariableObjectArray.resize(m_IRMethod->GetMethodLocalVariableList().size());
             for (size_t i = 0; i < m_IRMethod->GetMethodLocalVariableList().size(); i++) {
                 auto mev = m_IRMethod->GetMethodLocalVariableList()[i];
@@ -113,11 +113,11 @@ namespace VM {
 
     SObject* RuntimeVM::GetLocalVariableValue(int index) {
         if (index > static_cast<int>(m_LocalVariableObjectArray.size())) {
-            Log::AddVM(EError::None, "æ‰§è¡Œçš„æ ˆè¶…å‡ºèŒƒå›´!!");
+            Log::AddVM(EError::None, "Ö´ĞĞµÄÕ»³¬³ö·¶Î§!!");
             return nullptr;
         }
         if (index < 0) {
-            Log::AddVM(EError::None, "æ‰§è¡Œçš„æ ˆè¶…å‡ºèŒƒå›´!!-");
+            Log::AddVM(EError::None, "Ö´ĞĞµÄÕ»³¬³ö·¶Î§!!-");
             return nullptr;
         }
 
@@ -126,7 +126,7 @@ namespace VM {
 
     SObject* RuntimeVM::GetArgumentValue(int index) {
         if (index > static_cast<int>(m_ArgumentObjectArray.size())) {
-            Log::AddVM(EError::None, "SVM Error FunctionName:" + this->id + " æ‰§è¡Œçš„å‚æ•°è¶…å‡ºèŒƒå›´!!");
+            Log::AddVM(EError::None, "SVM Error FunctionName:" + this->id + " Ö´ĞĞµÄ²ÎÊı³¬³ö·¶Î§!!");
             return nullptr;
         }
         return m_ArgumentObjectArray[index];
@@ -134,7 +134,7 @@ namespace VM {
 
     void RuntimeVM::SetArgumentValue(int index, const SValue& svalue) {
         if (index > static_cast<int>(m_ArgumentObjectArray.size())) {
-            Log::AddVM(EError::None, "æ‰§è¡Œçš„å‚æ•°è¶…å‡ºèŒƒå›´!!");
+            Log::AddVM(EError::None, "Ö´ĞĞµÄ²ÎÊı³¬³ö·¶Î§!!");
             return;
         }
         ObjectManager::SetObjectByValue(m_ArgumentObjectArray[index], const_cast<SValue&>(svalue));
@@ -142,7 +142,7 @@ namespace VM {
 
     void RuntimeVM::SetLocalVariableSValue(int index, const SValue& svalue) {
         if (index > static_cast<int>(m_LocalVariableObjectArray.size())) {
-            Log::AddVM(EError::None, "æ‰§è¡Œçš„æ ˆè¶…å‡ºèŒƒå›´!!");
+            Log::AddVM(EError::None, "Ö´ĞĞµÄÕ»³¬³ö·¶Î§!!");
             return;
         }
         ObjectManager::SetObjectByValue(m_LocalVariableObjectArray[index], const_cast<SValue&>(svalue));
@@ -150,7 +150,7 @@ namespace VM {
 
     void RuntimeVM::SetReturnVariableSValue(int index, const SValue& svalue) {
         if (index > static_cast<int>(m_ReturnObjectArray.size())) {
-            Log::AddVM(EError::None, "æ‰§è¡Œçš„æ ˆè¶…å‡ºèŒƒå›´!!");
+            Log::AddVM(EError::None, "Ö´ĞĞµÄÕ»³¬³ö·¶Î§!!");
             return;
         }
         ObjectManager::SetObjectByValue(m_ReturnObjectArray[index], const_cast<SValue&>(svalue));
@@ -285,7 +285,7 @@ namespace VM {
     }
 
     void RuntimeVM::RunInstruction(IRData* iri) {
-        // æ ˆä½çš„ç§»åŠ¨çš„è§„åˆ™ï¼Œä½¿ç”¨å½“å‰ä½ä¸ºç©ºçš„æ¦‚å¿µï¼Œåªè¦æ ˆè¢«ä½¿ç”¨æ‰ï¼Œç´¢å¼•åˆ™åŠ 1ï¼Œæ‰€ä»¥ç´¢å¼•æœ€å°‘ä¸º0
+        // Õ»Î»µÄÒÆ¶¯µÄ¹æÔò£¬Ê¹ÓÃµ±Ç°Î»Îª¿ÕµÄ¸ÅÄî£¬Ö»ÒªÕ»±»Ê¹ÓÃµô£¬Ë÷ÒıÔò¼Ó1£¬ËùÒÔË÷Òı×îÉÙÎª0
         switch (iri->opCode) {
             case EIROpCode::Nop:
                 break;
@@ -341,9 +341,9 @@ namespace VM {
                 m_ValueStack[m_ValueIndex++].SetStringValue(std::any_cast<std::string>(iri->opValue));
                 break;
             }
-            // ... ç»§ç»­å…¶ä»–æŒ‡ä»¤çš„å¤„ç†
+            // ... ¼ÌĞøÆäËûÖ¸ÁîµÄ´¦Àí
             default: {
-                Log::AddVM(EError::None, "Error æš‚ä¸æ”¯æŒ" + std::to_string(static_cast<int>(iri->opCode)) + "çš„å¤„ç†!!");
+                Log::AddVM(EError::None, "Error Ôİ²»Ö§³Ö" + std::to_string(static_cast<int>(iri->opCode)) + "µÄ´¦Àí!!");
                 break;
             }
         }

@@ -11,6 +11,7 @@
 #include "../Define.h"
 #include <string>
 #include <vector>
+#include <sstream>
 #include <memory>
 #include <any>
 
@@ -27,7 +28,7 @@ namespace Compile {
         double double_val;
         const char* string_val;
     };
-    // ç±»å‹æ ‡ç­¾æšä¸¾
+    // ÀàĞÍ±êÇ©Ã¶¾Ù
     enum class DataType {
         SByte,  //
         Byte,    // uint8_t
@@ -39,16 +40,16 @@ namespace Compile {
         ULong,
         Float,      //float
         Double,     //Double
-        String  // å­—ç¬¦ä¸²ï¼ˆå­˜å‚¨åœ¨ char æ•°ç»„ä¸­ï¼‰
+        String  // ×Ö·û´®£¨´æ´¢ÔÚ char Êı×éÖĞ£©
     };
-    // å¸¦æ ‡ç­¾çš„ç»“æ„ä½“
+    // ´ø±êÇ©µÄ½á¹¹Ìå
     struct MultiData
     {
         DataType type;
         DataUnion data;
 
         MultiData() {};
-        // æ„é€ å‡½æ•°ï¼ˆçœç•¥ï¼ŒåŒä¸Šä¸€æ¡å›å¤ï¼‰
+        // ¹¹Ôìº¯Êı£¨Ê¡ÂÔ£¬Í¬ÉÏÒ»Ìõ»Ø¸´£©
         MultiData(int8_t val) : type(DataType::SByte) { data.byte_val = val; }
         MultiData(uint8_t val) : type(DataType::Byte) { data.byte_val = val; }
         MultiData(int16_t val) : type(DataType::Short) { data.short_val = val; }
@@ -61,53 +62,53 @@ namespace Compile {
         MultiData(double_t val) : type(DataType::Double) { data.double_val = val; }
         MultiData(const std::string& val) : type(DataType::String) {data.string_val = val.c_str();}
         MultiData(const char* cchar) :type(DataType::String) { data.string_val = cchar; }
-        // æ ¸å¿ƒæ–¹æ³•ï¼šå°†å†…éƒ¨æ•°æ®è½¬æ¢ä¸º std::string
+        // ºËĞÄ·½·¨£º½«ÄÚ²¿Êı¾İ×ª»»Îª std::string
         std::string ToString() const
         {
-            std::stringstream ss;  // ç”¨å­—ç¬¦ä¸²æµæ ¼å¼åŒ–ä¸åŒç±»å‹
+            std::stringstream ss;  // ÓÃ×Ö·û´®Á÷¸ñÊ½»¯²»Í¬ÀàĞÍ
 
             //switch (type) {
             //case DataType::Byte:
-            //    // byte é€šå¸¸æŒ‰åè¿›åˆ¶æˆ–åå…­è¿›åˆ¶è¾“å‡ºï¼ˆè¿™é‡ŒæŒ‰åè¿›åˆ¶ï¼‰
-            //    ss << data.byte_val;  // è½¬æ¢ä¸º int é¿å…è¢«å½“ä½œå­—ç¬¦
+            //    // byte Í¨³£°´Ê®½øÖÆ»òÊ®Áù½øÖÆÊä³ö£¨ÕâÀï°´Ê®½øÖÆ£©
+            //    ss << data.byte_val;  // ×ª»»Îª int ±ÜÃâ±»µ±×÷×Ö·û
             //    break;
             //case DataType::SByte:
-            //    // byte é€šå¸¸æŒ‰åè¿›åˆ¶æˆ–åå…­è¿›åˆ¶è¾“å‡ºï¼ˆè¿™é‡ŒæŒ‰åè¿›åˆ¶ï¼‰
-            //    ss << data.byte_val;  // è½¬æ¢ä¸º int é¿å…è¢«å½“ä½œå­—ç¬¦
+            //    // byte Í¨³£°´Ê®½øÖÆ»òÊ®Áù½øÖÆÊä³ö£¨ÕâÀï°´Ê®½øÖÆ£©
+            //    ss << data.byte_val;  // ×ª»»Îª int ±ÜÃâ±»µ±×÷×Ö·û
             //    break;
             //case DataType::Short:
-            //    // char ç›´æ¥è¾“å‡ºå­—ç¬¦æœ¬èº«
+            //    // char Ö±½ÓÊä³ö×Ö·û±¾Éí
             //    ss << data.short_val;
             //    break;
             //case DataType::UShort:
-            //    // char ç›´æ¥è¾“å‡ºå­—ç¬¦æœ¬èº«
+            //    // char Ö±½ÓÊä³ö×Ö·û±¾Éí
             //    ss << (uint16_t)data.short_val;
             //    break;
             //case DataType::Int:
-            //    // char ç›´æ¥è¾“å‡ºå­—ç¬¦æœ¬èº«
+            //    // char Ö±½ÓÊä³ö×Ö·û±¾Éí
             //    ss << data.int_val;
             //    break;
             //case DataType::UInt:
-            //    // char ç›´æ¥è¾“å‡ºå­—ç¬¦æœ¬èº«
+            //    // char Ö±½ÓÊä³ö×Ö·û±¾Éí
             //    ss << (uint32_t)data.int_val;
             //    break;
             //case DataType::Long:
-            //    // char ç›´æ¥è¾“å‡ºå­—ç¬¦æœ¬èº«
+            //    // char Ö±½ÓÊä³ö×Ö·û±¾Éí
             //    ss << data.long_val;
             //    break;
             //case DataType::ULong:
-            //    // char ç›´æ¥è¾“å‡ºå­—ç¬¦æœ¬èº«
+            //    // char Ö±½ÓÊä³ö×Ö·û±¾Éí
             //    ss << (uint64_t)data.long_val;
             //    break;
             //case DataType::String:
-            //    // ç›´æ¥å°†å­—ç¬¦æ•°ç»„è½¬æ¢ä¸º string
+            //    // Ö±½Ó½«×Ö·ûÊı×é×ª»»Îª string
             //    ss << std::string(data.string_val);
             //    break;
             //default:
             //    throw std::runtime_error("Unknown data type");
             //}
 
-            return ss.str();  // è¿”å›æ ¼å¼åŒ–åçš„å­—ç¬¦ä¸²
+            return ss.str();  // ·µ»Ø¸ñÊ½»¯ºóµÄ×Ö·û´®
         }
     };
 
@@ -124,7 +125,7 @@ namespace Compile {
         Token(const Token& token);
         virtual ~Token() = default;
 
-        // å±æ€§è®¿é—®å™¨
+        // ÊôĞÔ·ÃÎÊÆ÷
         std::string GetPath() const { return m_Path; }
         ETokenType GetType() const { return m_Type; }
         MultiData GetLexeme() const { return m_Lexeme; }
@@ -134,7 +135,7 @@ namespace Compile {
         int GetSourceEndLine() const { return m_SourceEndLine; }
         int GetSourceEndChar() const { return m_SourceEndChar; }
 
-        // è®¾ç½®æ–¹æ³•
+        // ÉèÖÃ·½·¨
         std::string GetLexemeString() const;
         void SetSourceEnd(int endSourceLine, int endSourceChar);
         void SetType(ETokenType type) { m_Type = type; }
@@ -143,11 +144,11 @@ namespace Compile {
         void SetExtend(const MultiData& extend) { m_Extend = extend; }
         void SetBindFilePath(const std::string& path) { m_Path = path; }
 
-        // å­Tokenç®¡ç†
+        // ×ÓToken¹ÜÀí
         void AddChildrenToken(Token* token);
         const std::vector<Token*>& GetChildrenTokens() const { return m_ChildrenTokensList; }
 
-        // å·¥å…·æ–¹æ³•
+        // ¹¤¾ß·½·¨
         std::string ToString() const;
         std::string ToAllString() const;
         std::string ToLexemeAllString() const;
@@ -155,14 +156,14 @@ namespace Compile {
         std::string ToConstString() const;
 
     private:
-        std::string m_Path;               //æ–‡ä»¶è·¯å¾„
-        ETokenType m_Type;               //æ ‡è®°ç±»å‹
-        MultiData m_Lexeme;            //æ ‡è®°å€¼
-        MultiData m_Extend;            //è¾…åŠ©æ ‡è®°ï¼Œå¯ä¸ºç©º
-        int m_SourceBeginLine;           //å¼€å§‹æ‰€åœ¨è¡Œ
-        int m_SourceBeginChar;           //å¼€å§‹æ‰€åœ¨åˆ—
-        int m_SourceEndLine;             //ç»“æŸæ‰€åœ¨è¡Œ
-        int m_SourceEndChar;             //ç»“æŸæ‰€åœ¨è¡Œ
+        std::string m_Path;               //ÎÄ¼şÂ·¾¶
+        ETokenType m_Type;               //±ê¼ÇÀàĞÍ
+        MultiData m_Lexeme;            //±ê¼ÇÖµ
+        MultiData m_Extend;            //¸¨Öú±ê¼Ç£¬¿ÉÎª¿Õ
+        int m_SourceBeginLine;           //¿ªÊ¼ËùÔÚĞĞ
+        int m_SourceBeginChar;           //¿ªÊ¼ËùÔÚÁĞ
+        int m_SourceEndLine;             //½áÊøËùÔÚĞĞ
+        int m_SourceEndChar;             //½áÊøËùÔÚĞĞ
 
         std::vector<Token*> m_ChildrenTokensList;
     };

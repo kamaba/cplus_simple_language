@@ -11,7 +11,7 @@
 namespace SimpleLanguage {
 namespace Core {
 
-// æ‰€æœ‰å®ç°éƒ½åœ¨å¤´æ–‡ä»¶ä¸­ï¼ˆå†…è”å®ç°ï¼‰
+// ËùÓĞÊµÏÖ¶¼ÔÚÍ·ÎÄ¼şÖĞ£¨ÄÚÁªÊµÏÖ£©
 
 } // namespace Core
 } // namespace SimpleLanguage

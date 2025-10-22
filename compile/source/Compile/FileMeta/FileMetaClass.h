@@ -18,9 +18,12 @@
 #include <string>
 #include <sstream>
 
-class SimpleLanguage::Core::MetaClass;
 namespace SimpleLanguage 
 {
+	namespace Core
+	{
+		class MetaClass;
+	}
 	namespace Compile
 	{
 		// Forward declarations
@@ -82,7 +85,7 @@ namespace SimpleLanguage
 			void AddExtendMetaNamespace(FileMetaNamespace* fmn);
 			void SetPartialToken(Token* partialToken);
 			void SetPermissionToken(Token* permissionToken);
-			void SetMetaClass(MetaClass* mc);
+			void SetMetaClass(Core::MetaClass* mc);
 			void AddFileMetaClass(FileMetaClass* fmc);
 			void AddInterfaceClass(FileMetaClassDefine* fmcv);
 			virtual void SetDeep(int _deep) override;

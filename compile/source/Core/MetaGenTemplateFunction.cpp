@@ -66,7 +66,7 @@ bool MetaGenTemplateFunction::MatchInputTemplateInsance(const std::vector<MetaCl
 void MetaGenTemplateFunction::UpdateGenMemberFunctionByTemplateClass(MetaMemberFunction* mmf) {
     m_MetaMemberParamCollection = mmf->GetMetaMemberParamCollection();
     for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
-        // ç©ºå¾ªç¯ï¼Œä¸C#ç‰ˆæœ¬ä¿æŒä¸€è‡´
+        // ¿ÕÑ­»·£¬ÓëC#°æ±¾±£³ÖÒ»ÖÂ
     }
     m_FileMetaMemberFunction = mmf->GetFileMetaMemberFunction();
     m_Name = mmf->GetName();
@@ -106,7 +106,7 @@ void MetaGenTemplateFunction::ParseMetaMemberFunctionDefineMetaType() {
 }
 
 void MetaGenTemplateFunction::UpdateRegsterGenMetaFunction() {
-    // è¿™ä¸ªè¿‡ç¨‹æ˜¯ ç»‘å®š åŸæ¥æ³¨å†Œè¿‡æ¥çš„Tçš„å·²æœ‰çš„ç±»
+    // Õâ¸ö¹ı³ÌÊÇ °ó¶¨ Ô­À´×¢²á¹ıÀ´µÄTµÄÒÑÓĞµÄÀà
 
     std::vector<MetaGenTemplate*> mgtList = m_MetaGenTemplateList;
     auto curfun = this->m_SourceMetaMemberFunction;
@@ -122,7 +122,7 @@ void MetaGenTemplateFunction::UpdateRegsterGenMetaFunction() {
 }
 
 void MetaGenTemplateFunction::UpdateRegsterGenMetaFunctionAndClass(const std::vector<MetaGenTemplate*>& classGtList) {
-    // è¿™ä¸ªè¿‡ç¨‹æ˜¯ ç»‘å®š åŸæ¥æ³¨å†Œè¿‡æ¥çš„Tçš„å·²æœ‰çš„ç±»
+    // Õâ¸ö¹ı³ÌÊÇ °ó¶¨ Ô­À´×¢²á¹ıÀ´µÄTµÄÒÑÓĞµÄÀà
 
     std::vector<MetaGenTemplate*> mgtList = m_MetaGenTemplateList;
     auto curfun = this->m_SourceMetaMemberFunction;

@@ -9,7 +9,7 @@
 #pragma once
 
 #include "../MetaClass.h"
-#include "../MetaConstExpressNode.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 #include "CoreMetaClassManager.h"
 #include "ClassManager.h"
 #include "ModuleManager.h"
@@ -19,7 +19,7 @@ namespace Core {
 
 class BooleanMetaClass : public MetaClass {
 public:
-    BooleanMetaClass() : MetaClass(DefaultObject::Boolean.ToString()) {
+    BooleanMetaClass() : MetaClass("Boolean") {
         m_Type = EType::Boolean;
         m_ClassDefineType = EClassDefineType::InnerDefine;
         SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());

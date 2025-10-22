@@ -2,6 +2,7 @@
 //#include "../Core/GrammerUtil.h"
 #include <sstream>
 #include <algorithm>
+#include <iostream>
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -18,7 +19,7 @@ bool CompilerUtil::CheckNameList(const std::string& ns, std::vector<std::string>
     }
     
     if (nsArr.empty()) {
-        std::cout << "å‘½åç©ºé—´åç§°ä¸èƒ½ä¸ºç©ºå­—ç¬¦ä¸²" << std::endl;
+        //std::cout << "ÃüÃû¿Õ¼äÃû³Æ²»ÄÜÎª¿Õ×Ö·û´®" << std::endl;
         return false;
     }
     

@@ -26,7 +26,7 @@ FileMetaNamespace::FileMetaNamespace(Node* namespaceNode, Node* namespaceNameNod
     : m_NamespaceNode(namespaceNode), m_NamespaceNameNode(namespaceNameNode) {
     
     if (namespaceNode == nullptr) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error åœ¨è§£ænamespace ä¸­ï¼Œæ²¡æœ‰æ‰¾åˆ°namespaceè®¾ç½®çš„åç§°!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ÔÚ½âÎönamespace ÖĞ£¬Ã»ÓĞÕÒµ½namespaceÉèÖÃµÄÃû³Æ!!");
         return;
     }
 

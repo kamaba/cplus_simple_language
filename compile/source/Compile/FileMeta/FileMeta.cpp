@@ -17,6 +17,7 @@
 #include "../../Debug/Log.h"
 #include "../../Define.h"
 #include "../../Project/ProjectManager.h"
+#include "../../Project/ProjectData.h"
 //#include "../../OtherLanguage/CSharp/CSharpManager.h"
 #include <algorithm>
 #include <sstream>
@@ -87,7 +88,7 @@ namespace SimpleLanguage
 		{
 			SimpleLanguage::Core::MetaNode* mb = nullptr;
 			for (size_t i = 0; i < m_ImportMetaNamespaceList.size(); i++) {
-				SimpleLanguage::Core::MetaNode* mn = GetMetaNodeFileMetaClass(fmcv->stringList());
+				SimpleLanguage::Core::MetaNode* mn = GetMetaNodeFileMetaClass(fmcv->StringList());
 				if (mn == nullptr) continue;
 				if (mn->IsMetaNamespace() == false) { continue; }
 				if (mn->GetMetaNamespace()->GetRefFromType() == SimpleLanguage::Core::RefFromType::CSharp) {
@@ -170,8 +171,8 @@ namespace SimpleLanguage
 			for (size_t i = 0; i < m_FileSearchNamespaceList.size(); i++) {
 				auto fmn = m_FileSearchNamespaceList[i];
 				if (SimpleLanguage::Project::ProjectManager::useDefineNamespaceType != SimpleLanguage::Project::EUseDefineType::NoUseProjectConfigNamespace) {
-					if (!(SimpleLanguage::Project::ProjectManager::GetData()->IsIncludeDefineStruct(fmn->namespaceStatementBlock()->NamespaceList()))) {
-						SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error æš‚ä¸å…è®¸ä½¿ç”¨namespace å®šä¹‰å‘½åç©ºé—´!!!" + fmn->ToFormatString() + " ä½ç½®: " + fmn->token()->ToLexemeAllString());
+					if (!(SimpleLanguage::Project::ProjectManager::GetData()->IsIncludeDefineStruct(fmn->GetNamespaceStatementBlock()->NamespaceList()))) {
+						SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ÔÝ²»ÔÊÐíÊ¹ÓÃnamespace ¶¨ÒåÃüÃû¿Õ¼ä!!!" + fmn->ToFormatString() + " Î»ÖÃ: " + fmn->GetToken()->ToLexemeAllString());
 					}
 				}
 				SimpleLanguage::Core::NamespaceManager::GetInstance().CreateMetaNamespaceByFineDefineNamespace(fmn);
@@ -216,7 +217,7 @@ namespace SimpleLanguage
 
 		::std::string FileMeta::ToFormatString() const {
 			::std::ostringstream sb;
-			sb << "-------------------FileMeta æ–‡ä»¶æ˜¾ç¤º å¼€å§‹ : Path: " << m_Path << "-----------------------" << ::std::endl;
+			sb << "-------------------FileMeta ÎÄ¼þÏÔÊ¾ ¿ªÊ¼ : Path: " << m_Path << "-----------------------" << ::std::endl;
 
 			for (size_t i = 0; i < m_FileImportSyntax.size(); i++) {
 				sb << m_FileImportSyntax[i]->ToFormatString() << ::std::endl;
@@ -230,7 +231,7 @@ namespace SimpleLanguage
 			for (size_t i = 0; i < m_FileMetaClassList.size(); i++) {
 				sb << m_FileMetaClassList[i]->ToFormatString() << ::std::endl;
 			}
-			sb << "-------------------FileMeta æ–‡ä»¶æ˜¾ç¤º ç»“æŸ : -----------------------" << ::std::endl;
+			sb << "-------------------FileMeta ÎÄ¼þÏÔÊ¾ ½áÊø : -----------------------" << ::std::endl;
 
 			return sb.str();
 		}

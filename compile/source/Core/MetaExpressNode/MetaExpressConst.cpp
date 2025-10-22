@@ -17,21 +17,23 @@
 namespace SimpleLanguage {
 namespace Core {
 
+// 构造函数实现
 MetaConstExpressNode::MetaConstExpressNode(FileMetaConstValueTerm* fmct) {
     m_FileMetaConstValueTerm = fmct;
-    eType = fmct->GetToken()->GetEType();
-    Parse1(eType, fmct->GetToken()->GetLexeme());
+    m_EType = fmct->GetToken()->GetEType();
+    Parse1(m_EType, fmct->GetToken()->GetLexeme());
 }
 
-MetaConstExpressNode::MetaConstExpressNode(EType _eType, const std::any& val) {
-    eType = _eType;
-    Parse1(_eType, val);
-}
-
-MetaConstExpressNode::MetaConstExpressNode(MetaType* mt, const std::any& val) {
+MetaConstExpressNode::MetaConstExpressNode(EType eType, const MultiData& val) {
+    m_EType = eType;
     Parse1(eType, val);
 }
 
+MetaConstExpressNode::MetaConstExpressNode(MetaType* mt, const MultiData& val) {
+    Parse1(m_EType, val);
+}
+
+// 操作符重载实现
 MetaConstExpressNode MetaConstExpressNode::operator+(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
     if (left.GetOpLevel() > right.GetOpLevel()) {
         MetaConstExpressNode result = left;
@@ -92,78 +94,84 @@ MetaConstExpressNode MetaConstExpressNode::operator%(const MetaConstExpressNode&
     }
 }
 
-void MetaConstExpressNode::Parse1(EType _etype, const std::any& val) {
-    eType = _etype;
+// Parse1方法实现
+void MetaConstExpressNode::Parse1(EType eType, const MultiData& val) {
+    m_EType = eType;
     switch (eType) {
         case EType::Boolean: {
-            std::string strVal = std::any_cast<std::string>(val);
-            value = (strVal == "true");
+            if (val.type == DataType::String) {
+                std::string strVal = val.ToString();
+                m_Value = MultiData(strVal == "true");
+            } else {
+                m_Value = val;
+            }
             break;
         }
         default: {
-            value = val;
+            m_Value = val;
             break;
         }
     }
 }
 
+// CalcReturnType方法实现
 void MetaConstExpressNode::CalcReturnType() {
     if (m_MetaDefineType != nullptr) {
         if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetNullMetaClass()) {
-            eType = EType::Null;
-            value = std::string("null");
+            m_EType = EType::Null;
+            m_Value = MultiData("null");
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetBooleanMetaClass()) {
-            eType = EType::Boolean;
-            value = std::any_cast<bool>(value);
+            m_EType = EType::Boolean;
+            m_Value = ConvertToMultiData(EType::Boolean, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetByteMetaClass()) {
-            eType = EType::Byte;
-            value = static_cast<uint8_t>(std::any_cast<int>(value));
+            m_EType = EType::Byte;
+            m_Value = ConvertToMultiData(EType::Byte, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetSByteMetaClass()) {
-            eType = EType::SByte;
-            value = static_cast<int8_t>(std::any_cast<int>(value));
+            m_EType = EType::SByte;
+            m_Value = ConvertToMultiData(EType::SByte, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetInt16MetaClass()) {
-            eType = EType::Int16;
-            value = static_cast<int16_t>(std::any_cast<int>(value));
+            m_EType = EType::Int16;
+            m_Value = ConvertToMultiData(EType::Int16, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetUInt16MetaClass()) {
-            eType = EType::UInt16;
-            value = static_cast<uint16_t>(std::any_cast<int>(value));
+            m_EType = EType::UInt16;
+            m_Value = ConvertToMultiData(EType::UInt16, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetInt32MetaClass()) {
-            eType = EType::Int32;
-            value = static_cast<int32_t>(std::any_cast<int>(value));
+            m_EType = EType::Int32;
+            m_Value = ConvertToMultiData(EType::Int32, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetUInt32MetaClass()) {
-            eType = EType::UInt32;
-            value = static_cast<uint32_t>(std::any_cast<int>(value));
+            m_EType = EType::UInt32;
+            m_Value = ConvertToMultiData(EType::UInt32, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetInt64MetaClass()) {
-            eType = EType::Int64;
-            value = static_cast<int64_t>(std::any_cast<int>(value));
+            m_EType = EType::Int64;
+            m_Value = ConvertToMultiData(EType::Int64, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetUInt64MetaClass()) {
-            eType = EType::UInt64;
-            value = static_cast<uint64_t>(std::any_cast<int>(value));
+            m_EType = EType::UInt64;
+            m_Value = ConvertToMultiData(EType::UInt64, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetFloat32MetaClass()) {
-            eType = EType::Float32;
-            value = static_cast<float>(std::any_cast<double>(value));
+            m_EType = EType::Float32;
+            m_Value = ConvertToMultiData(EType::Float32, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetFloat64MetaClass()) {
-            eType = EType::Float64;
-            value = std::any_cast<double>(value);
+            m_EType = EType::Float64;
+            m_Value = ConvertToMultiData(EType::Float64, m_Value);
         } else if (m_MetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetStringMetaClass()) {
-            eType = EType::String;
-            value = std::any_cast<std::string>(value);
+            m_EType = EType::String;
+            m_Value = ConvertToMultiData(EType::String, m_Value);
         } else {
-            eType = EType::Class;
+            m_EType = EType::Class;
         }
         return;
     }
     
-    if (eType == EType::Null) {
+    if (m_EType == EType::Null) {
         m_MetaDefineType = new MetaType(CoreMetaClassManager::GetInstance().GetNullMetaClass());
     } else {
-        MetaClass* mc = CoreMetaClassManager::GetMetaClassByEType(eType);
+        MetaClass* mc = CoreMetaClassManager::GetMetaClassByEType(m_EType);
         
         if (mc == nullptr) {
             m_MetaDefineType = new MetaType(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
         } else {
             MetaInputTemplateCollection* mitc = new MetaInputTemplateCollection();
-            if (eType == EType::Array) {
+            if (m_EType == EType::Array) {
                 MetaType* mitp = new MetaType(CoreMetaClassManager::GetInstance().GetInt32MetaClass());
                 mitc->AddMetaTemplateParamsList(mitp);
                 m_MetaDefineType = new MetaType(mc, nullptr, mitc);
@@ -174,355 +182,361 @@ void MetaConstExpressNode::CalcReturnType() {
     }
 }
 
+// ComputeAddRight方法实现
 void MetaConstExpressNode::ComputeAddRight(const MetaConstExpressNode& right) {
-    switch (right.eType) {
+    switch (right.m_EType) {
         case EType::Byte:
-            value = std::any_cast<uint8_t>(value) + std::any_cast<uint8_t>(right.value);
+            m_Value = MultiData(static_cast<uint8_t>(m_Value.data.byte_val + right.m_Value.data.byte_val));
             break;
         case EType::Int16:
-            value = std::any_cast<int16_t>(value) + std::any_cast<int16_t>(right.value);
+            m_Value = MultiData(static_cast<int16_t>(m_Value.data.short_val + right.m_Value.data.short_val));
             break;
         case EType::UInt16:
-            value = std::any_cast<uint16_t>(value) + std::any_cast<uint16_t>(right.value);
+            m_Value = MultiData(static_cast<uint16_t>(m_Value.data.short_val + right.m_Value.data.short_val));
             break;
         case EType::Int32:
-            value = std::any_cast<int32_t>(value) + std::any_cast<int32_t>(right.value);
+            m_Value = MultiData(m_Value.data.int_val + right.m_Value.data.int_val);
             break;
         case EType::UInt32:
-            value = std::any_cast<uint32_t>(value) + std::any_cast<uint32_t>(right.value);
+            m_Value = MultiData(static_cast<uint32_t>(m_Value.data.int_val + right.m_Value.data.int_val));
             break;
         case EType::Int64:
-            value = std::any_cast<int64_t>(value) + std::any_cast<int64_t>(right.value);
+            m_Value = MultiData(m_Value.data.long_val + right.m_Value.data.long_val);
             break;
         case EType::UInt64:
-            value = std::any_cast<uint64_t>(value) + std::any_cast<uint64_t>(right.value);
+            m_Value = MultiData(static_cast<uint64_t>(m_Value.data.long_val + right.m_Value.data.long_val));
             break;
         case EType::String: {
-            std::string leftStr = std::any_cast<std::string>(value);
-            std::string rightStr = std::any_cast<std::string>(right.value);
-            value = leftStr + rightStr;
+            std::string leftStr = m_Value.ToString();
+            std::string rightStr = right.m_Value.ToString();
+            m_Value = MultiData(leftStr + rightStr);
             break;
         }
     }
 }
 
+// ComputeMinusRight方法实现
 void MetaConstExpressNode::ComputeMinusRight(const MetaConstExpressNode& right) {
-    switch (right.eType) {
+    switch (right.m_EType) {
         case EType::Byte:
-            value = std::any_cast<uint8_t>(value) - std::any_cast<uint8_t>(right.value);
+            m_Value = MultiData(static_cast<uint8_t>(m_Value.data.byte_val - right.m_Value.data.byte_val));
             break;
         case EType::Int16:
-            value = std::any_cast<int16_t>(value) - std::any_cast<int16_t>(right.value);
+            m_Value = MultiData(static_cast<int16_t>(m_Value.data.short_val - right.m_Value.data.short_val));
             break;
         case EType::UInt16:
-            value = std::any_cast<uint16_t>(value) - std::any_cast<uint16_t>(right.value);
+            m_Value = MultiData(static_cast<uint16_t>(m_Value.data.short_val - right.m_Value.data.short_val));
             break;
         case EType::Int32:
-            value = std::any_cast<int32_t>(value) - std::any_cast<int32_t>(right.value);
+            m_Value = MultiData(m_Value.data.int_val - right.m_Value.data.int_val);
             break;
         case EType::UInt32:
-            value = std::any_cast<uint32_t>(value) - std::any_cast<uint32_t>(right.value);
+            m_Value = MultiData(static_cast<uint32_t>(m_Value.data.int_val - right.m_Value.data.int_val));
             break;
         case EType::Int64:
-            value = std::any_cast<int64_t>(value) - std::any_cast<int64_t>(right.value);
+            m_Value = MultiData(m_Value.data.long_val - right.m_Value.data.long_val);
             break;
         case EType::UInt64:
-            value = std::any_cast<uint64_t>(value) - std::any_cast<uint64_t>(right.value);
+            m_Value = MultiData(static_cast<uint64_t>(m_Value.data.long_val - right.m_Value.data.long_val));
             break;
     }
 }
 
+// ComputeMulRight方法实现
 void MetaConstExpressNode::ComputeMulRight(const MetaConstExpressNode& right) {
-    switch (right.eType) {
+    switch (right.m_EType) {
         case EType::Byte:
-            value = std::any_cast<uint8_t>(value) * std::any_cast<uint8_t>(right.value);
+            m_Value = MultiData(static_cast<uint8_t>(m_Value.data.byte_val * right.m_Value.data.byte_val));
             break;
         case EType::Int16:
-            value = std::any_cast<int16_t>(value) * std::any_cast<int16_t>(right.value);
+            m_Value = MultiData(static_cast<int16_t>(m_Value.data.short_val * right.m_Value.data.short_val));
             break;
         case EType::UInt16:
-            value = std::any_cast<uint16_t>(value) * std::any_cast<uint16_t>(right.value);
+            m_Value = MultiData(static_cast<uint16_t>(m_Value.data.short_val * right.m_Value.data.short_val));
             break;
         case EType::Int32:
-            value = std::any_cast<int32_t>(value) * std::any_cast<int32_t>(right.value);
+            m_Value = MultiData(m_Value.data.int_val * right.m_Value.data.int_val);
             break;
         case EType::UInt32:
-            value = std::any_cast<uint32_t>(value) * std::any_cast<uint32_t>(right.value);
+            m_Value = MultiData(static_cast<uint32_t>(m_Value.data.int_val * right.m_Value.data.int_val));
             break;
         case EType::Int64:
-            value = std::any_cast<int64_t>(value) * std::any_cast<int64_t>(right.value);
+            m_Value = MultiData(m_Value.data.long_val * right.m_Value.data.long_val);
             break;
         case EType::UInt64:
-            value = std::any_cast<uint64_t>(value) * std::any_cast<uint64_t>(right.value);
+            m_Value = MultiData(static_cast<uint64_t>(m_Value.data.long_val * right.m_Value.data.long_val));
             break;
     }
 }
 
+// ComputeDivRight方法实现
 void MetaConstExpressNode::ComputeDivRight(const MetaConstExpressNode& right) {
-    switch (right.eType) {
+    switch (right.m_EType) {
         case EType::Byte:
-            value = std::any_cast<uint8_t>(value) / std::any_cast<uint8_t>(right.value);
+            m_Value = MultiData(static_cast<uint8_t>(m_Value.data.byte_val / right.m_Value.data.byte_val));
             break;
         case EType::Int16:
-            value = std::any_cast<int16_t>(value) / std::any_cast<int16_t>(right.value);
+            m_Value = MultiData(static_cast<int16_t>(m_Value.data.short_val / right.m_Value.data.short_val));
             break;
         case EType::UInt16:
-            value = std::any_cast<uint16_t>(value) / std::any_cast<uint16_t>(right.value);
+            m_Value = MultiData(static_cast<uint16_t>(m_Value.data.short_val / right.m_Value.data.short_val));
             break;
         case EType::Int32:
-            value = std::any_cast<int32_t>(value) / std::any_cast<int32_t>(right.value);
+            m_Value = MultiData(m_Value.data.int_val / right.m_Value.data.int_val);
             break;
         case EType::UInt32:
-            value = std::any_cast<uint32_t>(value) / std::any_cast<uint32_t>(right.value);
+            m_Value = MultiData(static_cast<uint32_t>(m_Value.data.int_val / right.m_Value.data.int_val));
             break;
         case EType::Int64:
-            value = std::any_cast<int64_t>(value) / std::any_cast<int64_t>(right.value);
+            m_Value = MultiData(m_Value.data.long_val / right.m_Value.data.long_val);
             break;
         case EType::UInt64:
-            value = std::any_cast<uint64_t>(value) / std::any_cast<uint64_t>(right.value);
+            m_Value = MultiData(static_cast<uint64_t>(m_Value.data.long_val / right.m_Value.data.long_val));
             break;
     }
 }
 
+// ComputeModRight方法实现
 void MetaConstExpressNode::ComputeModRight(const MetaConstExpressNode& right) {
-    switch (right.eType) {
+    switch (right.m_EType) {
         case EType::Byte:
-            value = std::any_cast<uint8_t>(value) % std::any_cast<uint8_t>(right.value);
+            m_Value = MultiData(static_cast<uint8_t>(m_Value.data.byte_val % right.m_Value.data.byte_val));
             break;
         case EType::Int16:
-            value = std::any_cast<int16_t>(value) % std::any_cast<int16_t>(right.value);
+            m_Value = MultiData(static_cast<int16_t>(m_Value.data.short_val % right.m_Value.data.short_val));
             break;
         case EType::UInt16:
-            value = std::any_cast<uint16_t>(value) % std::any_cast<uint16_t>(right.value);
+            m_Value = MultiData(static_cast<uint16_t>(m_Value.data.short_val % right.m_Value.data.short_val));
             break;
         case EType::Int32:
-            value = std::any_cast<int32_t>(value) % std::any_cast<int32_t>(right.value);
+            m_Value = MultiData(m_Value.data.int_val % right.m_Value.data.int_val);
             break;
         case EType::UInt32:
-            value = std::any_cast<uint32_t>(value) % std::any_cast<uint32_t>(right.value);
+            m_Value = MultiData(static_cast<uint32_t>(m_Value.data.int_val % right.m_Value.data.int_val));
             break;
         case EType::Int64:
-            value = std::any_cast<int64_t>(value) % std::any_cast<int64_t>(right.value);
+            m_Value = MultiData(m_Value.data.long_val % right.m_Value.data.long_val);
             break;
         case EType::UInt64:
-            value = std::any_cast<uint64_t>(value) % std::any_cast<uint64_t>(right.value);
+            m_Value = MultiData(static_cast<uint64_t>(m_Value.data.long_val % right.m_Value.data.long_val));
             break;
         case EType::String: {
-            std::string leftStr = std::any_cast<std::string>(value);
-            std::string rightStr = std::any_cast<std::string>(right.value);
-            value = leftStr + rightStr;
+            std::string leftStr = m_Value.ToString();
+            std::string rightStr = right.m_Value.ToString();
+            m_Value = MultiData(leftStr + rightStr);
             break;
         }
     }
 }
 
+// ComputeEqualComputeRight方法实现
 void MetaConstExpressNode::ComputeEqualComputeRight(const MetaConstExpressNode& right, ELeftRightOpSign opSign) {
-    switch (right.eType) {
+    switch (right.m_EType) {
         case EType::Byte:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint8_t>(value) == std::any_cast<uint8_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.byte_val == right.m_Value.data.byte_val);
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint8_t>(value) != std::any_cast<uint8_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.byte_val != right.m_Value.data.byte_val);
                     break;
                 case ELeftRightOpSign::Greater:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint8_t>(value) > std::any_cast<uint8_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.byte_val > right.m_Value.data.byte_val);
                     break;
                 case ELeftRightOpSign::GreaterOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint8_t>(value) >= std::any_cast<uint8_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.byte_val >= right.m_Value.data.byte_val);
                     break;
                 case ELeftRightOpSign::Less:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint8_t>(value) < std::any_cast<uint8_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.byte_val < right.m_Value.data.byte_val);
                     break;
                 case ELeftRightOpSign::LessOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint8_t>(value) <= std::any_cast<uint8_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.byte_val <= right.m_Value.data.byte_val);
                     break;
             }
             break;
         case EType::Int16:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int16_t>(value) == std::any_cast<int16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val == right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int16_t>(value) != std::any_cast<int16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val != right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::Greater:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int16_t>(value) > std::any_cast<int16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val > right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::GreaterOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int16_t>(value) >= std::any_cast<int16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val >= right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::Less:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int16_t>(value) < std::any_cast<int16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val < right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::LessOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int16_t>(value) <= std::any_cast<int16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val <= right.m_Value.data.short_val);
                     break;
             }
             break;
         case EType::UInt16:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint16_t>(value) == std::any_cast<uint16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val == right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint16_t>(value) != std::any_cast<uint16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val != right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::Greater:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint16_t>(value) > std::any_cast<uint16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val > right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::GreaterOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint16_t>(value) >= std::any_cast<uint16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val >= right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::Less:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint16_t>(value) < std::any_cast<uint16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val < right.m_Value.data.short_val);
                     break;
                 case ELeftRightOpSign::LessOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint16_t>(value) <= std::any_cast<uint16_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.short_val <= right.m_Value.data.short_val);
                     break;
             }
             break;
         case EType::Int32:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int32_t>(value) == std::any_cast<int32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val == right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int32_t>(value) != std::any_cast<int32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val != right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::Greater:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int32_t>(value) > std::any_cast<int32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val > right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::GreaterOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int32_t>(value) >= std::any_cast<int32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val >= right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::Less:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int32_t>(value) < std::any_cast<int32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val < right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::LessOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int32_t>(value) <= std::any_cast<int32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val <= right.m_Value.data.int_val);
                     break;
             }
             break;
         case EType::UInt32:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint32_t>(value) == std::any_cast<uint32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val == right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint32_t>(value) != std::any_cast<uint32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val != right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::Greater:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint32_t>(value) > std::any_cast<uint32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val > right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::GreaterOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint32_t>(value) >= std::any_cast<uint32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val >= right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::Less:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint32_t>(value) < std::any_cast<uint32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val < right.m_Value.data.int_val);
                     break;
                 case ELeftRightOpSign::LessOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint32_t>(value) <= std::any_cast<uint32_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.int_val <= right.m_Value.data.int_val);
                     break;
             }
             break;
         case EType::Int64:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int64_t>(value) == std::any_cast<int64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val == right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int64_t>(value) != std::any_cast<int64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val != right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::Greater:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int64_t>(value) > std::any_cast<int64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val > right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::GreaterOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int64_t>(value) >= std::any_cast<int64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val >= right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::Less:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int64_t>(value) < std::any_cast<int64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val < right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::LessOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<int64_t>(value) <= std::any_cast<int64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val <= right.m_Value.data.long_val);
                     break;
             }
             break;
         case EType::UInt64:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint64_t>(value) == std::any_cast<uint64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val == right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint64_t>(value) != std::any_cast<uint64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val != right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::Greater:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint64_t>(value) > std::any_cast<uint64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val > right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::GreaterOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint64_t>(value) >= std::any_cast<uint64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val >= right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::Less:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint64_t>(value) < std::any_cast<uint64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val < right.m_Value.data.long_val);
                     break;
                 case ELeftRightOpSign::LessOrEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<uint64_t>(value) <= std::any_cast<uint64_t>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.data.long_val <= right.m_Value.data.long_val);
                     break;
             }
             break;
         case EType::String:
             switch (opSign) {
                 case ELeftRightOpSign::Equal:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<std::string>(value) == std::any_cast<std::string>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.ToString() == right.m_Value.ToString());
                     break;
                 case ELeftRightOpSign::NotEqual:
-                    eType = EType::Boolean;
-                    value = (std::any_cast<std::string>(value) != std::any_cast<std::string>(right.value));
+                    m_EType = EType::Boolean;
+                    m_Value = MultiData(m_Value.ToString() != right.m_Value.ToString());
                     break;
                 default:
                     std::cout << "Error Not Support string < <= > >=sign operator!!" << std::endl;
@@ -532,64 +546,113 @@ void MetaConstExpressNode::ComputeEqualComputeRight(const MetaConstExpressNode& 
     }
 }
 
+// ToFormatString方法实现
 std::string MetaConstExpressNode::ToFormatString() {
-    std::string signEn = "";
+    std::string signEn = GetTypeSuffix(m_EType);
     std::string str;
     
-    switch (eType) {
+    switch (m_EType) {
         case EType::Null:
             str = "null";
             break;
         case EType::String: {
-            std::string val = std::any_cast<std::string>(value);
+            std::string val = m_Value.ToString();
             str = "\"" + val + "\"";
             break;
         }
         case EType::Int16:
-            signEn = "s";
-            str = std::to_string(std::any_cast<int16_t>(value));
+            str = std::to_string(m_Value.data.short_val);
             break;
         case EType::UInt16:
-            signEn = "us";
-            str = std::to_string(std::any_cast<uint16_t>(value));
+            str = std::to_string(static_cast<uint16_t>(m_Value.data.short_val));
             break;
         case EType::Int32:
-            signEn = "i";
-            str = std::to_string(std::any_cast<int32_t>(value));
+            str = std::to_string(m_Value.data.int_val);
             break;
         case EType::UInt32:
-            signEn = "ui";
-            str = std::to_string(std::any_cast<uint32_t>(value));
+            str = std::to_string(static_cast<uint32_t>(m_Value.data.int_val));
             break;
         case EType::Int64:
-            signEn = "L";
-            str = std::to_string(std::any_cast<int64_t>(value));
+            str = std::to_string(m_Value.data.long_val);
             break;
         case EType::UInt64:
-            signEn = "uL";
-            str = std::to_string(std::any_cast<uint64_t>(value));
+            str = std::to_string(static_cast<uint64_t>(m_Value.data.long_val));
             break;
         case EType::Float32:
-            signEn = "f";
-            str = std::to_string(std::any_cast<float>(value));
+            str = std::to_string(m_Value.data.float_val);
             break;
         case EType::Float64:
-            signEn = "d";
-            str = std::to_string(std::any_cast<double>(value));
+            str = std::to_string(m_Value.data.double_val);
             break;
         default:
-            str = std::to_string(std::any_cast<int>(value));
+            str = std::to_string(m_Value.data.int_val);
             break;
     }
     return str + signEn;
 }
 
+// ToTokenString方法实现
 std::string MetaConstExpressNode::ToTokenString() {
     std::string result;
     if (m_FileMetaConstValueTerm != nullptr) {
         result = m_FileMetaConstValueTerm->ToTokenString();
     }
     return result;
+}
+
+// 辅助方法实现
+MultiData MetaConstExpressNode::ConvertToMultiData(EType targetType, const MultiData& value) {
+    switch (targetType) {
+        case EType::Boolean:
+            return MultiData(value.data.int_val != 0);
+        case EType::Byte:
+            return MultiData(static_cast<uint8_t>(value.data.int_val));
+        case EType::SByte:
+            return MultiData(static_cast<int8_t>(value.data.int_val));
+        case EType::Int16:
+            return MultiData(static_cast<int16_t>(value.data.int_val));
+        case EType::UInt16:
+            return MultiData(static_cast<uint16_t>(value.data.int_val));
+        case EType::Int32:
+            return MultiData(value.data.int_val);
+        case EType::UInt32:
+            return MultiData(static_cast<uint32_t>(value.data.int_val));
+        case EType::Int64:
+            return MultiData(static_cast<int64_t>(value.data.int_val));
+        case EType::UInt64:
+            return MultiData(static_cast<uint64_t>(value.data.int_val));
+        case EType::Float32:
+            return MultiData(static_cast<float>(value.data.double_val));
+        case EType::Float64:
+            return MultiData(value.data.double_val);
+        case EType::String:
+            return MultiData(value.ToString());
+        default:
+            return value;
+    }
+}
+
+std::string MetaConstExpressNode::GetTypeSuffix(EType type) const {
+    switch (type) {
+        case EType::Int16:
+            return "s";
+        case EType::UInt16:
+            return "us";
+        case EType::Int32:
+            return "i";
+        case EType::UInt32:
+            return "ui";
+        case EType::Int64:
+            return "L";
+        case EType::UInt64:
+            return "uL";
+        case EType::Float32:
+            return "f";
+        case EType::Float64:
+            return "d";
+        default:
+            return "";
+    }
 }
 
 } // namespace Core

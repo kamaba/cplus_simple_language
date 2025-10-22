@@ -16,11 +16,11 @@ namespace Core {
 
 class MetaDynamicClass : public MetaClass {
 public:
-    // æ„é€ å‡½æ•°
+    // ¹¹Ôìº¯Êı
     MetaDynamicClass(const std::string& _name);
     virtual ~MetaDynamicClass() = default;
 
-    // é‡å†™çš„æ–¹æ³•
+    // ÖØĞ´µÄ·½·¨
     virtual void ParseDefineComplete() override;
     virtual std::string ToFormatString() const override;
     virtual std::string ToString() const override;

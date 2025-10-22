@@ -11,7 +11,7 @@
 #include "MetaBase.h"
 #include "MetaClass.h"
 #include "MetaType.h"
-#include "../Compile/FileMeta/FileMetaTemplateDefine.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
 #include "ClassManager.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include <string>
@@ -42,7 +42,7 @@ namespace Core {
         void AddBindConstructFunction(MetaMethodCall* mmc);
         void SetInConstraintMetaClass(MetaClass* mc);
         bool IsInConstraintMetaClass(MetaClass* mc);
-        std::string ToFormatString() override;
+        std::string ToFormatString() const override;
 
     protected:
         Compile::FileMetaTemplateDefine* m_FileMetaTemplateDefine = nullptr;

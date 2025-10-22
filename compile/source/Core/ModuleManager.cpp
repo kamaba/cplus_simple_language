@@ -72,7 +72,7 @@ MetaModule* ModuleManager::GetMetaModuleOrRetSelfModuleByName(const std::string&
 
 MetaModule* ModuleManager::GetMetaModuleByName(const std::string& name) {
     if (name.empty()) {
-        Log::AddInStructMeta(EError::None, "Error ä¸¥é‡é”™è¯¯ï¼ŒèŽ·å–æ¨¡å¼ä¸ä¼ åç§°!!");
+        Log::AddInStructMeta(EError::None, "Error ÑÏÖØ´íÎó£¬»ñÈ¡Ä£Ê½²»´«Ãû³Æ!!");
         return nullptr;
     }
     if (m_AllMetaModuleDict.find(name) != m_AllMetaModuleDict.end()) {
@@ -104,7 +104,7 @@ void ModuleManager::AddMetaMdoule(MetaModule* mm) {
     }
     m_ImportMetaModuleDict[mm->GetName()] = mm;
     if (m_AllMetaModuleDict.find(mm->GetName()) != m_AllMetaModuleDict.end()) {
-        Log::AddInStructMeta(EError::None, "Error ä¸¥é‡é”™è¯¯ï¼Œæ¨¡å—æœ‰é‡å!!!");
+        Log::AddInStructMeta(EError::None, "Error ÑÏÖØ´íÎó£¬Ä£¿éÓÐÖØÃû!!!");
         return;
     }
     m_AllMetaModuleDict[mm->GetName()] = mm;

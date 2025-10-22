@@ -25,12 +25,12 @@ class CompileStateBase {
 public:
     bool IsInterrupt() const { return m_IsInterrupt; }
     
-    std::chrono::system_clock::time_point GetDateTime() const { return dateTime; }
-    void SetDateTime(const std::chrono::system_clock::time_point& dt) { dateTime = dt; }
+    //std::chrono::system_clock::time_point GetDateTime() const { return m_DateTime; }
+    //void SetDateTime(const std::chrono::system_clock::time_point& dt) { m_DateTime = dt; }
 
 protected:
     bool m_IsInterrupt = false;
-    std::chrono::system_clock::time_point dateTime = std::chrono::system_clock::now();
+    //std::chrono::system_clock::time_point m_DateTime = std::chrono::system_clock::now();
 };
 
 } // namespace Compile

@@ -55,11 +55,11 @@ RuntimeType* RuntimeType::GetClassRuntimeType(IRMetaType* irmt, bool isAdd) {
 
 void RuntimeType::GetMemberVariableSValue(int index, SValue& svalue) {
     if (index < 0) {
-        Log::AddVM(EError::None, "ÊâßË°åÁöÑÂèÇÊï∞Ë∂ÖÂá∫ËåÉÂõ¥!! < 0 ");
+        Log::AddVM(EError::None, "÷¥––µƒ≤Œ ˝≥¨≥ˆ∑∂Œß!! < 0 ");
         return;
     }
     if (index >= static_cast<int>(irClass->staticIRMetaVariableList.size())) {
-        Log::AddVM(EError::None, "ÊâßË°åÁöÑÂèÇÊï∞Ë∂ÖÂá∫ËåÉÂõ¥!!");
+        Log::AddVM(EError::None, "÷¥––µƒ≤Œ ˝≥¨≥ˆ∑∂Œß!!");
         return;
     }
     SObject* mmv = m_StaticMemObjectList[index];
@@ -96,7 +96,7 @@ void RuntimeType::GetMemberVariableSValue(int index, SValue& svalue) {
 
 void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
     if (index >= static_cast<int>(irClass->staticIRMetaVariableList.size())) {
-        Log::AddVM(EError::None, "ÊâßË°åÁöÑÂèÇÊï∞Ë∂ÖÂá∫ËåÉÂõ¥!!");
+        Log::AddVM(EError::None, "÷¥––µƒ≤Œ ˝≥¨≥ˆ∑∂Œß!!");
         return;
     }
     
@@ -104,7 +104,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::Null: {
             ClassObject* classObj = dynamic_cast<ClassObject*>(m_StaticMemObjectList[index]);
             if (classObj == nullptr) {
-                Log::AddVM(EError::None, "Null ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "Null ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                 return;
             }
             classObj->SetNull();
@@ -117,7 +117,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::Byte: {
             ByteObject* byteObj = dynamic_cast<ByteObject*>(m_StaticMemObjectList[index]);
             if (byteObj == nullptr) {
-                Log::AddVM(EError::None, "Byte ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "Byte ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                 return;
             }
             byteObj->SetValue(svalue.int8Value);
@@ -126,7 +126,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::SByte: {
             SByteObject* sbyteObj = dynamic_cast<SByteObject*>(m_StaticMemObjectList[index]);
             if (sbyteObj == nullptr) {
-                Log::AddVM(EError::None, "Sbyte ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "Sbyte ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                 return;
             }
             sbyteObj->SetValue(svalue.sint8Value);
@@ -135,7 +135,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::Int16: {
             Int16Object* int32Obj = dynamic_cast<Int16Object*>(m_StaticMemObjectList[index]);
             if (int32Obj == nullptr) {
-                Log::AddVM(EError::None, "Int16 ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "Int16 ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                 return;
             }
             int32Obj->SetValue(svalue.int16Value);
@@ -144,7 +144,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::UInt16: {
             UInt16Object* uint16Obj = dynamic_cast<UInt16Object*>(m_StaticMemObjectList[index]);
             if (uint16Obj == nullptr) {
-                Log::AddVM(EError::None, "UInt16 ËØ•Á±ªÂûã‰∏çÊòØInt16Á±ªÂûã!!");
+                Log::AddVM(EError::None, "UInt16 ∏√¿‡–Õ≤ª «Int16¿‡–Õ!!");
                 return;
             }
             uint16Obj->SetValue(svalue.uint16Value);
@@ -153,7 +153,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::Int32: {
             Int32Object* int32Obj = dynamic_cast<Int32Object*>(m_StaticMemObjectList[index]);
             if (int32Obj == nullptr) {
-                Log::AddVM(EError::None, "Int32 ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "Int32 ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                 return;
             }
             int32Obj->SetValue(svalue.int32Value);
@@ -162,7 +162,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::UInt32: {
             UInt32Object* uint32Obj = dynamic_cast<UInt32Object*>(m_StaticMemObjectList[index]);
             if (uint32Obj == nullptr) {
-                Log::AddVM(EError::None, "UInt32 ËØ•Á±ªÂûã‰∏çÊòØUInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "UInt32 ∏√¿‡–Õ≤ª «UInt32¿‡–Õ!!");
                 return;
             }
             uint32Obj->SetValue(svalue.uint32Value);
@@ -171,7 +171,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::Int64: {
             Int64Object* int64Obj = dynamic_cast<Int64Object*>(m_StaticMemObjectList[index]);
             if (int64Obj == nullptr) {
-                Log::AddVM(EError::None, "Int64 ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "Int64 ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                 return;
             }
             int64Obj->SetValue(svalue.int64Value);
@@ -180,7 +180,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::UInt64: {
             UInt64Object* uint64Obj = dynamic_cast<UInt64Object*>(m_StaticMemObjectList[index]);
             if (uint64Obj == nullptr) {
-                Log::AddVM(EError::None, "UInt64 ËØ•Á±ªÂûã‰∏çÊòØInt64Á±ªÂûã!!");
+                Log::AddVM(EError::None, "UInt64 ∏√¿‡–Õ≤ª «Int64¿‡–Õ!!");
                 return;
             }
             uint64Obj->SetValue(svalue.uint64Value);
@@ -189,7 +189,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::Float32: {
             FloatObject* floatObj = dynamic_cast<FloatObject*>(m_StaticMemObjectList[index]);
             if (floatObj == nullptr) {
-                Log::AddVM(EError::None, "Float ËØ•Á±ªÂûã‰∏çÊòØfloatÁ±ªÂûã!!");
+                Log::AddVM(EError::None, "Float ∏√¿‡–Õ≤ª «float¿‡–Õ!!");
                 return;
             }
             floatObj->SetValue(svalue.floatValue);
@@ -198,7 +198,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::Float64: {
             DoubleObject* doubleObj = dynamic_cast<DoubleObject*>(m_StaticMemObjectList[index]);
             if (doubleObj == nullptr) {
-                Log::AddVM(EError::None, "Double ËØ•Á±ªÂûã‰∏çÊòØDoubleÁ±ªÂûã!!");
+                Log::AddVM(EError::None, "Double ∏√¿‡–Õ≤ª «Double¿‡–Õ!!");
                 return;
             }
             doubleObj->SetValue(svalue.doubleValue);
@@ -207,7 +207,7 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
         case EType::String: {
             StringObject* stringObj = dynamic_cast<StringObject*>(m_StaticMemObjectList[index]);
             if (stringObj == nullptr) {
-                Log::AddVM(EError::None, "String ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                Log::AddVM(EError::None, "String ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                 return;
             }
             stringObj->SetValue(svalue.stringValue);
@@ -218,70 +218,70 @@ void RuntimeType::SetMemberVariableSValue(int index, const SValue& svalue) {
             if (mva->eType == EType::Byte) {
                 ByteObject* byteObj = dynamic_cast<ByteObject*>(mva);
                 if (byteObj == nullptr) {
-                    Log::AddVM(EError::None, "Class ByteObject ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "Class ByteObject ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                     return;
                 }
                 byteObj->SetValue(svalue.int8Value);
             } else if (mva->eType == EType::SByte) {
                 SByteObject* sbyteObj = dynamic_cast<SByteObject*>(mva);
                 if (sbyteObj == nullptr) {
-                    Log::AddVM(EError::None, "Class SByteObject ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "Class SByteObject ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                     return;
                 }
                 sbyteObj->SetValue(svalue.sint8Value);
             } else if (mva->eType == EType::Int16) {
                 Int16Object* int16Obj = dynamic_cast<Int16Object*>(mva);
                 if (int16Obj == nullptr) {
-                    Log::AddVM(EError::None, "Class Int16Object ËØ•Á±ªÂûã‰∏çÊòØInt16Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "Class Int16Object ∏√¿‡–Õ≤ª «Int16¿‡–Õ!!");
                     return;
                 }
                 int16Obj->SetValue(svalue.int16Value);
             } else if (mva->eType == EType::UInt16) {
                 UInt32Object* uint32Obj = dynamic_cast<UInt32Object*>(mva);
                 if (uint32Obj == nullptr) {
-                    Log::AddVM(EError::None, "Class UInt32Object ËØ•Á±ªÂûã‰∏çÊòØUInt32Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "Class UInt32Object ∏√¿‡–Õ≤ª «UInt32¿‡–Õ!!");
                     return;
                 }
                 uint32Obj->SetValue(svalue.uint32Value);
             } else if (mva->eType == EType::Int32) {
                 Int32Object* int32Obj = dynamic_cast<Int32Object*>(mva);
                 if (int32Obj == nullptr) {
-                    Log::AddVM(EError::None, "Class Int32Object ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "Class Int32Object ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                     return;
                 }
                 int32Obj->SetValue(svalue.int32Value);
             } else if (mva->eType == EType::UInt32) {
                 UInt32Object* uint32Obj = dynamic_cast<UInt32Object*>(mva);
                 if (uint32Obj == nullptr) {
-                    Log::AddVM(EError::None, "Class UInt32Object ËØ•Á±ªÂûã‰∏çÊòØInt32Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "Class UInt32Object ∏√¿‡–Õ≤ª «Int32¿‡–Õ!!");
                     return;
                 }
                 uint32Obj->SetValue(svalue.uint32Value);
             } else if (mva->eType == EType::Int64) {
                 Int64Object* int64Obj = dynamic_cast<Int64Object*>(mva);
                 if (int64Obj == nullptr) {
-                    Log::AddVM(EError::None, "ËØ•Á±ªÂûã‰∏çÊòØInt64Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "∏√¿‡–Õ≤ª «Int64¿‡–Õ!!");
                     return;
                 }
                 int64Obj->SetValue(svalue.int64Value);
             } else if (mva->eType == EType::UInt64) {
                 UInt64Object* uint64Obj = dynamic_cast<UInt64Object*>(mva);
                 if (uint64Obj == nullptr) {
-                    Log::AddVM(EError::None, "ËØ•Á±ªÂûã‰∏çÊòØInt64Á±ªÂûã!!");
+                    Log::AddVM(EError::None, "∏√¿‡–Õ≤ª «Int64¿‡–Õ!!");
                     return;
                 }
                 uint64Obj->SetValue(svalue.uint64Value);
             } else if (mva->eType == EType::String) {
                 StringObject* stringObj = dynamic_cast<StringObject*>(mva);
                 if (stringObj == nullptr) {
-                    Log::AddVM(EError::None, "ËØ•Á±ªÂûã‰∏çÊòØstringObjÁ±ªÂûã!!");
+                    Log::AddVM(EError::None, "∏√¿‡–Õ≤ª «stringObj¿‡–Õ!!");
                     return;
                 }
                 stringObj->SetValue(svalue.stringValue);
             } else {
                 ClassObject* classObj = dynamic_cast<ClassObject*>(m_StaticMemObjectList[index]);
                 if (classObj == nullptr) {
-                    Log::AddVM(EError::None, "ËØ•Á±ªÂûã‰∏çÊòØclassObjÁ±ªÂûã!!");
+                    Log::AddVM(EError::None, "∏√¿‡–Õ≤ª «classObj¿‡–Õ!!");
                     return;
                 }
                 m_StaticMemObjectList[index] = dynamic_cast<ClassObject*>(svalue.sobject);

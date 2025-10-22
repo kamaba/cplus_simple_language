@@ -22,7 +22,7 @@
 namespace SimpleLanguage {
 namespace Core {
 
-// 鍓嶅悜澹版槑
+// 前向声明
 class MetaFunction;
 class MetaInputParamCollection;
 class MetaExpressNode;
@@ -32,7 +32,7 @@ public:
     MetaMethodCall(MetaClass* staticMc, const std::vector<MetaType*>& staticMmitList, MetaFunction* fun, const std::vector<MetaType*>& mpipList, MetaInputParamCollection* paramCollection, MetaVariable* loadMv, MetaVariable* storeMv);
     virtual ~MetaMethodCall() = default;
 
-    // 灞炴�ц闂櫒
+    // 属性访问器
     MetaVariable* getLoadMetaVariable() const { return m_LoadMetaVariable; }
     MetaVariable* getStoreMetaVariable() const { return m_StoreMetaVariable; }
     MetaClass* getStaticCallerMetaClass() const { return m_StaticCallerMetaClass; }
@@ -42,7 +42,7 @@ public:
     const std::vector<MetaExpressNode*>& getMetaInputParamList() const { return m_MetaInputParamList; }
     const std::vector<MetaType*>& getMetaFunctionInputTemplateList() const { return m_MetaFunctionInputTemplateList; }
 
-    // 鏂规硶
+    // 方法
     void Parse(AllowUseSettings* auc);
     void CalcReturnType();
     std::string ToFormatString() const;
@@ -66,7 +66,7 @@ public:
     MetaVisitCall(const std::string& name);
     virtual ~MetaVisitCall() = default;
 
-    // 灞炴�ц闂櫒
+    // 属性访问器
     MetaMethodCall* GetMetaMethodCall() const { return m_MetaMethodCall; }
     MetaVariable* GetMetaVariable() const { return m_MetaVariable; }
     MetaClass* GetMetaClass() const { return m_MetaClass; }
@@ -271,7 +271,7 @@ public:
     bool IsPsi() const { return m_IsPsi; }
     bool IsOmega() const { return m_IsOmega; }
 
-    // 璁剧疆鏂规硶
+    // 设置方法
     void setMetaMethodCall(MetaMethodCall* metaMethodCall) { m_MetaMethodCall = metaMethodCall; }
     void setMetaVariable(MetaVariable* metaVariable) { m_MetaVariable = metaVariable; }
     void setMetaClass(MetaClass* metaClass) { m_MetaClass = metaClass; }
@@ -476,7 +476,7 @@ public:
     void setPsi(bool isPsi) { m_IsPsi = isPsi; }
     void setOmega(bool isOmega) { m_IsOmega = isOmega; }
 
-    // 鏂规硶
+    // 方法
     virtual std::string toFormatString() const override;
     virtual std::string toTokenString() const;
     virtual void parse();

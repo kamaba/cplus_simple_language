@@ -9,6 +9,8 @@
 #include "Log.h"
 #include <iostream>
 #include <iomanip>
+#include "../Compile/Token.h"
+
 using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
@@ -35,7 +37,7 @@ std::string LogData::ToString() const {
     m_SB.str("");
     m_SB.clear();
 
-    m_SB << "ç±»åž‹: [" << static_cast<int>(errorType) << "] ";
+    m_SB << "ÀàÐÍ: [" << static_cast<int>(errorType) << "] ";
     m_SB << " Error: [" << static_cast<int>(error) << "] ";
 
     if (!filePath.empty()) {
@@ -193,12 +195,12 @@ void Log::AddLog(Token* token, EError err, const std::string& msg) {
 }
 
 void Log::PrintLog() {
-    std::cout << "----------é”™è¯¯æ”¶é›† å¼€å§‹---------------------" << std::endl;
+    std::cout << "----------´íÎóÊÕ¼¯ ¿ªÊ¼---------------------" << std::endl;
 
     for (auto ld : logDataList) {
         std::cout << ld->ToString() << std::endl;
     }
-    std::cout << "----------é”™è¯¯æ”¶é›† ç»“æŸ---------------------" << std::endl;
+    std::cout << "----------´íÎóÊÕ¼¯ ½áÊø---------------------" << std::endl;
 }
 
 } // namespace Debug

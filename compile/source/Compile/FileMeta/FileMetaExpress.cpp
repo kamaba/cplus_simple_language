@@ -101,7 +101,7 @@ std::string FileMetaCallTerm::ToFormatString() const {
 }
 
 // FileMetaParTerm implementation
-FileMetaParTerm::FileMetaParTerm(FileMeta* fm, Node* node, FileMetaTermExpress::EExpressType expressType)
+FileMetaParTerm::FileMetaParTerm(FileMeta* fm, Node* node, EExpressType expressType)
     : FileMetaBaseTerm(fm), m_ParNode(node), m_ExpressType(expressType) {
     m_Priority = SimpleLanguage::SignComputePriority::Level1;
 }

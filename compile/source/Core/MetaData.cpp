@@ -8,11 +8,13 @@
 
 #include "MetaData.h"
 #include "MetaMemberData.h"
+#include "MetaNode.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
 #include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include <sstream>
 
+using namespace SimpleLanguage::Debug;
 namespace SimpleLanguage {
 namespace Core {
 
@@ -68,7 +70,7 @@ namespace Core {
             auto v = fmc->GetMemberDataList()[i];
             MetaNode* mb = m_MetaNode->GetChildrenMetaNodeByName(v->Name());
             if (mb != nullptr) {
-                Debug::Log::AddInStructMeta(EError::None, "Error MetaData MetaDataMemberå·²æœ‰å®šä¹‰ç±»: " + m_AllName + "ä¸­ å·²æœ‰: " + (v->GetToken() ? v->GetToken()->ToLexemeAllString() : "null") + "çš„å…ƒç´ !!");
+                Debug::Log::AddInStructMeta(EError::None, "Error MetaData MetaDataMemberÒÑÓĞ¶¨ÒåÀà: " + m_AllName + "ÖĞ ÒÑÓĞ: " + (v->GetToken() ? v->GetToken()->ToLexemeAllString() : "null") + "µÄÔªËØ!!");
                 isHave = true;
             } else {
                 isHave = false;
@@ -84,7 +86,7 @@ namespace Core {
         }
 
         if (fmc->GetMemberVariableList().size() > 0 || fmc->GetMemberFunctionList().size() > 0) {
-            Debug::Log::AddInStructMeta(EError::None, "Error Dataä¸­ä¸å…è®¸æœ‰Variable å’Œ Function!!");
+            Debug::Log::AddInStructMeta(EError::None, "Error DataÖĞ²»ÔÊĞíÓĞVariable ºÍ Function!!");
         }
     }
 

@@ -18,7 +18,7 @@
 namespace SimpleLanguage {
 namespace Core {
 
-    // å‰å‘å£°æ˜
+    // Ç°ÏòÉùÃ÷
     class MetaClass;
     class MetaType;
     class MetaMemberFunction;
@@ -70,12 +70,12 @@ namespace Core {
     public:
         MetaMemberFunction();
         MetaMemberFunction(MetaClass* mc);
-        MetaMemberFunction(MetaClass* mc, void* fmmf); // ç®€åŒ–å®ç°
+        MetaMemberFunction(MetaClass* mc, void* fmmf); // ¼ò»¯ÊµÏÖ
         MetaMemberFunction(MetaClass* mc, const std::string& name);
         MetaMemberFunction(const MetaMemberFunction& mmf);
         virtual ~MetaMemberFunction() = default;
 
-        // å±æ€§è®¿é—®å™¨
+        // ÊôĞÔ·ÃÎÊÆ÷
         virtual std::string GetFunctionAllName() const;
         int GetParseLevel() const;
         bool IsTemplateFunction() const { return m_IsTemplateFunction; }
@@ -92,13 +92,13 @@ namespace Core {
         const std::vector<MetaType*>& GetBindStructTemplateFunctionMtList() const { return m_BindStructTemplateFunctionMtList; }
         const std::vector<MetaType*>& GetBindStructTemplateFunctionAndClassMtList() const { return m_BindStructTemplateFunctionAndClassMtList; }
 
-        // è®¾ç½®æ–¹æ³•
+        // ÉèÖÃ·½·¨
         void SetSourceMetaMemberFunction(MetaMemberFunction* mmf) { m_SourceMetaMemberFunction = mmf; }
         void SetIsGet(bool isGet) { m_IsGet = isGet; }
         void SetIsSet(bool isSet) { m_IsSet = isSet; }
         void SetIsOverrideFunction(bool flag) { m_IsOverrideFunction = flag; }
 
-        // æ–¹æ³•
+        // ·½·¨
         void* GetToken() const;
         bool IsEqualWithMMFByNameAndParam(MetaMemberFunction* mmf);
         void AddMetaDefineParam(MetaDefineParam* mdp);
@@ -116,13 +116,13 @@ namespace Core {
         MetaType* FindBindStructTemplateFunctionMtList(MetaType* mt);
         MetaType* FindBindStructTemplateFunctionAndClassMtList(MetaType* mt);
 
-        // é™æ€æ–¹æ³•
+        // ¾²Ì¬·½·¨
         static MetaStatements* CreateMetaSyntax(void* rootMs, MetaBlockStatements* currentBlockStatements);
         static MetaStatements* HandleMetaSyntax(MetaBlockStatements* currentBlockStatements, 
                                                MetaStatements*& beforeStatements,
                                                void* childFms);
 
-        // æ ¼å¼åŒ–æ–¹æ³•
+        // ¸ñÊ½»¯·½·¨
         std::string ToString() const;
         std::string ToFormatString() const override;
 
@@ -140,16 +140,16 @@ namespace Core {
         bool m_ConstructInitFunction = false;
         bool m_IsWithInterface = false;
         MetaMemberFunction* m_SourceMetaMemberFunction = nullptr;
-        void* m_FileMetaMemberFunction = nullptr; // ç®€åŒ–å®ç°
+        void* m_FileMetaMemberFunction = nullptr; // ¼ò»¯ÊµÏÖ
 
-        // ç»‘å®šæ„å»ºå…ƒç±»å‹
+        // °ó¶¨¹¹½¨ÔªÀàĞÍ
         std::vector<MetaType*> m_BindStructTemplateFunctionMtList;
         std::vector<MetaType*> m_BindStructTemplateFunctionAndClassMtList;
 
-        // æ¨¡æ¿ç”Ÿæˆå‡½æ•°
-        std::vector<void*> m_GenTempalteFunctionList; // ç®€åŒ–å®ç°
+        // Ä£°åÉú³Éº¯Êı
+        std::vector<void*> m_GenTempalteFunctionList; // ¼ò»¯ÊµÏÖ
 
-        // å…¶ä»–æˆå‘˜
+        // ÆäËû³ÉÔ±
         MetaDefineParamCollection* m_MetaMemberParamCollection = nullptr;
         MetaTemplateCollection* m_MetaMemberTemplateCollection = nullptr;
         MetaBlockStatements* m_MetaBlockStatements = nullptr;

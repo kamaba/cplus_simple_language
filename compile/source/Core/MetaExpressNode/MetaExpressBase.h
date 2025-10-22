@@ -8,16 +8,12 @@
 
 #pragma once
 
-#include "../MetaType.h"
-#include "../MetaClass.h"
-#include "../MetaBlockStatements.h"
-#include "../MetaTypeFactory.h"
-#include "../AllowUseSettings.h"
+
 #include <string>
 
 namespace SimpleLanguage {
 namespace Core {
-
+    class AllowUseSettings;
 enum class ELeftRightOpSign {
     Add,
     Minus,

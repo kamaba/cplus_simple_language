@@ -251,7 +251,7 @@ public:
                 m_OpLevelSign = ELeftRightOpSign::Or;
                 break;
             default:
-                std::cout << "Error æ²¡æœ‰é€‚åˆçš„ç¬¦å·!!!" << static_cast<int>(ett) << std::endl;
+                std::cout << "Error Ã»ÓÐÊÊºÏµÄ·ûºÅ!!!" << static_cast<int>(ett) << std::endl;
                 break;
         }
         ComputeIsComputeType();
@@ -346,7 +346,7 @@ public:
                 }
             }
         } else {
-            std::cout << "Error é”™è¯¯ï¼Œå·¦å³å€¼ä¸å¯¹!!" << std::endl;
+            std::cout << "Error ´íÎó£¬×óÓÒÖµ²»¶Ô!!" << std::endl;
         }
     }
     

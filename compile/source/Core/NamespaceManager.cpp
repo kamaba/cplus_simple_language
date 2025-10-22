@@ -135,7 +135,7 @@ void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::FileMe
             MetaNamespace* mn = new MetaNamespace(name);
             if (ProjectManager::useDefineNamespaceType != EUseDefineType::NoUseProjectConfigNamespace) {
                 mn->SetIsNowAllowCreateName( true );
-                Log::AddInStructMeta(EError::None, "Error åœ¨ä½¿ç”¨namespace æ—¶ï¼Œåœ¨é¡¹ç›®å®šä¹‰ä¸­ï¼Œæ²¡æœ‰æ‰¾åˆ°ç›¸å…³çš„å®šä¹‰!!  ä½ç½®:" + fns->GetNamespaceStatementBlock()->GetTokenList()[i]->ToLexemeAllString());
+                Log::AddInStructMeta(EError::None, "Error ÔÚÊ¹ÓÃnamespace Ê±£¬ÔÚÏîÄ¿¶¨ÒåÖĞ£¬Ã»ÓĞÕÒµ½Ïà¹ØµÄ¶¨Òå!!  Î»ÖÃ:" + fns->GetNamespaceStatementBlock()->GetTokenList()[i]->ToLexemeAllString());
             }
             parentNode = parentNode->AddMetaNamespace(mn);
         }
@@ -194,7 +194,7 @@ void NamespaceManager::AddNamespaceString(const std::string& nsString) {
         //            parentMetaNamespace = metabase as MetaNamespace;
         //            if(parentMetaNamespace == null )
         //            {
-        //                Debug.Write("å·²æœ‰ç±»: " + tempname + "ä¸æ·»åŠ çš„å‘½åç©ºé—´å†²çª!!");
+        //                Debug.Write("ÒÑÓĞÀà: " + tempname + "ÓëÌí¼ÓµÄÃüÃû¿Õ¼ä³åÍ»!!");
         //                return;
         //            }
         //        }
@@ -212,7 +212,7 @@ void NamespaceManager::AddNamespaceString(const std::string& nsString) {
         //            parentMetaNamespace = metabase as MetaNamespace;
         //            if (parentMetaNamespace == null)
         //            {
-        //                Debug.Write("å·²æœ‰ç±»: " + tempname + "ä¸æ·»åŠ çš„å‘½åç©ºé—´å†²çª!!");
+        //                Debug.Write("ÒÑÓĞÀà: " + tempname + "ÓëÌí¼ÓµÄÃüÃû¿Õ¼ä³åÍ»!!");
         //                return;
         //            }
         //        }
@@ -226,7 +226,7 @@ void NamespaceManager::AddNamespaceString(const std::string& nsString) {
         //}
         //metaNamespaceDict.Add(nsString, parentMetaNamespace);
     } else {
-        Log::AddInStructMeta(EError::None, "NamespaceManager::AddNamespaceString å‘½åç©ºé—´:" + nsString + "è§£æé”™è¯¯!!");
+        Log::AddInStructMeta(EError::None, "NamespaceManager::AddNamespaceString ÃüÃû¿Õ¼ä:" + nsString + "½âÎö´íÎó!!");
         return;
     }
 }

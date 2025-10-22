@@ -29,23 +29,23 @@ bool FileMetaParamterDefine::ParseBuildMetaParamter(const std::vector<Node*>& in
     auto nodeList = SimpleLanguage::Compile::StructParse::HandleBeforeNode(beforeNode);
     
     if (!SimpleLanguage::Compile::FileMetatUtil::SplitNodeList(nodeList, listDefieNode, valueNodeList, m_AssignToken)) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error è§£æNodeListå‡ºç°é”™è¯¯~~~");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ½âÎöNodeList³öÏÖ´íÎó~~~");
         return false;
     }
     if (!valueNodeList.empty())
         m_Express = SimpleLanguage::Compile::FileMetatUtil::CreateFileMetaExpress(m_FileMeta, valueNodeList, 
-            FileMetaTermExpress::EExpressType::ParamVariable);
+            EExpressType::ParamVariable);
 
     Node* nameNode = nullptr;
     Node* typeNode = nullptr;
     if (!GetNameAndTypeNode(listDefieNode, nameNode, typeNode, m_ParamsToken)) {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::UnMatchChar, 
-            "Error æ²¡æœ‰æ‰¾åˆ°è¯¥å®šä¹‰åç§° å¿…é¡»ä½¿ç”¨ä¾‹: X = 102; çš„æ ¼å¼");
+            "Error Ã»ÓĞÕÒµ½¸Ã¶¨ÒåÃû³Æ ±ØĞëÊ¹ÓÃÀı: X = 102; µÄ¸ñÊ½");
         return false;
     }
     if (nameNode == nullptr) {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-            "Error æ²¡æœ‰æ‰¾åˆ°è¯¥å®šä¹‰åç§° å¿…é¡»ä½¿ç”¨ä¾‹: X = 101; çš„æ ¼å¼");
+            "Error Ã»ÓĞÕÒµ½¸Ã¶¨ÒåÃû³Æ ±ØĞëÊ¹ÓÃÀı: X = 101; µÄ¸ñÊ½");
         return false;
     }
     m_Token = nameNode->token;
@@ -160,7 +160,7 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
             if (cnode->parNode != nullptr) {
                 if (funNameNode != nullptr) {
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::UnMatchChar, 
-                        "Error å·²æœ‰å‡½æ•°å®ä½“ï¼Œä¸èƒ½åŒæ—¶å‡ºç°ä¸¤ä¸ªå‡½æ•°å®ä½“!");
+                        "Error ÒÑÓĞº¯ÊıÊµÌå£¬²»ÄÜÍ¬Ê±³öÏÖÁ½¸öº¯ÊıÊµÌå!");
                 }
                 funNameNode = cnode;
             } else {
@@ -176,12 +176,12 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
                     permissionToken = token;
                 } else {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error è§£æè¿‡äº†ä¸€æ¬¡æƒé™!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ½âÎö¹ıÁËÒ»´ÎÈ¨ÏŞ!!");
                 }
             } else if (token->GetType() == SimpleLanguage::ETokenType::Override) {
                 if (virtualToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error è§£æè¿‡äº†ä¸€æ¬¡Override!!");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ½âÎö¹ıÁËÒ»´ÎOverride!!");
                 }
                 virtualToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Static) {
@@ -189,13 +189,13 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
             } else if (token->GetType() == SimpleLanguage::ETokenType::Get) {
                 if (getToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error è§£æç±»å‹å¤šä¸ªget");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error ½âÎöÀàĞÍ¶à¸öget");
                 }
                 getToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Set) {
                 if (setToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error è§£æç±»å‹å¤šä¸ªset");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error ½âÎöÀàĞÍ¶à¸öset");
                 }
                 setToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Type ||
@@ -205,19 +205,19 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
                 if (interfaceToken != nullptr) {
                     isError = true;
                     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                        "Error è§£æinterfaceå·²ä½¿ç”¨è¿‡ä¸€æ¬¡ï¼Œä¸å…è®¸é‡å¤ä½¿ç”¨!!");
+                        "Error ½âÎöinterfaceÒÑÊ¹ÓÃ¹ıÒ»´Î£¬²»ÔÊĞíÖØ¸´Ê¹ÓÃ!!");
                 }
                 interfaceToken = token;
             } else if (token->GetType() == SimpleLanguage::ETokenType::Final) {
                 if (finalToken != nullptr) {
                     isError = true;
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error è§£æç±»å‹å¤šä¸ªfinal");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, " Error ½âÎöÀàĞÍ¶à¸öfinal");
                 }
                 finalToken = token;
             } else {
                 isError = true;
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-                    "Error æœ‰å…¶å®ƒæœªçŸ¥ç±»å‹åœ¨classä¸­", token);
+                    "Error ÓĞÆäËüÎ´ÖªÀàĞÍÔÚclassÖĞ", token);
                 break;
             }
         }
@@ -225,7 +225,7 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
     
     if (funNameNode == nullptr) {
         SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, 
-            "Eror æ²¡æœ‰æ‰¾åˆ°åˆé€‚çš„å‡½æ•°ç±»å‹: ä½ç½®: " + (nodeList.empty() ? "" : (nodeList[0]->token != nullptr ? nodeList[0]->token->ToLexemeAllString() : "")));
+            "Eror Ã»ÓĞÕÒµ½ºÏÊÊµÄº¯ÊıÀàĞÍ: Î»ÖÃ: " + (nodeList.empty() ? "" : (nodeList[0]->token != nullptr ? nodeList[0]->token->ToLexemeAllString() : "")));
         return false;
     }
 
@@ -239,7 +239,7 @@ bool FileMetaMemberFunction::ParseFunction(const std::vector<Node*>& nodeList) {
         m_FileMetaBlockSyntax = new FileMetaBlockSyntax(m_FileMeta, m_LeftBraceToken, m_RightBraceToken);
     }
     if (isError) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "ParseFunction è§£æå‡½æ•°");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "ParseFunction ½âÎöº¯Êı");
     }
     m_OverrideToken = virtualToken;
     m_PermissionToken = permissionToken;
@@ -277,7 +277,7 @@ void FileMetaMemberFunction::ParseParam(Node* parNode) {
         auto nodelist = tparamList[i];
         auto cdp = new FileMetaParamterDefine(m_FileMeta, nodelist);
         if (nameSet.find(cdp->Name()) != nameSet.end()) {
-            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error å‚æ•°åç§°æœ‰é‡å!!!");
+            SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ²ÎÊıÃû³ÆÓĞÖØÃû!!!");
         }
         AddMetaParamter(cdp);
     }
@@ -296,7 +296,7 @@ void FileMetaMemberFunction::ParseTemplate(Node* node) {
             auto it = std::find_if(m_MetaTemplatesList.begin(), m_MetaTemplatesList.end(),
                 [&cdp](FileMetaTemplateDefine* fmtd) { return fmtd->Name() == cdp->Name(); });
             if (it != m_MetaTemplatesList.end()) {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error å‚æ•°åç§°æœ‰é‡å!!!");
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ²ÎÊıÃû³ÆÓĞÖØÃû!!!");
                 continue;
             }
             AddMetaTemplate(cdp);

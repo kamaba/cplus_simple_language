@@ -115,8 +115,8 @@ namespace Compile {
         {
             case ETokenType::Number:
             {
-                // 这里需要根据extend字符串解析EType
-                    // 简化实现，实际需要更复杂的解析逻辑
+                // ������Ҫ����extend�ַ�������EType
+                    // ��ʵ�֣�ʵ����Ҫ�����ӵĽ����߼�
                 std::string extend_string = m_Extend.ToString();
                 if (extend_string == "Byte") etype = EType::Byte;
                 else if (extend_string == "SByte") etype = EType::SByte;
@@ -128,12 +128,12 @@ namespace Compile {
                 else if (extend_string == "UInt64") etype = EType::UInt64;
                 else if (extend_string == "Float32") etype = EType::Float32;
                 else if (extend_string == "Float64") etype = EType::Float64;
-                else etype = EType::Int32; // 默认
+                else etype = EType::Int32; // Ĭ��
             }
             break;
             case ETokenType::Type:
             {
-                // 类似上面的解析逻辑
+                // ��������Ľ����߼�
                 std::string extend_string = m_Extend.ToString();
                 if (extend_string == "Byte") etype = EType::Byte;
                 else if (extend_string == "SByte") etype = EType::SByte;
@@ -145,7 +145,7 @@ namespace Compile {
                 else if (extend_string == "UInt64") etype = EType::UInt64;
                 else if (extend_string == "Float32") etype = EType::Float32;
                 else if (extend_string == "Float64") etype = EType::Float64;
-                else etype = EType::Int32; // 默认
+                else etype = EType::Int32; // Ĭ��
             }
             break;
             case ETokenType::Boolean:

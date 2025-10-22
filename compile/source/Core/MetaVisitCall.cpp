@@ -27,9 +27,9 @@ MetaMethodCall::MetaMethodCall(MetaClass* staticMc, const std::vector<MetaType*>
 }
 
 void MetaMethodCall::Parse(AllowUseSettings* auc) {
-    // è§£ææ–¹æ³•è°ƒç”¨
+    // ½âÎö·½·¨µ÷ÓÃ
     if (m_VMCallMetaFunction != nullptr) {
-        // è§£æå‡½æ•°
+        // ½âÎöº¯Êı
     }
     
     for (auto& param : m_MetaInputParamList) {
@@ -40,9 +40,9 @@ void MetaMethodCall::Parse(AllowUseSettings* auc) {
 }
 
 void MetaMethodCall::CalcReturnType() {
-    // è®¡ç®—è¿”å›ç±»å‹
+    // ¼ÆËã·µ»ØÀàĞÍ
     if (m_VMCallMetaFunction != nullptr) {
-        // è®¡ç®—å‡½æ•°è¿”å›ç±»å‹
+        // ¼ÆËãº¯Êı·µ»ØÀàĞÍ
     }
     
     for (auto& param : m_MetaInputParamList) {
@@ -105,7 +105,7 @@ std::string MetaMethodCall::ToTokenString() const {
 MetaMethodCall* MetaMethodCall::Clone() const {
     MetaMethodCall* cloned = new MetaMethodCall(m_StaticCallerMetaClass, m_StaticMetaClassInputTemplateList, m_VMCallMetaFunction, m_MetaFunctionInputTemplateList, nullptr, m_LoadMetaVariable, m_StoreMetaVariable);
     
-    // å…‹éš†è¾“å…¥å‚æ•°åˆ—è¡¨
+    // ¿ËÂ¡ÊäÈë²ÎÊıÁĞ±í
     for (auto& param : m_MetaInputParamList) {
         if (param != nullptr) {
             cloned->m_MetaInputParamList.push_back(param->clone());
@@ -116,7 +116,7 @@ MetaMethodCall* MetaMethodCall::Clone() const {
 }
 
 MetaVisitCall::MetaVisitCall() : MetaBase() {
-    // é»˜è®¤æ„é€ å‡½æ•°
+    // Ä¬ÈÏ¹¹Ôìº¯Êı
 }
 
 MetaVisitCall::MetaVisitCall(const std::string& name) : MetaBase() {
@@ -180,41 +180,41 @@ std::string MetaVisitCall::ToTokenString() const {
 }
 
 void MetaVisitCall::Parse() {
-    // è§£æè®¿é—®è°ƒç”¨
+    // ½âÎö·ÃÎÊµ÷ÓÃ
     if (m_MetaMethodCall != nullptr) {
         m_MetaMethodCall->parse(nullptr);
     }
     
     if (m_MetaVariable != nullptr) {
-        // è§£æå˜é‡
+        // ½âÎö±äÁ¿
     }
     
     if (m_MetaClass != nullptr) {
-        // è§£æç±»
+        // ½âÎöÀà
     }
     
     if (m_MetaType != nullptr) {
-        // è§£æç±»å‹
+        // ½âÎöÀàĞÍ
     }
     
     if (m_MetaMemberFunction != nullptr) {
-        // è§£ææˆå‘˜å‡½æ•°
+        // ½âÎö³ÉÔ±º¯Êı
     }
     
     if (m_MetaMemberVariable != nullptr) {
-        // è§£ææˆå‘˜å˜é‡
+        // ½âÎö³ÉÔ±±äÁ¿
     }
     
     if (m_MetaMemberData != nullptr) {
-        // è§£ææˆå‘˜æ•°æ®
+        // ½âÎö³ÉÔ±Êı¾İ
     }
     
     if (m_MetaEnum != nullptr) {
-        // è§£ææšä¸¾
+        // ½âÎöÃ¶¾Ù
     }
     
     if (m_MetaData != nullptr) {
-        // è§£ææ•°æ®
+        // ½âÎöÊı¾İ
     }
     
     if (m_MetaExpressNode != nullptr) {
@@ -225,41 +225,41 @@ void MetaVisitCall::Parse() {
 }
 
 void MetaVisitCall::CalcReturnType() {
-    // è®¡ç®—è¿”å›ç±»å‹
+    // ¼ÆËã·µ»ØÀàĞÍ
     if (m_MetaMethodCall != nullptr) {
         m_MetaMethodCall->calcReturnType();
     }
     
     if (m_MetaVariable != nullptr) {
-        // è®¡ç®—å˜é‡ç±»å‹
+        // ¼ÆËã±äÁ¿ÀàĞÍ
     }
     
     if (m_MetaClass != nullptr) {
-        // è®¡ç®—ç±»ç±»å‹
+        // ¼ÆËãÀàÀàĞÍ
     }
     
     if (m_MetaType != nullptr) {
-        // è®¡ç®—ç±»å‹
+        // ¼ÆËãÀàĞÍ
     }
     
     if (m_MetaMemberFunction != nullptr) {
-        // è®¡ç®—æˆå‘˜å‡½æ•°ç±»å‹
+        // ¼ÆËã³ÉÔ±º¯ÊıÀàĞÍ
     }
     
     if (m_MetaMemberVariable != nullptr) {
-        // è®¡ç®—æˆå‘˜å˜é‡ç±»å‹
+        // ¼ÆËã³ÉÔ±±äÁ¿ÀàĞÍ
     }
     
     if (m_MetaMemberData != nullptr) {
-        // è®¡ç®—æˆå‘˜æ•°æ®ç±»å‹
+        // ¼ÆËã³ÉÔ±Êı¾İÀàĞÍ
     }
     
     if (m_MetaEnum != nullptr) {
-        // è®¡ç®—æšä¸¾ç±»å‹
+        // ¼ÆËãÃ¶¾ÙÀàĞÍ
     }
     
     if (m_MetaData != nullptr) {
-        // è®¡ç®—æ•°æ®ç±»å‹
+        // ¼ÆËãÊı¾İÀàĞÍ
     }
     
     if (m_MetaExpressNode != nullptr) {

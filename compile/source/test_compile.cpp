@@ -8,26 +8,26 @@
 #include <iostream>
 
 int main() {
-    std::cout << "SimpleLanguage C++ ç¼–è¯‘æµ‹è¯•" << std::endl;
+    std::cout << "SimpleLanguage C++ ±àÒë²âÊÔ" << std::endl;
     
-    // æµ‹è¯•åŸºæœ¬æšä¸¾
+    // ²âÊÔ»ù±¾Ã¶¾Ù
     SimpleLanguage::Core::EPermission perm = SimpleLanguage::Core::EPermission::Public;
-    std::cout << "æƒé™æšä¸¾æµ‹è¯•: " << static_cast<int>(perm) << std::endl;
+    std::cout << "È¨ÏŞÃ¶¾Ù²âÊÔ: " << static_cast<int>(perm) << std::endl;
     
-    // æµ‹è¯• Token
+    // ²âÊÔ Token
     SimpleLanguage::Compile::Token token;
     token.SetLexeme(0, SimpleLanguage::Core::ETokenType::Identifier);
-    std::cout << "Token æµ‹è¯•: " << token.lexeme().ToString() << std::endl;
+    std::cout << "Token ²âÊÔ: " << token.lexeme().ToString() << std::endl;
     
-    // æµ‹è¯• FileMetaBase
+    // ²âÊÔ FileMetaBase
     SimpleLanguage::Compile::CoreFileMeta::FileMetaBase base;
-    std::cout << "FileMetaBase æ·±åº¦: " << base.deep() << std::endl;
+    std::cout << "FileMetaBase Éî¶È: " << base.deep() << std::endl;
     
-    // æµ‹è¯• FileMeta
+    // ²âÊÔ FileMeta
     SimpleLanguage::Compile::CoreFileMeta::FileMeta fileMeta("test.cpp");
-    std::cout << "FileMeta è·¯å¾„: " << fileMeta.path() << std::endl;
+    std::cout << "FileMeta Â·¾¶: " << fileMeta.path() << std::endl;
     
-    std::cout << "æ‰€æœ‰æµ‹è¯•é€šè¿‡!" << std::endl;
+    std::cout << "ËùÓĞ²âÊÔÍ¨¹ı!" << std::endl;
     return 0;
 }
 
