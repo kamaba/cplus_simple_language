@@ -29,3 +29,6 @@
 /source/clang/test/test_basic.c
 /cplus_simple_language.vcxproj.user
 /x64
+/compile/cplus_simple_language.vcxproj.user
+/compile/x64
+/compile/cplus_simple_language.vcxproj.filters
