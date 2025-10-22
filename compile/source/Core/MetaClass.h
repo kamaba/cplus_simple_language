@@ -10,20 +10,6 @@
 
 #include "MetaBase.h"
 #include "../Define.h"
-#include "../Compile/FileMeta/FileMetaClass.h"
-#include "../Compile/Token.h"
-#include "MetaType.h"
-#include "MetaMemberVariable.h"
-#include "MetaMemberFunction.h"
-#include "MetaMemberFunctionTemplateNode.h"
-#include "MetaExpressNode.h"
-#include "MetaTemplate.h"
-#include "MetaInputParamCollection.h"
-#include "ClassManager.h"
-#include "CoreMetaClassManager.h"
-#include "TypeManager.h"
-#include "MetaVariableManager.h"
-#include "MethodManager.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -61,6 +47,8 @@ namespace SimpleLanguage
 			MetaClass(const std::string& name, EType type = EType::Class);
 			MetaClass(const MetaClass& mc);
 			virtual ~MetaClass() = default;
+
+			void SetDeep(int deep) override;
 
 			// 属性访问器
 			virtual std::string GetAllClassName() const { return m_AllName; }
@@ -112,7 +100,7 @@ namespace SimpleLanguage
 			virtual MetaMemberFunction* GetFirstMetaMemberFunctionByName(const std::string& name);
 			virtual std::vector<MetaMemberFunction*> GetMemberInterfaceFunction();
 			virtual bool GetMemberInterfaceFunctionByFunc(MetaMemberFunction* func);
-			virtual std::string ToDefineTypeString();
+			virtual std::string ToDefineTypeString() const;
 			virtual std::string GetFormatString(bool isShowNamespace) const;
 
 			// 其他方法
@@ -133,12 +121,12 @@ namespace SimpleLanguage
 			MetaType* BindStructTemplateMetaClassList(MetaType* mt);
 
 			// 格式化方法
-			std::string ToString() const;
+			std::string ToString() const override;
 			std::string ToFormatString() const override;
 
 			// 模板相关属性访问器
 			bool IsTemplateClass() const { return m_IsTemplateClass; }
-			bool IsGenTemplate() const { return m_IsGenTemplate; }
+			virtual bool IsGenTemplate() const { return m_IsGenTemplate; }
 			const std::vector<MetaTemplate*>& GetMetaTemplateList() const { return m_MetaTemplateList; }
 
 		protected:

@@ -171,6 +171,7 @@
     <ClCompile Include="source\Core\MetaClass.cpp" />
     <ClCompile Include="source\Core\MetaData.cpp" />
     <ClCompile Include="source\Core\MetaDefineParam.cpp" />
+    <ClCompile Include="source\Core\MetaDynamicClass.cpp" />
     <ClCompile Include="source\Core\MetaEnum.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressBase.cpp" />
@@ -178,13 +179,16 @@
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressConst.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressNewObject.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressOperator.cpp" />
+    <ClCompile Include="source\Core\MetaGenTemplateClass.cpp" />
     <ClCompile Include="source\Core\MetaMemberData.cpp" />
     <ClCompile Include="source\Core\MetaMemberEnum.cpp" />
     <ClCompile Include="source\Core\MetaMemberFunction.cpp" />
     <ClCompile Include="source\Core\MetaMemberVariable.cpp" />
+    <ClCompile Include="source\Core\MetaMethod.cpp" />
     <ClCompile Include="source\Core\MetaModule.cpp" />
     <ClCompile Include="source\Core\MetaNamespace.cpp" />
     <ClCompile Include="source\Core\MetaNode.cpp" />
+    <ClCompile Include="source\Core\MetaParam.cpp" />
     <ClCompile Include="source\Core\MetaTemplate.cpp" />
     <ClCompile Include="source\Core\MetaType.cpp" />
     <ClCompile Include="source\Core\MetaVariable.cpp" />
@@ -203,6 +207,7 @@
     <ClCompile Include="source\Core\Statements\MetaStatements.cpp" />
     <ClCompile Include="source\Core\Statements\MetaSwitchStatements.cpp" />
     <ClCompile Include="source\Core\Statements\MetaWhileDoWhileStatements.cpp" />
+    <ClCompile Include="source\Core\TypeManager.cpp" />
     <ClCompile Include="source\Debug\Log.cpp" />
     <ClCompile Include="source\Define.cpp" />
     <ClCompile Include="source\IR\Core\IRMetaCallLink.cpp" />
@@ -298,6 +303,7 @@
     <ClInclude Include="source\Core\MetaClass.h" />
     <ClInclude Include="source\Core\MetaData.h" />
     <ClInclude Include="source\Core\MetaDefineParam.h" />
+    <ClInclude Include="source\Core\MetaDynamicClass.h" />
     <ClInclude Include="source\Core\MetaEnum.h" />
     <ClInclude Include="source\Core\MetaExpressNode.h" />
     <ClInclude Include="source\Core\MetaExpressNode\MetaExecuteStatementsNode.h" />
@@ -306,13 +312,16 @@
     <ClInclude Include="source\Core\MetaExpressNode\MetaExpressConst.h" />
     <ClInclude Include="source\Core\MetaExpressNode\MetaExpressNewObject.h" />
     <ClInclude Include="source\Core\MetaExpressNode\MetaExpressOperator.h" />
+    <ClInclude Include="source\Core\MetaGenTemplateClass.h" />
     <ClInclude Include="source\Core\MetaMemberData.h" />
     <ClInclude Include="source\Core\MetaMemberEnum.h" />
     <ClInclude Include="source\Core\MetaMemberFunction.h" />
     <ClInclude Include="source\Core\MetaMemberVariable.h" />
+    <ClInclude Include="source\Core\MetaMethod.h" />
     <ClInclude Include="source\Core\MetaModule.h" />
     <ClInclude Include="source\Core\MetaNamespace.h" />
     <ClInclude Include="source\Core\MetaNode.h" />
+    <ClInclude Include="source\Core\MetaParam.h" />
     <ClInclude Include="source\Core\MetaTemplate.h" />
     <ClInclude Include="source\Core\MetaType.h" />
     <ClInclude Include="source\Core\MetaVariable.h" />
@@ -331,6 +340,7 @@
     <ClInclude Include="source\Core\Statements\MetaStatements.h" />
     <ClInclude Include="source\Core\Statements\MetaSwitchStatements.h" />
     <ClInclude Include="source\Core\Statements\MetaWhileDoWhileStatements.h" />
+    <ClInclude Include="source\Core\TypeManager.h" />
     <ClInclude Include="source\Debug\Log.h" />
     <ClInclude Include="source\Define.h" />
     <ClInclude Include="source\IR\Core\IRMetaCallLink.h" />
@@ -379,20 +389,6 @@
     <ClInclude Include="source\VM\SValue.h" />
     <ClInclude Include="source\VM\TemplateObject.h" />
     <ClInclude Include="source\VM\VoidObject.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="source\Core\MetaParam.cs" />
-    <None Include="source\Core\MetaTypeFactory.cs" />
-    <None Include="source\Core\Statements\MetaAssignStatements.cs" />
-    <None Include="source\Core\Statements\MetaBlockStatements.cs" />
-    <None Include="source\Core\Statements\MetaBreakContinueGoStatements.cs" />
-    <None Include="source\Core\Statements\MetaCallStatements.cs" />
-    <None Include="source\Core\Statements\MetaDefineVarStatements.cs" />
-    <None Include="source\Core\Statements\MetaIfStatements.cs" />
-    <None Include="source\Core\Statements\MetaOtherPlatformStatement.cs" />
-    <None Include="source\Core\Statements\MetaReturnStatements.cs" />
-    <None Include="source\Core\Statements\MetaStatements.cs" />
-    <None Include="source\Core\Statements\MetaSwitchStatements.cs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

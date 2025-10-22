@@ -10,7 +10,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 // MetaAssignManager implementation
 MetaVariable* MetaAssignManager::GetJudgmentValueMetaVariable() const {
@@ -357,6 +356,5 @@ std::string MetaAssignStatements::GetFormatString() {
     return result;
 }
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

@@ -21,7 +21,7 @@ class MetaNode;
 class ModuleManager {
 public:
     static ModuleManager* s_Instance;
-    static ModuleManager* GetInstance();
+    static ModuleManager& GetInstance();
 
     std::string moduleName = "S";
     static const std::string csharpModuleName;

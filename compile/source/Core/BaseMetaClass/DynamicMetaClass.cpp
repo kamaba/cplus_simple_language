@@ -11,12 +11,18 @@
 #include "../MetaMemberFunction.h"
 #include "../MetaMemberVariable.h"
 #include "../MetaConstExpressNode.h"
+#include "../Global.h"
+#include <sstream>
 
 namespace SimpleLanguage {
 namespace Core {
 
 DynamicMetaClass::DynamicMetaClass() : MetaClass(DefaultObject::Dynamic.ToString()) {
     m_ClassDefineType = EClassDefineType::InnerDefine;
+}
+
+DynamicMetaClass::DynamicMetaClass(const std::string& _name) : MetaClass(_name) {
+    m_Type = EType::Class;
 }
 
 MetaClass* DynamicMetaClass::Cast(MetaTemplate* mc) {
@@ -29,6 +35,33 @@ int DynamicMetaClass::ToInt32() {
 
 void DynamicMetaClass::ParseInnerFunction() {
     AddCoreFunction();
+}
+
+void DynamicMetaClass::ParseDefineComplete() {
+    MetaClass::ParseDefineComplete();
+}
+
+std::string DynamicMetaClass::ToFormatString() const {
+    std::stringstream stringBuilder;
+    for (int i = 0; i < GetRealDeep(); i++)
+        stringBuilder << Global::tabChar;
+    
+    stringBuilder << GetName() << " ";
+    stringBuilder << std::endl;
+    
+    for (int i = 0; i < GetRealDeep(); i++)
+        stringBuilder << Global::tabChar;
+    stringBuilder << "{" << std::endl;
+
+    for (int i = 0; i < GetRealDeep(); i++)
+        stringBuilder << Global::tabChar;
+    stringBuilder << "}" << std::endl;
+
+    return stringBuilder.str();
+}
+
+std::string DynamicMetaClass::ToString() const {
+    return MetaClass::ToString();
 }
 
 void DynamicMetaClass::AddCoreFunction() {

@@ -33,7 +33,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaAssignManager {
 private:
@@ -87,6 +86,5 @@ public:
     virtual std::string GetFormatString();
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

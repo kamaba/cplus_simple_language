@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "../Compile/Token.h"
-#include "../Core/MetaBase.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -18,6 +16,8 @@
 #include <sstream>
 
 namespace SimpleLanguage {
+    class Compile::Token;
+    class Core::MetaBase;
 namespace Debug {
 
 enum class EError {
@@ -89,7 +89,7 @@ public:
     std::string advan;
     std::chrono::system_clock::time_point time;
 
-    std::map<EMetaType, MetaBase*> valDict;
+    std::map<EMetaType, Core::MetaBase*> valDict;
 
     LogData();
     LogData(const std::string& msg, const std::string& path, int sline, int schar, int eline, int echar);

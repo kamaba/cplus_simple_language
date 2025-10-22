@@ -26,6 +26,10 @@ public:
         m_ClassDefineType = EClassDefineType::InnerDefine;
     }
     
+    DynamicMetaClass(const std::string& _name) : MetaClass(_name) {
+        m_Type = EType::Class;
+    }
+    
     MetaClass* Cast(MetaTemplate* mc) {
         return nullptr;
     }
@@ -37,6 +41,14 @@ public:
     virtual void ParseInnerFunction() override {
         AddCoreFunction();
     }
+    
+    virtual void ParseDefineComplete() override {
+        MetaClass::ParseDefineComplete();
+    }
+    
+    virtual std::string ToFormatString() const override;
+    
+    virtual std::string ToString() const override;
     
     void AddCoreFunction() {
         MetaMemberFunction* Cast = new MetaMemberFunction(this, "cast");

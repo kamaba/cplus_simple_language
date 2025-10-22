@@ -17,7 +17,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaStatements : public MetaBase {
 protected:
@@ -45,6 +44,5 @@ public:
     virtual void UpdateOwnerMetaClass(MetaClass* ownerclass);
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

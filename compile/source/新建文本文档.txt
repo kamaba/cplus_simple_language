@@ -1,0 +1,1 @@
+检查 source/Core/MetaDynamicClass.cs 相对应的 MetaDynamicClass.h, MetaDynamicClass.cpp 看是否有缺少的方法，还有要比较方法里边的逻辑是否对的上 

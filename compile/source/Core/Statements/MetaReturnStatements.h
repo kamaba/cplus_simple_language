@@ -19,7 +19,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaReturnStatements : public MetaStatements {
 private:
@@ -118,6 +117,5 @@ public:
     }
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

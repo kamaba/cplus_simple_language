@@ -8,6 +8,9 @@
 
 #include "ClassManager.h"
 #include "ModuleManager.h"
+#include "MetaModule.h"
+#include "MetaClass.h"
+#include "MetaDynamicClass.h"
 #include "NamespaceManager.h"
 #include "MetaVariableManager.h"
 #include "../Debug/Log.h"

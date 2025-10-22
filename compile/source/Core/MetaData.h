@@ -39,8 +39,8 @@ namespace Core {
         std::vector<MetaMemberData*> GetMetaMemberDataList();
         virtual void ParseFileMetaDataMemeberData(Compile::FileMetaClass* fmc);
         void ParseDefineComplete() override;
-        std::string ToFormatString() override;
-        std::string ToString() override;
+        std::string ToFormatString()const override ;
+        std::string ToString()const override ;
 
     protected:
         bool m_IsConst = false;

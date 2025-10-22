@@ -20,7 +20,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaBlockStatements : public MetaStatements {
 private:
@@ -65,6 +64,5 @@ public:
     virtual std::string ToFormatString() override;
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

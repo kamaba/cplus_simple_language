@@ -22,11 +22,11 @@ ModuleManager* ModuleManager::s_Instance = nullptr;
 const std::string ModuleManager::csharpModuleName = "CSharp";
 const std::string ModuleManager::coreModuleName = "Core";
 
-ModuleManager* ModuleManager::GetInstance() {
+ModuleManager& ModuleManager::GetInstance() {
     if (s_Instance == nullptr) {
         s_Instance = new ModuleManager();
     }
-    return s_Instance;
+    return *s_Instance;
 }
 
 ModuleManager::ModuleManager() {

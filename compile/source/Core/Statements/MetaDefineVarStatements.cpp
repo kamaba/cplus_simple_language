@@ -10,11 +10,9 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 // 所有实现都在头文件中（内联实现）
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage
 

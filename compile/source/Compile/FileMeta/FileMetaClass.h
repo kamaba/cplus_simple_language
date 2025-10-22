@@ -18,6 +18,7 @@
 #include <string>
 #include <sstream>
 
+class SimpleLanguage::Core::MetaClass;
 namespace SimpleLanguage 
 {
 	namespace Compile
@@ -32,7 +33,6 @@ namespace SimpleLanguage
 		class FileMetaTemplateDefine;
 		class NamespaceStatementBlock;
 		class Node;
-		class MetaClass;
 
 		class FileMetaClass : public FileMetaBase 
 		{
@@ -62,7 +62,7 @@ namespace SimpleLanguage
 			bool IsPartial() const { return m_PartialToken != nullptr; }
 
 			Token* PreInterfaceToken() const { return m_PreInterfaceToken; }
-			MetaClass* GetMetaClass() const { return m_MetaClass; }
+			Core::MetaClass* GetMetaClass() const { return m_MetaClass; }
 			FileMetaClassDefine* GetFileMetaExtendClass() const { return m_FileMetaExtendClass; }
 			const ::std::vector<FileMetaClassDefine*>& GetInterfaceClassList() const { return m_InterfaceClassList; }
 			FileMetaNamespace* GetTopLevelFileMetaNamespace() const { return m_TopLevelFileMetaNamespace; }
@@ -106,7 +106,7 @@ namespace SimpleLanguage
 			Token* m_StaticToken = nullptr;
 
 			// Class members
-			MetaClass* m_MetaClass = nullptr;
+			Core::MetaClass* m_MetaClass = nullptr;
 			FileMetaNamespace* m_TopLevelFileMetaNamespace = nullptr;
 			FileMetaClass* m_TopLevelFileMetaClass = nullptr;
 			FileMetaClassDefine* m_FileMetaExtendClass = nullptr;

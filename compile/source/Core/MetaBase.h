@@ -39,7 +39,7 @@ namespace Core {
         virtual std::string GetName() const { return m_Name; }
         RefFromType GetRefFromType() const { return m_RefFromType; }
         MetaNode* GetMetaNode() const { return m_MetaNode; }
-        virtual ::std::string GetPathName() const { return m_MetaNode != nullptr ? m_MetaNode->GetAllName() : ""; }
+        virtual ::std::string GetPathName() const; 
 
         // 设置方法
         void SetRefFromType(RefFromType type) { m_RefFromType = type; }
@@ -51,7 +51,7 @@ namespace Core {
         // 虚方法
         virtual std::string GetFormatString() const { return ""; }
         virtual std::string ToFormatString() const { return ""; }
-        virtual std::string ToString() { return "";}
+        virtual std::string ToString() const { return "";}
 
     protected:
         EPermission m_Permission = EPermission::Public;

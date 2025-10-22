@@ -14,11 +14,11 @@
 #include "../MetaIteratorVariable.h"
 #include "../ExpressManager.h"
 #include "../AllowUseSettings.h"
-#include "../Compile/CoreFileMeta/FileMetaKeyForSyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaConditionExpressSyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaDefineVariableSyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaOpAssignSyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaCallSyntax.h"
+#include "../Compile/FileMeta/FileMetaKeyForSyntax.h"
+#include "../Compile/FileMeta/FileMetaConditionExpressSyntax.h"
+#include "../Compile/FileMeta/FileMetaDefineVariableSyntax.h"
+#include "../Compile/FileMeta/FileMetaOpAssignSyntax.h"
+#include "../Compile/FileMeta/FileMetaCallSyntax.h"
 #include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include "../Global.h"
@@ -26,7 +26,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaForStatements : public MetaStatements {
 private:
@@ -349,6 +348,5 @@ public:
     }
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

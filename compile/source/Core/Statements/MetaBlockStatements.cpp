@@ -11,7 +11,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 // MetaBlockStatements implementation
 MetaFunction* MetaBlockStatements::GetOwnerMetaFunction() const {
@@ -214,6 +213,5 @@ std::string MetaBlockStatements::ToFormatString() {
     return result;
 }
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

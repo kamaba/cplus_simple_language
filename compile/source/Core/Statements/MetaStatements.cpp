@@ -10,7 +10,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 // MetaStatements implementation
 MetaStatements* MetaStatements::GetNextMetaStatements() const {
@@ -67,6 +66,5 @@ void MetaStatements::UpdateOwnerMetaClass(MetaClass* ownerclass) {
     }
 }
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

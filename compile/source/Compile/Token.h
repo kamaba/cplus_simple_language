@@ -56,7 +56,7 @@ namespace Compile {
         MultiData(int32_t val) : type(DataType::Int) { data.int_val = val; }
         MultiData(uint32_t val) : type(DataType::UInt) { data.int_val = val; }
         MultiData(int64_t val) : type(DataType::Long) { data.long_val = val; }
-        MultiData(uint16_t val) : type(DataType::ULong) { data.long_val = val; }
+        MultiData(uint64_t val) : type(DataType::ULong) { data.long_val = val; }
         MultiData(float_t val) : type(DataType::Float) { data.float_val = val; }
         MultiData(double_t val) : type(DataType::Double) { data.double_val = val; }
         MultiData(const std::string& val) : type(DataType::String) {data.string_val = val.c_str();}
@@ -66,46 +66,46 @@ namespace Compile {
         {
             std::stringstream ss;  // 用字符串流格式化不同类型
 
-            switch (type) {
-            case DataType::Byte:
-                // byte 通常按十进制或十六进制输出（这里按十进制）
-                ss << static_cast<int>(data.byte_val);  // 转换为 int 避免被当作字符
-                break;
-            case DataType::SByte:
-                // byte 通常按十进制或十六进制输出（这里按十进制）
-                ss << static_cast<int>(data.byte_val);  // 转换为 int 避免被当作字符
-                break;
-            case DataType::Short:
-                // char 直接输出字符本身
-                ss << data.short_val;
-                break;
-            case DataType::UShort:
-                // char 直接输出字符本身
-                ss << (uint16_t)data.short_val;
-                break;
-            case DataType::Int:
-                // char 直接输出字符本身
-                ss << data.int_val;
-                break;
-            case DataType::UInt:
-                // char 直接输出字符本身
-                ss << (uint32_t)data.int_val;
-                break;
-            case DataType::Long:
-                // char 直接输出字符本身
-                ss << data.long_val;
-                break;
-            case DataType::ULong:
-                // char 直接输出字符本身
-                ss << (uint64_t)data.long_val;
-                break;
-            case DataType::String:
-                // 直接将字符数组转换为 string
-                ss << data.string_val;
-                break;
-            default:
-                throw std::runtime_error("Unknown data type");
-            }
+            //switch (type) {
+            //case DataType::Byte:
+            //    // byte 通常按十进制或十六进制输出（这里按十进制）
+            //    ss << data.byte_val;  // 转换为 int 避免被当作字符
+            //    break;
+            //case DataType::SByte:
+            //    // byte 通常按十进制或十六进制输出（这里按十进制）
+            //    ss << data.byte_val;  // 转换为 int 避免被当作字符
+            //    break;
+            //case DataType::Short:
+            //    // char 直接输出字符本身
+            //    ss << data.short_val;
+            //    break;
+            //case DataType::UShort:
+            //    // char 直接输出字符本身
+            //    ss << (uint16_t)data.short_val;
+            //    break;
+            //case DataType::Int:
+            //    // char 直接输出字符本身
+            //    ss << data.int_val;
+            //    break;
+            //case DataType::UInt:
+            //    // char 直接输出字符本身
+            //    ss << (uint32_t)data.int_val;
+            //    break;
+            //case DataType::Long:
+            //    // char 直接输出字符本身
+            //    ss << data.long_val;
+            //    break;
+            //case DataType::ULong:
+            //    // char 直接输出字符本身
+            //    ss << (uint64_t)data.long_val;
+            //    break;
+            //case DataType::String:
+            //    // 直接将字符数组转换为 string
+            //    ss << std::string(data.string_val);
+            //    break;
+            //default:
+            //    throw std::runtime_error("Unknown data type");
+            //}
 
             return ss.str();  // 返回格式化后的字符串
         }

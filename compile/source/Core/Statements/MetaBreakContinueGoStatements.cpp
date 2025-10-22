@@ -18,7 +18,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 MetaBreakStatements::MetaBreakStatements(MetaBlockStatements* mbs, FileMetaKeyOnlySyntax* fmkos) : MetaStatements(mbs) {
     m_FileMetaKeyOnlySyntax = fmkos;
@@ -108,6 +107,5 @@ std::string MetaGotoLabelStatements::ToFormatString() {
     return result;
 }
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

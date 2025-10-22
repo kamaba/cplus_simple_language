@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "MetaBase.h"
+#include "MetaFunction.h"
 #include "../Define.h"
 #include <string>
 #include <vector>
@@ -65,7 +65,7 @@ namespace Core {
         std::unordered_map<int, std::vector<MetaMemberFunction*>> m_MetaParamFunctionDict;
     };
 
-    class MetaMemberFunction : public MetaBase
+    class MetaMemberFunction : public MetaFunction
     {
     public:
         MetaMemberFunction();

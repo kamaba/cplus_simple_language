@@ -8,21 +8,7 @@
 
 #pragma once
 
-#include "MetaClass.h"
-#include "MetaData.h"
-#include "MetaDynamicClass.h"
-#include "MetaGenTemplateClass.h"
-#include "MetaEnum.h"
-#include "../Compile/CoreFileMeta/FileMetaClass.h"
-#include "../Compile/CoreFileMeta/FileMetaClassDefine.h"
-#include "../Compile/CoreFileMeta/FileMeta.h"
-#include "../Compile/CoreFileMeta/FileInputTemplateNode.h"
-#include "../BaseMetaClass/CoreMetaClassManager.h"
-#include "ModuleManager.h"
-#include "NamespaceManager.h"
-#include "MetaVariableManager.h"
 #include "../Debug/Log.h"
-#include "../Project/ProjectManager.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -30,6 +16,10 @@
 
 namespace SimpleLanguage {
 namespace Core {
+    class MetaClass;
+    class MetaDynamicClass;
+    class MetaData;
+    class MetaGenTemplateClass;
 
 enum class EClassRelation {
     None = 0,

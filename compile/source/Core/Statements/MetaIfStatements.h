@@ -23,7 +23,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaIfStatements : public MetaStatements {
 public:
@@ -267,6 +266,5 @@ public:
     }
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

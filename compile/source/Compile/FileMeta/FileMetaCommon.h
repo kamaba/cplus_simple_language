@@ -27,6 +27,7 @@ class FileMetaBracketTerm;
 class FileMetaSyntax;
 class FileMetaDefineVariableSyntax;
 class FileMetaOpAssignSyntax;
+class Node;
 
 class NamespaceStatementBlock 
 {
@@ -69,7 +70,7 @@ public:
 
     FileMeta* GetFileMeta() const { return m_FileMeta; }
     FileMetaCallLink* DefineClassCallLink() const { return m_DefineClassCallLink; }
-    std::vector<std::string> NameList() const;
+    std::vector<std::string> GetNameList() const;
     int InputTemplateCount() const;
     std::string ToFormatString() const;
 

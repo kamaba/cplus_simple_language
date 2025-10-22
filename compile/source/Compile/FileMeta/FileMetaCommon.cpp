@@ -119,7 +119,7 @@ FileInputTemplateNode::FileInputTemplateNode(FileMeta* fm, Node* node) {
     m_DefineClassCallLink = new FileMetaCallLink(fm, node);
 }
 
-std::vector<std::string> FileInputTemplateNode::NameList() const {
+std::vector<std::string> FileInputTemplateNode::GetNameList() const {
     std::vector<std::string> _nameList;
     if (m_DefineClassCallLink != nullptr) {
         for (size_t i = 0; i < m_DefineClassCallLink->CallNodeList().size(); i++) {

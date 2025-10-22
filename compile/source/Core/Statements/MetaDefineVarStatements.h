@@ -27,7 +27,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaDefineVarStatements : public MetaStatements {
 private:
@@ -273,6 +272,5 @@ public:
     }
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

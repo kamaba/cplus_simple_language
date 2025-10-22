@@ -20,7 +20,6 @@
 
 namespace SimpleLanguage {
 namespace Core {
-namespace Statements {
 
 class MetaBreakStatements : public MetaStatements {
 private:
@@ -135,6 +134,5 @@ public:
     }
 };
 
-} // namespace Statements
 } // namespace Core
 } // namespace SimpleLanguage

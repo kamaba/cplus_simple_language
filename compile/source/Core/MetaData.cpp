@@ -92,7 +92,7 @@ namespace Core {
         MetaClass::ParseDefineComplete();
     }
 
-    std::string MetaData::ToFormatString() {
+    std::string MetaData::ToFormatString() const {
         std::stringstream stringBuilder;
 
         if (m_IsDynamic) {
@@ -107,7 +107,7 @@ namespace Core {
         return stringBuilder.str();
     }
 
-    std::string MetaData::ToString() {
+    std::string MetaData::ToString() const {
         return MetaClass::ToString();
     }
 

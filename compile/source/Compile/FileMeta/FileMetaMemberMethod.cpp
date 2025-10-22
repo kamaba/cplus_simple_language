@@ -18,7 +18,6 @@ FileMetaParamterDefine::FileMetaParamterDefine(FileMeta* fileMeta, const std::ve
     m_FileMeta = fileMeta;
     ParseBuildMetaParamter(list);
 }
-
 bool FileMetaParamterDefine::ParseBuildMetaParamter(const std::vector<Node*>& inputNodeList) {
     if (inputNodeList.empty()) return false;
 

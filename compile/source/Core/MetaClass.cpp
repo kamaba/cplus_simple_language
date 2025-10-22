@@ -6,6 +6,7 @@
 //  Description: Meta class's attribute
 //****************************************************************************
 
+#include "../Compile/FileMeta/FileMetaClass.h"
 #include "MetaClass.h"
 #include "MetaNode.h"
 #include "MetaType.h"
@@ -13,20 +14,18 @@
 #include "MetaMemberFunction.h"
 #include "MetaExpressNode.h"
 #include "MetaTemplate.h"
-#include "MetaInputParamCollection.h"
+#include "MetaParam.h"
 #include "MetaGenTemplateClass.h"
-#include "../Debug/Log.h"
-#include "../Compile/FileMeta/FileMetaClass.h"
 #include "ClassManager.h"
-#include "CoreMetaClassManager.h"
 #include "TypeManager.h"
 #include "MetaVariableManager.h"
-#include "MethodManager.h"
-#include "Global.h"
+
+#include "../Debug/Log.h"
 #include <algorithm>
 #include <sstream>
 
 using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -156,7 +155,7 @@ void MetaClass::ParseExtendsRelation() {
         return;
     }
     for (const auto& pair : m_FileMetaClassDict) {
-        auto mc = pair.second;
+        FileMetaClass* mc = pair.second;
         if (mc->GetFileMetaExtendClass() == nullptr) {
             continue;
         }
@@ -478,7 +477,7 @@ void MetaClass::AddDefineConstructFunction() {
     MetaMemberFunction* mmf = GetMetaMemberConstructDefaultFunction();
     if (mmf == nullptr) {
         mmf = new MetaMemberFunction(this, "_init_");
-        mmf->SetReturnMetaClass(CoreMetaClassManager::VoidMetaClass);
+        mmf->SetReturnMetaClass(CoreMetaClassManager::voidMetaClass);
         mmf->Parse();
         AddMetaMemberFunction(mmf);
         MethodManager::GetInstance().AddOriginalMemeberFunction(mmf);
@@ -649,7 +648,7 @@ bool MetaClass::GetMemberInterfaceFunctionByFunc(MetaMemberFunction* func) {
     return true;
 }
 
-std::string MetaClass::ToDefineTypeString() {
+std::string MetaClass::ToDefineTypeString() const {
     std::stringstream stringBuilder;
     stringBuilder << GetAllClassName();
     return stringBuilder.str();
