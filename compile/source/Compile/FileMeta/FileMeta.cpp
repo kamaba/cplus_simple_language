@@ -71,7 +71,7 @@ namespace SimpleLanguage
 		FileMetaClass* FileMeta::GetFileMetaClassByName(const ::std::string& name)
 		{
 			auto it = ::std::find_if(m_FileMetaAllClassList.begin(), m_FileMetaAllClassList.end(),
-				[&name](FileMetaClass* fmc) { return fmc->Name() == name; });
+				[&name](FileMetaClass* fmc) { return fmc->GetName() == name; });
 
 			if (it != m_FileMetaAllClassList.end()) {
 				return *it;
@@ -88,7 +88,7 @@ namespace SimpleLanguage
 		{
 			SimpleLanguage::Core::MetaNode* mb = nullptr;
 			for (size_t i = 0; i < m_ImportMetaNamespaceList.size(); i++) {
-				SimpleLanguage::Core::MetaNode* mn = GetMetaNodeFileMetaClass(fmcv->StringList());
+				SimpleLanguage::Core::MetaNode* mn = GetMetaNodeFileMetaClass(fmcv->GetStringList());
 				if (mn == nullptr) continue;
 				if (mn->IsMetaNamespace() == false) { continue; }
 				if (mn->GetMetaNamespace()->GetRefFromType() == SimpleLanguage::Core::RefFromType::CSharp) {

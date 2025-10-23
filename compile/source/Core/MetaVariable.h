@@ -9,16 +9,19 @@
 #pragma once
 
 #include "MetaBase.h"
-#include "../Compile/Token.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
 
-using namespace SimpleLanguage::Compile;
-
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class Token;
+    }
 namespace Core {
-
+    class MetaClass;
+    class MetaType;
+    class MetaBlockStatements;
 enum class EVariableFrom {
     None = 0,
     Static = 1,
@@ -35,7 +38,7 @@ protected:
     MetaType* m_DefineMetaType = nullptr;
     MetaType* m_RealMetaType = nullptr;
     EVariableFrom m_VariableFrom;
-    std::vector<Token*> m_PintTokenList;
+    std::vector<Compile::Token*> m_PintTokenList;
     bool m_IsParsed = false;
     bool m_IsStatic = false;
     bool m_IsConst = false;
@@ -56,7 +59,7 @@ public:
     virtual bool IsParsed() const { return m_IsParsed; }
     bool IsArgument() const { return m_VariableFrom == EVariableFrom::Argument; }
     bool IsGlobal() const { return m_VariableFrom == EVariableFrom::Global; }
-    bool IsArray() const { return m_DefineMetaType != nullptr ? m_DefineMetaType->IsArray() : false; }
+    bool IsArray() const;
 
     MetaBlockStatements* GetOwnerMetaBlockStatements() const { return m_OwnerMetaBlockStatements; }
     EVariableFrom GetVariableFrom() const { return m_VariableFrom; }
@@ -64,7 +67,7 @@ public:
     MetaType* GetRealMetaType() const { return m_RealMetaType; }
     MetaClass* GetOwnerMetaClass() const { return m_OwnerMetaClass; }
     MetaVariable* GetSourceMetaVariable() const { return m_SourceMetaVariable; }
-    Token* GetPingToken() const { return m_PintTokenList.size() > 0 ? m_PintTokenList[0] : nullptr; }
+    Compile::Token* GetPingToken() const { return m_PintTokenList.size() > 0 ? m_PintTokenList[0] : nullptr; }
 
     // 设置方法
     virtual void SetOwnerMetaClass(MetaClass* ownerclass);
@@ -79,7 +82,7 @@ public:
     // 方法
     MetaClass* GetOwnerClassTemplateClass() const;
     void AddPingToken(const std::string& path, int beginline, int beginpos, int endline, int endpos);
-    void AddPingToken(Token* token);
+    void AddPingToken(Compile::Token* token);
     void AddMetaVariable(const std::string& name, MetaVariable* mv);
     MetaVariable* GetMetaVariable(const std::string& name) const;
     bool AddMetaVariable(MetaVariable* mv);
@@ -92,6 +95,7 @@ public:
     virtual void ParseDefineMetaType() {}
     virtual bool ParseMetaExpress() { return true; }
     virtual std::string ToFormatString() const;
+    virtual std::string ToString() const;
 };
 
 } // namespace Core

@@ -56,7 +56,7 @@ public:
     bool IsIncludeMetaData(MetaData* md);
     void ParseChildMemberData();
     std::string ToFormatString2(bool isDynamic);
-    std::string ToString() override;
+    std::string ToString() const override;
 
 private:
     void ParseName();

@@ -7,18 +7,19 @@
 //****************************************************************************
 
 #include "StringMetaClass.h"
-#include <typeinfo>
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-StringMetaClass::StringMetaClass() : MetaClass(DefaultObject::String.ToString()) {
-    std::type_info& type = typeid(std::string);
+StringMetaClass::StringMetaClass() : MetaClass("String") {    
     m_ClassDefineType = EClassDefineType::InnerDefine;
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::String;
 }
-
 MetaClass* StringMetaClass::CreateMetaClass() {
     MetaClass* mc = new StringMetaClass();
     ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());

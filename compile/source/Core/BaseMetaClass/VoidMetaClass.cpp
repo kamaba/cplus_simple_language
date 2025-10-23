@@ -7,12 +7,15 @@
 //****************************************************************************
 
 #include "VoidMetaClass.h"
-#include "../MetaConstExpressNode.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-VoidMetaClass::VoidMetaClass() : MetaClass(DefaultObject::Void.ToString()) {
+VoidMetaClass::VoidMetaClass() : MetaClass("Void") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_ClassDefineType = EClassDefineType::InnerDefine;
     MetaConstExpressNode* mcen = new MetaConstExpressNode(EType::Null, "null");

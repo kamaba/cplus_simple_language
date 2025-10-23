@@ -7,11 +7,18 @@
 //****************************************************************************
 
 #include "ByteMetaClass.h"
+#include "CoreMetaClassManager.h"
+#include "../MetaTemplate.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaMemberVariable.h"
+#include "../MetaMemberFunction.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-ByteMetaClass::ByteMetaClass() : MetaClass(DefaultObject::Byte.ToString()) {
+ByteMetaClass::ByteMetaClass() : MetaClass("Byte") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::Byte;
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -23,7 +30,7 @@ MetaClass* ByteMetaClass::CreateMetaClass() {
     return mc;
 }
 
-SByteMetaClass::SByteMetaClass() : MetaClass(DefaultObject::SByte.ToString()) {
+SByteMetaClass::SByteMetaClass() : MetaClass("SByte") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::SByte;
     m_ClassDefineType = EClassDefineType::InnerDefine;

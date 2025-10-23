@@ -12,102 +12,26 @@
 #include "../MetaTemplate.h"
 #include "../MetaMemberFunction.h"
 #include "../MetaMemberVariable.h"
-#include "../MetaConstExpressNode.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 #include "CoreMetaClassManager.h"
-#include "ClassManager.h"
-#include "ModuleManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
 class DynamicMetaClass : public MetaClass {
 public:
-    DynamicMetaClass() : MetaClass(DefaultObject::Dynamic.ToString()) {
-        m_ClassDefineType = EClassDefineType::InnerDefine;
-    }
+    DynamicMetaClass();    
+    DynamicMetaClass(const std::string& _name);
     
-    DynamicMetaClass(const std::string& _name) : MetaClass(_name) {
-        m_Type = EType::Class;
-    }
-    
-    MetaClass* Cast(MetaTemplate* mc) {
-        return nullptr;
-    }
-    
-    virtual int ToInt32() {
-        return 0;
-    }
-    
-    virtual void ParseInnerFunction() override {
-        AddCoreFunction();
-    }
-    
-    virtual void ParseDefineComplete() override {
-        MetaClass::ParseDefineComplete();
-    }
-    
-    virtual std::string ToFormatString() const override;
-    
-    virtual std::string ToString() const override;
-    
-    void AddCoreFunction() {
-        MetaMemberFunction* Cast = new MetaMemberFunction(this, "cast");
-        //Cast.AddMetaDefineParam(new MetaDefineParam("t", this, null, CoreMetaClassManager.templateMetaClass, null));
-        //Cast.SetDefineMetaClass(CoreMetaClassManager.int32MetaClass);
-        //AddMetaMemberFunction(Cast);
+    virtual void ParseInnerFunction() override;    
+    virtual void ParseDefineComplete() override;    
+    virtual std::string ToFormatString() const override;    
+    virtual std::string ToString() const override;    
+    void AddCoreFunction();
 
-        MetaConstExpressNode* ecen = new MetaConstExpressNode(EType::Int32, 0);
-        MetaMemberVariable* mmvobjectid = new MetaMemberVariable(this, "objectid", CoreMetaClassManager::GetInstance().GetInt32MetaClass(), ecen);
-        AddMetaMemberVariable(mmvobjectid);
-
-        //MetaMemberVariable mmvname = new MetaMemberVariable(this, "name", CoreMetaClassManager.stringMetaClass);
-        //AddMetaMemberVariable(mmvname);
-
-        MetaMemberFunction* _init_ = new MetaMemberFunction(this, "_init_");
-        AddMetaMemberFunction(_init_);
-
-        MetaMemberFunction* GetHashCode = new MetaMemberFunction(this, "GetHashCode");
-        GetHashCode->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetInt32MetaClass());
-        AddInnerMetaMemberFunction(GetHashCode);
-        
-        MetaMemberFunction* GetType = new MetaMemberFunction(this, "GetType");
-        GetType->SetReturnMetaClass(this);
-        AddInnerMetaMemberFunction(GetType);
-        
-        MetaMemberFunction* Clone = new MetaMemberFunction(this, "Clone");
-        Clone->SetReturnMetaClass(this);
-        AddInnerMetaMemberFunction(Clone);
-        
-        MetaMemberFunction* ToString = new MetaMemberFunction(this, "ToString");
-        ToString->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetStringMetaClass());
-        AddInnerMetaMemberFunction(ToString);
-        
-        MetaMemberFunction* ToShort = new MetaMemberFunction(this, "ToShort");
-        ToShort->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetInt16MetaClass());
-        AddInnerMetaMemberFunction(ToShort);
-        
-        MetaMemberFunction* ToInt = new MetaMemberFunction(this, "ToInt");
-        ToInt->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetInt32MetaClass());
-        AddInnerMetaMemberFunction(ToInt);
-        
-        MetaMemberFunction* ToLong = new MetaMemberFunction(this, "ToLong");
-        ToLong->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetInt64MetaClass());
-        AddInnerMetaMemberFunction(ToLong);
-        
-        MetaMemberFunction* ToFloat = new MetaMemberFunction(this, "ToFloat");
-        ToFloat->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetFloat32MetaClass());
-        AddInnerMetaMemberFunction(ToFloat);
-        
-        MetaMemberFunction* ToDouble = new MetaMemberFunction(this, "ToDouble");
-        ToDouble->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetFloat64MetaClass());
-        AddInnerMetaMemberFunction(ToDouble);
-    }
-
-    static MetaClass* CreateMetaClass() {
-        MetaClass* mc = new DynamicMetaClass();
-        ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());
-        return mc;
-    }
+    static MetaClass* CreateMetaClass();
 };
 
 } // namespace Core

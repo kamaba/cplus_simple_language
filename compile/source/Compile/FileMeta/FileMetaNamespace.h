@@ -34,7 +34,7 @@ public:
     bool IsSearchNamespace() const { return m_IsSearchNamespace; }
     Node* NamespaceNode() const { return m_NamespaceNode; }
     Node* NamespaceNameNode() const { return m_NamespaceNameNode; }
-    virtual std::string Name() const override;
+    virtual std::string GetName() const override;
     NamespaceStatementBlock* GetNamespaceStatementBlock() const { return m_NamespaceStateBlock; }
     FileMetaNamespace* topLevelFileMetaNamespace = nullptr;
     std::stack<FileMetaNamespace*> NamespaceStack() const;

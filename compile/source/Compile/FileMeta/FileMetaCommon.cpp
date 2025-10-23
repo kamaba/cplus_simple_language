@@ -76,12 +76,12 @@ NamespaceStatementBlock* NamespaceStatementBlock::CreateStateBlock(const std::ve
                 tokenList.push_back(token[i]);
                 isIdentifier = false;
             } else {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ÃüÃû¿Õ¼äÓĞÎó£¬±ØĞëÎªX.xx.X ÀàËÆµÄ¸ñÊ½!");
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error å‘½åç©ºé—´æœ‰è¯¯ï¼Œå¿…é¡»ä¸ºX.xx.X ç±»ä¼¼çš„æ ¼å¼!");
                 return nullptr;
             }
         } else {
             if (token[i]->GetType() != SimpleLanguage::ETokenType::Period) {
-                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ÃüÃû¿Õ¼äÓĞÎó£¬±ØĞëÎªX.xx.X ÀàËÆµÄ¸ñÊ½!");
+                SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error å‘½åç©ºé—´æœ‰è¯¯ï¼Œå¿…é¡»ä¸ºX.xx.X ç±»ä¼¼çš„æ ¼å¼!");
                 return nullptr;
             }
             isIdentifier = true;
@@ -129,7 +129,7 @@ std::vector<std::string> FileInputTemplateNode::GetNameList() const {
     return _nameList;
 }
 
-int FileInputTemplateNode::InputTemplateCount() const {
+int FileInputTemplateNode::GetInputTemplateCount() const {
     int templateCount = 0;
     if (m_DefineClassCallLink != nullptr) {
         int cn = m_DefineClassCallLink->CallNodeList().size();
@@ -191,7 +191,7 @@ void FileMetaCallNode::CreateFileMetaCallNode() {
         for (size_t i = 0; i < list.size(); i++) {
             if (list[i]->nodeType == SimpleLanguage::Compile::ENodeType::Comma) {
                 if (i == list.size() - 1) {
-                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Warning [1,2,3,]ÓĞ¶àÓà¶ººÅ³öÏÖ??");
+                    SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Warning [1,2,3,]æœ‰å¤šä½™é€—å·å‡ºç°??");
                 }
                 continue;
             }
@@ -272,7 +272,7 @@ std::string FileMetaCallNode::ToTokenString() const {
         sb << m_FileMetaParTerm->ToFormatString();
     } else {
         sb << (token() ? token()->lexeme().ToString() : "");
-        sb << "ÔÚÎÄ¼ş:" << (token() ? token()->path() : "") << " ĞĞ: " << (token() ? std::to_string(token()->sourceBeginLine()) : "") << " Î»ÖÃ: " << (token() ? std::to_string(token()->sourceBeginChar()) : "");
+        sb << "åœ¨æ–‡ä»¶:" << (token() ? token()->path() : "") << " è¡Œ: " << (token() ? std::to_string(token()->sourceBeginLine()) : "") << " ä½ç½®: " << (token() ? std::to_string(token()->sourceBeginChar()) : "");
         if (m_IsCallFunction) {
             sb << (m_BeginParToken ? m_BeginParToken->lexeme().ToString() : "");
             sb << (m_EndParToken ? m_EndParToken->lexeme().ToString() : "");
@@ -399,11 +399,11 @@ FileMetaClassDefine::FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode
     }
 }
 
-std::vector<std::string> FileMetaClassDefine::StringList() const {
+std::vector<std::string> FileMetaClassDefine::GetStringList() const {
     return FileMetatUtil::GetLinkStringMidPeriodList(m_TokenList);
 }
 
-std::string FileMetaClassDefine::AllName() const {
+std::string FileMetaClassDefine::GetAllName() const {
     std::ostringstream sb;
     for (size_t i = 0; i < m_TokenList.size(); i++) {
         sb << (m_TokenList[i] ? m_TokenList[i]->GetLexemeString() : "");
@@ -411,7 +411,7 @@ std::string FileMetaClassDefine::AllName() const {
     return sb.str();
 }
 
-std::string FileMetaClassDefine::Name() const {
+std::string FileMetaClassDefine::GetName() const {
     if (m_ClassNameToken != nullptr) {
         return m_ClassNameToken->GetLexemeString();
     }
@@ -421,7 +421,7 @@ std::string FileMetaClassDefine::Name() const {
 SimpleLanguage::Core::MetaNode* FileMetaClassDefine::GetChildrenMetaNode(SimpleLanguage::Core::MetaNode* mb) {
     if (mb == nullptr) return nullptr;
     SimpleLanguage::Core::MetaNode* mb2 = mb;
-    auto list = StringList();
+    auto list = GetStringList();
     for (size_t i = 0; i < list.size(); i++) {
         mb2 = mb2->GetChildrenMetaNodeByName(list[i]);
         if (mb2 == nullptr)
@@ -431,18 +431,18 @@ SimpleLanguage::Core::MetaNode* FileMetaClassDefine::GetChildrenMetaNode(SimpleL
 }
 
 std::string FileMetaClassDefine::ToString() const {
-    return AllName();
+    return GetAllName();
 }
 
 std::string FileMetaClassDefine::ToTokenString() const {
-    return AllName() + " Token File:[" + (m_ClassNameToken ? m_ClassNameToken->GetPath() : "") + "] Line:[" + 
+    return GetAllName() + " Token File:[" + (m_ClassNameToken ? m_ClassNameToken->GetPath() : "") + "] Line:[" + 
            (m_ClassNameToken ? std::to_string(m_ClassNameToken->GetSourceBeginLine()) : "") + "]  Char:[" + 
            (m_ClassNameToken ? std::to_string(m_ClassNameToken->GetSourceBeginChar()) : "") + "]";
 }
 
 std::string FileMetaClassDefine::ToFormatString() const {
     std::ostringstream sb;
-    sb << AllName();
+    sb << GetAllName();
     if (m_IsInputTemplateData) {
         sb << (m_AngleTokenBegin ? m_AngleTokenBegin->GetLexemeString() : "");
         for (size_t i = 0; i < m_InputTemplateNodeList.size(); i++) {
@@ -469,15 +469,15 @@ void FileMetaClassDefine::AddError2(int errorId, const std::string& pfile, const
     std::string str = "";
     switch (errorId) {
         case 0: {
-            str = "ÅĞ¶Ï½Ó¿ÚµÄÊ±ºòÃ»ÓĞ·¢ÏÖ[" + AllName() + "]Àà";
+            str = "åˆ¤æ–­æ¥å£çš„æ—¶å€™æ²¡æœ‰å‘ç°[";// +AllName() + "]ç±»";
         }
         break;
         default: break;
     }
-    str = str + " \n Token: ÔÚÎÄ¼ş:" + (m_ClassNameToken ? m_ClassNameToken->GetPath() : "") + " ¿ªÊ¼ĞĞºÅ:" + 
-          (m_ClassNameToken ? std::to_string(m_ClassNameToken->GetSourceBeginLine()) : "") + "¿ªÊ¼Î»ÖÃ: " +
+    str = str + " \n Token: åœ¨æ–‡ä»¶:" + (m_ClassNameToken ? m_ClassNameToken->GetPath() : "") + " å¼€å§‹è¡Œå·:" + 
+          (m_ClassNameToken ? std::to_string(m_ClassNameToken->GetSourceBeginLine()) : "") + "å¼€å§‹ä½ç½®: " +
           (m_ClassNameToken ? std::to_string(m_ClassNameToken->GetSourceBeginChar()) : "");
-    str = str + " \n ÔÚ´úÂëÖĞÎÄ¼ş:" + pfile + "   º¯Êı:" + pfunction + "ĞĞºÅ: " + std::to_string(line);
+    str = str + " \n åœ¨ä»£ç ä¸­æ–‡ä»¶:" + pfile + "   å‡½æ•°:" + pfunction + "è¡Œå·: " + std::to_string(line);
     SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, str);
 }
 
@@ -498,7 +498,7 @@ FileMetaTemplateDefine::FileMetaTemplateDefine(FileMeta* fm, Node* node, Node* e
 FileMetaTemplateDefine::FileMetaTemplateDefine(FileMeta* fm, const std::vector<Node*>& nodeList) {
     m_FileMeta = fm;
     if (nodeList.empty()) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ÔÚ<>ÖĞÃ»ÓĞ·¢ÏÖÔªËØ!!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error åœ¨<>ä¸­æ²¡æœ‰å‘ç°å…ƒç´ !!");
         return;
     }
     m_Token = nodeList[0]->token;
@@ -506,7 +506,7 @@ FileMetaTemplateDefine::FileMetaTemplateDefine(FileMeta* fm, const std::vector<N
         m_InToken = nodeList[1]->token;
         m_InClassNameTemplateNode = new FileInputTemplateNode(fm, nodeList[2]);
     } else if (nodeList.size() == 2) {
-        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error ÔÚ<T in> or <T []> or <T ClassName> Ê¹ÓÃ·½·¨²»ÕıÈ·,ÇëÊ¹ÓÃ <T in []>»òÕßÊÇ <T in ClassName> !!");
+        SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error åœ¨<T in> or <T []> or <T ClassName> ä½¿ç”¨æ–¹æ³•ä¸æ­£ç¡®,è¯·ä½¿ç”¨ <T in []>æˆ–è€…æ˜¯ <T in ClassName> !!");
     }
 }
 

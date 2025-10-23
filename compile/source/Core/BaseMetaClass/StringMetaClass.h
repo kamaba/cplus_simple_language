@@ -9,28 +9,14 @@
 #pragma once
 
 #include "../MetaClass.h"
-#include "CoreMetaClassManager.h"
-#include "ClassManager.h"
-#include "ModuleManager.h"
-#include <typeinfo>
 
 namespace SimpleLanguage {
 namespace Core {
 
 class StringMetaClass : public MetaClass {
 public:
-    StringMetaClass() : MetaClass(DefaultObject::String.ToString()) {
-        std::type_info& type = typeid(std::string);
-        m_ClassDefineType = EClassDefineType::InnerDefine;
-        SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
-        m_Type = EType::String;
-    }
-    
-    static MetaClass* CreateMetaClass() {
-        MetaClass* mc = new StringMetaClass();
-        ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());
-        return mc;
-    }
+    StringMetaClass();    
+    static MetaClass* CreateMetaClass();
 };
 
 } // namespace Core

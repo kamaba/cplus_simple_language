@@ -19,7 +19,7 @@ FileMetaBase::FileMetaBase() {
     m_Id = ++s_IdCount;
 }
 
-std::string FileMetaBase::Name() const {
+std::string FileMetaBase::GetName() const {
     if (m_Token != nullptr) {
         return m_Token->GetLexemeString();
     }

@@ -10,38 +10,40 @@
 
 #include "MetaExpressBase.h"
 #include "../MetaType.h"
-#include "../MetaInputTemplateCollection.h"
-#include "../BaseMetaClass/CoreMetaClassManager.h"
-#include "../Compile/CoreFileMeta/FileMetaConstValueTerm.h"
-#include "../Compile/Token.h"
+#include "../../Compile/Token.h"
 #include <string>
 #include <sstream>
 #include <iostream>
 
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class FileMetaConstValueTerm;
+        struct MultiData;
+    }
 namespace Core {
 
 class MetaConstExpressNode : public MetaExpressNode {
 private:
-    FileMetaConstValueTerm* m_FileMetaConstValueTerm = nullptr;
-    MultiData m_Value;
+    Compile::FileMetaConstValueTerm* m_FileMetaConstValueTerm = nullptr;
+    Compile::MultiData m_Value;
     EType m_EType = EType::None;
 
 public:
     // 构造函数
-    MetaConstExpressNode(FileMetaConstValueTerm* fmct);
-    MetaConstExpressNode(EType eType, const MultiData& val);
-    MetaConstExpressNode(MetaType* mt, const MultiData& val);
+    MetaConstExpressNode(Compile::FileMetaConstValueTerm* fmct);
+    MetaConstExpressNode(EType eType, const Compile::MultiData& val);
+    MetaConstExpressNode(MetaType* mt, const Compile::MultiData& val);
     
     // 操作符重载
-    static MetaConstExpressNode operator+(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
-    static MetaConstExpressNode operator-(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
-    static MetaConstExpressNode operator*(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
-    static MetaConstExpressNode operator/(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
-    static MetaConstExpressNode operator%(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
+    friend MetaConstExpressNode operator+(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
+    friend MetaConstExpressNode operator-(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
+    friend MetaConstExpressNode operator*(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
+    friend MetaConstExpressNode operator/(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
+    friend MetaConstExpressNode operator%(const MetaConstExpressNode& left, const MetaConstExpressNode& right);
     
     // 属性访问器
-    MultiData GetValue() const { return m_Value; }
+    Compile::MultiData GetValue() const { return m_Value; }
     EType GetEType() const { return m_EType; }
     
     // 重写的方法
@@ -50,7 +52,7 @@ public:
     virtual std::string ToTokenString() override;
 
 private:
-    void Parse1(EType eType, const MultiData& val);
+    void Parse(EType eType, const Compile::MultiData& val);
     void ComputeAddRight(const MetaConstExpressNode& right);
     void ComputeMinusRight(const MetaConstExpressNode& right);
     void ComputeMulRight(const MetaConstExpressNode& right);
@@ -59,7 +61,7 @@ private:
     void ComputeEqualComputeRight(const MetaConstExpressNode& right, ELeftRightOpSign opSign);
     
     // 辅助方法
-    MultiData ConvertToMultiData(EType targetType, const MultiData& value);
+    Compile::MultiData ConvertToMultiData(EType targetType, const Compile::MultiData& value);
     std::string GetTypeSuffix(EType type) const;
 };
 

@@ -9,22 +9,17 @@
 #include "ObjectMetaClass.h"
 #include "../MetaMemberFunction.h"
 #include "../MetaMemberVariable.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-ObjectMetaClass::ObjectMetaClass() : MetaClass(DefaultObject::Object.ToString()) {
+ObjectMetaClass::ObjectMetaClass() : MetaClass("Object") {
     m_ClassDefineType = EClassDefineType::InnerDefine;
 }
-
-MetaClass* ObjectMetaClass::Cast(MetaTemplate* mc) {
-    return nullptr;
-}
-
-int ObjectMetaClass::ToInt32() {
-    return 0;
-}
-
 void ObjectMetaClass::ParseInnerFunction() {
     AddCoreFunction();
 }

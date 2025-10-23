@@ -27,6 +27,7 @@ namespace Compile {
         float float_val;
         double double_val;
         const char* string_val;
+        void* object_valptr;
     };
     // 类型标签枚举
     enum class DataType {
@@ -40,7 +41,8 @@ namespace Compile {
         ULong,
         Float,      //float
         Double,     //Double
-        String  // 字符串（存储在 char 数组中）
+        String,  // 字符串（存储在 char 数组中）
+        Object,
     };
     // 带标签的结构体
     struct MultiData

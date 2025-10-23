@@ -7,19 +7,22 @@
 //****************************************************************************
 
 #include "NullMetaClass.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-NullMetaClass::NullMetaClass() : MetaClass(DefaultObject::Null.ToString()) {
+NullMetaClass::NullMetaClass() : MetaClass("Null")
+{
     m_ClassDefineType = EClassDefineType::InnerDefine;
 }
-
 MetaClass* NullMetaClass::CreateMetaClass() {
     MetaClass* mc = new NullMetaClass();
     ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());
     return mc;
 }
-
 } // namespace Core
 } // namespace SimpleLanguage

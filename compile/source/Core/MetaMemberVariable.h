@@ -9,14 +9,14 @@
 #pragma once
 
 #include "MetaVariable.h"
-#include "MetaExpressNode/MetaExpressBase.h"
-#include "../Compile/FileMeta/FileMetaMemberVariable.h"
-#include "../Debug/Log.h"
 #include <string>
 #include <vector>
 
 namespace SimpleLanguage {
 namespace Core {
+
+    class MetaExpressNode;
+    class MetaClass;
 
 enum class EFromType : uint8_t {
     Code = 1,         // Ð´µÄ.s´úÂë

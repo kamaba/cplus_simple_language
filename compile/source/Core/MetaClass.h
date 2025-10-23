@@ -32,7 +32,7 @@ namespace SimpleLanguage
 			CodeDefine = 2
 		};
 
-		// Ç°ÏòÉùÃ÷
+		// å‰å‘å£°æ˜
 		class MetaNode;
 		class MetaType;
 		class MetaMemberVariable;
@@ -46,7 +46,7 @@ namespace SimpleLanguage
 		class MetaClass : public MetaBase
 		{
 		public:
-			// ¹¹Ôìº¯Êı
+			// æ„é€ å‡½æ•°
 			MetaClass();
 			MetaClass(const std::string& name, EClassDefineType ecdt);
 			MetaClass(const std::string& name, EType type = EType::Class);
@@ -55,7 +55,7 @@ namespace SimpleLanguage
 
 			void SetDeep(int deep) override;
 
-			// ÊôĞÔ·ÃÎÊÆ÷
+			// å±æ€§è®¿é—®å™¨
 			virtual std::string GetAllClassName() const { return m_AllName; }
 			EType GetEType() const { return m_Type; }
 			EClassDefineType GetClassDefineType() const { return m_ClassDefineType; }
@@ -76,13 +76,13 @@ namespace SimpleLanguage
 			const std::unordered_map<Compile::Token*, Compile::FileMetaClass*>& GetFileMetaClassDict() const { return m_FileMetaClassDict; }
 			bool IsHandleExtendVariableDirty() const { return m_IsHandleExtendVariableDirty; }
 
-			// ÉèÖÃ·½·¨
+			// è®¾ç½®æ–¹æ³•
 			void SetDefaultExpressNode(MetaExpressNode* defaultExpressNode) { m_DefaultExpressNode = defaultExpressNode; }
 			void SetClassDefineType(EClassDefineType ecdt) { m_ClassDefineType = ecdt; }
 			void SetExtendClass(MetaClass* sec) { m_ExtendClass = sec; }
 			void SetHandleExtendVariableDirty(bool dirty) { m_IsHandleExtendVariableDirty = dirty; }
 
-			// Ğé·½·¨
+			// è§£ææ–¹æ³•
 			virtual void Parse();
 			virtual void ParseInnerVariable();
 			virtual void ParseInnerFunction();
@@ -95,6 +95,10 @@ namespace SimpleLanguage
 			virtual void ParseMemberFunctionDefineMetaType();
 			virtual bool CheckInterface();
 			virtual void ParseDefineComplete();
+			virtual void ParseGenTemplateClassMetaType();
+			virtual void ParseMetaInConstraint();
+
+			// æŸ¥æ‰¾æ–¹æ³•
 			virtual MetaMemberVariable* GetMetaMemberVariableByName(const std::string& name);
 			virtual std::vector<MetaMemberVariable*> GetMetaMemberVariableListByFlag(bool isStatic);
 			virtual MetaMemberFunction* GetMetaDefineGetSetMemberFunctionByName(const std::string& name, MetaInputParamCollection* inputParam, bool isGet, bool isSet);
@@ -105,10 +109,8 @@ namespace SimpleLanguage
 			virtual MetaMemberFunction* GetFirstMetaMemberFunctionByName(const std::string& name);
 			virtual std::vector<MetaMemberFunction*> GetMemberInterfaceFunction();
 			virtual bool GetMemberInterfaceFunctionByFunc(MetaMemberFunction* func);
-			virtual std::string ToDefineTypeString() const;
-			virtual std::string GetFormatString(bool isShowNamespace) const;
 
-			// ÆäËû·½·¨
+			// å·¥å…·æ–¹æ³•
 			void UpdateClassAllName();
 			void CalcExtendLevel();
 			bool IsParseMetaClass(MetaClass* parentClass, bool isIncludeSelf = true);
@@ -120,16 +122,23 @@ namespace SimpleLanguage
 			void AddDefineInstanceValue();
 			void HandleExtendClassVariable();
 
-			// Ä£°åÏà¹Ø·½·¨
+			// æ¨¡æ¿ç›¸å…³æ–¹æ³•
 			MetaType* AddMetaPreTemplateClass(MetaType* mt, bool isParse, bool& isGenMetaClass);
 			MetaGenTemplateClass* AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(const std::vector<MetaType*>& templateMetaTypeList);
 			MetaType* BindStructTemplateMetaClassList(MetaType* mt);
 
-			// ¸ñÊ½»¯·½·¨
+			// æ–‡ä»¶å…ƒç±»ç»‘å®šå’Œè§£ææ–¹æ³•
+			void BindFileMetaClass(Compile::FileMetaClass* fmc);
+			void ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc);
+			void ParseFileMetaClassMemeberVarAndFunc(Compile::FileMetaClass* fmc);
+
+			// æ ¼å¼åŒ–æ–¹æ³•
 			std::string ToString() const override;
 			std::string ToFormatString() const override;
+			virtual std::string ToDefineTypeString() const;
+			virtual std::string GetFormatString(bool isShowNamespace) const;
 
-			// Ä£°åÏà¹ØÊôĞÔ·ÃÎÊÆ÷
+			// æ¨¡æ¿ç›¸å…³å±æ€§è®¿é—®å™¨
 			bool IsTemplateClass() const { return m_IsTemplateClass; }
 			virtual bool IsGenTemplate() const { return m_IsGenTemplate; }
 			const std::vector<MetaTemplate*>& GetMetaTemplateList() const { return m_MetaTemplateList; }
@@ -156,7 +165,7 @@ namespace SimpleLanguage
 			bool m_IsInterfaceClass = false;
 			bool m_IsHandleExtendVariableDirty = false;
 
-			// Ä£°åÏà¹Ø
+			// æ¨¡æ¿ç›¸å…³
 			std::vector<MetaTemplate*> m_MetaTemplateList;
 			bool m_IsTemplateClass = false;
 			bool m_IsGenTemplate = false;

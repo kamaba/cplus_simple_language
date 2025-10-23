@@ -9,29 +9,13 @@
 #pragma once
 
 #include "../MetaClass.h"
-#include "../MetaExpressNode/MetaExpressConst.h"
-#include "CoreMetaClassManager.h"
-#include "ClassManager.h"
-#include "ModuleManager.h"
-
 namespace SimpleLanguage {
 namespace Core {
 
 class BooleanMetaClass : public MetaClass {
 public:
-    BooleanMetaClass() : MetaClass("Boolean") {
-        m_Type = EType::Boolean;
-        m_ClassDefineType = EClassDefineType::InnerDefine;
-        SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
-    }
-    
-    static MetaClass* CreateMetaClass() {
-        MetaClass* mc = new BooleanMetaClass();
-        ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());
-        MetaConstExpressNode* mcen = new MetaConstExpressNode(EType::Boolean, false);
-        mc->SetDefaultExpressNode(mcen);
-        return mc;
-    }
+    BooleanMetaClass();    
+    static MetaClass* CreateMetaClass();
 };
 
 } // namespace Core

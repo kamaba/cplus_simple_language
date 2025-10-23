@@ -10,22 +10,20 @@
 #include "../MetaTemplate.h"
 #include "../MetaMemberFunction.h"
 #include "../MetaMemberVariable.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-DynamicMetaData::DynamicMetaData() : MetaClass(DefaultObject::Data.ToString()) {
+DynamicMetaData::DynamicMetaData() : MetaClass("Data") {
     m_ClassDefineType = EClassDefineType::InnerDefine;
 }
-
-MetaClass* DynamicMetaData::Cast(MetaTemplate* mc) {
-    return nullptr;
-}
-
 void DynamicMetaData::ParseInnerFunction() {
     AddCoreFunction();
 }
-
 void DynamicMetaData::AddCoreFunction() {
     MetaMemberFunction* Cast = new MetaMemberFunction(this, "cast");
     //Cast.AddMetaDefineParam(new MetaDefineParam("t", this, null, CoreMetaClassManager.templateMetaClass, null));

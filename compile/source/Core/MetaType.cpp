@@ -35,6 +35,10 @@ MetaType::MetaType(const MetaType& mt) {
     m_IsTemplate = mt.m_IsTemplate;
     m_IsIncludeTemplate = mt.m_IsIncludeTemplate;
 }
+bool MetaType::IsArray()
+{
+    return m_MetaClass == nullptr ;
+}
 
 std::string MetaType::ToFormatString() const {
     std::stringstream ss;

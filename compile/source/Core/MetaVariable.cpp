@@ -7,8 +7,10 @@
 //****************************************************************************
 
 #include "MetaVariable.h"
+#include "MetaType.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/CompilerUtil.h"
+#include "../Compile/Token.h"
 #include <algorithm>
 
 namespace SimpleLanguage {
@@ -48,6 +50,7 @@ MetaVariable::MetaVariable(const std::string& name, EVariableFrom from, MetaBloc
     }
     m_RealMetaType = new MetaType(*m_DefineMetaType);
 }
+bool MetaVariable::IsArray() const { return m_DefineMetaType != nullptr ? m_DefineMetaType->IsArray() : false; }
 
 void MetaVariable::SetOwnerMetaClass(MetaClass* ownerclass) {
     m_OwnerMetaClass = ownerclass;
@@ -62,11 +65,11 @@ MetaClass* MetaVariable::GetOwnerClassTemplateClass() const {
 }
 
 void MetaVariable::AddPingToken(const std::string& path, int beginline, int beginpos, int endline, int endpos) {
-    auto pingToken = new Token(path, ETokenType::None, "", beginline, beginpos);
+    auto pingToken = new Compile::Token(path, ETokenType::None, "", beginline, beginpos);
     pingToken->SetSourceEnd(endline, endpos);
 
     auto find1 = std::find_if(m_PintTokenList.begin(), m_PintTokenList.end(), 
-        [beginline, beginpos](Token* token) {
+        [beginline, beginpos](Compile::Token* token) {
             return token->GetSourceBeginLine() == beginline && token->GetSourceBeginChar() == beginpos;
         });
     
@@ -75,7 +78,7 @@ void MetaVariable::AddPingToken(const std::string& path, int beginline, int begi
     }
 }
 
-void MetaVariable::AddPingToken(Token* token) {
+void MetaVariable::AddPingToken(Compile::Token* token) {
     if (token != nullptr) {
         m_PintTokenList.push_back(token);
     }

@@ -7,6 +7,8 @@
 //****************************************************************************
 
 #include "MetaExpressBase.h"
+#include "../MetaClass.h"
+#include "../MetaType.h"
 #include "../MetaTypeFactory.h"
 
 namespace SimpleLanguage {
@@ -20,18 +22,6 @@ MetaExpressNode::MetaExpressNode() {
 
 int MetaExpressNode::GetOpLevel() const {
     return MetaTypeFactory::GetOpLevelByMetaType(m_MetaDefineType);
-}
-
-int MetaExpressNode::CalcParseLevel(int level) {
-    return level;
-}
-
-void MetaExpressNode::CalcReturnType() {
-    // 基类默认实现为空
-}
-
-void MetaExpressNode::Parse(AllowUseSettings* auc) {
-    // 基类默认实现为空
 }
 
 MetaClass* MetaExpressNode::GetReturnMetaClass() {
@@ -48,14 +38,5 @@ void MetaExpressNode::SetMetaType(MetaType* mt) {
 MetaType* MetaExpressNode::GetReturnMetaDefineType() {
     return m_MetaDefineType;
 }
-
-std::string MetaExpressNode::ToFormatString() {
-    return "";
-}
-
-std::string MetaExpressNode::ToTokenString() {
-    return "";
-}
-
 } // namespace Core
 } // namespace SimpleLanguage

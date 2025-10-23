@@ -9,17 +9,24 @@
 #pragma once
 
 #include "MetaStatements.h"
-#include "../MetaFunction.h"
-#include "../MetaVariable.h"
-#include "../MetaDefineParamCollection.h"
-#include "../Compile/CoreFileMeta/FileMetaBlockSyntax.h"
-#include "../Global.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
 
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class Token;
+        class FileMetaBlockSyntax;
+    }
 namespace Core {
+
+    // 前向声明
+    class MetaFunction;
+    class MetaVariable;
+    class MetaDefineParamCollection;
+    class MetaForStatements;
+    class MetaWhileDoWhileStatements;
 
 class MetaBlockStatements : public MetaStatements {
 private:
@@ -29,27 +36,34 @@ private:
     std::unordered_map<std::string, MetaVariable*> m_MetaVariableDict;
     std::vector<MetaBlockStatements*> m_ChildrenMetaBlockStatementsList;
     MetaStatements* m_OwnerMetaStatements = nullptr;
-    FileMetaBlockSyntax* m_FileMetaBlockSyntax = nullptr;
+    Compile::FileMetaBlockSyntax* m_FileMetaBlockSyntax = nullptr;
 
 public:
     MetaBlockStatements* parent = nullptr;
     
-    virtual MetaFunction* GetOwnerMetaFunction() const override;
-    MetaStatements* GetOwnerMetaStatements() const;
-    FileMetaBlockSyntax* GetFileMetaBlockSyntax() const;
-    
+    // 构造函数
     MetaBlockStatements(MetaBlockStatements* mbs);
     MetaBlockStatements(MetaFunction* mf);
-    MetaBlockStatements(MetaFunction* mf, FileMetaBlockSyntax* fmbs);
-    MetaBlockStatements(MetaBlockStatements* mbs, FileMetaBlockSyntax* fmbs);
+    MetaBlockStatements(MetaFunction* mf, Compile::FileMetaBlockSyntax* fmbs);
+    MetaBlockStatements(MetaBlockStatements* mbs, Compile::FileMetaBlockSyntax* fmbs);
     
-    void SetFileMetaBlockSyntax(FileMetaBlockSyntax* blockSyntax);
+    // 属性访问器
+    virtual MetaFunction* GetOwnerMetaFunction() override;
+    MetaStatements* GetOwnerMetaStatements() const;
+    Compile::FileMetaBlockSyntax* GetFileMetaBlockSyntax() const;
+    bool IsOnFunction() const { return m_IsOnFunction; }
+    void SetIsOnFunction(bool value) { m_IsOnFunction = value; }
+    
+    // 设置方法
+    void SetFileMetaBlockSyntax(Compile::FileMetaBlockSyntax* blockSyntax);
     void SetOwnerMetaStatements(MetaStatements* ms);
     virtual void SetNextStatements(MetaStatements* ms) override;
     
+    // 查找和遍历方法
     MetaStatements* FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements();
     virtual void SetDeep(int dp) override;
     
+    // 变量管理方法
     MetaVariable* GetMetaVariable(const std::string& name);
     bool AddMetaVariable(MetaVariable* mv);
     void AddFrontStatements(MetaStatements* ms);
@@ -61,7 +75,8 @@ public:
     MetaVariable* GetMetaVariableByName(const std::string& name, bool isFromParent = true);
     void SetMetaMemberParamCollection(MetaDefineParamCollection* mmpc);
     
-    virtual std::string ToFormatString() override;
+    // 格式化方法
+    virtual std::string ToFormatString() const override;
 };
 
 } // namespace Core

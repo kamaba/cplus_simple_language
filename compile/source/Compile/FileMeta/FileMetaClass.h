@@ -64,7 +64,7 @@ namespace SimpleLanguage
 			bool IsData() const { return m_DataToken != nullptr; }
 			bool IsPartial() const { return m_PartialToken != nullptr; }
 
-			Token* PreInterfaceToken() const { return m_PreInterfaceToken; }
+			Token* GetPreInterfaceToken() const { return m_PreInterfaceToken; }
 			Core::MetaClass* GetMetaClass() const { return m_MetaClass; }
 			FileMetaClassDefine* GetFileMetaExtendClass() const { return m_FileMetaExtendClass; }
 			const ::std::vector<FileMetaClassDefine*>& GetInterfaceClassList() const { return m_InterfaceClassList; }

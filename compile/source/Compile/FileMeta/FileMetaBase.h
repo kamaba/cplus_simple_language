@@ -24,7 +24,7 @@ public:
     // Properties
     Token* GetToken() const { return m_Token; }
     int Deep() const { return m_Deep; }
-    virtual std::string Name() const;
+    virtual std::string GetName() const;
     FileMeta* GetFileMeta() const { return m_FileMeta; }
 
     // Methods

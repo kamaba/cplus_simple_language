@@ -9,18 +9,20 @@
 #pragma once
 
 #include "MetaBase.h"
-#include "MetaClass.h"
-#include "MetaType.h"
-#include "../Compile/FileMeta/FileMetaCommon.h"
-#include "ClassManager.h"
-#include "BaseMetaClass/CoreMetaClassManager.h"
 #include <string>
 #include <vector>
 
 namespace SimpleLanguage {
+    namespace Compile {
+        class FileMetaTemplateDefine;
+    }
 namespace Core {
 
+    class MetaClass;
+    class MetaType;
     class MetaMethodCall;
+    class MetaInputTemplateCollection;
+    class MetaDefineTemplateCollection;
 
     class MetaTemplate : public MetaBase
     {

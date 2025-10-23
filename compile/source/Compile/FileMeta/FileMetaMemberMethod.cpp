@@ -276,7 +276,7 @@ void FileMetaMemberFunction::ParseParam(Node* parNode) {
     for (size_t i = 0; i < tparamList.size(); i++) {
         auto nodelist = tparamList[i];
         auto cdp = new FileMetaParamterDefine(m_FileMeta, nodelist);
-        if (nameSet.find(cdp->Name()) != nameSet.end()) {
+        if (nameSet.find(cdp->GetName()) != nameSet.end()) {
             SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 参数名称有重名!!!");
         }
         AddMetaParamter(cdp);
@@ -294,7 +294,7 @@ void FileMetaMemberFunction::ParseTemplate(Node* node) {
         } else {
             auto cdp = new FileMetaTemplateDefine(m_FileMeta, cnode);
             auto it = std::find_if(m_MetaTemplatesList.begin(), m_MetaTemplatesList.end(),
-                [&cdp](FileMetaTemplateDefine* fmtd) { return fmtd->Name() == cdp->Name(); });
+                [&cdp](FileMetaTemplateDefine* fmtd) { return fmtd->GetName() == cdp->GetName(); });
             if (it != m_MetaTemplatesList.end()) {
                 SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 参数名称有重名!!!");
                 continue;

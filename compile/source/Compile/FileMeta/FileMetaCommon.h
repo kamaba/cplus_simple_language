@@ -75,7 +75,7 @@ public:
     FileMeta* GetFileMeta() const { return m_FileMeta; }
     FileMetaCallLink* DefineClassCallLink() const { return m_DefineClassCallLink; }
     std::vector<std::string> GetNameList() const;
-    int InputTemplateCount() const;
+    int GetInputTemplateCount() const;
     std::string ToFormatString() const;
 
 private:
@@ -156,9 +156,9 @@ public:
     FileMetaClassDefine(FileMeta* fm, Node* node, Node* mutNode = nullptr);
     virtual ~FileMetaClassDefine() = default;
 
-    std::vector<std::string> StringList() const;
-    std::string AllName() const;
-    std::string Name() const;
+    std::vector<std::string> GetStringList() const;
+    std::string GetAllName() const;
+    std::string GetName() const;
     FileMeta* GetFileMeta() const { return m_FileMeta; }
     Token* ClassNameToken() const { return m_ClassNameToken; }
     bool IsInputTemplateData() const { return m_IsInputTemplateData; }

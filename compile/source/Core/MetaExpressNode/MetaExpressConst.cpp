@@ -8,11 +8,15 @@
 
 #include "MetaExpressConst.h"
 #include "../MetaType.h"
-#include "../MetaInputTemplateCollection.h"
+#include "../MetaParam.h"
 #include "../BaseMetaClass/CoreMetaClassManager.h"
-#include "../Compile/CoreFileMeta/FileMetaConstValueTerm.h"
+#include "../../Compile/FileMeta/FileMetaCommon.h"
+#include "../../Compile/FileMeta/FileMetaExpress.h"
+#include "../../Compile/Token.h"
 #include <sstream>
 #include <iostream>
+
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -21,20 +25,20 @@ namespace Core {
 MetaConstExpressNode::MetaConstExpressNode(FileMetaConstValueTerm* fmct) {
     m_FileMetaConstValueTerm = fmct;
     m_EType = fmct->GetToken()->GetEType();
-    Parse1(m_EType, fmct->GetToken()->GetLexeme());
+    Parse(m_EType, fmct->GetToken()->GetLexeme());
 }
 
 MetaConstExpressNode::MetaConstExpressNode(EType eType, const MultiData& val) {
     m_EType = eType;
-    Parse1(eType, val);
+    Parse(eType, val);
 }
 
 MetaConstExpressNode::MetaConstExpressNode(MetaType* mt, const MultiData& val) {
-    Parse1(m_EType, val);
+    Parse(m_EType, val);
 }
 
 // 操作符重载实现
-MetaConstExpressNode MetaConstExpressNode::operator+(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
+MetaConstExpressNode operator+(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
     if (left.GetOpLevel() > right.GetOpLevel()) {
         MetaConstExpressNode result = left;
         result.ComputeAddRight(right);
@@ -46,7 +50,7 @@ MetaConstExpressNode MetaConstExpressNode::operator+(const MetaConstExpressNode&
     }
 }
 
-MetaConstExpressNode MetaConstExpressNode::operator-(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
+MetaConstExpressNode operator-(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
     if (left.GetOpLevel() > right.GetOpLevel()) {
         MetaConstExpressNode result = left;
         result.ComputeMinusRight(right);
@@ -58,7 +62,7 @@ MetaConstExpressNode MetaConstExpressNode::operator-(const MetaConstExpressNode&
     }
 }
 
-MetaConstExpressNode MetaConstExpressNode::operator*(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
+MetaConstExpressNode operator*(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
     if (left.GetOpLevel() > right.GetOpLevel()) {
         MetaConstExpressNode result = left;
         result.ComputeMulRight(right);
@@ -70,7 +74,7 @@ MetaConstExpressNode MetaConstExpressNode::operator*(const MetaConstExpressNode&
     }
 }
 
-MetaConstExpressNode MetaConstExpressNode::operator/(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
+MetaConstExpressNode operator/(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
     if (left.GetOpLevel() > right.GetOpLevel()) {
         MetaConstExpressNode result = left;
         result.ComputeDivRight(right);
@@ -82,7 +86,7 @@ MetaConstExpressNode MetaConstExpressNode::operator/(const MetaConstExpressNode&
     }
 }
 
-MetaConstExpressNode MetaConstExpressNode::operator%(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
+MetaConstExpressNode operator%(const MetaConstExpressNode& left, const MetaConstExpressNode& right) {
     if (left.GetOpLevel() > right.GetOpLevel()) {
         MetaConstExpressNode result = left;
         result.ComputeModRight(right);
@@ -95,7 +99,7 @@ MetaConstExpressNode MetaConstExpressNode::operator%(const MetaConstExpressNode&
 }
 
 // Parse1方法实现
-void MetaConstExpressNode::Parse1(EType eType, const MultiData& val) {
+void MetaConstExpressNode::Parse(EType eType, const MultiData& val) {
     m_EType = eType;
     switch (eType) {
         case EType::Boolean: {

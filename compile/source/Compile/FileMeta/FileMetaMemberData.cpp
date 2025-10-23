@@ -81,7 +81,7 @@ void FileMetaMemberData::SetMetaMemberData(MetaMemberData* mmd) {
 
 FileMetaMemberData* FileMetaMemberData::GetFileMetaMemberDataByName(const std::string& name) {
     auto it = std::find_if(m_FileMetaMemberData.begin(), m_FileMetaMemberData.end(),
-        [&name](FileMetaMemberData* fmmd) { return fmmd->Name() == name; });
+        [&name](FileMetaMemberData* fmmd) { return fmmd->GetName() == name; });
     
     if (it != m_FileMetaMemberData.end()) {
         return *it;
@@ -95,7 +95,7 @@ std::string FileMetaMemberData::ToFormatString() const {
     for (int i = 0; i < Deep(); i++)
         sb << SimpleLanguage::Global::tabChar;
     if (m_IsWithName) {
-        sb << Name() << " = ";
+        sb << GetName() << " = ";
     }
     if (m_MemberDataType == EMemberDataType::Data) {
         sb << std::endl << "{";
@@ -126,7 +126,7 @@ std::string FileMetaMemberData::ToFormatString() const {
 std::string FileMetaMemberData::ToString() const {
     std::ostringstream sb;
     if (m_IsWithName) {
-        sb << Name() << " = " << std::endl;
+        sb << GetName() << " = " << std::endl;
     }
     if (m_MemberDataType == EMemberDataType::Data) {
         sb << std::endl << "{";

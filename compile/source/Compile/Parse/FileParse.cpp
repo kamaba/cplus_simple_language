@@ -64,6 +64,8 @@ static std::string AddPath(std::string path1, std::string path2)
     addsign = "/";
 #endif
     ::std::string realpath = path1 + addsign + path2;
+
+    return realpath;
 }
 
 bool FileParse::LoadFile() 

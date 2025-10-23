@@ -7,24 +7,23 @@
 //****************************************************************************
 
 #include "MetaBlockStatements.h"
+#include "../MetaFunction.h"
+#include "../MetaVariable.h"
+#include "../MetaDefineParamCollection.h"
+#include "../Compile/CoreFileMeta/FileMetaBlockSyntax.h"
+#include "../Global.h"
+#include "../Debug/Log.h"
+#include "../Compile/Token.h"
 #include <iostream>
+#include <sstream>
+
+using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
 
-// MetaBlockStatements implementation
-MetaFunction* MetaBlockStatements::GetOwnerMetaFunction() const {
-    return m_OwnerMetaFunction;
-}
-
-MetaStatements* MetaBlockStatements::GetOwnerMetaStatements() const {
-    return m_OwnerMetaStatements;
-}
-
-FileMetaBlockSyntax* MetaBlockStatements::GetFileMetaBlockSyntax() const {
-    return m_FileMetaBlockSyntax;
-}
-
+// 构造函数实现
 MetaBlockStatements::MetaBlockStatements(MetaBlockStatements* mbs) {
     m_OwnerMetaFunction = mbs->GetOwnerMetaFunction();
     m_OwnerMetaBlockStatements = mbs->m_OwnerMetaBlockStatements;
@@ -35,19 +34,33 @@ MetaBlockStatements::MetaBlockStatements(MetaFunction* mf) {
     m_OwnerMetaFunction = mf;
 }
 
-MetaBlockStatements::MetaBlockStatements(MetaFunction* mf, FileMetaBlockSyntax* fmbs) {
+MetaBlockStatements::MetaBlockStatements(MetaFunction* mf, Compile::FileMetaBlockSyntax* fmbs) {
     m_OwnerMetaBlockStatements = nullptr;
     m_OwnerMetaFunction = mf;
     m_FileMetaBlockSyntax = fmbs;
 }
 
-MetaBlockStatements::MetaBlockStatements(MetaBlockStatements* mbs, FileMetaBlockSyntax* fmbs) : MetaStatements(mbs) {
+MetaBlockStatements::MetaBlockStatements(MetaBlockStatements* mbs, Compile::FileMetaBlockSyntax* fmbs) : MetaStatements(mbs) {
     mbs->m_ChildrenMetaBlockStatementsList.push_back(this);
     m_OwnerMetaFunction = mbs->GetOwnerMetaFunction();
     m_FileMetaBlockSyntax = fmbs;
 }
 
-void MetaBlockStatements::SetFileMetaBlockSyntax(FileMetaBlockSyntax* blockSyntax) {
+// 属性访问器实现
+MetaFunction* MetaBlockStatements::GetOwnerMetaFunction(){
+    return m_OwnerMetaFunction;
+}
+
+MetaStatements* MetaBlockStatements::GetOwnerMetaStatements() const {
+    return m_OwnerMetaStatements;
+}
+
+Compile::FileMetaBlockSyntax* MetaBlockStatements::GetFileMetaBlockSyntax() const {
+    return m_FileMetaBlockSyntax;
+}
+
+// 设置方法实现
+void MetaBlockStatements::SetFileMetaBlockSyntax(Compile::FileMetaBlockSyntax* blockSyntax) {
     m_FileMetaBlockSyntax = blockSyntax;
 }
 
@@ -61,7 +74,7 @@ void MetaBlockStatements::SetNextStatements(MetaStatements* ms) {
 
 MetaStatements* MetaBlockStatements::FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements() {
     if (m_OwnerMetaStatements != nullptr) {
-        // ����Ƿ�Ϊfor��while���
+        // 检查是否为for或while语句
         if (auto forStmt = dynamic_cast<MetaForStatements*>(m_OwnerMetaStatements)) {
             return m_OwnerMetaStatements;
         }
@@ -93,6 +106,7 @@ void MetaBlockStatements::SetDeep(int dp) {
     }
 }
 
+// 变量管理方法实现
 MetaVariable* MetaBlockStatements::GetMetaVariable(const std::string& name) {
     auto it = m_MetaVariableDict.find(name);
     if (it != m_MetaVariableDict.end()) {
@@ -103,11 +117,11 @@ MetaVariable* MetaBlockStatements::GetMetaVariable(const std::string& name) {
 
 bool MetaBlockStatements::AddMetaVariable(MetaVariable* mv) {
     if (m_MetaVariableDict.find(mv->GetName()) != m_MetaVariableDict.end()) {
-        Token* token = m_FileMetaBlockSyntax ? m_FileMetaBlockSyntax->GetToken() : nullptr;
-        std::cout << "error Class: [" << (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") 
-                  << "] Method: [" << (m_OwnerMetaFunction ? m_OwnerMetaFunction->GetFunctionAllName() : "") << "]"
-                  << "�Ѷ�����˱�������!!! MBS:" << (token ? token->ToLexemeAllString() : "") 
-                  << " var:" << mv->ToFormatString() << std::endl;
+        Compile::Token* token = m_FileMetaBlockSyntax ? m_FileMetaBlockSyntax->GetToken() : nullptr;
+        Log::AddInStructMeta(EError::None, "error Class: [" + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") 
+                      + "] Method: [" + (m_OwnerMetaFunction ? m_OwnerMetaFunction->GetFunctionAllName() : "") + "]"
+                      + "已定义过了变量名称!!! MBS:" + (token ? token->ToLexemeAllString() : "") 
+                      + " var:" + mv->ToFormatString());
         return false;
     }
     m_MetaVariableDict[mv->GetName()] = mv;
@@ -188,29 +202,29 @@ MetaVariable* MetaBlockStatements::GetMetaVariableByName(const std::string& name
 
 void MetaBlockStatements::SetMetaMemberParamCollection(MetaDefineParamCollection* mmpc) {
     auto list = mmpc->GetMetaDefineParamList();
-    for (int i = 0; i < list.size(); i++) {
+    for (size_t i = 0; i < list.size(); i++) {
         auto mmpcp = list[i];
         AddMetaVariable(mmpcp->GetMetaVariable());
     }
 }
 
-std::string MetaBlockStatements::ToFormatString() {
-    std::string result;
+std::string MetaBlockStatements::ToFormatString() const {
+    std::stringstream sb;
     for (int i = 0; i < GetRealDeep(); i++) {
-        result += Global::GetTabChar();
+        sb << Global::GetTabChar();
     }
-    result += "{\n";
+    sb << "{\n";
     
     if (m_NextMetaStatements != nullptr) {
-        result += m_NextMetaStatements->ToFormatString() + "\n";
+        sb << m_NextMetaStatements->ToFormatString() << "\n";
     }
     
     for (int i = 0; i < GetRealDeep(); i++) {
-        result += Global::GetTabChar();
+        sb << Global::GetTabChar();
     }
-    result += "}";
+    sb << "}";
     
-    return result;
+    return sb.str();
 }
 
 } // namespace Core

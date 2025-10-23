@@ -9,15 +9,12 @@
 #pragma once
 
 #include "../MetaBase.h"
-#include "../MetaClass.h"
-#include "../MetaFunction.h"
-#include "../MetaVariable.h"
-#include "MetaBlockStatements.h"
 #include <string>
 
 namespace SimpleLanguage {
 namespace Core {
-
+    class MetaVariable;
+    class MetaBlockStatements;
 class MetaStatements : public MetaBase {
 protected:
     MetaVariable* m_TrMetaVariable = nullptr;

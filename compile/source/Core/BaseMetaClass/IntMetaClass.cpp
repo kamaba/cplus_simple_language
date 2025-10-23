@@ -7,11 +7,15 @@
 //****************************************************************************
 
 #include "IntMetaClass.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-Int16MetaClass::Int16MetaClass() : MetaClass(DefaultObject::Int16.ToString()) {
+Int16MetaClass::Int16MetaClass() : MetaClass("Int16") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::Int16;
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -23,7 +27,7 @@ MetaClass* Int16MetaClass::CreateMetaClass() {
     return mc;
 }
 
-UInt16MetaClass::UInt16MetaClass() : MetaClass(DefaultObject::UInt16.ToString()) {
+UInt16MetaClass::UInt16MetaClass() : MetaClass("Int16") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::UInt16;
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -35,7 +39,7 @@ MetaClass* UInt16MetaClass::CreateMetaClass() {
     return mc;
 }
 
-Int32MetaClass::Int32MetaClass() : MetaClass(DefaultObject::Int32.ToString()) {
+Int32MetaClass::Int32MetaClass() : MetaClass("Int32") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::Int32;
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -58,11 +62,8 @@ MetaClass* Int32MetaClass::CreateMetaClass() {
     return mc;
 }
 
-std::string Int32MetaClass::MetaToString(int32_t v) {
-    return std::to_string(v);
-}
 
-UInt32MetaClass::UInt32MetaClass() : MetaClass(DefaultObject::UInt32.ToString()) {
+UInt32MetaClass::UInt32MetaClass() : MetaClass("UInt32") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::UInt32;
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -74,7 +75,7 @@ MetaClass* UInt32MetaClass::CreateMetaClass() {
     return mc;
 }
 
-Int64MetaClass::Int64MetaClass() : MetaClass(DefaultObject::Int64.ToString()) {
+Int64MetaClass::Int64MetaClass() : MetaClass("Int64") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::Int64;
     m_ClassDefineType = EClassDefineType::InnerDefine;
@@ -86,7 +87,7 @@ MetaClass* Int64MetaClass::CreateMetaClass() {
     return mc;
 }
 
-UInt64MetaClass::UInt64MetaClass() : MetaClass(DefaultObject::UInt64.ToString()) {
+UInt64MetaClass::UInt64MetaClass() : MetaClass("UInt64") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::UInt64;
     m_ClassDefineType = EClassDefineType::InnerDefine;

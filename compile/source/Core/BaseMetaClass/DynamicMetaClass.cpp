@@ -7,30 +7,21 @@
 //****************************************************************************
 
 #include "DynamicMetaClass.h"
-#include "../MetaTemplate.h"
-#include "../MetaMemberFunction.h"
-#include "../MetaMemberVariable.h"
-#include "../MetaConstExpressNode.h"
-#include "../Global.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 #include <sstream>
 
 namespace SimpleLanguage {
 namespace Core {
 
-DynamicMetaClass::DynamicMetaClass() : MetaClass(DefaultObject::Dynamic.ToString()) {
+DynamicMetaClass::DynamicMetaClass() : MetaClass("Dynamic") {
     m_ClassDefineType = EClassDefineType::InnerDefine;
 }
 
 DynamicMetaClass::DynamicMetaClass(const std::string& _name) : MetaClass(_name) {
     m_Type = EType::Class;
-}
-
-MetaClass* DynamicMetaClass::Cast(MetaTemplate* mc) {
-    return nullptr;
-}
-
-int DynamicMetaClass::ToInt32() {
-    return 0;
 }
 
 void DynamicMetaClass::ParseInnerFunction() {

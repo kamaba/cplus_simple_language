@@ -8,19 +8,21 @@
 
 #include "RealMetaClass.h"
 #include "../MetaTemplate.h"
-#include "../MetaConstExpressNode.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-Float32MetaClass::Float32MetaClass() : MetaClass(DefaultObject::Float32.ToString()) {
+Float32MetaClass::Float32MetaClass() : MetaClass("Float32") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_ClassDefineType = EClassDefineType::InnerDefine;
     MetaConstExpressNode* mcen = new MetaConstExpressNode(EType::Float32, 0.0f);
     SetDefaultExpressNode(mcen);
     m_Type = EType::Float32;
 }
-
 void Float32MetaClass::ParseInnerFunction() {
     AddCoreFunction();
 }
@@ -39,43 +41,22 @@ void Float32MetaClass::AddCoreFunction() {
     //AddMetaMemberFunction(ToString);
     //ToString.AddCSharpMetaStatements("SimpleLanguage.VM.Int32Object", "FloatToString");
 }
-
-MetaClass* Float32MetaClass::Cast(MetaTemplate* mt) {
-    if (mt->GetName() == "Int32") {
-        // Implementation for cast to Int32
-    }
-    return nullptr;
-}
-
-std::string Float32MetaClass::MetaToString(float v) {
-    return std::to_string(v);
-}
-
 MetaClass* Float32MetaClass::CreateMetaClass() {
     MetaClass* mc = new Float32MetaClass();
     ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());
     return mc;
 }
 
-Float64MetaClass::Float64MetaClass() : MetaClass(DefaultObject::Float64.ToString()) {
+Float64MetaClass::Float64MetaClass() : MetaClass("Float64") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_ClassDefineType = EClassDefineType::InnerDefine;
     MetaConstExpressNode* mcen = new MetaConstExpressNode(EType::Float64, 0.0);
     SetDefaultExpressNode(mcen);
     m_Type = EType::Float64;
 }
-
-MetaClass* Float64MetaClass::Cast(MetaTemplate* mc) {
-    if (mc->GetName() == "Int32") {
-        // Implementation for cast to Int32
-    }
-    return nullptr;
-}
-
 void Float64MetaClass::ParseInnerFunction() {
     AddCoreFunction();
 }
-
 void Float64MetaClass::AddCoreFunction() {
     //MetaMemberFunction toFloat = new MetaMemberFunction(this, "toFloat");
     //toFloat.SetMetaDefineType(new MetaType(CoreMetaClassManager.floatMetaClass));
@@ -87,11 +68,6 @@ void Float64MetaClass::AddCoreFunction() {
     //AddMetaMemberFunction(ToString);
     //ToString.AddCSharpMetaStatements("SimpleLanguage.VM.DoubleObject", "DoubleToString");
 }
-
-std::string Float64MetaClass::MetaToString(double v) {
-    return std::to_string(v);
-}
-
 MetaClass* Float64MetaClass::CreateMetaClass() {
     MetaClass* mc = new Float64MetaClass();
     ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());

@@ -8,30 +8,20 @@
 
 #pragma once
 
-#include "MetaVariable.h"
-#include "MetaExpressNode.h"
-#include "MetaType.h"
-#include "MetaClass.h"
-#include "FileMetaMemberVariable.h"
-#include "MetaConstExpressNode.h"
-#include "MetaCallLinkExpressNode.h"
-#include "MetaNewObjectExpressNode.h"
-#include "Log.h"
-#include "CoreMetaClassManager.h"
-#include "ExpressManager.h"
-#include "AllowUseSettings.h"
-#include "CreateExpressParam.h"
-#include "Global.h"
-#include "CompilerUtil.h"
-#include "MetaInputParamCollection.h"
-#include "MetaMemberFunction.h"
-#include "MetaGenTemplate.h"
 #include <vector>
 #include <string>
 #include <sstream>
+#include "MetaMemberVariable.h"
 
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class FileMetaMemberVariable;
+    }
 namespace Core {
+    class MetaConstExpressNode;
+    class MetaExpressNode;
+    class MetaGenTemplate;
 
 class MetaMemberEnum : public MetaVariable {
 public:
@@ -42,7 +32,7 @@ public:
     int GetParseLevel() const { return parseLevel; }
     void SetParseLevel(int level) { parseLevel = level; }
     bool IsInnerDefine() const { return m_IsInnerDefine; }
-    MetaConstExpressNode* GetConstExpressNode() const { return dynamic_cast<MetaConstExpressNode*>(m_Express); }
+    MetaConstExpressNode* GetConstExpressNode() const;
 
     // Static constants
     static int s_ConstLevel;
@@ -52,13 +42,13 @@ public:
     static int s_ExpressLevel;
 
     // Constructor
-    MetaMemberEnum(MetaClass* mc, FileMetaMemberVariable* fmmv);
+    MetaMemberEnum(MetaClass* mc, Compile::FileMetaMemberVariable* fmmv);
 
     // Methods
     void ParseDefineMetaType() override;
     bool ParseMetaExpress() override;
     void SetExpress(MetaConstExpressNode* mcen);
-    std::string ToFormatString() override;
+    std::string ToFormatString() const override;
     std::string ToTokenString();
 
 private:
@@ -66,7 +56,7 @@ private:
 
     EFromType m_FromType = EFromType::Code;
     int m_Index = -1;
-    FileMetaMemberVariable* m_FileMetaMemeberVariable = nullptr;
+    Compile::FileMetaMemberVariable* m_FileMetaMemeberVariable = nullptr;
     MetaExpressNode* m_Express = nullptr;
     bool m_IsInnerDefine = false;
     std::vector<MetaGenTemplate*> m_MetaGenTemplateList;

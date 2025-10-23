@@ -6,17 +6,28 @@
 //  Description: Meta Class's manager center 
 //****************************************************************************
 
+#include "MetaType.h"
 #include "ClassManager.h"
 #include "ModuleManager.h"
 #include "MetaModule.h"
 #include "MetaClass.h"
+#include "MetaData.h"
+#include "MetaEnum.h"
 #include "MetaDynamicClass.h"
 #include "NamespaceManager.h"
 #include "MetaVariableManager.h"
+#include "MetaGenTemplateClass.h"
 #include "../Debug/Log.h"
 #include "../Project/ProjectManager.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
+#include "../Compile/FileMeta/FileMetaClass.h"
+#include "../Compile/FileMeta/FileMeta.h"
 #include <algorithm>
 #include <iostream>
+
+using namespace SimpleLanguage::Compile;
+using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Project;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -41,7 +52,7 @@ ClassManager::ClassManager() {
 }
 
 ClassManager::~ClassManager() {
-    // ÇåÀí×ÊÔ´
+    // æ¸…ç†èµ„æº
     for (auto& pair : m_AllClassDict) {
         delete pair.second;
     }
@@ -183,7 +194,7 @@ bool ClassManager::CompareMetaClassMemberVariable(MetaClass* curClass, MetaClass
                 curMV->IsStatic() == cpMV->IsStatic() &&
                 curMV->GetName() == cpMV->GetName() &&
                 curMV->GetMetaDefineType() == cpMV->GetMetaDefineType()) {
-                // ¼ÌĞø¼ì²é
+                // ç»§ç»­æ¯”è¾ƒ
             }
             else {
                 return false;
@@ -225,14 +236,14 @@ MetaClass* ClassManager::AddClass(FileMetaClass* fmc) {
     
     if (topLevelClass != nullptr) {
         if (topLevelClass->GetMetaClass() && topLevelClass->GetMetaClass()->GetMetaNode() == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error ÉÏ¼¶ÀàÖĞµÄMetaClassÃ»ÓĞ°ó¶¨!!");
+            Log::AddInStructMeta(EError::None, "Error ä¸Šçº§ç±»ä¸­çš„MetaClassæ²¡æœ‰ç»‘!!");
             return nullptr;
         }
 
         auto findmc = topLevelClass->GetMetaClass()->GetMetaNode()->GetChildrenMetaNodeByName(fmc->GetName());
         if (findmc != nullptr) {
             if (findmc->IsMetaNamespace() || findmc->IsMetaData() || findmc->IsMetaEnum()) {
-                Log::AddInStructMeta(EError::None, "ÒÑÌí¼ÓÁË¿Õ¼äÃüÃû½Úµã£¬²»ÔÊĞíÓĞÖØ¸´Ãû³ÆµÄÀà½ÚµãÔÙ´ÎÌí¼Ó");
+                Log::AddInStructMeta(EError::None, "æ‰¾åˆ°åŒåç©ºé—´æˆ–æ•°æ®èŠ‚ç‚¹ï¼Œä¸å…è®¸é‡å¤åç§°çš„èŠ‚ç‚¹å†æ¬¡åˆ›å»º");
                 return nullptr;
             }
 
@@ -246,11 +257,11 @@ MetaClass* ClassManager::AddClass(FileMetaClass* fmc) {
                     return findmc2;
                 }
                 else {
-                    Log::AddInStructMeta(EError::None, "Error ²éµ½ÄÚ²¿²»ÊÇÄÚ²¿ÄÚ£¬¿ÉÄÜÓĞÏàÍ¬³ÉÔ±");
+                    Log::AddInStructMeta(EError::None, "Error æ‰¾åˆ°å†…éƒ¨ç±»å†…éƒ¨ç±»ï¼Œä¸å…è®¸ç›¸åŒæˆå‘˜");
                 }
             }
             else {
-                Log::AddInStructMeta(EError::None, "Error ²éµ½ÄÚ²¿²»ÊÇÄÚ²¿ÄÚ£¬¿ÉÄÜÓĞÏàÍ¬³ÉÔ±");
+                Log::AddInStructMeta(EError::None, "Error æ‰¾åˆ°å†…éƒ¨ç±»å†…éƒ¨ç±»ï¼Œä¸å…è®¸ç›¸åŒæˆå‘˜");
                 return nullptr;
             }
         }
@@ -260,16 +271,16 @@ MetaClass* ClassManager::AddClass(FileMetaClass* fmc) {
         }
     }
     else {
-        // ´¦ÀíÃüÃû¿Õ¼äÂß¼­
+        // å¤„ç†å‘½åç©ºé—´é€»è¾‘
         if (fmc->GetTopLevelFileMetaNamespace() != nullptr) {
             finalTopMetaNode = ModuleManager::GetInstance().GetChildrenMetaNodeByName(fmc->GetTopLevelFileMetaNamespace()->GetName());
-            // ¸ü¶àÃüÃû¿Õ¼ä´¦ÀíÂß¼­...
+            // å¤„ç†å‘½åç©ºé—´å¤„ç†é€»è¾‘...
         }
     }
 
     if (isCanAddBind) {
-        if (ProjectManager::GetUseDefineNamespaceType() == EUseDefineType::LimitUseProjectConfigNamespaceAndClass) {
-            Log::AddInStructMeta(EError::None, "Error Ê¹ÓÃµÄÇ¿¶¨ÖÆÀà½ÚµãµÄ·½Ê½ÖĞ£¬Ã»ÓĞ²éÕÒµ½Ïà¹ØµÄÀà£¬ËùÒÔ²»ÔÊĞí¶¨Òå¸ÃÀà£¬ÇëÏÈÔÚ¹¤³ÌÖĞ¶¨ÒåÀà");
+        if (ProjectManager::useDefineNamespaceType == EUseDefineType::LimitUseProjectConfigNamespaceAndClass) {
+            Log::AddInStructMeta(EError::None, "Error ä½¿ç”¨çš„å¼ºåˆ¶å®šä¹‰èŠ‚ç‚¹çš„æ–¹å¼ä¸­ï¼Œæ²¡æœ‰æ‰¾åˆ°ç›¸å…³çš„ç±»ï¼Œä¸èƒ½åˆ›å»ºæ–°çš„ç±»ï¼Œè¯·åœ¨å·¥ç¨‹ä¸­å®šä¹‰");
         }
         
         if (fmc->IsEnum()) {
@@ -290,7 +301,7 @@ MetaClass* ClassManager::AddClass(FileMetaClass* fmc) {
         }
         else {
             if (fmc->IsConst()) {
-                Log::AddInStructMeta(EError::None, "Class ÖĞ£¬Ê¹ÓÃ¹Ø¼ü×Ö£¬²»ÔÊĞíÊ¹ÓÃConst");
+                Log::AddInStructMeta(EError::None, "Class ä¸­ï¼Œä½¿ç”¨å…³é”®å­—ï¼Œä¸å…è®¸ä½¿ç”¨Const");
                 return nullptr;
             }
             MetaClass* newmc = new MetaClass(fmc->GetName());
@@ -425,7 +436,7 @@ EClassRelation ClassManager::ValidateClassRelationByMetaClass(MetaClass* curClas
 }
 
 void ClassManager::HandleInterface(FileMetaClass* mc) {
-    // ½Ó¿Ú´¦ÀíÂß¼­
+    // æ¥å£å¤„ç†é€»è¾‘
 }
 
 MetaNode* ClassManager::GetMetaClassByRef(MetaClass* mc, FileMetaClassDefine* fmcv) {
@@ -513,7 +524,7 @@ MetaNode* ClassManager::GetMetaClassByClassDefineAndFileMeta(MetaClass* ownerCla
         auto mb = fm->GetMetaBaseByFileMetaClassRef(fmcd);
         if (mb != nullptr) {
             if (mb->IsMetaNamespace()) {
-                Log::AddInStructMeta(EError::None, "ÕÒµ½ÁËÒÑÓĞÃüÃû¿Õ¼ä¶ø²»ÊÇÒª¼Ì³ĞµÄÀà!!");
+                Log::AddInStructMeta(EError::None, "æ‰¾åˆ°çš„æ˜¯å‘½åç©ºé—´èŠ‚ç‚¹ï¼Œéœ€è¦ç»§æ‰¿çš„ç±»!!");
                 return nullptr;
             }
             else if (mb->IsMetaClass()) {
@@ -542,21 +553,21 @@ MetaClass* ClassManager::GetMetaClassAndRegisterExptendTemplateClassInstance(Met
 
     MetaNode* getmc = GetMetaClassByRef(curMc, fmcd);
     if (getmc == nullptr) {
-        Log::AddInStructMeta(EError::StructMetaStart, " CheckExtendAndInterface ÔÚÅĞ¶Ï¼Ì³ĞµÄÊ±ºò£¬·¢Ã»µÄ:" + fmcd->GetAllName() + "  Àà");
+        Log::AddInStructMeta(EError::StructMetaStart, " CheckExtendAndInterface åˆ¤æ–­ç»§æ‰¿çš„æ—¶å€™ï¼Œçˆ¶æ²¡æœ‰:");// +fmcd->GetAllName() + "  ç±»");
     }
     else {
-        // ¸ü¶àÄ£°å´¦ÀíÂß¼­
+        // æ¨¡æ¿å¤„ç†é€»è¾‘
     }
     return nullptr;
 }
 
 void ClassManager::PrintAlllClassContent() {
     for (const auto& v : m_AllClassDict) {
-        // ´òÓ¡ÀàÄÚÈİ
+        // æ‰“å°æ‰€æœ‰ç±»
     }
 
     for (auto* v : m_RuntimeClassList) {
-        // ´òÓ¡ÔËĞĞÊ±ÀàÄÚÈİ
+        // æ‰“å°è¿è¡Œæ—¶ç±»
     }
 }
 

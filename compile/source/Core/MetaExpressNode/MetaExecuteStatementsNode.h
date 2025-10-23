@@ -11,12 +11,11 @@
 #include "MetaExpressBase.h"
 #include "../MetaType.h"
 #include "../MetaClass.h"
-#include "../MetaBlockStatements.h"
+#include "../Statements/MetaBlockStatements.h"
 #include "../Statements/MetaIfStatements.h"
 #include "../Statements/MetaSwitchStatements.h"
 #include "../BaseMetaClass/CoreMetaClassManager.h"
-#include "../Compile/CoreFileMeta/FileMetaKeyIfSyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaKeySwitchSyntax.h"
+#include "../Compile/FileMeta/FileMetaSyntax.h"
 #include <string>
 
 namespace SimpleLanguage {

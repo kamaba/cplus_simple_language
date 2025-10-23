@@ -86,12 +86,13 @@ bool MetaMemberEnum::ParseMetaExpress() {
     }
     return true;
 }
+MetaConstExpressNode* MetaMemberEnum::GetConstExpressNode() const { return dynamic_cast<MetaConstExpressNode*>(m_Express); }
 
 void MetaMemberEnum::SetExpress(MetaConstExpressNode* mcen) {
     m_Express = mcen;
 }
 
-std::string MetaMemberEnum::ToFormatString() {
+std::string MetaMemberEnum::ToFormatString() const {
     std::stringstream sb;
 
     for (int i = 0; i < realDeep; i++)

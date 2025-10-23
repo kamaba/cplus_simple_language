@@ -10,11 +10,15 @@
 #include "../MetaTemplate.h"
 #include "../MetaMemberFunction.h"
 #include "../MetaMemberVariable.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-RangeIteratorMetaClass::RangeIteratorMetaClass() : MetaClass(DefaultObject::Class.ToString()) {
+RangeIteratorMetaClass::RangeIteratorMetaClass() : MetaClass("Class") {
     m_Type = EType::Class;
     m_ClassDefineType = EClassDefineType::InnerDefine;
 }
@@ -33,11 +37,11 @@ MetaClass* RangeIteratorMetaClass::CreateMetaClass() {
     return mc;
 }
 
-RangeMetaClass::RangeMetaClass() : MetaClass(DefaultObject::Range.ToString()) {
+RangeMetaClass::RangeMetaClass() : MetaClass("Range") {
     m_Type = EType::Range;
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_ClassDefineType = EClassDefineType::InnerDefine;
-    m_MetaTemplateList.push_back(std::make_unique<MetaTemplate>(this, "T"));
+    m_MetaTemplateList.push_back( new MetaTemplate(this, "T"));
 }
 
 void RangeMetaClass::ParseInnerVariable() {
@@ -73,11 +77,6 @@ void RangeMetaClass::ParseInnerFunction() {
     // IsIn.SetMetaDefineType(new MetaType(CoreMetaClassManager.voidMetaClass));
     // AddInnerMetaMemberFunction(IsIn);
 }
-
-void RangeMetaClass::Init_Call(const std::vector<int>& arrObj, int count) {
-    // Implementation for Init_Call
-}
-
 MetaClass* RangeMetaClass::CreateMetaClass() {
     MetaClass* mc = new RangeMetaClass();
     ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());

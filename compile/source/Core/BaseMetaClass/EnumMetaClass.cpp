@@ -8,11 +8,15 @@
 
 #include "EnumMetaClass.h"
 #include "../MetaMemberFunction.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-EnumMetaClass::EnumMetaClass() : MetaClass(DefaultObject::Enum.ToString()) {
+EnumMetaClass::EnumMetaClass() : MetaClass("Enum") {
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     m_Type = EType::Enum;
     m_ClassDefineType = EClassDefineType::InnerDefine;

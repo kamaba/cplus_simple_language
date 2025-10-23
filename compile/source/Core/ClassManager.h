@@ -9,8 +9,6 @@
 #pragma once
 
 #include "../Debug/Log.h"
-#include "MetaModule.h"
-#include "ModuleManager.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -18,13 +16,16 @@
 
 namespace SimpleLanguage {
     namespace Compile {
+        class FileMeta;
         class FileMetaClass;
         class FileInputTemplateNode;
         class FileMetaClassDefine;
         class FileInputTemplateNode;
     }
 namespace Core {
+    class MetaNode;
     class MetaClass;
+    class MetaModule;
     class MetaDynamicClass;
     class MetaData;
     class MetaGenTemplateClass;
@@ -57,14 +58,14 @@ public:
     static ClassManager& GetInstance();
     static void DestroyInstance();
     
-    // ÊôĞÔ·ÃÎÊÆ÷
+    // å±æ€§è®¿é—®å™¨
     const std::unordered_map<std::string, MetaClass*>& GetAllClassDict() const { return m_AllClassDict; }
     const std::unordered_map<std::string, MetaData*>& GetAllDataDict() const { return m_AllDataDict; }
     const std::vector<MetaDynamicClass*>& GetDynamicClassList() const { return m_DynamicClassList; }
     const std::vector<MetaGenTemplateClass*>& GetGenTemplateMetaClassList() const { return m_GenTemplateMetaClassList; }
     const std::vector<MetaClass*>& GetRuntimeClassList() const { return m_RuntimeClassList; }
     
-    // Àà¹ÜÀí·½·¨
+    // ç±»ç®¡ç†æ–¹æ³•
     MetaClass* GetClassByName(const std::string& name, int templateCount = 0);
     MetaClass* GetMetaClassByCSharpType(const std::string& typeName);
     bool AddMetaClass(MetaClass* mc, MetaModule* mm = nullptr);
@@ -73,16 +74,16 @@ public:
     bool AddDynamicClass(MetaDynamicClass* dc);
     void AddInitHandleMetaClassList(MetaClass* mc);
     
-    // Êı¾İ¹ÜÀí·½·¨
+    // æ•°æ®ç®¡ç†æ–¹æ³•
     MetaData* FindMetaData(MetaData* md);
     MetaData* FindMetaDataByName(const std::string& name);
     bool AddMetaData(MetaData* dc);
     
-    // ±È½Ï·½·¨
+    // æ¯”è¾ƒæ–¹æ³•
     bool CompareMetaClassMemberVariable(MetaClass* curClass, MetaClass* cpClass);
     bool CompareMetaDataMember(MetaData* curClass, MetaData* cpClass);
     
-    // ÀàÌí¼ÓºÍ´¦Àí·½·¨
+    // ç±»æ·»åŠ å’Œå¤„ç†æ–¹æ³•
     MetaClass* AddClass(Compile::FileMetaClass* fmc);
     void AddRuntimeMetaClass(MetaClass* mc);
     void HandleExtendMember();
@@ -92,11 +93,11 @@ public:
     void ParseDefineComplete();
     void ParseMemberEnumExpress();
     
-    // ¾²Ì¬¹¤¾ß·½·¨
+    // é™æ€å·¥å…·æ–¹æ³•
     static bool IsNumberClass(MetaClass* curClass);
     static EClassRelation ValidateClassRelationByMetaClass(MetaClass* curClass, MetaClass* compareClass);
     
-    // Àà²éÕÒ·½·¨
+    // æŸ¥æ‰¾æ–¹æ³•
     MetaNode* GetMetaClassByRef(MetaClass* mc, Compile::FileMetaClassDefine* fmcv);
     MetaNode* GetMetaClassByClassDefine(MetaClass* ownerClass, Compile::FileMetaClassDefine* fmcd);
     MetaNode* GetMetaClassByNameAndFileMeta(MetaClass* ownerClass, Compile::FileMeta* fm, const std::vector<std::string>& stringList);
@@ -104,10 +105,10 @@ public:
     MetaClass* GetMetaClassByInputTemplateAndFileMeta(MetaClass* ownerClass, Compile::FileInputTemplateNode* fitn);
     MetaClass* GetMetaClassAndRegisterExptendTemplateClassInstance(MetaClass* curMc, Compile::FileMetaClassDefine* fmcd);
     
-    // µ÷ÊÔ·½·¨
+    // è°ƒè¯•æ–¹æ³•
     void PrintAlllClassContent();
     
-    // ½Ó¿Ú´¦Àí·½·¨
+    // æ¥å£å¤„ç†æ–¹æ³•
     void HandleInterface(Compile::FileMetaClass* mc);
 
 private:

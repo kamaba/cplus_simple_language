@@ -7,12 +7,15 @@
 //****************************************************************************
 
 #include "BooleanMetaClass.h"
-#include "../MetaConstExpressNode.h"
+#include "CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ModuleManager.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
-BooleanMetaClass::BooleanMetaClass() : MetaClass(DefaultObject::Boolean.ToString()) {
+BooleanMetaClass::BooleanMetaClass() : MetaClass("Boolean") {
     m_Type = EType::Boolean;
     m_ClassDefineType = EClassDefineType::InnerDefine;
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());

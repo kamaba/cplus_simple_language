@@ -16,7 +16,6 @@
 #include "../Compile/FileMeta/FileMetaMemberVariable.h"
 #include "../Compile/CompilerUtil.h"
 #include "../Debug/Log.h"
-#include "../Global.h"
 #include <sstream>
 
 namespace SimpleLanguage {

@@ -9,24 +9,15 @@
 #pragma once
 
 #include "../MetaClass.h"
-#include "CoreMetaClassManager.h"
-#include "ClassManager.h"
-#include "ModuleManager.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
 class NullMetaClass : public MetaClass {
 public:
-    NullMetaClass() : MetaClass("Null") {
-        m_ClassDefineType = EClassDefineType::InnerDefine;
-    }
+    NullMetaClass();
     
-    static MetaClass* CreateMetaClass() {
-        MetaClass* mc = new NullMetaClass();
-        ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());
-        return mc;
-    }
+    static MetaClass* CreateMetaClass();
 };
 
 } // namespace Core

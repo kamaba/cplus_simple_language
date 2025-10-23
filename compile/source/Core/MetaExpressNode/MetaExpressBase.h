@@ -13,7 +13,10 @@
 
 namespace SimpleLanguage {
 namespace Core {
+    class MetaClass;
+    class MetaType;
     class AllowUseSettings;
+    class MetaBlockStatements;
 enum class ELeftRightOpSign {
     Add,
     Minus,
@@ -50,39 +53,19 @@ protected:
 
 public:
     virtual ~MetaExpressNode() = default;
-    
-    virtual int GetOpLevel() const {
-        return MetaTypeFactory::GetOpLevelByMetaType(m_MetaDefineType);
-    }
-    
+
     MetaType* GetMetaDefineType() const { return m_MetaDefineType; }
     
+    virtual int GetOpLevel() const;  
     virtual int CalcParseLevel(int level) { return level; }
     virtual void CalcReturnType() { }
-    virtual void Parse(AllowUseSettings* auc) { }
+    virtual void Parse(AllowUseSettings* auc) { }    
+    MetaClass* GetReturnMetaClass();    
+    virtual void SetMetaType(MetaType* mt);
     
-    MetaClass* GetReturnMetaClass() {
-        if (m_MetaDefineType == nullptr) {
-            GetReturnMetaDefineType();
-        }
-        return m_MetaDefineType ? m_MetaDefineType->GetMetaClass() : nullptr;
-    }
-    
-    virtual void SetMetaType(MetaType* mt) {
-        m_MetaDefineType = mt;
-    }
-    
-    virtual MetaType* GetReturnMetaDefineType() {
-        return m_MetaDefineType;
-    }
-    
-    virtual std::string ToFormatString() {
-        return "";
-    }
-    
-    virtual std::string ToTokenString() {
-        return "";
-    }
+    virtual MetaType* GetReturnMetaDefineType();    
+    virtual std::string ToFormatString() { return ""; }    
+    virtual std::string ToTokenString() {return "";}
 };
 
 } // namespace Core

@@ -9,38 +9,16 @@
 #pragma once
 
 #include "../MetaClass.h"
-#include "../MetaMemberFunction.h"
-#include "CoreMetaClassManager.h"
-#include "ClassManager.h"
-#include "ModuleManager.h"
 
 namespace SimpleLanguage {
 namespace Core {
 
 class EnumMetaClass : public MetaClass {
 public:
-    EnumMetaClass() : MetaClass(DefaultObject::Enum.ToString()) {
-        SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
-        m_Type = EType::Enum;
-        m_ClassDefineType = EClassDefineType::InnerDefine;
-    }
-    
-    virtual void ParseInnerFunction() override {
-        AddCoreFunction();
-    }
-    
-    void AddCoreFunction() {
-        MetaMemberFunction* values = new MetaMemberFunction(this, "_values_");
-        values->SetIsGet(true);
-        values->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetArrayMetaClass());
-        AddMetaMemberFunction(values);
-    }
-    
-    static MetaClass* CreateMetaClass() {
-        EnumMetaClass* mc = new EnumMetaClass();
-        ClassManager::GetInstance().AddMetaClass(mc, ModuleManager::GetInstance().GetCoreModule());
-        return mc;
-    }
+    EnumMetaClass();    
+    virtual void ParseInnerFunction() override;    
+    void AddCoreFunction();    
+    static MetaClass* CreateMetaClass();
 };
 
 } // namespace Core

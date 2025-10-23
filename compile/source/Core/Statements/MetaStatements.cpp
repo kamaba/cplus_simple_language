@@ -7,6 +7,10 @@
 //****************************************************************************
 
 #include "MetaStatements.h"
+#include "../MetaClass.h"
+#include "MetaBlockStatements.h"
+#include "../MetaFunction.h"
+#include "../MetaVariable.h"
 
 namespace SimpleLanguage {
 namespace Core {

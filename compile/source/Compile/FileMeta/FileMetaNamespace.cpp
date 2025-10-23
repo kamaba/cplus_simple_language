@@ -42,7 +42,7 @@ FileMetaNamespace::FileMetaNamespace(Node* namespaceNode, Node* namespaceNameNod
     m_NamespaceStateBlock = NamespaceStatementBlock::CreateStateBlock(m_NamespaceNameNode->GetLinkTokenList());
 }
 
-std::string FileMetaNamespace::Name() const {
+std::string FileMetaNamespace::GetName() const {
     if (m_NamespaceStateBlock != nullptr) {
         return m_NamespaceStateBlock->NamespaceString();
     }
@@ -75,7 +75,7 @@ void FileMetaNamespace::AddFileMetaClass(FileMetaClass* mc) {
 }
 
 std::string FileMetaNamespace::ToString() const {
-    return "namespace " + Name() + "{}";
+    return "namespace " + GetName() + "{}";
 }
 
 void FileMetaNamespace::SetDeep(int _deep) {

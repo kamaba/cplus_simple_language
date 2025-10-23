@@ -19,6 +19,8 @@
 #include "ClassManager.h"
 #include "TypeManager.h"
 #include "MetaVariableManager.h"
+#include "MethodManager.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
 
 #include "../Debug/Log.h"
 #include <algorithm>
@@ -126,15 +128,15 @@ void MetaClass::UpdateClassAllName() {
 }
 
 void MetaClass::Parse() {
-    // ParseExtendsRelation();
-    // ParseTemplateRelation();
-    // HandleExtendData();
+    // 基础解析逻辑
 }
 
 void MetaClass::ParseInnerVariable() {
+    // 解析内部变量
 }
 
 void MetaClass::ParseInnerFunction() {
+    // 解析内部函数
 }
 
 void MetaClass::ParseInner() {
@@ -151,47 +153,50 @@ void MetaClass::ParseExtendsRelation() {
     }
 
     if (this->m_ExtendClassMetaType != nullptr) {
-        Log::AddInStructMeta(EError::None, "�Ѱ󶨹��˼̳��� : " + GetExtendClass()->GetName());
+        Log::AddInStructMeta(EError::None, "已绑定过了继承类 : " + GetExtendClass()->GetName());
         return;
     }
+    
     for (const auto& pair : m_FileMetaClassDict) {
-        FileMetaClass* mc = pair.second;
+        auto mc = pair.second;
         if (mc->GetFileMetaExtendClass() == nullptr) {
             continue;
         }
         if (this->m_ExtendClassMetaType != nullptr) {
-            Log::AddInStructMeta(EError::None, "�Ѱ󶨹��˼̳��� : " + mc->GetMetaClass()->GetExtendClass()->GetName());
+            Log::AddInStructMeta(EError::None, "已绑定过了继承类 : " + mc->GetMetaClass()->GetExtendClass()->GetName());
             continue;
         }
 
         MetaType* getmt = TypeManager::GetInstance().GetMetaTemplateClassAndRegisterExptendTemplateClassInstance(this, mc->GetFileMetaExtendClass());
         if (getmt != nullptr) {
             this->m_ExtendClassMetaType = getmt;
-        } else {
-            Log::AddInStructMeta(EError::None, "û�з��ּ̳��������!!! " + mc->GetMetaClass()->GetExtendClass()->GetName());
+        }
+        else {
+            Log::AddInStructMeta(EError::None, "没有发现继承类的类型!!! " + mc->GetMetaClass()->GetExtendClass()->GetName());
         }
     }
 
-    if (m_ExtendClassMetaType == nullptr && this != CoreMetaClassManager::ObjectMetaClass) {
-        m_ExtendClassMetaType = new MetaType(CoreMetaClassManager::ObjectMetaClass);
+    if (m_ExtendClassMetaType == nullptr && this != CoreMetaClassManager::GetInstance().GetObjectMetaClass()) {
+        m_ExtendClassMetaType = new MetaType(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
     }
 
     if (!m_ExtendClassMetaType->IsIncludeTemplate()) {
         this->m_ExtendClass = this->m_ExtendClassMetaType->GetMetaClass();
-    } else {
+    }
+    else {
         this->m_ExtendClass = m_ExtendClassMetaType->GetMetaClass();
     }
 }
 
 void MetaClass::ParseInterfaceRelation() {
     m_InterfaceMetaType.clear();
-    for (const auto& pair : this->m_FileMetaClassDict) {
+    for (const auto& pair : m_FileMetaClassDict) {
         for (size_t i = 0; i < pair.second->GetInterfaceClassList().size(); i++) {
             auto icd = pair.second->GetInterfaceClassList()[i];
 
             MetaType* getmt = TypeManager::GetInstance().GetMetaTemplateClassAndRegisterExptendTemplateClassInstance(this, icd);
             if (getmt == nullptr) {
-                Log::AddInStructMeta(EError::None, "û���ҵ��ӿ���صĶ�����!!");
+                Log::AddInStructMeta(EError::None, "没有找到接口相关的定义类!!");
                 continue;
             }
             m_InterfaceMetaType.push_back(getmt);
@@ -210,14 +215,15 @@ void MetaClass::HandleExtendMemberVariable() {
             m_MetaMemberVariableDict[v->GetName()] = v;
         }
         return;
-    } else {
+    }
+    else {
         for (const auto& pair : m_ExtendClass->m_MetaExtendMemeberVariableDict) {
             auto c = pair.second;
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
-                auto ld = Log::AddInStructMeta(EError::None, "Error �̳е���123:" + m_AllName + " �ڼ̳еĸ���" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " ���Ѱ���:" + c->GetName() + " ");
-                // ld->valDict.Add(EMetaType.MetaClass, this);
-                // ld->valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
-                // ld->valDict.Add(EMetaType.MetaMemberVariable, c);
+                auto ld = Log::AddInStructMeta(EError::None, "Error 继承的类123:" + m_AllName + " 在继承的父类" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " 中已包含:" + c->GetName() + " ");
+                // ld.valDict.Add(EMetaType.MetaClass, this);
+                // ld.valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
+                // ld.valDict.Add(EMetaType.MetaMemberVariable, c);
                 continue;
             }
             this->m_MetaExtendMemeberVariableDict[c->GetName()] = c;
@@ -225,17 +231,17 @@ void MetaClass::HandleExtendMemberVariable() {
         for (const auto& pair : m_ExtendClass->m_MetaMemberVariableDict) {
             auto c = pair.second;
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
-                auto ld = Log::AddInStructMeta(EError::None, "Error �̳е���123:" + m_AllName + " �ڼ̳еĸ���" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " ���Ѱ���:" + c->GetName() + " ");
-                // ld->valDict.Add(EMetaType.MetaClass, this);
-                // ld->valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
-                // ld->valDict.Add(EMetaType.MetaMemberVariable, c);
+                auto ld = Log::AddInStructMeta(EError::None, "Error 继承的类123:" + m_AllName + " 在继承的父类" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " 中已包含:" + c->GetName() + " ");
+                // ld.valDict.Add(EMetaType.MetaClass, this);
+                // ld.valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
+                // ld.valDict.Add(EMetaType.MetaMemberVariable, c);
                 continue;
             }
             this->m_MetaExtendMemeberVariableDict[c->GetName()] = c;
         }
         for (auto c : this->m_FileCollectMetaMemberVariable) {
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
-                Log::AddInStructMeta(EError::None, "Error �̳е���321:" + m_AllName + " �ڼ̳еĸ���" + m_ExtendClass->m_AllName + " ���Ѱ���:" + c->GetName() + " ");
+                Log::AddInStructMeta(EError::None, "Error 继承的类321:" + m_AllName + " 在继承的父类" + m_ExtendClass->m_AllName + " 中已包含:" + c->GetName() + " ");
                 continue;
             }
             this->m_MetaMemberVariableDict[c->GetName()] = c;
@@ -248,12 +254,14 @@ void MetaClass::HandleExtendMemberFunction() {
         for (auto v : m_FileCollectMetaMemberFunctionList) {
             if (v->IsStatic()) {
                 m_StaticMetaMemberFunctionList.push_back(v);
-            } else {
+            }
+            else {
                 if (v->IsWithInterface()) continue;
                 m_NonStaticVirtualMetaMemberFunctionList.push_back(v);
             }
         }
-    } else {
+    }
+    else {
         bool canAdd = false;
         for (auto v : this->m_ExtendClass->m_NonStaticVirtualMetaMemberFunctionList) {
             canAdd = true;
@@ -277,54 +285,56 @@ void MetaClass::HandleExtendMemberFunction() {
                 if (find != m_StaticMetaMemberFunctionList.end()) continue;
 
                 m_StaticMetaMemberFunctionList.push_back(v2);
-            } else {
+            }
+            else {
                 auto find = std::find(m_NonStaticVirtualMetaMemberFunctionList.begin(), m_NonStaticVirtualMetaMemberFunctionList.end(), v2);
                 if (find != m_NonStaticVirtualMetaMemberFunctionList.end()) continue;
 
                 m_NonStaticVirtualMetaMemberFunctionList.push_back(v2);
             }
         }
-    }
 
-    for (auto v2 : m_NonStaticVirtualMetaMemberFunctionList) {
-        AddMetaMemberFunction(v2);
-    }
-    for (auto v2 : m_StaticMetaMemberFunctionList) {
-        AddMetaMemberFunction(v2);
-    }
+        for (auto v2 : m_NonStaticVirtualMetaMemberFunctionList) {
+            AddMetaMemberFunction(v2);
+        }
+        for (auto v2 : m_StaticMetaMemberFunctionList) {
+            AddMetaMemberFunction(v2);
+        }
 
-    std::vector<MetaMemberFunction*> addList;
-    for (size_t i = 0; i < this->m_TempInnerFunctionList.size(); i++) {
-        MetaMemberFunction* mmf = m_TempInnerFunctionList[i];
+        std::vector<MetaMemberFunction*> addList;
+        for (size_t i = 0; i < this->m_TempInnerFunctionList.size(); i++) {
+            MetaMemberFunction* mmf = m_TempInnerFunctionList[i];
 
-        bool isAdd = true;
-        if (m_MetaMemberFunctionTemplateNodeDict.find(mmf->GetName()) != m_MetaMemberFunctionTemplateNodeDict.end()) {
-            auto list = m_MetaMemberFunctionTemplateNodeDict[mmf->GetName()];
-            MetaMemberFunction* curFun = list->IsSameMetaMemeberFunction(mmf);
-            if (curFun != nullptr) {
-                isAdd = false;
-                if (mmf->IsCanRewrite()) {
-                    // int index = list->IndexOf(curFun);
-                    // list[index] = mmf;
-                } else {
-                    isAdd = true;
-                    break;
+            bool isAdd = true;
+            if (m_MetaMemberFunctionTemplateNodeDict.find(mmf->GetName()) != m_MetaMemberFunctionTemplateNodeDict.end()) {
+                auto list = m_MetaMemberFunctionTemplateNodeDict[mmf->GetName()];
+                MetaMemberFunction* curFun = list->IsSameMetaMemeberFunction(mmf);
+                if (curFun != nullptr) {
+                    isAdd = false;
+                    if (mmf->IsCanRewrite()) {
+                        // 处理重写逻辑
+                    }
+                    else {
+                        isAdd = true;
+                        break;
+                    }
                 }
             }
+            if (isAdd) {
+                addList.push_back(mmf);
+            }
         }
-        if (isAdd) {
-            addList.push_back(mmf);
+        for (size_t i = 0; i < addList.size(); i++) {
+            auto v = addList[i];
+            if (v->IsStatic()) {
+                m_StaticMetaMemberFunctionList.push_back(v);
+            }
+            else {
+                m_NonStaticVirtualMetaMemberFunctionList.push_back(v);
+            }
         }
+        m_TempInnerFunctionList.clear();
     }
-    for (size_t i = 0; i < addList.size(); i++) {
-        auto v = addList[i];
-        if (v->IsStatic()) {
-            m_StaticMetaMemberFunctionList.push_back(v);
-        } else {
-            m_NonStaticVirtualMetaMemberFunctionList.push_back(v);
-        }
-    }
-    m_TempInnerFunctionList.clear();
 }
 
 void MetaClass::ParseMemberVariableDefineMetaType() {
@@ -343,53 +353,6 @@ bool MetaClass::CheckInterface() {
     return true;
 }
 
-MetaType* MetaClass::AddMetaPreTemplateClass(MetaType* mt, bool isParse, bool& isGenMetaClass) {
-    isGenMetaClass = false;
-    if (mt->GetMetaClass() == nullptr) {
-        return nullptr;
-    }
-    MetaGenTemplateClass* mgtc = mt->GetMetaClass()->AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(mt->GetTemplateMetaTypeList());
-
-    if (mgtc != nullptr) {
-        isGenMetaClass = true;
-        if (isParse) {
-            mgtc->Parse();
-        }
-        return new MetaType(mgtc, mt->GetTemplateMetaTypeList());
-    }
-
-    auto find = BindStructTemplateMetaClassList(mt);
-    if (find == nullptr) {
-        this->m_BindStructTemplateMetaClassList.push_back(new MetaType(mt));
-    }
-    return mt;
-}
-
-MetaGenTemplateClass* MetaClass::AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(const std::vector<MetaType*>& templateMetaTypeList) {
-    std::vector<MetaClass*> mcList;
-    for (size_t i = 0; i < templateMetaTypeList.size(); i++) {
-        auto mtc = templateMetaTypeList[i];
-        if (mtc->GetEType() == EMetaTypeType::MetaClass
-            || mtc->GetEType() == EMetaTypeType::MetaGenClass) {
-            mcList.push_back(mtc->GetMetaClass());
-        }
-    }
-    if (mcList.size() == templateMetaTypeList.size()) {
-        MetaGenTemplateClass* mgtc = AddInstanceMetaClass(mcList);
-        return mgtc;
-    }
-    return nullptr;
-}
-
-MetaType* MetaClass::BindStructTemplateMetaClassList(MetaType* mt) {
-    for (auto v : m_BindStructTemplateMetaClassList) {
-        if (MetaType::EqualMetaDefineType(v, mt)) {
-            return v;
-        }
-    }
-    return nullptr;
-}
-
 void MetaClass::ParseDefineComplete() {
     if (m_IsInterfaceClass) {
         return;
@@ -402,17 +365,85 @@ void MetaClass::ParseDefineComplete() {
         }
         auto defaultFunction = GetMetaMemberConstructDefaultFunction();
         if (defaultFunction == nullptr) {
-            Log::AddInStructMeta(EError::None, "û���ҷ���Ĭ�Ϲ��캯��");
+            Log::AddInStructMeta(EError::None, "没有找发现默认构造函数");
             return;
         }
-        m_DefaultExpressNode = new MetaNewObjectExpressNode(mdt, this, defaultFunction->GetMetaBlockStatements());
+        // m_DefaultExpressNode = new MetaNewObjectExpressNode(mdt, this, defaultFunction->GetMetaBlockStatements());
+    }
+}
+
+void MetaClass::ParseGenTemplateClassMetaType() {
+    // 解析生成模板类元类型
+}
+
+void MetaClass::ParseMetaInConstraint() {
+    // 解析元约束
+}
+
+void MetaClass::BindFileMetaClass(Compile::FileMetaClass* fmc) {
+    if (m_FileMetaClassDict.find(fmc->GetToken()) != m_FileMetaClassDict.end()) {
+        return;
+    }
+    fmc->SetMetaClass(this);
+    m_FileMetaClassDict[fmc->GetToken()] = fmc;
+
+    if (m_IsInterfaceClass == false) {
+        m_IsInterfaceClass = fmc->GetPreInterfaceToken() != nullptr;
+    }
+}
+
+void MetaClass::ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc) {
+    // 解析文件元类模板
+    // 这里需要实现模板解析逻辑
+}
+
+void MetaClass::ParseFileMetaClassMemeberVarAndFunc(Compile::FileMetaClass* fmc) {
+    bool isHave = false;
+    for (auto v2 : fmc->GetMemberVariableList()) {
+        auto mn = m_MetaNode->GetChildrenMetaNodeByName(v2->GetName());
+        if (mn != nullptr) {
+            Log::AddInStructMeta(EError::None, "Error MetaClass MemberVarAndFunc已有定义类: " + m_AllName + "中 已有: " + (v2->GetToken() ? v2->GetToken()->ToLexemeAllString() : "") + "的元素!!");
+            continue;
+        }
+
+        MetaMemberVariable* cmmv = GetMetaMemberVariableByName(v2->GetName());
+        if (cmmv != nullptr) {
+            if (cmmv != nullptr && cmmv->IsInnerDefine()) {
+                break;
+            }
+            else {
+                Log::AddInStructMeta(EError::None, "Error MetaClass MemberVarAndFunc已有定义类: " + m_AllName + "中 已有: " + (v2->GetToken() ? v2->GetToken()->ToLexemeAllString() : "") + "的元素!!");
+            }
+            isHave = true;
+        }
+        else {
+            isHave = false;
+        }
+        MetaMemberVariable* mmv = new MetaMemberVariable(this, v2);
+        if (isHave) {
+            mmv->SetName(mmv->GetName() + "__repeat__");
+        }
+        m_FileCollectMetaMemberVariable.push_back(mmv);
+        MetaVariableManager::GetInstance().AddMetaMemberVariable(mmv);
+    }
+    for (auto v2 : fmc->GetMemberFunctionList()) {
+        auto mn = this->m_MetaNode->GetChildrenMetaNodeByName(v2->GetName());
+        if (mn != nullptr) {
+            Log::AddInStructMeta(EError::None, "Error MetaClass MemberVarAndFunc已有定义类: " + m_AllName + "中 已有: " + (v2->GetToken() ? v2->GetToken()->ToLexemeAllString() : "") + "的元素!!");
+            continue;
+        }
+
+        MetaMemberFunction* mmf = new MetaMemberFunction(this, v2);
+        m_FileCollectMetaMemberFunctionList.push_back(mmf);
+        MethodManager::GetInstance().AddOriginalMemeberFunction(mmf);
     }
 }
 
 void MetaClass::CalcExtendLevel() {
     if (this->m_ExtendClass == nullptr) {
         m_ExtendLevel = 0;
-    } else {
+    }
+    else {
         MetaClass* mc = m_ExtendClass;
         int level = 0;
         while (mc != nullptr) {
@@ -426,9 +457,9 @@ void MetaClass::CalcExtendLevel() {
 bool MetaClass::IsParseMetaClass(MetaClass* parentClass, bool isIncludeSelf) {
     MetaClass* mc = isIncludeSelf ? this : this->m_ExtendClass;
     while (mc != nullptr) {
-        if (mc == CoreMetaClassManager::ObjectMetaClass)
+        if (mc == CoreMetaClassManager::GetInstance().GetObjectMetaClass())
             break;
-
+        
         if (mc == parentClass) {
             return true;
         }
@@ -440,8 +471,9 @@ bool MetaClass::IsParseMetaClass(MetaClass* parentClass, bool isIncludeSelf) {
 void MetaClass::AddInterfaceClass(MetaClass* aic) {
     if (std::find(m_InterfaceClass.begin(), m_InterfaceClass.end(), aic) == m_InterfaceClass.end()) {
         m_InterfaceClass.push_back(aic);
-    } else {
-        Log::AddInStructMeta(EError::None, "�ظ����ӽӿ�");
+    }
+    else {
+        Log::AddInStructMeta(EError::None, "重复添加接口");
     }
 }
 
@@ -463,7 +495,8 @@ bool MetaClass::AddMetaMemberFunction(MetaMemberFunction* mmf) {
     MetaMemberFunctionTemplateNode* find = nullptr;
     if (this->m_MetaMemberFunctionTemplateNodeDict.find(mmf->GetName()) != this->m_MetaMemberFunctionTemplateNodeDict.end()) {
         find = m_MetaMemberFunctionTemplateNodeDict[mmf->GetName()];
-    } else {
+    }
+    else {
         find = new MetaMemberFunctionTemplateNode();
         m_MetaMemberFunctionTemplateNodeDict[mmf->GetName()] = find;
     }
@@ -477,7 +510,7 @@ void MetaClass::AddDefineConstructFunction() {
     MetaMemberFunction* mmf = GetMetaMemberConstructDefaultFunction();
     if (mmf == nullptr) {
         mmf = new MetaMemberFunction(this, "_init_");
-        mmf->SetReturnMetaClass(CoreMetaClassManager::voidMetaClass);
+        mmf->SetReturnMetaClass(CoreMetaClassManager::GetInstance().GetVoidMetaClass());
         mmf->Parse();
         AddMetaMemberFunction(mmf);
         MethodManager::GetInstance().AddOriginalMemeberFunction(mmf);
@@ -503,11 +536,13 @@ void MetaClass::HandleExtendClassVariable() {
 }
 
 MetaMemberVariable* MetaClass::GetMetaMemberVariableByName(const std::string& name) {
-    if (m_MetaMemberVariableDict.find(name) != m_MetaMemberVariableDict.end()) {
-        return m_MetaMemberVariableDict[name];
+    auto it = m_MetaMemberVariableDict.find(name);
+    if (it != m_MetaMemberVariableDict.end()) {
+        return it->second;
     }
-    if (m_MetaExtendMemeberVariableDict.find(name) != m_MetaExtendMemeberVariableDict.end()) {
-        return m_MetaExtendMemeberVariableDict[name];
+    auto it2 = m_MetaExtendMemeberVariableDict.find(name);
+    if (it2 != m_MetaExtendMemeberVariableDict.end()) {
+        return it2->second;
     }
     return nullptr;
 }
@@ -521,7 +556,8 @@ std::vector<MetaMemberVariable*> MetaClass::GetMetaMemberVariableListByFlag(bool
             if (tempMmv->IsStatic() == isStatic || tempMmv->IsConst() == isStatic) {
                 mmvList.push_back(tempMmv);
             }
-        } else {
+        }
+        else {
             if (tempMmv->IsStatic() == false && tempMmv->IsConst() == false) {
                 mmvList.push_back(tempMmv);
             }
@@ -533,7 +569,8 @@ std::vector<MetaMemberVariable*> MetaClass::GetMetaMemberVariableListByFlag(bool
             if (tempMmv->IsStatic() == isStatic || tempMmv->IsConst() == isStatic) {
                 mmvList.push_back(tempMmv);
             }
-        } else {
+        }
+        else {
             if (tempMmv->IsStatic() == false && tempMmv->IsConst() == false) {
                 mmvList.push_back(tempMmv);
             }
@@ -543,15 +580,17 @@ std::vector<MetaMemberVariable*> MetaClass::GetMetaMemberVariableListByFlag(bool
 }
 
 MetaMemberFunction* MetaClass::GetMetaDefineGetSetMemberFunctionByName(const std::string& name, MetaInputParamCollection* inputParam, bool isGet, bool isSet) {
-    if (m_MetaMemberFunctionTemplateNodeDict.find(name) == m_MetaMemberFunctionTemplateNodeDict.end()) {
+    auto it = m_MetaMemberFunctionTemplateNodeDict.find(name);
+    if (it == m_MetaMemberFunctionTemplateNodeDict.end()) {
         return nullptr;
     }
-    auto tnode = m_MetaMemberFunctionTemplateNodeDict[name];
+    auto tnode = it->second;
 
-    if (tnode->GetMetaTemplateFunctionNodeDict().find(0) == tnode->GetMetaTemplateFunctionNodeDict().end()) {
+    auto it2 = tnode->GetMetaTemplateFunctionNodeDict().find(0);
+    if (it2 == tnode->GetMetaTemplateFunctionNodeDict().end()) {
         return nullptr;
     }
-    auto tfunctionNode = tnode->GetMetaTemplateFunctionNodeDict()[0];
+    auto tfunctionNode = it2->second;
 
     auto list = tfunctionNode->GetMetaMemberFunctionListByParamCount(inputParam != nullptr ? inputParam->GetCount() : 0);
     if (list == nullptr) return nullptr;
@@ -560,7 +599,8 @@ MetaMemberFunction* MetaClass::GetMetaDefineGetSetMemberFunctionByName(const std
         auto fun = (*list)[i];
         if (fun->IsTemplateFunction()) {
             return fun;
-        } else {
+        }
+        else {
             if (fun->IsEqualMetaInputParamCollection(inputParam))
                 return fun;
         }
@@ -569,14 +609,16 @@ MetaMemberFunction* MetaClass::GetMetaDefineGetSetMemberFunctionByName(const std
 }
 
 MetaMemberFunction* MetaClass::GetMetaMemberFunctionByNameAndInputTemplateInputParamCount(const std::string& name, int templateParamCount, MetaInputParamCollection* inputParam, bool isIncludeExtendClass) {
-    if (this->m_MetaMemberFunctionTemplateNodeDict.find(name) == this->m_MetaMemberFunctionTemplateNodeDict.end()) {
+    auto it = this->m_MetaMemberFunctionTemplateNodeDict.find(name);
+    if (it == this->m_MetaMemberFunctionTemplateNodeDict.end()) {
         return nullptr;
     }
-    auto tnode = this->m_MetaMemberFunctionTemplateNodeDict[name];
-    if (tnode->GetMetaTemplateFunctionNodeDict().find(templateParamCount) == tnode->GetMetaTemplateFunctionNodeDict().end()) {
+    auto tnode = it->second;
+    auto it2 = tnode->GetMetaTemplateFunctionNodeDict().find(templateParamCount);
+    if (it2 == tnode->GetMetaTemplateFunctionNodeDict().end()) {
         return nullptr;
     }
-    auto tfunctionNode = tnode->GetMetaTemplateFunctionNodeDict()[templateParamCount];
+    auto tfunctionNode = it2->second;
 
     auto list = tfunctionNode->GetMetaMemberFunctionListByParamCount(inputParam != nullptr ? inputParam->GetCount() : 0);
     if (list == nullptr) return nullptr;
@@ -585,7 +627,8 @@ MetaMemberFunction* MetaClass::GetMetaMemberFunctionByNameAndInputTemplateInputP
         auto fun = (*list)[i];
         if (fun->IsTemplateFunction()) {
             return fun;
-        } else {
+        }
+        else {
             if (fun->IsEqualMetaInputParamCollection(inputParam))
                 return fun;
         }
@@ -594,18 +637,20 @@ MetaMemberFunction* MetaClass::GetMetaMemberFunctionByNameAndInputTemplateInputP
 }
 
 MetaMemberFunction* MetaClass::GetMetaMemberFunctionByNameAndInputTemplateInputParam(const std::string& name, const std::vector<MetaClass*>& mtList, MetaInputParamCollection* inputParam, bool isIncludeExtendClass) {
-    if (this->m_MetaMemberFunctionTemplateNodeDict.find(name) == this->m_MetaMemberFunctionTemplateNodeDict.end()) {
+    auto it = this->m_MetaMemberFunctionTemplateNodeDict.find(name);
+    if (it == this->m_MetaMemberFunctionTemplateNodeDict.end()) {
         return nullptr;
     }
     int templateParamCount = 0;
     if (mtList.size() > 0) {
-        templateParamCount = static_cast<int>(mtList.size());
+        templateParamCount = mtList.size();
     }
-    auto tnode = this->m_MetaMemberFunctionTemplateNodeDict[name];
-    if (tnode->GetMetaTemplateFunctionNodeDict().find(templateParamCount) == tnode->GetMetaTemplateFunctionNodeDict().end()) {
+    auto tnode = it->second;
+    auto it2 = tnode->GetMetaTemplateFunctionNodeDict().find(templateParamCount);
+    if (it2 == tnode->GetMetaTemplateFunctionNodeDict().end()) {
         return nullptr;
     }
-    auto tfunctionNode = tnode->GetMetaTemplateFunctionNodeDict()[templateParamCount];
+    auto tfunctionNode = it2->second;
 
     auto list = tfunctionNode->GetMetaMemberFunctionListByParamCount(inputParam != nullptr ? inputParam->GetCount() : 0);
     if (list == nullptr) return nullptr;
@@ -614,12 +659,12 @@ MetaMemberFunction* MetaClass::GetMetaMemberFunctionByNameAndInputTemplateInputP
         auto fun = (*list)[i];
         if (fun->IsTemplateFunction()) {
             auto gfun = fun->GetGenTemplateFunction(mtList);
-
             if (gfun != nullptr) {
                 return gfun;
             }
             return fun;
-        } else {
+        }
+        else {
             if (fun->IsEqualMetaInputParamCollection(inputParam))
                 return fun;
         }
@@ -648,6 +693,73 @@ bool MetaClass::GetMemberInterfaceFunctionByFunc(MetaMemberFunction* func) {
     return true;
 }
 
+MetaType* MetaClass::AddMetaPreTemplateClass(MetaType* mt, bool isParse, bool& isGenMetaClass) {
+    isGenMetaClass = false;
+    if (mt->GetMetaClass() == nullptr) {
+        return nullptr;
+    }
+    MetaGenTemplateClass* mgtc = mt->GetMetaClass()->AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(mt->GetTemplateMetaTypeList());
+
+    if (mgtc != nullptr) {
+        isGenMetaClass = true;
+        if (isParse) {
+            mgtc->Parse();
+        }
+        return new MetaType(mgtc, mt->GetTemplateMetaTypeList());
+    }
+
+    auto find = BindStructTemplateMetaClassList(mt);
+    if (find == nullptr) {
+        this->m_BindStructTemplateMetaClassList.push_back(new MetaType(*mt));
+    }
+    return mt;
+}
+
+MetaGenTemplateClass* MetaClass::AddMetaTemplateClassByMetaClassAndMetaTemplateMetaTypeList(const std::vector<MetaType*>& templateMetaTypeList) {
+    std::vector<MetaClass*> mcList;
+    for (size_t i = 0; i < templateMetaTypeList.size(); i++) {
+        auto mtc = templateMetaTypeList[i];
+        if (mtc->GetEType() == EMetaTypeType::MetaClass || mtc->GetEType() == EMetaTypeType::MetaGenClass) {
+            mcList.push_back(mtc->GetMetaClass());
+        }
+    }
+    if (mcList.size() == templateMetaTypeList.size()) {
+        MetaGenTemplateClass* mgtc = AddInstanceMetaClass(mcList);
+        return mgtc;
+    }
+    return nullptr;
+}
+
+MetaType* MetaClass::BindStructTemplateMetaClassList(MetaType* mt) {
+    for (auto v : m_BindStructTemplateMetaClassList) {
+        if (MetaType::EqualMetaDefineType(v, mt)) {
+            return v;
+        }
+    }
+    return nullptr;
+}
+
+std::string MetaClass::ToString() const {
+    std::stringstream stringBuilder;
+
+    if (this->IsGenTemplate()) {
+        stringBuilder << " [Gen] ";
+    }
+    else {
+        if (this->IsTemplateClass()) {
+            stringBuilder << " [Template] ";
+        }
+    }
+
+    stringBuilder << GetAllClassName();
+
+    return stringBuilder.str();
+}
+
+std::string MetaClass::ToFormatString() const {
+    return GetFormatString(false);
+}
+
 std::string MetaClass::ToDefineTypeString() const {
     std::stringstream stringBuilder;
     stringBuilder << GetAllClassName();
@@ -656,14 +768,16 @@ std::string MetaClass::ToDefineTypeString() const {
 
 std::string MetaClass::GetFormatString(bool isShowNamespace) const {
     std::stringstream stringBuilder;
+    stringBuilder.clear();
     for (int i = 0; i < GetRealDeep(); i++)
-        stringBuilder << Global::tabChar;
+        stringBuilder << "\t";
     stringBuilder << GetPermission().ToFormatString();
     stringBuilder << " ";
     if (isShowNamespace) {
         stringBuilder << "class ";
         stringBuilder << GetName();
-    } else {
+    }
+    else {
         stringBuilder << "class " + GetName();
     }
     if (m_MetaTemplateList.size() > 0) {
@@ -699,55 +813,35 @@ std::string MetaClass::GetFormatString(bool isShowNamespace) const {
         if (i != m_InterfaceClass.size() - 1)
             stringBuilder << ",";
     }
-    stringBuilder << std::endl;
+    stringBuilder << "\n";
 
     for (int i = 0; i < GetRealDeep(); i++)
-        stringBuilder << Global::tabChar;
-    stringBuilder << "{" << std::endl;
+        stringBuilder << "\t";
+    stringBuilder << "{\n";
 
     for (const auto& pair : m_MetaNode->GetChildrenMetaNodeDict()) {
         stringBuilder << pair.second->ToFormatString();
     }
 
     for (const auto& pair : m_MetaMemberVariableDict) {
-        stringBuilder << pair.second->ToFormatString() << std::endl;
+        stringBuilder << pair.second->ToFormatString() << "\n";
     }
 
     for (auto v : m_StaticMetaMemberFunctionList) {
         stringBuilder << v->ToFormatString();
-        stringBuilder << std::endl;
+        stringBuilder << "\n";
     }
 
     for (auto v : m_NonStaticVirtualMetaMemberFunctionList) {
         stringBuilder << v->ToFormatString();
-        stringBuilder << std::endl;
+        stringBuilder << "\n";
     }
 
     for (int i = 0; i < GetRealDeep(); i++)
-        stringBuilder << Global::tabChar;
-    stringBuilder << "}" << std::endl;
+        stringBuilder << "\t";
+    stringBuilder << "}\n";
 
     return stringBuilder.str();
-}
-
-std::string MetaClass::ToString() const {
-    std::stringstream stringBuilder;
-
-    if (this->IsGenTemplate()) {
-        stringBuilder << " [Gen] ";
-    } else {
-        if (this->IsTemplateClass()) {
-            stringBuilder << " [Template] ";
-        }
-    }
-
-    stringBuilder << GetAllClassName();
-
-    return stringBuilder.str();
-}
-
-std::string MetaClass::ToFormatString() const {
-    return GetFormatString(false);
 }
 
 } // namespace Core

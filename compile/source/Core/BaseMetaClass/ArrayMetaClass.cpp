@@ -10,19 +10,19 @@
 #include "../MetaTemplate.h"
 #include "../MetaMemberVariable.h"
 #include "../MetaMemberFunction.h"
-#include "../MetaConstExpressNode.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
 #include <cstdlib>
 
 namespace SimpleLanguage {
 namespace Core {
 
-IEnumerableMetaClass::IEnumerableMetaClass() : MetaClass(DefaultObject::Array.ToString()) {
+IEnumerableMetaClass::IEnumerableMetaClass() : MetaClass("Array") {
     m_Type = EType::Array;
     m_ClassDefineType = EClassDefineType::InnerDefine;
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
 }
 
-ArrayIteratorMetaClass::ArrayIteratorMetaClass() : MetaClass(DefaultObject::Array.ToString()) {
+ArrayIteratorMetaClass::ArrayIteratorMetaClass() : MetaClass("Array") {
     m_Type = EType::Class;
     m_ClassDefineType = EClassDefineType::InnerDefine;
 }
@@ -42,11 +42,11 @@ MetaClass* ArrayIteratorMetaClass::CreateMetaClass() {
     return mc;
 }
 
-ArrayMetaClass::ArrayMetaClass() : MetaClass(DefaultObject::Array.ToString()) {
+ArrayMetaClass::ArrayMetaClass() : MetaClass("Array") {
     m_Type = EType::Array;
     m_ClassDefineType = EClassDefineType::InnerDefine;
     SetExtendClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
-    m_MetaTemplateList.push_back(std::make_unique<MetaTemplate>(this, "T"));
+    m_MetaTemplateList.push_back( new MetaTemplate(this, "T"));
 }
 
 void ArrayMetaClass::ParseInnerVariable() {

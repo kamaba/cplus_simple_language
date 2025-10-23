@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "MetaBase.h"
-#include "../Define.h"
+#include <vector>
+#include <string>
 
 namespace SimpleLanguage {
 namespace Core {
@@ -38,6 +38,7 @@ namespace Core {
         const std::vector<MetaType*>& GetTemplateMetaTypeList() const { return m_TemplateMetaTypeList; }
         bool IsTemplate() const { return m_IsTemplate; }
         bool IsIncludeTemplate() const { return m_IsIncludeTemplate; }
+        bool IsArray();
 
         // …Ë÷√∑Ω∑®
         void SetMetaClass(MetaClass* metaClass) { m_MetaClass = metaClass; }

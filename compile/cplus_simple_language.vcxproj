@@ -149,6 +149,7 @@
     <ClCompile Include="source\Compile\Parse\StructParse.cpp" />
     <ClCompile Include="source\Compile\Parse\TokenParse.cpp" />
     <ClCompile Include="source\Compile\Token.cpp" />
+    <ClCompile Include="source\Core\AllowUseSettings.cpp" />
     <ClCompile Include="source\Core\BaseMetaClass\ArrayMetaClass.cpp" />
     <ClCompile Include="source\Core\BaseMetaClass\BooleanMetaClass.cpp" />
     <ClCompile Include="source\Core\BaseMetaClass\ByteMetaClass.cpp" />
@@ -162,7 +163,6 @@
     <ClCompile Include="source\Core\BaseMetaClass\RangeMetaClass.cpp" />
     <ClCompile Include="source\Core\BaseMetaClass\RealMetaClass.cpp" />
     <ClCompile Include="source\Core\BaseMetaClass\StringMetaClass.cpp" />
-    <ClCompile Include="source\Core\BaseMetaClass\TypeMetaClass.cpp" />
     <ClCompile Include="source\Core\BaseMetaClass\VoidMetaClass.cpp" />
     <ClCompile Include="source\Core\ClassManager.cpp" />
     <ClCompile Include="source\Core\ExpressManager.cpp" />
@@ -175,7 +175,6 @@
     <ClCompile Include="source\Core\MetaDefineParam.cpp" />
     <ClCompile Include="source\Core\MetaDynamicClass.cpp" />
     <ClCompile Include="source\Core\MetaEnum.cpp" />
-    <ClCompile Include="source\Core\MetaExpressNode.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressBase.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressCalllink.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressConst.cpp" />
@@ -285,6 +284,7 @@
     <ClInclude Include="source\Compile\Process\MethodCompileState.h" />
     <ClInclude Include="source\Compile\Process\ProjectCompileState.h" />
     <ClInclude Include="source\Compile\Token.h" />
+    <ClInclude Include="source\Core\AllowUseSettings.h" />
     <ClInclude Include="source\Core\BaseMetaClass\ArrayMetaClass.h" />
     <ClInclude Include="source\Core\BaseMetaClass\BooleanMetaClass.h" />
     <ClInclude Include="source\Core\BaseMetaClass\ByteMetaClass.h" />
@@ -298,7 +298,6 @@
     <ClInclude Include="source\Core\BaseMetaClass\RangeMetaClass.h" />
     <ClInclude Include="source\Core\BaseMetaClass\RealMetaClass.h" />
     <ClInclude Include="source\Core\BaseMetaClass\StringMetaClass.h" />
-    <ClInclude Include="source\Core\BaseMetaClass\TypeMetaClass.h" />
     <ClInclude Include="source\Core\BaseMetaClass\VoidMetaClass.h" />
     <ClInclude Include="source\Core\ClassManager.h" />
     <ClInclude Include="source\Core\ExpressManager.h" />
@@ -311,7 +310,6 @@
     <ClInclude Include="source\Core\MetaDefineParam.h" />
     <ClInclude Include="source\Core\MetaDynamicClass.h" />
     <ClInclude Include="source\Core\MetaEnum.h" />
-    <ClInclude Include="source\Core\MetaExpressNode.h" />
     <ClInclude Include="source\Core\MetaExpressNode\MetaExecuteStatementsNode.h" />
     <ClInclude Include="source\Core\MetaExpressNode\MetaExpressBase.h" />
     <ClInclude Include="source\Core\MetaExpressNode\MetaExpressCalllink.h" />

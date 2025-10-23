@@ -235,7 +235,7 @@ void FileMetaMemberVariable::AddFileMemberVariable(FileMetaMemberVariable* fmmd)
 
 FileMetaMemberVariable* FileMetaMemberVariable::GetFileMetaMemberDataByName(const std::string& name) {
     auto it = std::find_if(m_FileMetaMemberVariableList.begin(), m_FileMetaMemberVariableList.end(),
-        [&name](FileMetaMemberVariable* fmmd) { return fmmd->Name() == name; });
+        [&name](FileMetaMemberVariable* fmmd) { return fmmd->GetName() == name; });
     
     if (it != m_FileMetaMemberVariableList.end()) {
         return *it;
