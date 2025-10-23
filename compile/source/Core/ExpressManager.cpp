@@ -28,8 +28,82 @@ using namespace SimpleLanguage::Debug;
 namespace SimpleLanguage {
 namespace Core {
 
-// ¾²Ì¬³ÉÔ±³õÊ¼»¯
+// é™æ€æˆå‘˜åˆå§‹åŒ–
 ExpressOptimizeConfig ExpressManager::expressOptimizeConfig;
+
+ExpressManager& ExpressManager::GetInstance() {
+    static ExpressManager instance;
+    return instance;
+}
+
+// CreateExpressParam implementation
+CreateExpressParam::CreateExpressParam(const CreateExpressParam& clone) {
+    ownerMBS = clone.ownerMBS;
+    ownerMetaClass = clone.ownerMetaClass;
+    equalMetaVariable = clone.equalMetaVariable;
+    metaType = clone.metaType;
+    parentMetaType = clone.parentMetaType;
+    fme = clone.fme;
+    isStatic = clone.isStatic;
+    isConst = clone.isConst;
+    allowUseIfSyntax = clone.allowUseIfSyntax;
+    allowUseSwitchSyntax = clone.allowUseSwitchSyntax;
+    allowUseParSyntax = clone.allowUseParSyntax;
+    allowUseBraceSyntax = clone.allowUseBraceSyntax;
+    parsefrom = clone.parsefrom;
+}
+
+void CreateExpressParam::SetOwnerMBS(MetaBlockStatements* mbs) {
+    ownerMBS = mbs;
+}
+
+void CreateExpressParam::SetOwnerMetaClass(MetaClass* mc) {
+    ownerMetaClass = mc;
+}
+
+void CreateExpressParam::SetMetaType(MetaType* mt) {
+    metaType = mt;
+}
+
+void CreateExpressParam::SetParentMetaType(MetaType* pmt) {
+    parentMetaType = pmt;
+}
+
+void CreateExpressParam::SetEqualMetaVariable(MetaVariable* mv) {
+    equalMetaVariable = mv;
+}
+
+void CreateExpressParam::SetFme(Compile::FileMetaBaseTerm* fme) {
+    this->fme = fme;
+}
+
+void CreateExpressParam::SetIsStatic(bool isStatic) {
+    this->isStatic = isStatic;
+}
+
+void CreateExpressParam::SetIsConst(bool isConst) {
+    this->isConst = isConst;
+}
+
+void CreateExpressParam::SetAllowUseIfSyntax(bool allow) {
+    allowUseIfSyntax = allow;
+}
+
+void CreateExpressParam::SetAllowUseSwitchSyntax(bool allow) {
+    allowUseSwitchSyntax = allow;
+}
+
+void CreateExpressParam::SetAllowUseParSyntax(bool allow) {
+    allowUseParSyntax = allow;
+}
+
+void CreateExpressParam::SetAllowUseBraceSyntax(bool allow) {
+    allowUseBraceSyntax = allow;
+}
+
+void CreateExpressParam::SetParseFrom(EParseFrom parseFrom) {
+    parsefrom = parseFrom;
+}
 
 bool ExpressManager::IsCanExpressCampute(MetaClass* mc) {
     if (mc == CoreMetaClassManager::GetInstance().GetInt16MetaClass()
@@ -49,7 +123,7 @@ MetaExpressNode* ExpressManager::CreateExpressNodeByCEP(const CreateExpressParam
     MetaClass* mc = cep.ownerMetaClass;
 
     if (fmte == nullptr) {
-        Log::AddInStructMeta(EError::None, "CreateExpressNode FileMetaBaseTerm Îª¿Õ !!");
+        Log::AddInStructMeta(EError::None, "CreateExpressNode FileMetaBaseTerm ä¸ºç©º !!");
         return nullptr;
     }
     
@@ -62,7 +136,7 @@ MetaExpressNode* ExpressManager::CreateExpressNodeByCEP(const CreateExpressParam
             }
         }
     } else if (ifExpressTerm != nullptr) {
-        Log::AddInStructMeta(EError::None, "²»ÔÊĞíÊ¹ÓÃIfÓï¾ä!!");
+        Log::AddInStructMeta(EError::None, "ä¸å…è®¸ä½¿ç”¨Ifè¯­å¥!!");
         return nullptr;
     }
 
@@ -75,7 +149,7 @@ MetaExpressNode* ExpressManager::CreateExpressNodeByCEP(const CreateExpressParam
             }
         }
     } else if (switchExpressTerm != nullptr) {
-        Log::AddInStructMeta(EError::None, "²»ÔÊĞíÊ¹ÓÃSwitchÓï¾ä!!");
+        Log::AddInStructMeta(EError::None, "ä¸å…è®¸ä½¿ç”¨Switchè¯­å¥!!");
         return nullptr;
     }
 
@@ -87,7 +161,7 @@ MetaExpressNode* ExpressManager::CreateExpressNodeByCEP(const CreateExpressParam
                 return mnoen;
         }
     } else if (parExpressTerm != nullptr) {
-        Log::AddInStructMeta(EError::None, "²»ÔÊĞíÊ¹ÓÃSwitchÓï¾ä!!");
+        Log::AddInStructMeta(EError::None, "ä¸å…è®¸ä½¿ç”¨Switchè¯­å¥!!");
         return nullptr;
     }
 
@@ -104,7 +178,7 @@ MetaExpressNode* ExpressManager::CreateExpressNode(const CreateExpressParam& cep
         MetaExpressNode* men = nullptr;
         
         if (auto fmst = dynamic_cast<Compile::FileMetaSymbolTerm*>(root)) {
-            Log::AddInStructMeta(EError::None, "Error CreateExpressNode ´´½¨±í´ïÏî²»ÄÜÎª·ûºÅ");
+            Log::AddInStructMeta(EError::None, "Error CreateExpressNode åˆ›å»ºè¡¨è¾¾é¡¹ä¸èƒ½ä¸ºç¬¦å·");
         } else if (auto fmcvt = dynamic_cast<Compile::FileMetaConstValueTerm*>(root)) {
             if (fmcvt->GetToken()->GetType() == ETokenType::NumberArrayLink) {
                 MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(fmcvt, ownerClass, cep.ownerMBS);
@@ -134,7 +208,7 @@ MetaExpressNode* ExpressManager::CreateExpressNode(const CreateExpressParam& cep
             if (mnoen != nullptr)
                 return mnoen;
         } else {
-            Log::AddInStructMeta(EError::None, "Error CreateExpressNode ´´½¨±í´ïÏî²»ÄÜÎª·ûºÅ");
+            Log::AddInStructMeta(EError::None, "Error CreateExpressNode åˆ›å»ºè¡¨è¾¾é¡¹ä¸èƒ½ä¸ºç¬¦å·");
         }
     } else {
         CreateExpressParam clonecep = CreateExpressParam(cep);
@@ -147,7 +221,7 @@ MetaExpressNode* ExpressManager::CreateExpressNode(const CreateExpressParam& cep
             if (auto fmst = dynamic_cast<Compile::FileMetaSymbolTerm*>(root)) {
                 return new MetaOpExpressNode(fmst, cep.metaType, leftNode, rightNode);
             } else {
-                Log::AddInStructMeta(EError::None, " Error VisitFileMetaExpress fileMetaNode ²»ÊÇ·ûºÅ!!");
+                Log::AddInStructMeta(EError::None, " Error VisitFileMetaExpress fileMetaNode ä¸æ˜¯ç¬¦å·!!");
             }
         } else if (leftNode != nullptr && rightNode == nullptr) {
             if (auto fmst = dynamic_cast<Compile::FileMetaSymbolTerm*>(root)) {
@@ -162,7 +236,7 @@ MetaExpressNode* ExpressManager::CreateExpressNode(const CreateExpressParam& cep
                 return rightNode;
             }
         } else {
-            Log::AddInStructMeta(EError::None, " Error VisitFileMetaExpress left and right¶¼Îª¿Õ!!");
+            Log::AddInStructMeta(EError::None, " Error VisitFileMetaExpress left and rightéƒ½ä¸ºç©º!!");
         }
         return nullptr;
     }
@@ -189,7 +263,7 @@ MetaExpressNode* ExpressManager::CreateOptimizeAfterExpress(MetaExpressNode* men
     } else if (auto mcn = dynamic_cast<MetaCallLinkExpressNode*>(men)) {
         // mcn->GetMetaVariable
     } else if (auto mcen = dynamic_cast<MetaConstExpressNode*>(men)) {
-        // ³£Á¿½Úµã²»ĞèÒªÓÅ»¯
+        // å¸¸é‡èŠ‚ç‚¹ä¸éœ€è¦ä¼˜åŒ–
     } else {
         Log::AddInStructMeta(EError::None, "Error Optimaze don't support that ExpressType");
     }

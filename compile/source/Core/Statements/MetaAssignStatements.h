@@ -9,30 +9,27 @@
 #pragma once
 
 #include "MetaStatements.h"
-#include "../MetaExpressNode/MetaExpressBase.h"
-#include "../MetaExpressNode/MetaExpressCalllink.h"
-#include "../MetaExpressNode/MetaExpressConst.h"
-#include "../MetaExpressNode/MetaExpressOperator.h"
-#include "../MetaExpressNode/MetaExecuteStatementsNode.h"
-#include "../MetaVariable.h"
-#include "../MetaType.h"
-#include "../MetaClass.h"
-#include "../MetaBlockStatements.h"
-#include "../MetaCallLink.h"
-#include "../BaseMetaClass/CoreMetaClassManager.h"
-#include "../ClassManager.h"
-#include "../ExpressManager.h"
-#include "../AllowUseSettings.h"
-#include "../Compile/CoreFileMeta/FileMetaOpAssignSyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaDefineVariableSyntax.h"
-#include "../Compile/Token.h"
-#include "../Debug/Log.h"
-#include "../Global.h"
 #include <string>
-#include <sstream>
 
 namespace SimpleLanguage {
+    namespace Compile {
+        class Token;
+        class FileMetaOpAssignSyntax;
+        class FileMetaDefineVariableSyntax;
+    }
 namespace Core {
+
+    // 前向声明
+    class MetaExpressNode;
+    class MetaCallLinkExpressNode;
+    class MetaVariable;
+    class MetaType;
+    class MetaBlockStatements;
+    class MetaClass;
+    class MetaMemberFunction;
+    class MetaInputParam;
+    class AllowUseSettings;
+    class CreateExpressParam;
 
 class MetaAssignManager {
 private:
@@ -53,14 +50,15 @@ public:
 
 class MetaAssignStatements : public MetaStatements {
 private:
-    FileMetaOpAssignSyntax* m_FileMetaOpAssignSyntax = nullptr;
-    FileMetaDefineVariableSyntax* m_FileMetaDefineVariableSyntax = nullptr;
+    Compile::FileMetaOpAssignSyntax* m_FileMetaOpAssignSyntax = nullptr;
+    Compile::FileMetaDefineVariableSyntax* m_FileMetaDefineVariableSyntax = nullptr;
     
     MetaVariable* m_MetaVariable = nullptr;
     ELeftRightOpSign m_AutoAddExpressOpSign;
-    Token* m_SignToken = nullptr;
+    Compile::Token* m_SignToken = nullptr;
     bool m_IsSetStatements = false;
     bool m_IsAssign = false;
+    bool m_IsNeedCastState = false; // 添加缺失的成员变量
     
     MetaExpressNode* m_ExpressNode = nullptr;
     MetaCallLinkExpressNode* m_LeftMetaExpress = nullptr;
@@ -74,15 +72,15 @@ public:
     bool IsNewStatements() const;
     
     MetaAssignStatements(MetaBlockStatements* mbs);
-    MetaAssignStatements(MetaBlockStatements* mbs, FileMetaOpAssignSyntax* fmos);
-    MetaAssignStatements(MetaBlockStatements* mbs, FileMetaDefineVariableSyntax* fmos);
+    MetaAssignStatements(MetaBlockStatements* mbs, Compile::FileMetaOpAssignSyntax* fmos);
+    MetaAssignStatements(MetaBlockStatements* mbs, Compile::FileMetaDefineVariableSyntax* fmos);
     
 private:
     void Parse();
 
 public:
     virtual void UpdateOwnerMetaClass(MetaClass* ownerclass) override;
-    virtual std::string ToFormatString() override;
+    virtual std::string ToFormatString() const override;
     virtual std::string GetFormatString();
 };
 

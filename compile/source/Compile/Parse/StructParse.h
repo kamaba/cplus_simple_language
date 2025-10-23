@@ -23,6 +23,13 @@ class FileMetaSyntax;
 class FileMetaMemberData;
 class FileMetaNamespace;
 class FileMetaClass;
+class FileMetaImportSyntax;
+class FileMetaIfStatements;
+class FileMetaWhileDoWhileStatements;
+class FileMetaSwitchStatements;
+class FileMetaReturnStatements;
+class FileMetaBreakContinueGoStatements;
+class FileMetaCallStatements;
 
 class StructParse {
 public:
@@ -36,8 +43,7 @@ public:
         DataMemeber
     };
 
-    struct ParseCurrentNodeInfo 
-    {
+    struct ParseCurrentNodeInfo {
         EParseNodeType parseType;
         FileMeta* codeFile = nullptr;
         FileMetaNamespace* codeNamespace = nullptr;
@@ -55,6 +61,7 @@ public:
     };
 
     StructParse(FileMeta* fm, Node* node);
+    virtual ~StructParse() = default;
     
     void ParseRootNodeToFileMeta();
     std::vector<Node*> GetAllNodeToSemiColon(Node* pnode, bool isAddSelf = false);

@@ -8,24 +8,43 @@
 
 #pragma once
 
-#include "../Debug/Log.h"
-#include "AllowUseSettings.h"
 #include <string>
 
 namespace SimpleLanguage {
-    namespace Compile
-    {
+    namespace Compile {
         class FileMetaBaseTerm;
         class FileMetaIfSyntaxTerm;
+        class FileMetaMatchSyntaxTerm;
+        class FileMetaParTerm;
+        class FileMetaCallTerm;
+        class FileMetaConstValueTerm;
+        class FileMetaBraceTerm;
+        class FileMetaBracketTerm;
+        class FileMetaSymbolTerm;
+        class FileMetaTermExpress;
+        class FileMetaCallLink;
     }
+    namespace Core {
+        class MetaClass;
+        class MetaType;
+        class MetaVariable;
+        class MetaBlockStatements;
+        class MetaExpressNode;
+        class MetaNewObjectExpressNode;
+        class MetaCallLinkExpressNode;
+        class MetaConstExpressNode;
+        class MetaOpExpressNode;
+        class MetaUnaryOpExpressNode;
+        class MetaExecuteStatementsNode;
+        class MetaCallLink;
+        class MetaMemberFunction;
+        class MetaVisitNode;
+        class AllowUseSettings;
+    }
+}
+
+namespace SimpleLanguage {
 namespace Core {
-    class MetaClass;
-    class MetaType;
-    class MetaVariable;
-    class MetaBlockStatements;
-    class MetaExpressNode;
-    class MetaNewObjectExpressNode;
-    class MetaCallLinkExpressNode;
 
 // ExpressOptimizeConfig class
 class ExpressOptimizeConfig {
@@ -55,40 +74,36 @@ struct CreateExpressParam {
     EParseFrom parsefrom = EParseFrom::None;
 
     CreateExpressParam() = default;
-    CreateExpressParam(const CreateExpressParam& clone) {
-        ownerMBS = clone.ownerMBS;
-        ownerMetaClass = clone.ownerMetaClass;
-        equalMetaVariable = clone.equalMetaVariable;
-        metaType = clone.metaType;
-        parentMetaType = clone.parentMetaType;
-        fme = clone.fme;
-        isStatic = clone.isStatic;
-        isConst = clone.isConst;
-        allowUseIfSyntax = clone.allowUseIfSyntax;
-        allowUseSwitchSyntax = clone.allowUseSwitchSyntax;
-        allowUseParSyntax = clone.allowUseParSyntax;
-        allowUseBraceSyntax = clone.allowUseBraceSyntax;
-        parsefrom = clone.parsefrom;
-    }
+    CreateExpressParam(const CreateExpressParam& clone);
+    
+    // Setter methods
+    void SetOwnerMBS(MetaBlockStatements* mbs);
+    void SetOwnerMetaClass(MetaClass* mc);
+    void SetMetaType(MetaType* mt);
+    void SetParentMetaType(MetaType* pmt);
+    void SetEqualMetaVariable(MetaVariable* mv);
+    void SetFme(Compile::FileMetaBaseTerm* fme);
+    void SetIsStatic(bool isStatic);
+    void SetIsConst(bool isConst);
+    void SetAllowUseIfSyntax(bool allow);
+    void SetAllowUseSwitchSyntax(bool allow);
+    void SetAllowUseParSyntax(bool allow);
+    void SetAllowUseBraceSyntax(bool allow);
+    void SetParseFrom(EParseFrom parseFrom);
 };
 
 // ExpressManager class
 class ExpressManager {
 public:
-    // µ•¿˝ƒ£ Ω
-    static ExpressManager& GetInstance() {
-        static ExpressManager instance;
-        return instance;
-    }
-
-    // Ω˚”√øΩ±¥ππ‘Ï∫Õ∏≥÷µ
+    // Âçï‰æãÊ®°Âºè
+    static ExpressManager& GetInstance();
     ExpressManager(const ExpressManager&) = delete;
     ExpressManager& operator=(const ExpressManager&) = delete;
 
-    // æ≤Ã¨≈‰÷√
+    // ÈùôÊÄÅÊàêÂëò
     static ExpressOptimizeConfig expressOptimizeConfig;
 
-    // æ≤Ã¨∑Ω∑®
+    // ÈùôÊÄÅÊñπÊ≥ï
     static bool IsCanExpressCampute(MetaClass* mc);
     static MetaExpressNode* CreateExpressNodeByCEP(const CreateExpressParam& cep);
     static MetaExpressNode* CreateExpressNode(const CreateExpressParam& cep);
@@ -97,7 +112,7 @@ public:
     static int CalcParseLevel(int level, MetaExpressNode* men);
 
 private:
-    // ÀΩ”–ππ‘Ï∫Ø ˝
+    // ÁßÅÊúâÊûÑÈÄ†ÂáΩÊï∞
     ExpressManager() = default;
     ~ExpressManager() = default;
 };

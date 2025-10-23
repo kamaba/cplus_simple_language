@@ -13,9 +13,11 @@
 #include <memory>
 
 
-class SimpleLanguage::Compile::FileMetaCallLink;
 
 namespace SimpleLanguage {
+    namespace Compile{
+        class FileMetaCallLink;
+    }
 namespace Core {
 
 // Ç°ÏòÉùÃ÷

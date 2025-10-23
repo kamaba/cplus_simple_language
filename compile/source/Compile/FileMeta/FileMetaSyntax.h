@@ -1,29 +1,38 @@
 #pragma once
 
 #include "FileMetaBase.h"
-#include "../Parse/Node.h"
-#include "../../Define.h"
-#include "../../Debug/Log.h"
 #include <vector>
 #include <string>
-#include <sstream>
+
+namespace SimpleLanguage {
+    namespace Compile {
+        class FileMeta;
+        class FileMetaBlockSyntax;
+        class FileMetaBaseTerm;
+        class FileMetaCallLink;
+        class FileMetaClassDefine;
+        class FileMetaConstValueTerm;
+        class Node;
+        class Token;
+    }
+}
 
 namespace SimpleLanguage {
 namespace Compile {
 
-// Forward declarations
-class FileMeta;
+// 前向声明
+class FileMetaConditionExpressSyntax;
+class FileMetaKeyIfSyntax;
+class FileMetaKeySwitchSyntax;
+class FileMetaKeyMatchSyntax;
+class FileMetaKeyForSyntax;
+class FileMetaKeyOnlySyntax;
+class FileMetaKeyReturnSyntax;
+class FileMetaKeyGotoLabelSyntax;
+class FileMetaCallSyntax;
+class FileMetaDefineVariableSyntax;
+class FileMetaOpAssignSyntax;
 class FileMetaBlockSyntax;
-class FileMetaAssignStatements;
-class FileMetaDefineVarStatements;
-class FileMetaCallStatements;
-class FileMetaReturnStatements;
-class FileMetaIfStatements;
-class FileMetaWhileDoWhileStatements;
-class FileMetaSwitchStatements;
-class FileMetaBreakContinueGoStatements;
-class FileMetaOtherPlatformStatement;
-class Node;
 
 class FileMetaSyntax : public FileMetaBase {
 public:
@@ -31,138 +40,326 @@ public:
     virtual ~FileMetaSyntax() = default;
 
     // Properties
-    int GetParseIndex() const { return m_ParseIndex; }
-    void SetParseIndex(int value) { m_ParseIndex = value; }
+    int GetParseIndex() const;
+    void SetParseIndex(int value);
     
-    bool IsAppendSemiColon() const { return m_IsAppendSemiColon; }
-    void SetAppendSemiColon(bool value) { m_IsAppendSemiColon = value; }
+    bool IsAppendSemiColon() const;
+    void SetAppendSemiColon(bool value);
     
-    const ::std::vector<FileMetaSyntax*>& GetFileMetaSyntax() const { return m_FileMetaSyntax; }
+    const std::vector<FileMetaSyntax*>& GetFileMetaSyntax() const;
 
     // Methods
     bool IsNotEnd() const;
     FileMetaSyntax* GetCurrentSyntaxAndMove(int moveIndex = 1);
     void AddFileMetaSyntax(FileMetaSyntax* fms);
-    virtual ::std::string ToFormatString() const override;
+    virtual std::string ToFormatString() const override;
 
 protected:
-    ::std::vector<FileMetaSyntax*> m_FileMetaSyntax;
-    ::std::vector<Node*> m_NodeList;
+    std::vector<FileMetaSyntax*> m_FileMetaSyntax;
+    std::vector<Node*> m_NodeList;
     int m_ParseIndex = 0;
     bool m_IsAppendSemiColon = true;
 };
 
-class FileMetaBlockSyntax : public FileMetaSyntax {
+class FileMetaConditionExpressSyntax : public FileMetaSyntax {
 public:
-    FileMetaBlockSyntax(FileMeta* fm, Token* leftBraceToken, Token* rightBraceToken);
-    virtual ~FileMetaBlockSyntax() = default;
+    FileMetaConditionExpressSyntax(FileMeta* fm, Token* ifToken, FileMetaBaseTerm* condition, FileMetaBlockSyntax* executeBlockSyntax);
+    virtual ~FileMetaConditionExpressSyntax() = default;
 
-    Token* GetLeftBraceToken() const { return m_LeftBraceToken; }
-    Token* GetRightBraceToken() const { return m_RightBraceToken; }
+    FileMetaBaseTerm* GetConditionExpress() const;
+    FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
+    
+    virtual void SetDeep(int deep) override;
+    virtual std::string ToFormatString() const override;
+
+private:
+    FileMetaBaseTerm* m_ConditionExpress = nullptr;
+    FileMetaBlockSyntax* m_ExecuteBlockSyntax = nullptr;
+};
+
+class FileMetaKeyIfSyntax : public FileMetaSyntax {
+public:
+    FileMetaKeyIfSyntax(FileMeta* fm);
+    virtual ~FileMetaKeyIfSyntax() = default;
+
+    FileMetaConditionExpressSyntax* GetIfExpressSyntax() const;
+    const std::vector<FileMetaConditionExpressSyntax*>& GetElseIfExpressSyntax() const;
+    FileMetaKeyOnlySyntax* GetElseExpressSyntax() const;
+    
+    void SetFileMetaConditionExpressSyntax(FileMetaConditionExpressSyntax* fmces);
+    void SetElseExpressSyntax(FileMetaKeyOnlySyntax* fmces);
+    void AddElseIfExpressSyntax(FileMetaConditionExpressSyntax* fmces);
+    
+    virtual void SetDeep(int deep) override;
+    virtual std::string ToFormatString() const override;
+
+    // Static method
+    static FileMetaKeyIfSyntax* ParseIfSyntax(FileMeta* fm, void* sns); // StructParse.SyntaxNodeStruct
+
+private:
+    FileMetaConditionExpressSyntax* m_IfExpressSyntax = nullptr;
+    std::vector<FileMetaConditionExpressSyntax*> m_ElseIfExpressSyntax;
+    FileMetaKeyOnlySyntax* m_ElseExpressSyntax = nullptr;
+};
+
+class FileMetaKeySwitchSyntax : public FileMetaSyntax {
+public:
+    class FileMetaKeyCaseSyntax {
+    public:
+        FileMetaKeyCaseSyntax(FileMeta* fm, Token* castToken);
+        virtual ~FileMetaKeyCaseSyntax() = default;
+
+        FileMeta* GetFileMeta() const;
+        bool IsContinueNextCastSyntax() const;
+        void SetContinueNextCastSyntax(bool value);
+        Token* GetVariableToken() const;
+        FileMetaCallLink* GetDefineClassCallLink() const;
+        FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
+        const std::vector<FileMetaConstValueTerm*>& GetConstValueTokenList() const;
+
+        void SetDefineClassNode(Node* defineClassNode);
+        void SetVariableToken(Token* variableToken);
+        void SetExecuteBlockSyntax(FileMetaBlockSyntax* ebs);
+        void AddConstValueTokenList(FileMetaConstValueTerm* fmcvt);
+        void SetDeep(int deep);
+        std::string ToFormatString() const;
+
+    private:
+        FileMeta* m_FileMeta = nullptr;
+        Token* m_Token = nullptr;
+        FileMetaCallLink* m_DefineClassToken = nullptr;
+        Token* m_VariableToken = nullptr;
+        std::vector<FileMetaConstValueTerm*> m_ConstValueTokenList;
+        FileMetaBlockSyntax* m_ExecuteBlockSyntax = nullptr;
+        int m_Deep = 0;
+        bool m_IsContinueNextCastSyntax = false;
+    };
+
+    FileMetaKeySwitchSyntax(FileMeta* fm, Token* switchToken, Token* leftBraceToken, Token* rightBraceToken, FileMetaCallLink* cl);
+    virtual ~FileMetaKeySwitchSyntax() = default;
+
+    FileMetaCallLink* GetFileMetaVariableRef() const;
+    FileMetaBlockSyntax* GetDefaultExecuteBlockSyntax() const;
+    const std::vector<FileMetaKeyCaseSyntax*>& GetFileMetaKeyCaseSyntaxList() const;
+    FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
+
+    void AddFileMetaKeyCaseSyntaxList(FileMetaKeyCaseSyntax* keyCase);
+    void SetDefaultExecuteBlockSyntax(FileMetaBlockSyntax* fmbs);
+    
+    virtual void SetDeep(int deep) override;
     virtual std::string ToFormatString() const override;
 
 private:
     Token* m_LeftBraceToken = nullptr;
     Token* m_RightBraceToken = nullptr;
+    FileMetaCallLink* m_FileMetaVariableRef = nullptr;
+    FileMetaBlockSyntax* m_DefaultExecuteBlockSyntax = nullptr;
+    std::vector<FileMetaKeyCaseSyntax*> m_FileMetaKeyCaseSyntaxList;
 };
 
-class FileMetaAssignStatements : public FileMetaSyntax {
+class FileMetaKeyMatchSyntax : public FileMetaSyntax {
 public:
-    FileMetaAssignStatements(FileMeta* fm, const std::vector<Node*>& nodeList);
-    virtual ~FileMetaAssignStatements() = default;
+    class FileMetaKeyCaseSyntax 
+    {
+    public:
+        FileMetaKeyCaseSyntax(FileMeta* fm, Token* castToken);
+        virtual ~FileMetaKeyCaseSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+        FileMeta* GetFileMeta() const;
+        bool IsContinueNextCastSyntax() const;
+        void SetContinueNextCastSyntax(bool value);
+        Token* GetVariableToken() const;
+        FileMetaCallLink* GetDefineClassCallLink() const;
+        FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
+        const std::vector<FileMetaConstValueTerm*>& GetConstValueTokenList() const;
+
+        void SetDefineClassNode(Node* defineClassNode);
+        void SetVariableToken(Token* variableToken);
+        void SetExecuteBlockSyntax(FileMetaBlockSyntax* ebs);
+        void AddConstValueTokenList(FileMetaConstValueTerm* fmcvt);
+        void SetDeep(int deep);
+        std::string ToFormatString() const;
+
+    private:
+        FileMeta* m_FileMeta = nullptr;
+        Token* m_Token = nullptr;
+        FileMetaCallLink* m_DefineClassToken = nullptr;
+        Token* m_VariableToken = nullptr;
+        std::vector<FileMetaConstValueTerm*> m_ConstValueTokenList;
+        FileMetaBlockSyntax* m_ExecuteBlockSyntax = nullptr;
+        int m_Deep = 0;
+        bool m_IsContinueNextCastSyntax = false;
+    };
+
+    FileMetaKeyMatchSyntax(FileMeta* fm, Token* switchToken, Token* leftBraceToken, Token* rightBraceToken, FileMetaCallLink* cl);
+    virtual ~FileMetaKeyMatchSyntax() = default;
+
+    FileMetaCallLink* GetFileMetaVariableRef() const;
+    FileMetaBlockSyntax* GetDefaultExecuteBlockSyntax() const;
+    const std::vector<FileMetaKeyCaseSyntax*>& GetFileMetaKeyCaseSyntaxList() const;
+    FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
+
+    void AddFileMetaKeyCaseSyntaxList(FileMetaKeyCaseSyntax* keyCase);
+    void SetDefaultExecuteBlockSyntax(FileMetaBlockSyntax* fmbs);
+    
+    virtual void SetDeep(int deep) override;
+    virtual std::string ToFormatString() const override;
 
 private:
-    std::vector<Node*> m_NodeList;
+    Token* m_LeftBraceToken = nullptr;
+    Token* m_RightBraceToken = nullptr;
+    FileMetaCallLink* m_FileMetaVariableRef = nullptr;
+    FileMetaBlockSyntax* m_DefaultExecuteBlockSyntax = nullptr;
+    std::vector<FileMetaKeyCaseSyntax*> m_FileMetaKeyCaseSyntaxList;
 };
 
-class FileMetaDefineVarStatements : public FileMetaSyntax {
+class FileMetaKeyForSyntax : public FileMetaSyntax {
 public:
-    FileMetaDefineVarStatements(FileMeta* fm, const std::vector<Node*>& nodeList);
-    virtual ~FileMetaDefineVarStatements() = default;
+    FileMetaKeyForSyntax(FileMeta* fm, Token* forToken, FileMetaBlockSyntax* fmbs);
+    virtual ~FileMetaKeyForSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
+    FileMetaSyntax* GetFileMetaClassDefine() const;
+    FileMetaBaseTerm* GetConditionExpress() const;
+    FileMetaOpAssignSyntax* GetStepFileMetaOpAssignSyntax() const;
+    bool IsInFor() const;
+
+    void SetFileMetaClassDefine(FileMetaSyntax* fmdvs);
+    void SetInKeyAndArrayVariable(Token* inToken, FileMetaBaseTerm* cn);
+    void SetConditionExpress(FileMetaBaseTerm* fmte);
+    void SetStepFileMetaOpAssignSyntax(FileMetaOpAssignSyntax* fmoas);
+    
+    virtual void SetDeep(int deep) override;
+    virtual std::string ToFormatString() const override;
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    FileMetaBlockSyntax* m_ExecuteBlockSyntax = nullptr;
+    FileMetaSyntax* m_FileMetaClassDefine = nullptr;
+    FileMetaBaseTerm* m_ConditionExpress = nullptr;
+    FileMetaOpAssignSyntax* m_StepFileMetaOpAssignSyntax = nullptr;
+    Token* m_InToken = nullptr;
 };
 
-class FileMetaCallStatements : public FileMetaSyntax {
+class FileMetaKeyOnlySyntax : public FileMetaSyntax {
 public:
-    FileMetaCallStatements(FileMeta* fm, const ::std::vector<Node*>& nodeList);
-    virtual ~FileMetaCallStatements() = default;
+    FileMetaKeyOnlySyntax(FileMeta* fm, Token* token, FileMetaBlockSyntax* executeBlockSyntax);
+    virtual ~FileMetaKeyOnlySyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
+    
+    virtual void SetDeep(int deep) override;
+    virtual std::string ToFormatString() const override;
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    FileMetaBlockSyntax* m_ExecuteBlockSyntax = nullptr;
 };
 
-class FileMetaReturnStatements : public FileMetaSyntax {
+class FileMetaKeyReturnSyntax : public FileMetaSyntax {
 public:
-    FileMetaReturnStatements(FileMeta* fm, const ::std::vector<Node*>& nodeList);
-    virtual ~FileMetaReturnStatements() = default;
+    FileMetaKeyReturnSyntax(FileMeta* fm, Token* token, FileMetaBaseTerm* express);
+    virtual ~FileMetaKeyReturnSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    FileMetaBaseTerm* GetReturnExpress() const;
+    
+    virtual std::string ToFormatString() const override;
+
+    // Static method
+    static FileMetaKeyReturnSyntax* ParseIfSyntax(FileMeta* fm, void* akss); // StructParse.SyntaxNodeStruct
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    FileMetaBaseTerm* m_ReturnExpress = nullptr;
 };
 
-class FileMetaIfStatements : public FileMetaSyntax {
+class FileMetaKeyGotoLabelSyntax : public FileMetaSyntax {
 public:
-    FileMetaIfStatements(FileMeta* fm, const ::std::vector<Node*>& nodeList);
-    virtual ~FileMetaIfStatements() = default;
+    FileMetaKeyGotoLabelSyntax(FileMeta* fm, Token* token, Token* label);
+    virtual ~FileMetaKeyGotoLabelSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    Token* GetLabelToken() const;
+    
+    virtual std::string ToFormatString() const override;
+
+    // Static method
+    static FileMetaKeyGotoLabelSyntax* ParseIfSyntax(FileMeta* fm, void* akss); // StructParse.SyntaxNodeStruct
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    Token* m_LabelToken = nullptr;
 };
 
-class FileMetaWhileDoWhileStatements : public FileMetaSyntax {
+class FileMetaCallSyntax : public FileMetaSyntax {
 public:
-    FileMetaWhileDoWhileStatements(FileMeta* fm, const ::std::vector<Node*>& nodeList);
-    virtual ~FileMetaWhileDoWhileStatements() = default;
+    FileMetaCallSyntax(FileMetaCallLink* fmrv);
+    virtual ~FileMetaCallSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    FileMetaCallLink* GetVariableRef() const;
+    
+    virtual std::string ToFormatString() const override;
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    FileMetaCallLink* m_FileMetaVariableRef = nullptr;
 };
 
-class FileMetaSwitchStatements : public FileMetaSyntax {
+class FileMetaDefineVariableSyntax : public FileMetaSyntax {
 public:
-    FileMetaSwitchStatements(FileMeta* fm, const ::std::vector<Node*>& nodeList);
-    virtual ~FileMetaSwitchStatements() = default;
+    FileMetaDefineVariableSyntax(FileMeta* fm, FileMetaClassDefine* fmcd, Token* nameToken, Token* assignToken, Token* staticToken, FileMetaBaseTerm* express);
+    virtual ~FileMetaDefineVariableSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    Token* GetNameToken() const;
+    Token* GetStaticToken() const;
+    Token* GetAssignToken() const;
+    FileMetaClassDefine* GetFileMetaClassDefine() const;
+    FileMetaBaseTerm* GetExpress() const;
+    
+    virtual std::string ToFormatString() const override;
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    FileMetaClassDefine* m_FileMetaClassDefine = nullptr;
+    Token* m_StaticToken = nullptr;
+    Token* m_AssignToken = nullptr;
+    FileMetaBaseTerm* m_FileMetaExpress = nullptr;
 };
 
-class FileMetaBreakContinueGoStatements : public FileMetaSyntax {
+class FileMetaOpAssignSyntax : public FileMetaSyntax {
 public:
-    FileMetaBreakContinueGoStatements(FileMeta* fm, const ::std::vector<Node*>& nodeList);
-    virtual ~FileMetaBreakContinueGoStatements() = default;
+    FileMetaOpAssignSyntax(FileMetaCallLink* fileMetaVariableRef, Token* opAssignToken, Token* dynamicClassToken, Token* dynamicDataToken, Token* varToken, FileMetaBaseTerm* fme, bool flag = false);
+    virtual ~FileMetaOpAssignSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    FileMetaCallLink* GetVariableRef() const;
+    FileMetaBaseTerm* GetExpress() const;
+    Token* GetAssignToken() const;
+    Token* GetDynamicToken() const;
+    Token* GetConstToken() const;
+    Token* GetStaticToken() const;
+    bool HasDefine() const;
+    
+    virtual void SetDeep(int deep) override;
+    virtual std::string ToFormatString() const override;
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    FileMetaCallLink* m_VariableRef = nullptr;
+    FileMetaBaseTerm* m_Express = nullptr;
+    Token* m_AssignToken = nullptr;
+    Token* m_DynamicToken = nullptr;
+    Token* m_DataToken = nullptr;
+    Token* m_VarToken = nullptr;
+    Token* m_ConstToken = nullptr;
+    Token* m_StaticToken = nullptr;
 };
 
-class FileMetaOtherPlatformStatement : public FileMetaSyntax {
+class FileMetaBlockSyntax : public FileMetaSyntax {
 public:
-    FileMetaOtherPlatformStatement(FileMeta* fm, const ::std::vector<Node*>& nodeList);
-    virtual ~FileMetaOtherPlatformStatement() = default;
+    FileMetaBlockSyntax(FileMeta* fm, Token* bblock, Token* eblock);
+    virtual ~FileMetaBlockSyntax() = default;
 
-    virtual ::std::string ToFormatString() const override;
+    Token* GetBeginBlock() const;
+    Token* GetEndBlock() const;
+    
+    virtual void SetDeep(int deep) override;
+    virtual std::string ToFormatString() const override;
 
 private:
-    ::std::vector<Node*> m_NodeList;
+    Token* m_BeginBlock = nullptr;
+    Token* m_EndBlock = nullptr;
 };
 
 } // namespace Compile

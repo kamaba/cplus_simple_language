@@ -10,16 +10,18 @@
 #include "../MetaForStatements.h"
 #include "../MetaWhileDoWhileStatements.h"
 #include "../MetaFunction.h"
-#include "../Compile/CoreFileMeta/FileMetaKeyOnlySyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaKeyGotoLabelSyntax.h"
-#include "../Compile/Token.h"
-#include "../Global.h"
+#include "../../Compile/FileMeta/FileMetaKeyOnlySyntax.h"
+#include "../../Compile/FileMeta/FileMetaKeyGotoLabelSyntax.h"
+#include "../../Compile/Token.h"
+#include "../../Define.h"
 #include <iostream>
+#include <string>
 
 namespace SimpleLanguage {
 namespace Core {
 
-MetaBreakStatements::MetaBreakStatements(MetaBlockStatements* mbs, FileMetaKeyOnlySyntax* fmkos) : MetaStatements(mbs) {
+// MetaBreakStatements implementation
+MetaBreakStatements::MetaBreakStatements(MetaBlockStatements* mbs, Compile::FileMetaKeyOnlySyntax* fmkos) : MetaStatements(mbs) {
     m_FileMetaKeyOnlySyntax = fmkos;
     
     auto fwd = mbs->FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements();
@@ -30,7 +32,7 @@ MetaBreakStatements::MetaBreakStatements(MetaBlockStatements* mbs, FileMetaKeyOn
     }
 }
 
-std::string MetaBreakStatements::ToFormatString() {
+std::string MetaBreakStatements::ToFormatString() const {
     std::string result;
     for (int i = 0; i < m_Deep; i++) {
         result += Global::GetTabChar();
@@ -39,7 +41,8 @@ std::string MetaBreakStatements::ToFormatString() {
     return result;
 }
 
-MetaContinueStatements::MetaContinueStatements(MetaBlockStatements* mbs, FileMetaKeyOnlySyntax* fmkos) : MetaStatements(mbs) {
+// MetaContinueStatements implementation
+MetaContinueStatements::MetaContinueStatements(MetaBlockStatements* mbs, Compile::FileMetaKeyOnlySyntax* fmkos) : MetaStatements(mbs) {
     m_FileMetaKeyOnlySyntax = fmkos;
     
     auto fwd = mbs->FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements();
@@ -50,7 +53,7 @@ MetaContinueStatements::MetaContinueStatements(MetaBlockStatements* mbs, FileMet
     }
 }
 
-std::string MetaContinueStatements::ToFormatString() {
+std::string MetaContinueStatements::ToFormatString() const {
     std::string result;
     for (int i = 0; i < m_Deep; i++) {
         result += Global::GetTabChar();
@@ -59,7 +62,8 @@ std::string MetaContinueStatements::ToFormatString() {
     return result;
 }
 
-MetaGotoLabelStatements::MetaGotoLabelStatements(MetaBlockStatements* mbs, FileMetaKeyGotoLabelSyntax* labelSyntax) : MetaStatements(mbs) {
+// MetaGotoLabelStatements implementation
+MetaGotoLabelStatements::MetaGotoLabelStatements(MetaBlockStatements* mbs, Compile::FileMetaKeyGotoLabelSyntax* labelSyntax) : MetaStatements(mbs) {
     m_FileMetaKeyGotoLabelSyntax = labelSyntax;
     labelToken = labelSyntax->GetLabelToken();
     
@@ -75,7 +79,7 @@ MetaGotoLabelStatements::MetaGotoLabelStatements(MetaBlockStatements* mbs, FileM
             if (isLabel) {
                 labelData = mf->AddLabelData(labelName, m_NextMetaStatements);
             } else {
-                std::cout << "Error 使用goto跳转，必须在本函数中已有定义!!" << std::endl;
+                std::cout << "Error 浣跨敤goto璺宠浆锛屽繀椤诲湪鏈嚱鏁颁腑宸叉湁瀹氫箟!!" << std::endl;
                 return;
             }
         }
@@ -89,7 +93,7 @@ void MetaGotoLabelStatements::SetDeep(int dp) {
     }
 }
 
-std::string MetaGotoLabelStatements::ToFormatString() {
+std::string MetaGotoLabelStatements::ToFormatString() const {
     std::string result;
     for (int i = 0; i < m_Deep; i++) {
         result += Global::GetTabChar();

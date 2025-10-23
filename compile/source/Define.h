@@ -370,6 +370,7 @@ namespace SimpleLanguage {
     class Global
     {
     public:
+        static const std::string GetTabChar() { return tabChar; }
         static const std::string tabChar;
     };
 

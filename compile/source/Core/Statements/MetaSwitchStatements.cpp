@@ -15,9 +15,10 @@
 #include "../MetaExpressNode/MetaCallLinkExpressNode.h"
 #include "../MetaMemberFunction.h"
 #include "../MetaBlockStatements.h"
-#include "../Compile/FileMeta/FileMetaKeySwitchSyntax.h"
-#include "../Compile/Token.h"
-#include "../Global.h"
+#include "../AllowUseSettings.h"
+#include "../../Compile/FileMeta/FileMetaKeySwitchSyntax.h"
+#include "../../Compile/Token.h"
+#include "../../Define.h"
 #include "../Debug/Log.h"
 #include <iostream>
 #include <sstream>
@@ -124,7 +125,7 @@ void MetaSwitchStatements::MetaCaseStatements::SetMatchMetaVariable(MetaVariable
     matchMetaVariable = matchMV;
 }
 
-std::string MetaSwitchStatements::MetaCaseStatements::ToFormatString() {
+std::string MetaSwitchStatements::MetaCaseStatements::ToFormatString() const {
     std::stringstream sb;
     
     for (int i = 0; i < m_Deep; i++) {
@@ -228,7 +229,7 @@ void MetaSwitchStatements::SetTRMetaVariable(MetaVariable* mv) {
     }
 }
 
-std::string MetaSwitchStatements::ToFormatString() {
+std::string MetaSwitchStatements::ToFormatString() const {
     std::stringstream sb;
     
     for (int i = 0; i < m_Deep; i++) {

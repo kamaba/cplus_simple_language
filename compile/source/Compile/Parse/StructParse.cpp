@@ -13,7 +13,6 @@
 #include "../FileMeta/FileMetaMemberVariable.h"
 #include "../FileMeta/FileMetaNamespace.h"
 #include "../FileMeta/FileMetaSyntax.h"
-#include "../FileMeta/FileMetaSyntax.h"
 #include "Node.h"
 #include "../../Debug/Log.h"
 #include "../../Project/ProjectManager.h"
@@ -671,7 +670,7 @@ FileMetaSyntax* StructParse::HandleCreateFileMetaSyntaxByPNode(Node* pnode) {
     if (firstNode->nodeType == ENodeType::Key && firstNode->token != nullptr) {
         switch (firstNode->token->GetType()) {
             case ETokenType::If:
-                return new FileMetaIfStatements(m_FileMeta, nodeList);
+                return new Compile::FileMetaIfStatements(m_FileMeta, nodeList);
             case ETokenType::While:
             case ETokenType::DoWhile:
                 return new FileMetaWhileDoWhileStatements(m_FileMeta, nodeList);

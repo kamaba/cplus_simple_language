@@ -9,129 +9,65 @@
 #pragma once
 
 #include "MetaStatements.h"
-#include "../MetaForStatements.h"
-#include "../MetaWhileDoWhileStatements.h"
-#include "../MetaFunction.h"
-#include "../Compile/CoreFileMeta/FileMetaKeyOnlySyntax.h"
-#include "../Compile/CoreFileMeta/FileMetaKeyGotoLabelSyntax.h"
-#include "../Compile/Token.h"
-#include "../Global.h"
 #include <string>
+
+namespace SimpleLanguage {
+    namespace Compile {
+        class FileMetaKeyOnlySyntax;
+        class FileMetaKeyGotoLabelSyntax;
+        class Token;
+    }
+    namespace Core {
+        class MetaForStatements;
+        class MetaWhileDoWhileStatements;
+        class MetaFunction;
+        class MetaBlockStatements;
+        class LabelData;
+    }
+}
 
 namespace SimpleLanguage {
 namespace Core {
 
 class MetaBreakStatements : public MetaStatements {
 private:
-    FileMetaKeyOnlySyntax* m_FileMetaKeyOnlySyntax = nullptr;
+    Compile::FileMetaKeyOnlySyntax* m_FileMetaKeyOnlySyntax = nullptr;
     MetaForStatements* m_ForStatements = nullptr;
     MetaWhileDoWhileStatements* m_WhileStatements = nullptr;
 
 public:
-    MetaBreakStatements(MetaBlockStatements* mbs, FileMetaKeyOnlySyntax* fmkos) : MetaStatements(mbs) {
-        m_FileMetaKeyOnlySyntax = fmkos;
-        
-        auto fwd = mbs->FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements();
-        if (auto forStmt = dynamic_cast<MetaForStatements*>(fwd)) {
-            m_ForStatements = forStmt;
-        } else if (auto whileStmt = dynamic_cast<MetaWhileDoWhileStatements*>(fwd)) {
-            m_WhileStatements = whileStmt;
-        }
-    }
+    MetaBreakStatements(MetaBlockStatements* mbs, Compile::FileMetaKeyOnlySyntax* fmkos);
+    virtual ~MetaBreakStatements() = default;
     
-    virtual std::string ToFormatString() override {
-        std::string result;
-        for (int i = 0; i < m_Deep; i++) {
-            result += Global::GetTabChar();
-        }
-        result += "break;";
-        return result;
-    }
+    virtual std::string ToFormatString() const override;
 };
 
 class MetaContinueStatements : public MetaStatements {
 private:
-    FileMetaKeyOnlySyntax* m_FileMetaKeyOnlySyntax = nullptr;
+    Compile::FileMetaKeyOnlySyntax* m_FileMetaKeyOnlySyntax = nullptr;
     MetaForStatements* m_ForStatements = nullptr;
     MetaWhileDoWhileStatements* m_WhileStatements = nullptr;
 
 public:
-    MetaContinueStatements(MetaBlockStatements* mbs, FileMetaKeyOnlySyntax* fmkos) : MetaStatements(mbs) {
-        m_FileMetaKeyOnlySyntax = fmkos;
-        
-        auto fwd = mbs->FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements();
-        if (auto forStmt = dynamic_cast<MetaForStatements*>(fwd)) {
-            m_ForStatements = forStmt;
-        } else if (auto whileStmt = dynamic_cast<MetaWhileDoWhileStatements*>(fwd)) {
-            m_WhileStatements = whileStmt;
-        }
-    }
+    MetaContinueStatements(MetaBlockStatements* mbs, Compile::FileMetaKeyOnlySyntax* fmkos);
+    virtual ~MetaContinueStatements() = default;
     
-    virtual std::string ToFormatString() override {
-        std::string result;
-        for (int i = 0; i < m_Deep; i++) {
-            result += Global::GetTabChar();
-        }
-        result += "continue;";
-        return result;
-    }
+    virtual std::string ToFormatString() const override;
 };
 
 class MetaGotoLabelStatements : public MetaStatements {
 public:
     bool isLabel = true;
     LabelData* labelData = nullptr;
-    Token* labelToken = nullptr;
-    FileMetaKeyGotoLabelSyntax* m_FileMetaKeyGotoLabelSyntax = nullptr;
+    Compile::Token* labelToken = nullptr;
+    Compile::FileMetaKeyGotoLabelSyntax* m_FileMetaKeyGotoLabelSyntax = nullptr;
 
 public:
-    MetaGotoLabelStatements(MetaBlockStatements* mbs, FileMetaKeyGotoLabelSyntax* labelSyntax) : MetaStatements(mbs) {
-        m_FileMetaKeyGotoLabelSyntax = labelSyntax;
-        labelToken = labelSyntax->GetLabelToken();
-        
-        if (m_FileMetaKeyGotoLabelSyntax->GetToken()->GetType() == ETokenType::Goto) {
-            isLabel = false;
-        }
-        
-        MetaFunction* mf = m_OwnerMetaBlockStatements->GetOwnerMetaFunction();
-        if (mf != nullptr) {
-            std::string labelName = labelToken->GetLexeme()->ToString();
-            labelData = mf->GetLabelDataById(labelName);
-            if (labelData == nullptr) {
-                if (isLabel) {
-                    labelData = mf->AddLabelData(labelName, m_NextMetaStatements);
-                } else {
-                    std::cout << "Error 使用goto跳转，必须在本函数中已有定义!!" << std::endl;
-                    return;
-                }
-            }
-        }
-    }
+    MetaGotoLabelStatements(MetaBlockStatements* mbs, Compile::FileMetaKeyGotoLabelSyntax* labelSyntax);
+    virtual ~MetaGotoLabelStatements() = default;
     
-    virtual void SetDeep(int dp) override {
-        m_Deep = dp;
-        if (m_NextMetaStatements != nullptr) {
-            m_NextMetaStatements->SetDeep(dp);
-        }
-    }
-    
-    virtual std::string ToFormatString() override {
-        std::string result;
-        for (int i = 0; i < m_Deep; i++) {
-            result += Global::GetTabChar();
-        }
-        result += isLabel ? "label " : "goto ";
-        if (labelData != nullptr) {
-            result += labelData->GetLabel()->ToString() + ";";
-        }
-        result += "\n";
-        
-        if (m_NextMetaStatements != nullptr) {
-            result += m_NextMetaStatements->ToFormatString();
-        }
-        
-        return result;
-    }
+    virtual void SetDeep(int dp) override;
+    virtual std::string ToFormatString() const override;
 };
 
 } // namespace Core

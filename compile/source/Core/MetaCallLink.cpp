@@ -6,16 +6,15 @@
 //  Description:  this's a common node handles
 //****************************************************************************
 
+#include "MetaCallNode.h"
 #include "MetaCallLink.h"
-#include "../Compile/FileMeta/FileMetaCallLink.h"
-#include "../Compile/FileMeta/FileMetaCallNode.h"
-#include "../Compile/AllowUseSettings.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
 #include <iostream>
 
 namespace SimpleLanguage {
 namespace Core {
 
-MetaCallLink::MetaCallLink(FileMetaCallLink* fmcl, MetaClass* metaClass, MetaBlockStatements* mbs, MetaType* frontDefineMt, MetaVariable* mv) {
+MetaCallLink::MetaCallLink( Compile::FileMetaCallLink* fmcl, MetaClass* metaClass, MetaBlockStatements* mbs, MetaType* frontDefineMt, MetaVariable* mv) {
     m_FileMetaCallLink = fmcl;
     m_OwnerMetaClass = metaClass;
     m_OwnerMetaBlockStatements = mbs;
@@ -24,16 +23,16 @@ MetaCallLink::MetaCallLink(FileMetaCallLink* fmcl, MetaClass* metaClass, MetaBlo
 
 void MetaCallLink::CreateCallLinkNode(MetaType* frontDefineMt, MetaVariable* mv) {
     MetaCallNode* frontMetaNode = nullptr;
-    if (m_FileMetaCallLink->getCallNodeList().size() > 0) {
-        FileMetaCallNode* fmcn = m_FileMetaCallLink->getCallNodeList()[0];
+    if (m_FileMetaCallLink->GetCallNodeList().size() > 0) {
+        Compile::FileMetaCallNode* fmcn = m_FileMetaCallLink->GetCallNodeList()[0];
         auto firstNode = new MetaCallNode(nullptr, fmcn, m_OwnerMetaClass, m_OwnerMetaBlockStatements, frontDefineMt);
         frontMetaNode = firstNode;
         m_CallNodeList.push_back(firstNode);
     }
     
-    for (size_t i = 1; i < m_FileMetaCallLink->getCallNodeList().size(); i += 2) {
-        auto cn1 = m_FileMetaCallLink->getCallNodeList()[i];
-        auto cn2 = m_FileMetaCallLink->getCallNodeList()[i + 1];
+    for (size_t i = 1; i < m_FileMetaCallLink->GetCallNodeList().size(); i += 2) {
+        auto cn1 = m_FileMetaCallLink->GetCallNodeList()[i];
+        auto cn2 = m_FileMetaCallLink->GetCallNodeList()[i + 1];
         
         if (cn1 != nullptr && cn2 != nullptr) {
             auto metaNode = new MetaCallNode(cn1, cn2, m_OwnerMetaClass, m_OwnerMetaBlockStatements, frontDefineMt);
@@ -123,7 +122,7 @@ std::string MetaCallLink::ToFormatString() const {
     
     for (auto& callNode : m_CallNodeList) {
         if (callNode != nullptr) {
-            result += callNode->toFormatString();
+            result += callNode->ToFormatString();
         }
     }
     
@@ -135,7 +134,7 @@ std::string MetaCallLink::ToTokenString() const {
     
     for (auto& callNode : m_CallNodeList) {
         if (callNode != nullptr) {
-            result += callNode->toTokenString();
+            result += callNode->ToTokenString();
         }
     }
     
@@ -148,7 +147,7 @@ MetaCallLink* MetaCallLink::Clone() const {
     // 克隆调用节点列表
     for (auto& callNode : m_CallNodeList) {
         if (callNode != nullptr) {
-            cloned->m_CallNodeList.push_back(callNode->clone());
+            cloned->m_CallNodeList.push_back(callNode->Clone());
         }
     }
     

@@ -14,6 +14,8 @@
 namespace SimpleLanguage {
 namespace Core {
     class MetaVariable;
+    class MetaFunction;
+    class MetaClass;
     class MetaBlockStatements;
 class MetaStatements : public MetaBase {
 protected:

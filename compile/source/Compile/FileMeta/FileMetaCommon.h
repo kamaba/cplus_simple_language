@@ -137,7 +137,7 @@ public:
 
     bool IsOnlyName() const;
     std::string Name() const;
-    const std::vector<FileMetaCallNode*>& CallNodeList() const { return m_CallNodeList; }
+    const std::vector<FileMetaCallNode*>& GetCallNodeList() const { return m_CallNodeList; }
 
     std::string ToFormatString() const;
     std::string ToTokenString() const;

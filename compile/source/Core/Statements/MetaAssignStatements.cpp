@@ -7,6 +7,29 @@
 //****************************************************************************
 
 #include "MetaAssignStatements.h"
+#include "../MetaExpressNode/MetaExpressBase.h"
+#include "../MetaExpressNode/MetaExpressCalllink.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
+#include "../MetaExpressNode/MetaExpressOperator.h"
+#include "../MetaExpressNode/MetaExecuteStatementsNode.h"
+#include "../MetaVariable.h"
+#include "../MetaType.h"
+#include "../MetaClass.h"
+#include "MetaBlockStatements.h"
+#include "../MetaCallLink.h"
+#include "../BaseMetaClass/CoreMetaClassManager.h"
+#include "../ClassManager.h"
+#include "../ExpressManager.h"
+#include "../AllowUseSettings.h"
+#include "../../Compile/FileMeta/FileMetaSyntax.h"
+#include "../../Compile/Token.h"
+#include "../../Debug/Log.h"
+#include <string>
+#include <sstream>
+#include <iostream>
+
+using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -37,15 +60,15 @@ void MetaAssignManager::CreateMetaVariable() {
         if (retMc == CoreMetaClassManager::GetInstance().GetBooleanMetaClass()) {
             m_JudgmentValueMetaVariable = mcen->GetMetaVariable();
         } else {
-            Log::AddInStructMeta(EError::None, "Error ·µ»ØµÄÅĞ¶ÏÓï¾ä: " + mcen->ToTokenString() + "   ²¢·ÇÊÇbooleanÀàĞÍ!");
+            Log::AddInStructMeta(EError::None, "Error è¿”å›çš„åˆ¤æ–­è¯­å¥: " + mcen->ToTokenString() + "   å¹¶éæ˜¯booleanç±»å‹!");
         }
     } else if (auto mconen = dynamic_cast<MetaConstExpressNode*>(m_ExpressNode)) {
         Log::AddInStructMeta(EError::None, "Error -------------------------------------------");
     } else if (auto moen = dynamic_cast<MetaOpExpressNode*>(m_ExpressNode)) {
-        if (moen->isEqualType) {
+        if (moen->IsEqualType()) {
             // m_JudgmentValueMetaVariable = CreateOptimizeAfterExpress;
         } else {
-            // Log::AddInStructMeta(EError::None, "Error ·µ»ØµÄÅĞ¶ÏÓï¾ä: " + mcen->ToTokenString() + "   ²¢·ÇÊÇbooleanÀàĞÍ!");
+            // Log::AddInStructMeta(EError::None, "Error è¿”å›çš„åˆ¤æ–­è¯­å¥: " + mcen->ToTokenString() + "   å¹¶éæ˜¯booleanç±»å‹!");
         }
     } else {
         Log::AddInStructMeta(EError::None, "Error -------------------------------------------");
@@ -82,12 +105,12 @@ bool MetaAssignStatements::IsNewStatements() const {
 MetaAssignStatements::MetaAssignStatements(MetaBlockStatements* mbs) : MetaStatements(mbs) {
 }
 
-MetaAssignStatements::MetaAssignStatements(MetaBlockStatements* mbs, FileMetaOpAssignSyntax* fmos) : MetaStatements(mbs) {
+MetaAssignStatements::MetaAssignStatements(MetaBlockStatements* mbs, Compile::FileMetaOpAssignSyntax* fmos) : MetaStatements(mbs) {
     m_FileMetaOpAssignSyntax = fmos;
     Parse();
 }
 
-MetaAssignStatements::MetaAssignStatements(MetaBlockStatements* mbs, FileMetaDefineVariableSyntax* fmos) : MetaStatements(mbs) {
+MetaAssignStatements::MetaAssignStatements(MetaBlockStatements* mbs, Compile::FileMetaDefineVariableSyntax* fmos) : MetaStatements(mbs) {
     m_FileMetaDefineVariableSyntax = fmos;
     m_MetaVariable = mbs->GetOwnerMetaClass()->GetMetaMemberVariableByName(m_FileMetaDefineVariableSyntax->GetName());
     Parse();
@@ -156,7 +179,7 @@ void MetaAssignStatements::Parse() {
             m_AutoAddExpressOpSign = ELeftRightOpSign::Minus;
             break;
         default:
-            Log::AddInStructMeta(EError::None, "Error ¸³ÖµÓï¾ä½âÎö·ûºÅÔİ²»Ö§³Ö: " + std::to_string(static_cast<int>(ett)));
+            Log::AddInStructMeta(EError::None, "Error èµ‹å€¼è¯­å¥è§£æç¬¦å·æš‚ä¸æ”¯æŒ: " + std::to_string(static_cast<int>(ett)));
             break;
     }
     
@@ -181,19 +204,19 @@ void MetaAssignStatements::Parse() {
     if (!m_IsSetStatements) {
         m_MetaVariable = m_LeftMetaExpress->GetMetaVariable();
         if (m_MetaVariable == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error ±äÁ¿Ã»ÓĞ·¢ÏÖ" + m_LeftMetaExpress->ToTokenString());
+            Log::AddInStructMeta(EError::None, "Error å˜é‡æ²¡æœ‰å‘ç°" + m_LeftMetaExpress->ToTokenString());
             return;
         }
         if (m_MetaVariable->IsConst()) {
-            Log::AddInStructMeta(EError::None, "Error ÀàĞÍÎªConstÀàĞÍ£¬²»ÔÊĞíÊ¹ÓÃ¸³Öµ!!");
+            Log::AddInStructMeta(EError::None, "Error ç±»å‹ä¸ºConstç±»å‹ï¼Œä¸å…è®¸ä½¿ç”¨èµ‹å€¼!!");
         }
         
         m_Name = m_MetaVariable->GetName();
         if (m_MetaVariable->IsGlobal()) {
             if (GetOwnerMetaClass()->GetName() == "Project") {
-                // ÔÊĞíÈ«¾Ö±äÁ¿¸³Öµ
+                // å…è®¸å…¨å±€å˜é‡èµ‹å€¼
             } else {
-                Log::AddInStructMeta(EError::None, "Error Ö»ÄÜÔÚProject¹¤³ÌÏÂµÄº¯ÊıÖĞ£¬¸øÈ«¾Ö±äÁ¿¸³Öµ!!");
+                Log::AddInStructMeta(EError::None, "Error åªèƒ½åœ¨Projectå·¥ç¨‹ä¸‹çš„å‡½æ•°ä¸­ï¼Œç»™å…¨å±€å˜é‡èµ‹å€¼!!");
                 return;
             }
         }
@@ -213,7 +236,7 @@ void MetaAssignStatements::Parse() {
         m_ExpressNode = ExpressManager::CreateExpressNodeByCEP(cep);
         
         if (m_ExpressNode == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error ½âÎöĞÂ½¨±äÁ¿Óï¾äÊ±£¬±í´ïÊ½½âÎöÎª¿Õ!!");
+            Log::AddInStructMeta(EError::None, "Error è§£ææ–°å»ºå˜é‡è¯­å¥æ—¶ï¼Œè¡¨è¾¾å¼è§£æä¸ºç©º!!");
             return;
         }
     } else {
@@ -232,7 +255,7 @@ void MetaAssignStatements::Parse() {
     }
     
     if (m_FinalMetaExpress == nullptr) {
-        Log::AddInStructMeta(EError::None, "Error Àà: " + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") + "Ã»ÓĞÕÒµ½±äÁ¿:[" + (m_FileMetaOpAssignSyntax ? m_FileMetaOpAssignSyntax->GetExpress()->ToFormatString() : "") + "]µÄ¶¨Òå!!! 69 ");
+        Log::AddInStructMeta(EError::None, "Error ç±»: " + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") + "æ²¡æœ‰æ‰¾åˆ°å˜é‡:[" + (m_FileMetaOpAssignSyntax ? m_FileMetaOpAssignSyntax->GetExpress()->ToFormatString() : "") + "]çš„å®šä¹‰!!! 69 ");
         return;
     }
     
@@ -242,7 +265,7 @@ void MetaAssignStatements::Parse() {
     
     MetaType* expressRetMetaDefineType = m_FinalMetaExpress->GetReturnMetaDefineType();
     if (expressRetMetaDefineType == nullptr) {
-        Log::AddInStructMeta(EError::None, "Error ½âÎöĞÂ½¨±äÁ¿Óï¾äÊ±£¬±í´ïÊ½·µ»ØÀàĞÍÎª¿Õ!!__3");
+        Log::AddInStructMeta(EError::None, "Error è§£ææ–°å»ºå˜é‡è¯­å¥æ—¶ï¼Œè¡¨è¾¾å¼è¿”å›ç±»å‹ä¸ºç©º!!__3");
         return;
     }
     
@@ -250,7 +273,7 @@ void MetaAssignStatements::Parse() {
         MetaType* mdt = m_MetaVariable->GetRealMetaType();
         
         if (expressRetMetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetNullMetaClass()) {
-            // ÔÊĞínull¸³Öµ
+            // å…è®¸nullèµ‹å€¼
         } else {
             ClassManager::EClassRelation relation = ClassManager::EClassRelation::No;
             MetaClass* curClass = mdt->GetMetaClass();
@@ -271,29 +294,29 @@ void MetaAssignStatements::Parse() {
             }
             
             std::stringstream sb;
-            sb << "Warning ÔÚÀà: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaClass()->GetAllClassName() : "") 
-               << " º¯Êı: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaFunction()->GetName() : "") << "ÖĞ  ";
+            sb << "Warning åœ¨ç±»: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaClass()->GetAllClassName() : "") 
+               << " å‡½æ•°: " << (m_OwnerMetaBlockStatements ? m_OwnerMetaBlockStatements->GetOwnerMetaFunction()->GetName() : "") << "ä¸­  ";
             if (curClass != nullptr) {
-                sb << " ¶¨ÒåÀà : " << curClass->GetAllClassName();
+                sb << " å®šä¹‰ç±» : " << curClass->GetAllClassName();
             }
-            sb << " Ãû³ÆÎª: " << (m_Name ? m_Name->ToString() : "");
-            sb << "Óëºó±ß¸³ÖµÓï¾äÖĞ ";
+            sb << " åç§°ä¸º: " << (m_Name ? m_Name->ToString() : "");
+            sb << "ä¸åè¾¹èµ‹å€¼è¯­å¥ä¸­ ";
             if (compareClass != nullptr) {
-                sb << "±í´ïÊ½ÀàÎª: " << compareClass->GetAllClassName();
+                sb << "è¡¨è¾¾å¼ç±»ä¸º: " << compareClass->GetAllClassName();
             }
             
             if (relation == ClassManager::EClassRelation::No) {
-                sb << "ÀàĞÍ²»ÏàÍ¬£¬¿ÉÄÜ»áÓĞÇ¿×ª£¬Ç¿×ªºó¿ÉÄÜÄ¬ÈÏÖµÎªnull";
+                sb << "ç±»å‹ä¸ç›¸åŒï¼Œå¯èƒ½ä¼šæœ‰å¼ºè½¬ï¼Œå¼ºè½¬åå¯èƒ½é»˜è®¤å€¼ä¸ºnull";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
             } else if (relation == ClassManager::EClassRelation::Similar) {
-                sb << "Êı×ÖÀàĞÍÏàËÆ£¬¿ÉÄÜ»áÓĞÇ¿×ª»áÓĞ¾«¶ÈµÄ¶ªÊ§!";
+                sb << "æ•°å­—ç±»å‹ç›¸ä¼¼ï¼Œå¯èƒ½ä¼šæœ‰å¼ºè½¬ä¼šæœ‰ç²¾åº¦çš„ä¸¢å¤±!";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
             } else if (relation == ClassManager::EClassRelation::Same) {
-                // ÀàĞÍÏàÍ¬£¬ÎŞĞè×ª»»
+                // ç±»å‹ç›¸åŒï¼Œæ— éœ€è½¬æ¢
             } else if (relation == ClassManager::EClassRelation::Parent) {
-                sb << "ÀàĞÍ²»ÏàÍ¬£¬¿ÉÄÜ»áÓĞÇ¿×ª£¬ ·µ»ØÖµÊÇ¸¸ÀàĞÍÏò×ÓÀàĞÍ×ª»»£¬´æÔÚ´íÎó×ª»»!!";
+                sb << "ç±»å‹ä¸ç›¸åŒï¼Œå¯èƒ½ä¼šæœ‰å¼ºè½¬ï¼Œ è¿”å›å€¼æ˜¯çˆ¶ç±»å‹å‘å­ç±»å‹è½¬æ¢ï¼Œå­˜åœ¨é”™è¯¯è½¬æ¢!!";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
             } else if (relation == ClassManager::EClassRelation::Child) {
@@ -301,13 +324,13 @@ void MetaAssignStatements::Parse() {
                     m_MetaVariable->SetMetaDefineType(expressRetMetaDefineType);
                 }
             } else {
-                sb << "±í´ïÊ½´íÎó£¬»òÕßÊÇ¶¨ÒåÀàĞÍ´íÎó";
+                sb << "è¡¨è¾¾å¼é”™è¯¯ï¼Œæˆ–è€…æ˜¯å®šä¹‰ç±»å‹é”™è¯¯";
                 Log::AddInStructMeta(EError::None, sb.str());
             }
         }
     } else {
         MetaInputParam* mip = new MetaInputParam(m_ExpressNode);
-        // ´¦Àísetterº¯Êıµ÷ÓÃ
+        // å¤„ç†setterå‡½æ•°è°ƒç”¨
     }
 }
 
@@ -318,7 +341,7 @@ void MetaAssignStatements::UpdateOwnerMetaClass(MetaClass* ownerclass) {
     MetaStatements::UpdateOwnerMetaClass(ownerclass);
 }
 
-std::string MetaAssignStatements::ToFormatString() {
+std::string MetaAssignStatements::ToFormatString() const {
     std::string result = GetFormatString();
     result += ";";
     result += "\n";
@@ -330,8 +353,8 @@ std::string MetaAssignStatements::ToFormatString() {
 
 std::string MetaAssignStatements::GetFormatString() {
     std::string result;
-    for (int i = 0; i < m_RealDeep; i++) {
-        result += Global::GetTabChar();
+    for (int i = 0; i < GetRealDeep(); i++) {
+        result += Global::tabChar;
     }
     
     if (m_IsSetStatements) {

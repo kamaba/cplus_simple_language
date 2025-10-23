@@ -9,28 +9,30 @@
 #pragma once
 
 #include "MetaStatements.h"
-#include "../AllowUseSettings.h"
 #include <string>
 #include <vector>
 
 namespace SimpleLanguage {
-    namespace Compile
-    {
+    namespace Compile {
         class Token;
         class FileMetaKeySwitchSyntax;
         class FileMetaKeyCaseSyntax;
     }
-namespace Core 
-{
-    // 前向声明
-    class MetaConstExpressNode;
-    class MetaCallLinkExpressNode;
-    class MetaCallLink;
-    class MetaBlockStatements;
-    class MetaVariable;
-    class MetaClass;
-    class MetaType;
-    class MetaMemberFunction;
+    namespace Core {
+        class MetaConstExpressNode;
+        class MetaCallLinkExpressNode;
+        class MetaCallLink;
+        class MetaBlockStatements;
+        class MetaVariable;
+        class MetaClass;
+        class MetaType;
+        class MetaMemberFunction;
+        class AllowUseSettings;
+    }
+}
+
+namespace SimpleLanguage {
+namespace Core {
 
 class MetaSwitchStatements : public MetaStatements {
 public:
@@ -46,6 +48,7 @@ public:
         Compile::Token* token = nullptr;
         
         MetaNextStatements(Compile::Token* _token);
+        virtual ~MetaNextStatements() = default;
         virtual std::string ToFormatString() const override;
     };
     
@@ -70,6 +73,7 @@ public:
 
     public:
         MetaCaseStatements(Compile::FileMetaKeyCaseSyntax* fmkcs, MetaBlockStatements* mbs);
+        virtual ~MetaCaseStatements() = default;
         
     private:
         void Parse();
@@ -90,6 +94,7 @@ private:
 
 public:
     MetaSwitchStatements(MetaBlockStatements* mbs, Compile::FileMetaKeySwitchSyntax* fmkss, MetaVariable* retMv = nullptr);
+    virtual ~MetaSwitchStatements() = default;
     
 private:
     void Parse();

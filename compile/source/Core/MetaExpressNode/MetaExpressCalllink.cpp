@@ -9,12 +9,21 @@
 #include "MetaExpressCalllink.h"
 #include "../MetaCallLink.h"
 #include "../MetaVariable.h"
-#include "../Compile/CoreFileMeta/FileMetaCallLink.h"
+#include "../MetaClass.h"
+#include "../MetaBlockStatements.h"
+#include "../AllowUseSettings.h"
+#include "../MetaType.h"
+#include "../Compile/FileMeta/FileMetaCallLink.h"
+#include <string>
 
 namespace SimpleLanguage {
 namespace Core {
 
-MetaCallLinkExpressNode::MetaCallLinkExpressNode(FileMetaCallLink* fmcl, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* mv) {
+MetaCallLink* MetaCallLinkExpressNode::GetMetaCallLink() const {
+    return m_MetaCallLink;
+}
+
+MetaCallLinkExpressNode::MetaCallLinkExpressNode(Compile::FileMetaCallLink* fmcl, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* mv) {
     m_OwnerMetaClass = mc;
     m_OwnerMetaBlockStatements = mbs;
     m_EqualMetaVariable = mv;

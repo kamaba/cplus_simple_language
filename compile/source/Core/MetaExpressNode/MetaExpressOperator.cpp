@@ -12,12 +12,31 @@
 #include "../Compile/CoreFileMeta/FileMetaSymbolTerm.h"
 #include "../Compile/Token.h"
 #include "../VM/ExpressOptimizeConfig.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
+#include "../AllowUseSettings.h"
 #include <iostream>
+#include <string>
+#include <sstream>
+
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
 
-MetaUnaryOpExpressNode::MetaUnaryOpExpressNode(FileMetaSymbolTerm* fme, MetaExpressNode* _value) {
+// MetaUnaryOpExpressNode implementation
+Compile::Token* MetaUnaryOpExpressNode::GetTokeType() const {
+    return m_TokeType;
+}
+
+ESingleOpSign MetaUnaryOpExpressNode::GetOpSign() const {
+    return m_OpSign;
+}
+
+MetaExpressNode* MetaUnaryOpExpressNode::GetValue() const {
+    return m_Value;
+}
+
+MetaUnaryOpExpressNode::MetaUnaryOpExpressNode(Compile::FileMetaSymbolTerm* fme, MetaExpressNode* _value) {
     m_Value = _value;
     m_TokeType = fme->GetToken();
     if (fme->GetSymbolType() == ETokenType::Minus) {
@@ -56,23 +75,23 @@ MetaExpressNode* MetaUnaryOpExpressNode::SimulateCompute() {
             case ESingleOpSign::Neg: {
                 switch (eType) {
                     case EType::Int16: {
-                        mcen->SetValue(-std::any_cast<int16_t>(mcen->GetValue()));
+                        mcen->SetValue(-mcen->GetValue().ToShort());
                         return mcen;
                     }
                     case EType::UInt16: {
-                        mcen->SetValue(-std::any_cast<uint16_t>(mcen->GetValue()));
+                        mcen->SetValue(-mcen->GetValue().ToUShort());
                         return mcen;
                     }
                     case EType::Int32: {
-                        mcen->SetValue(-std::any_cast<int32_t>(mcen->GetValue()));
+                        mcen->SetValue(-mcen->GetValue().ToInt());
                         return mcen;
                     }
                     case EType::UInt32: {
-                        mcen->SetValue(-std::any_cast<uint32_t>(mcen->GetValue()));
+                        mcen->SetValue(-mcen->GetValue().ToUInt());
                         return mcen;
                     }
                     case EType::Int64: {
-                        mcen->SetValue(-std::any_cast<int64_t>(mcen->GetValue()));
+                        mcen->SetValue(-mcen->GetValue().ToLong());
                         return mcen;
                     }
                 }
@@ -81,35 +100,35 @@ MetaExpressNode* MetaUnaryOpExpressNode::SimulateCompute() {
             case ESingleOpSign::Not: {
                 switch (eType) {
                     case EType::Byte: {
-                        mcen->SetValue(std::any_cast<uint8_t>(mcen->GetValue()) != 0);
+                        mcen->SetValue(mcen->GetValue().ToByte() != 0);
                         return mcen;
                     }
                     case EType::Int16: {
-                        mcen->SetValue(std::any_cast<int16_t>(mcen->GetValue()) != 0);
+                        mcen->SetValue(mcen->GetValue().ToShort() != 0);
                         return mcen;
                     }
                     case EType::UInt16: {
-                        mcen->SetValue(std::any_cast<uint16_t>(mcen->GetValue()) != 0);
+                        mcen->SetValue(mcen->GetValue().ToUShort() != 0);
                         return mcen;
                     }
                     case EType::Int32: {
-                        mcen->SetValue(std::any_cast<int32_t>(mcen->GetValue()) != 0);
+                        mcen->SetValue(mcen->GetValue().ToInt() != 0);
                         return mcen;
                     }
                     case EType::UInt32: {
-                        mcen->SetValue(std::any_cast<uint32_t>(mcen->GetValue()) != 0);
+                        mcen->SetValue(mcen->GetValue().ToUInt() != 0);
                         return mcen;
                     }
                     case EType::Int64: {
-                        mcen->SetValue(std::any_cast<int64_t>(mcen->GetValue()) != 0);
+                        mcen->SetValue(mcen->GetValue().ToLong() != 0);
                         return mcen;
                     }
                     case EType::UInt64: {
-                        mcen->SetValue(std::any_cast<uint64_t>(mcen->GetValue()) != 0);
+                        mcen->SetValue(mcen->GetValue().ToULong() != 0);
                         return mcen;
                     }
                     case EType::String: {
-                        std::string str = std::any_cast<std::string>(mcen->GetValue());
+                        std::string str = mcen->GetValue().ToString();
                         mcen->SetValue(str.empty());
                         return mcen;
                     }
@@ -119,23 +138,23 @@ MetaExpressNode* MetaUnaryOpExpressNode::SimulateCompute() {
             case ESingleOpSign::Xor: {
                 switch (eType) {
                     case EType::Byte: {
-                        mcen->SetValue(~std::any_cast<uint8_t>(mcen->GetValue()));
+                        mcen->SetValue(~mcen->GetValue().ToByte());
                         return mcen;
                     }
                     case EType::SByte: {
-                        mcen->SetValue(~std::any_cast<int8_t>(mcen->GetValue()));
+                        mcen->SetValue(~mcen->GetValue().ToSByte());
                         return mcen;
                     }
                     case EType::Int16: {
-                        mcen->SetValue(~std::any_cast<int16_t>(mcen->GetValue()));
+                        mcen->SetValue(~mcen->GetValue().ToShort());
                         return mcen;
                     }
                     case EType::UInt16: {
-                        mcen->SetValue(~std::any_cast<uint16_t>(mcen->GetValue()));
+                        mcen->SetValue(~mcen->GetValue().ToUShort());
                         return mcen;
                     }
                     case EType::Int32: {
-                        mcen->SetValue(~std::any_cast<int32_t>(mcen->GetValue()));
+                        mcen->SetValue(~mcen->GetValue().ToInt());
                         return mcen;
                     }
                 }
@@ -163,7 +182,28 @@ std::string MetaUnaryOpExpressNode::ToTokenString() {
     return result;
 }
 
-MetaOpExpressNode::MetaOpExpressNode(FileMetaSymbolTerm* fme, MetaType* mt, MetaExpressNode* _left, MetaExpressNode* _right) {
+// MetaOpExpressNode implementation
+MetaExpressNode* MetaOpExpressNode::GetLeft() const {
+    return m_Left;
+}
+
+MetaExpressNode* MetaOpExpressNode::GetRight() const {
+    return m_Right;
+}
+
+ELeftRightOpSign MetaOpExpressNode::GetOpSign() const {
+    return m_OpLevelSign;
+}
+
+ConvertType* MetaOpExpressNode::GetLeftConvert() const {
+    return m_LeftConvert;
+}
+
+ConvertType* MetaOpExpressNode::GetRightConvert() const {
+    return m_RightConvert;
+}
+
+MetaOpExpressNode::MetaOpExpressNode(Compile::FileMetaSymbolTerm* fme, MetaType* mt, MetaExpressNode* _left, MetaExpressNode* _right) {
     m_Left = _left;
     m_Right = _right;
     m_FileMetaBaseTerm = fme;
@@ -212,7 +252,7 @@ MetaOpExpressNode::MetaOpExpressNode(FileMetaSymbolTerm* fme, MetaType* mt, Meta
             m_OpLevelSign = ELeftRightOpSign::Or;
             break;
         default:
-            std::cout << "Error Ã»ÓÐÊÊºÏµÄ·ûºÅ!!!" << static_cast<int>(ett) << std::endl;
+            std::cout << "Error æ²¡æœ‰åˆé€‚çš„ç¬¦å·!!!" << static_cast<int>(ett) << std::endl;
             break;
     }
     ComputeIsComputeType();
@@ -307,7 +347,7 @@ void MetaOpExpressNode::ParseCompute() {
             }
         }
     } else {
-        std::cout << "Error ´íÎó£¬×óÓÒÖµ²»¶Ô!!" << std::endl;
+        std::cout << "Error å·¦å³å€¼ä¸èƒ½ä¸ºç©º!!" << std::endl;
     }
 }
 

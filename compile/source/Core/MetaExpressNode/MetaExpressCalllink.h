@@ -9,10 +9,22 @@
 #pragma once
 
 #include "MetaExpressBase.h"
-#include "../MetaCallLink.h"
-#include "../MetaVariable.h"
-#include "../Compile/CoreFileMeta/FileMetaCallLink.h"
 #include <string>
+
+namespace SimpleLanguage {
+    namespace Compile {
+        class FileMetaCallLink;
+    }
+    namespace Core {
+        class MetaCallLink;
+        class MetaVariable;
+        class MetaClass;
+        class MetaBlockStatements;
+        class AllowUseSettings;
+        class MetaType;
+        class MetaExpressNode;
+    }
+}
 
 namespace SimpleLanguage {
 namespace Core {
@@ -23,80 +35,21 @@ private:
     MetaVariable* m_EqualMetaVariable = nullptr;
 
 public:
-    MetaCallLink* GetMetaCallLink() const { return m_MetaCallLink; }
+    MetaCallLink* GetMetaCallLink() const;
     
-    MetaCallLinkExpressNode(FileMetaCallLink* fmcl, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* mv) {
-        m_OwnerMetaClass = mc;
-        m_OwnerMetaBlockStatements = mbs;
-        m_EqualMetaVariable = mv;
-        if (fmcl != nullptr) {
-            m_MetaCallLink = new MetaCallLink(fmcl, mc, mbs, mv ? mv->GetMetaDefineType() : nullptr, mv);
-        }
-    }
+    MetaCallLinkExpressNode(Compile::FileMetaCallLink* fmcl, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* mv);
+    MetaCallLinkExpressNode(MetaCallLink* mcl);
     
-    MetaCallLinkExpressNode(MetaCallLink* mcl) {
-        m_MetaCallLink = mcl;
-    }
+    virtual void Parse(AllowUseSettings* auc) override;
+    virtual int CalcParseLevel(int level) override;
+    virtual void CalcReturnType() override;
     
-    virtual void Parse(AllowUseSettings* auc) override {
-        if (m_MetaCallLink != nullptr) {
-            m_MetaCallLink->Parse(auc);
-        }
-    }
+    MetaVariable* GetMetaVariable();
+    virtual MetaType* GetReturnMetaDefineType() override;
+    MetaExpressNode* ConvertConstExpressNode();
     
-    virtual int CalcParseLevel(int level) override {
-        if (m_MetaCallLink != nullptr) {
-            level = m_MetaCallLink->CalcParseLevel(level);
-        }
-        return level;
-    }
-    
-    virtual void CalcReturnType() override {
-        if (m_MetaCallLink != nullptr) {
-            m_MetaCallLink->CalcReturnType();
-        }
-        m_MetaDefineType = GetReturnMetaDefineType();
-    }
-    
-    MetaVariable* GetMetaVariable() {
-        if (m_MetaCallLink != nullptr) {
-            return m_MetaCallLink->ExecuteGetMetaVariable();
-        }
-        return nullptr;
-    }
-    
-    virtual MetaType* GetReturnMetaDefineType() override {
-        if (m_MetaDefineType != nullptr) {
-            return m_MetaDefineType;
-        }
-        if (m_MetaCallLink == nullptr) {
-            return nullptr;
-        }
-        m_MetaDefineType = m_MetaCallLink->GetMetaDefineType();
-        return m_MetaDefineType;
-    }
-    
-    MetaExpressNode* ConvertConstExpressNode() {
-        if (m_MetaCallLink == nullptr) {
-            return nullptr;
-        }
-        return m_MetaCallLink->GetMetaExpressNode();
-    }
-    
-    virtual std::string ToFormatString() override {
-        if (m_MetaCallLink != nullptr) {
-            return m_MetaCallLink->ToFormatString();
-        }
-        return "ExpressCallLink Error!!";
-    }
-    
-    virtual std::string ToTokenString() override {
-        std::string result;
-        if (m_MetaCallLink != nullptr) {
-            result = m_MetaCallLink->ToTokenString();
-        }
-        return result;
-    }
+    virtual std::string ToFormatString() override;
+    virtual std::string ToTokenString() override;
 };
 
 } // namespace Core

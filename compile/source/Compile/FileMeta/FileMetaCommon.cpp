@@ -122,8 +122,8 @@ FileInputTemplateNode::FileInputTemplateNode(FileMeta* fm, Node* node) {
 std::vector<std::string> FileInputTemplateNode::GetNameList() const {
     std::vector<std::string> _nameList;
     if (m_DefineClassCallLink != nullptr) {
-        for (size_t i = 0; i < m_DefineClassCallLink->CallNodeList().size(); i++) {
-            _nameList.push_back(m_DefineClassCallLink->CallNodeList()[i]->Name());
+        for (size_t i = 0; i < m_DefineClassCallLink->GetCallNodeList().size(); i++) {
+            _nameList.push_back(m_DefineClassCallLink->GetCallNodeList()[i]->Name());
         }
     }
     return _nameList;
@@ -132,9 +132,9 @@ std::vector<std::string> FileInputTemplateNode::GetNameList() const {
 int FileInputTemplateNode::GetInputTemplateCount() const {
     int templateCount = 0;
     if (m_DefineClassCallLink != nullptr) {
-        int cn = m_DefineClassCallLink->CallNodeList().size();
+        int cn = m_DefineClassCallLink->GetCallNodeList().size();
         if (cn > 0) {
-            return m_DefineClassCallLink->CallNodeList()[cn - 1]->InputTemplateNodeList().size();
+            return m_DefineClassCallLink->GetCallNodeList()[cn - 1]->InputTemplateNodeList().size();
         }
     }
     return templateCount;

@@ -12,40 +12,65 @@
 #include "../MetaExpressNode/MetaCallLinkExpressNode.h"
 #include "../MetaExpressNode/MetaExecuteStatementsNode.h"
 #include "../MetaGenTemplateClass.h"
+#include "../MetaVariable.h"
+#include "../MetaType.h"
+#include "../MetaClass.h"
+#include "../MetaMemberFunction.h"
+#include "../ClassManager.h"
+#include "../TypeManager.h"
+#include "../ExpressManager.h"
+#include "../AllowUseSettings.h"
+#include "../BaseMetaClass/CoreMetaClassManager.h"
+#include "../../Compile/FileMeta/FileMetaDefineVariableSyntax.h"
+#include "../../Compile/FileMeta/FileMetaOpAssignSyntax.h"
+#include "../../Compile/FileMeta/FileMetaCallSyntax.h"
+#include "../../Compile/FileMeta/FileMetaBase.h"
+#include "../../Compile/Token.h"
+#include "../../Define.h"
 #include "../Debug/Log.h"
 #include <iostream>
+#include <string>
 
 using namespace SimpleLanguage::Debug;
 
 namespace SimpleLanguage {
 namespace Core {
 
-// ¹¹Ôìº¯ÊıÊµÏÖ
+// å±æ€§è®¿é—®å™¨å®ç°
+MetaExpressNode* MetaDefineVarStatements::GetExpressNode() const {
+    return m_ExpressNode;
+}
+
+MetaVariable* MetaDefineVarStatements::GetDefineVarMetaVariable() const {
+    return m_DefineVarMetaVariable;
+}
+
+// æ„é€ å‡½æ•°å®ç°
 MetaDefineVarStatements::MetaDefineVarStatements(MetaBlockStatements* mbs) : MetaStatements(mbs) {
 }
 
-MetaDefineVarStatements::MetaDefineVarStatements(MetaBlockStatements* mbs, FileMetaDefineVariableSyntax* fmdvs) : MetaStatements(mbs) {
+MetaDefineVarStatements::MetaDefineVarStatements(MetaBlockStatements* mbs, Compile::FileMetaDefineVariableSyntax* fmdvs) : MetaStatements(mbs) {
     m_FileMetaDefineVariableSyntax = fmdvs;
     m_Name = fmdvs->GetName();
     m_OwnerMetaBlockStatements->AddOnlyNameMetaVariable(m_Name);
     Parse();
 }
 
-MetaDefineVarStatements::MetaDefineVarStatements(MetaBlockStatements* mbs, FileMetaOpAssignSyntax* fmoas) : MetaStatements(mbs) {
+MetaDefineVarStatements::MetaDefineVarStatements(MetaBlockStatements* mbs, Compile::FileMetaOpAssignSyntax* fmoas) : MetaStatements(mbs) {
     m_FileMetaOpAssignSyntax = fmoas;
     m_Name = m_FileMetaOpAssignSyntax->GetVariableRef()->GetName();
     m_OwnerMetaBlockStatements->AddOnlyNameMetaVariable(m_Name);
     Parse();
 }
 
-MetaDefineVarStatements::MetaDefineVarStatements(MetaBlockStatements* mbs, FileMetaCallSyntax* callSyntax) : MetaStatements(mbs) {
+MetaDefineVarStatements::MetaDefineVarStatements(MetaBlockStatements* mbs, Compile::FileMetaCallSyntax* callSyntax) : MetaStatements(mbs) {
     m_FileMetaCallSyntax = callSyntax;
     m_Name = callSyntax->GetVariableRef()->GetName();
     m_OwnerMetaBlockStatements->AddOnlyNameMetaVariable(m_Name);
     Parse();
 }
 
-// Parse·½·¨ÊµÏÖ
+// Parseæ–¹æ³•å®ç°
 void MetaDefineVarStatements::Parse() {
     std::string defineName = m_Name;
     MetaType* mdt = new MetaType(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
@@ -96,26 +121,26 @@ void MetaDefineVarStatements::Parse() {
     MetaType* expressRetMetaDefineType = nullptr;
     if (fileExpress != nullptr) {
         CreateExpressParam cep;
-        cep.fme = fileExpress;
-        cep.equalMetaVariable = m_DefineVarMetaVariable;
-        cep.metaType = mdt;
-        cep.ownerMBS = m_OwnerMetaBlockStatements;
-        cep.ownerMetaClass = m_OwnerMetaBlockStatements->GetOwnerMetaClass();
+        cep.SetFme(fileExpress);
+        cep.SetEqualMetaVariable(m_DefineVarMetaVariable);
+        cep.SetMetaType(mdt);
+        cep.SetOwnerMBS(m_OwnerMetaBlockStatements);
+        cep.SetOwnerMetaClass(m_OwnerMetaBlockStatements->GetOwnerMetaClass());
         
         m_ExpressNode = ExpressManager::CreateExpressNodeByCEP(cep);
         if (m_ExpressNode == nullptr) {
-            std::cout << "Error ½âÎöĞÂ½¨±äÁ¿Óï¾äÊ±£¬±í´ïÊ½½âÎöÎª¿Õ!!__1" << std::endl;
+            std::cout << "Error è§£ææ–°å»ºå˜é‡è¯­å¥æ—¶ï¼Œè¡¨è¾¾å¼è§£æä¸ºç©º!!__1" << std::endl;
             return;
         }
         
         AllowUseSettings auc;
         auc.parseFrom = EParseFrom::StatementRightExpress;
-        m_ExpressNode->Parse(auc);
+        m_ExpressNode->Parse(&auc);
         m_ExpressNode->CalcReturnType();
         expressRetMetaDefineType = m_ExpressNode->GetReturnMetaDefineType();
         
         if (expressRetMetaDefineType == nullptr) {
-            std::cout << "Error ½âÎöĞÂ½¨±äÁ¿Óï¾äÊ±£¬±í´ïÊ½·µ»ØÀàĞÍÎª¿Õ!!__2 " << defineName << std::endl;
+            std::cout << "Error è§£ææ–°å»ºå˜é‡è¯­å¥æ—¶ï¼Œè¡¨è¾¾å¼è¿”å›ç±»å‹ä¸ºç©º!!__2 " << defineName << std::endl;
             return;
         }
     }
@@ -141,13 +166,13 @@ void MetaDefineVarStatements::Parse() {
                 if (m_ExpressNode != nullptr) {
                     auto expressMDT = dynamic_cast<MetaCallLinkExpressNode*>(m_ExpressNode);
                     if (expressMDT == nullptr) {
-                        std::cout << "Error EnumÄ£Ê½£¬Ö»ÔÊĞíÊÇµ÷ÓÃÄ£Ê½[CallLinkExpress]" << std::endl;
+                        std::cout << "Error Enumæ¨¡å¼ï¼Œåªå…è®¸æ˜¯è°ƒç”¨æ¨¡å¼[CallLinkExpress]" << std::endl;
                     } else {
                         auto varableEnum = expressMDT->GetMetaCallLink()->GetFinalCallNode()->GetVariable()->GetOwnerMetaClass();
                         if (mdt->GetMetaClass() != varableEnum) {
-                            std::cout << "Error EnumÓëÖµ²»ÏàµÈ!!" << std::endl;
+                            std::cout << "Error Enumä¸å€¼ä¸ç›¸ç­‰!!" << std::endl;
                         } else {
-                            m_IsNeedCastState = false;
+                            m_IsNeedCastStatements = false;
                         }
                     }
                 }
@@ -160,35 +185,35 @@ void MetaDefineVarStatements::Parse() {
                     relation = ClassManager::ValidateClassRelationByMetaClass(curClass, compareClass);
                 }
                 
-                std::string sb = "Warning ÔÚÀà: " + (metaFunction ? metaFunction->GetOwnerMetaClass()->GetAllClassName() : "") + 
-                                " º¯Êı: " + (metaFunction ? metaFunction->GetName() : "") + "ÖĞ  ";
+                std::string sb = "Warning åœ¨ç±»: " + (metaFunction ? metaFunction->GetOwnerMetaClass()->GetAllClassName() : "") + 
+                                " å‡½æ•°: " + (metaFunction ? metaFunction->GetName() : "") + "ä¸­  ";
                 if (curClass != nullptr) {
-                    sb += " ¶¨ÒåÀà : " + curClass->GetAllClassName();
+                    sb += " å®šä¹‰ç±» : " + curClass->GetAllClassName();
                 }
-                if (defineName != nullptr) {
-                    sb += " Ãû³ÆÎª: " + defineName;
+                if (!defineName.empty()) {
+                    sb += " åç§°ä¸º: " + defineName;
                 }
-                sb += "Óëºó±ß¸³ÖµÓï¾äÖĞ ";
+                sb += "ä¸åè¾¹èµ‹å€¼è¯­å¥ä¸­ ";
                 if (compareClass != nullptr) {
-                    sb += "±í´ïÊ½ÀàÎª: " + compareClass->GetAllClassName();
+                    sb += "è¡¨è¾¾å¼ç±»ä¸º: " + compareClass->GetAllClassName();
                 }
                 
                 if (relation == ClassManager::EClassRelation::No) {
-                    sb += "ÀàĞÍ²»ÏàÍ¬£¬¿ÉÄÜ»áÓĞÇ¿×ª£¬Ç¿×ªºó¿ÉÄÜÄ¬ÈÏÖµÎªnull";
+                    sb += "ç±»å‹ä¸ç›¸åŒï¼Œå¯èƒ½ä¼šæœ‰å¼ºè½¬ï¼Œå¼ºè½¬åå¯èƒ½é»˜è®¤å€¼ä¸ºnull";
                     std::cout << sb << std::endl;
-                    m_IsNeedCastState = true;
+                    m_IsNeedCastStatements = true;
                 } else if (relation == ClassManager::EClassRelation::Same) {
                     m_DefineVarMetaVariable->SetRealMetaType(expressRetMetaDefineType);
                 } else if (relation == ClassManager::EClassRelation::Parent) {
-                    sb += "ÀàĞÍ²»ÏàÍ¬£¬¿ÉÄÜ»áÓĞÇ¿×ª£¬ ·µ»ØÖµÊÇ¸¸ÀàĞÍÏò×ÓÀàĞÍ×ª»»£¬´æÔÚ´íÎó×ª»»!!";
+                    sb += "ç±»å‹ä¸ç›¸åŒï¼Œå¯èƒ½ä¼šæœ‰å¼ºè½¬ï¼Œ è¿”å›å€¼æ˜¯çˆ¶ç±»å‹å‘å­ç±»å‹è½¬æ¢ï¼Œå­˜åœ¨é”™è¯¯è½¬æ¢!!";
                     std::cout << sb << std::endl;
-                    m_IsNeedCastState = true;
+                    m_IsNeedCastStatements = true;
                 } else if (relation == ClassManager::EClassRelation::Child) {
                     if (compareClass != nullptr) {
                         m_DefineVarMetaVariable->SetRealMetaType(expressRetMetaDefineType);
                     }
                 } else {
-                    sb += "±í´ïÊ½´íÎó£¬»òÕßÊÇ¶¨ÒåÀàĞÍ´íÎó";
+                    sb += "è¡¨è¾¾å¼é”™è¯¯ï¼Œæˆ–è€…æ˜¯å®šä¹‰ç±»å‹é”™è¯¯";
                     std::cout << sb << std::endl;
                 }
             }
@@ -201,7 +226,7 @@ void MetaDefineVarStatements::Parse() {
     SetTRMetaVariable(m_DefineVarMetaVariable);
 }
 
-// SetTRMetaVariable·½·¨ÊµÏÖ
+// SetTRMetaVariableæ–¹æ³•å®ç°
 void MetaDefineVarStatements::SetTRMetaVariable(MetaVariable* mv) {
     if (m_ExpressNode != nullptr && dynamic_cast<MetaExecuteStatementsNode*>(m_ExpressNode)) {
         dynamic_cast<MetaExecuteStatementsNode*>(m_ExpressNode)->UpdateTrMetaVariable(mv);
@@ -211,7 +236,7 @@ void MetaDefineVarStatements::SetTRMetaVariable(MetaVariable* mv) {
     }
 }
 
-// SetDeep·½·¨ÊµÏÖ
+// SetDeepæ–¹æ³•å®ç°
 void MetaDefineVarStatements::SetDeep(int dp) {
     MetaStatements::SetDeep(dp);
     if (auto mesn = dynamic_cast<MetaExecuteStatementsNode*>(m_ExpressNode)) {
@@ -219,8 +244,8 @@ void MetaDefineVarStatements::SetDeep(int dp) {
     }
 }
 
-// ToFormatString·½·¨ÊµÏÖ
-std::string MetaDefineVarStatements::ToFormatString() {
+// ToFormatStringæ–¹æ³•å®ç°
+std::string MetaDefineVarStatements::ToFormatString() const {
     std::string result;
     
     for (int i = 0; i < GetRealDeep(); i++) {
@@ -232,13 +257,13 @@ std::string MetaDefineVarStatements::ToFormatString() {
     if (m_DefineVarMetaVariable->GetMetaDefineType()->IsData()) {
         result += m_ExpressNode->ToFormatString();
     } else if (m_DefineVarMetaVariable->GetMetaDefineType()->IsEnum()) {
-        // Enum´¦Àí
+        // Enumå¤„ç†
     } else {
-        if (m_IsNeedCastState) {
+        if (m_IsNeedCastStatements) {
             result += "(";
         }
         result += m_ExpressNode->ToFormatString();
-        if (m_IsNeedCastState) {
+        if (m_IsNeedCastStatements) {
             result += ").cast<" + m_DefineVarMetaVariable->GetMetaDefineType()->GetMetaClass()->GetAllClassName() + ">()";
         }
         result += ";";
