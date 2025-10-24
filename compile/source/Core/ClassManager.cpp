@@ -279,7 +279,7 @@ MetaClass* ClassManager::AddClass(FileMetaClass* fmc) {
     }
 
     if (isCanAddBind) {
-        if (ProjectManager::useDefineNamespaceType == EUseDefineType::LimitUseProjectConfigNamespaceAndClass) {
+        if (ProjectManager::GetUseDefineNamespaceType() == EUseDefineType::LimitUseProjectConfigNamespaceAndClass) {
             Log::AddInStructMeta(EError::None, "Error 使用的强制定义节点的方式中，没有找到相关的类，不能创建新的类，请在工程中定义");
         }
         

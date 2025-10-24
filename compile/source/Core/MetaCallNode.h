@@ -15,8 +15,6 @@
 #include <vector>
 #include <memory>
 
-using namespace SimpleLanguage::Compile;
-
 namespace SimpleLanguage {
     namespace Compile
     {
@@ -58,32 +56,6 @@ enum class ECallNodeType : uint8_t {
     Global = 23,
     Express = 24
 };
-
-
-class AllowUseSettings {
-public:
-    bool useNotStatic = false;
-    bool useNotConst = true;
-    bool callFunction = true;
-    bool callConstructFunction = true;
-    bool setterFunction = false;
-    bool getterFunction = true;
-    EParseFrom parseFrom = EParseFrom::None;
-
-    AllowUseSettings() = default;
-    AllowUseSettings(const AllowUseSettings& clone) {
-        useNotStatic = clone.useNotStatic;
-        useNotConst = clone.useNotConst;
-        callFunction = clone.callFunction;
-        callConstructFunction = clone.callConstructFunction;
-        setterFunction = clone.setterFunction;
-        getterFunction = clone.getterFunction;
-        parseFrom = clone.parseFrom;
-    }
-};
-
-// 前向声明
-class AllowUseSettings;
 class MetaClass;
 class MetaType;
 class MetaNode;
@@ -103,7 +75,7 @@ class MetaConstExpressNode;
 class MetaVisitVariable;
 class MetaMemberEnum;
 class MetaGenTemplateClass;
-class MetaGenTempalteFunction;
+class MetaGenTemplateFunction;
 class MetaInputTemplateCollection;
 class MetaBase;
 
@@ -111,7 +83,7 @@ class MetaCallNode : public MetaBase {
 public:
     // 构造函数
     MetaCallNode();
-    MetaCallNode(FileMetaCallNode* fmcn1, FileMetaCallNode* fmcn2, MetaClass* mc, MetaBlockStatements* mbs, MetaType* fdmt);
+    MetaCallNode(Compile::FileMetaCallNode* fmcn1, Compile::FileMetaCallNode* fmcn2, MetaClass* mc, MetaBlockStatements* mbs, MetaType* fdmt);
     virtual ~MetaCallNode() = default;
 
     // 属性访问器
@@ -119,15 +91,15 @@ public:
     MetaCallNode* GetFrontCallNode() const { return m_FrontCallNode; }
     ECallNodeType GetCallNodeType() const { return m_CallNodeType; }
     MetaExpressNode* GetMetaExpressValue() const { return m_ExpressNode; }
-    const std::vector<MetaType*>& GetMetaTemplateParamsList() const { return m_MetaTemplateParamsList; }
-    MetaBraceOrBracketStatementsContent* GetMetaBraceStatementsContent() const { return m_MetaBraceStatementsContent; }
-    MetaInputParamCollection* GetMetaInputParamCollection() const { return m_MetaInputParamCollection; }
-    MetaBlockStatements* GetOwnerMetaFunctionBlock() const { return m_OwnerMetaFunctionBlock; }
-    MetaVariable* GetStoreMetaVariable() const { return m_StoreMetaVariable; }
-    MetaType* GetCallMetaType() const { return m_CallMetaType; }
-    MetaVariable* GetMetaVariable() const { return m_MetaVariable; }
-    MetaMemberFunction* GetMetaFunction() const { return m_MetaFunction; }
-    MetaType* GetMetaType() const { return m_MetaType; }
+    const std::vector<MetaType*>& GetMetaTemplateParamsList() { return m_MetaTemplateParamsList; }
+    MetaBraceOrBracketStatementsContent* GetMetaBraceStatementsContent() { return m_MetaBraceStatementsContent; }
+    MetaInputParamCollection* GetMetaInputParamCollection() { return m_MetaInputParamCollection; }
+    MetaBlockStatements* GetOwnerMetaFunctionBlock() { return m_OwnerMetaFunctionBlock; }
+    MetaVariable* GetStoreMetaVariable() { return m_StoreMetaVariable; }
+    MetaType* GetCallMetaType() { return m_CallMetaType; }
+    MetaVariable* GetMetaVariable() { return m_MetaVariable; }
+    MetaMemberFunction* GetMetaFunction() { return m_MetaFunction; }
+    MetaType* GetMetaType() { return m_MetaType; }
 
     // 设置方法
     void SetFrontCallNode(MetaCallNode* mcn);
@@ -154,9 +126,9 @@ private:
     bool m_IsFunction = false;
 
     MetaCallNode* m_FrontCallNode = nullptr;
-    FileMetaCallNode* m_FileMetaCallSign = nullptr;
-    FileMetaCallNode* m_FileMetaCallNode = nullptr;
-    Token* m_Token = nullptr;
+    Compile::FileMetaCallNode* m_FileMetaCallSign = nullptr;
+    Compile::FileMetaCallNode* m_FileMetaCallNode = nullptr;
+    Compile::Token* m_Token = nullptr;
 
     MetaType* m_CallMetaType = nullptr;
     MetaBlockStatements* m_OwnerMetaFunctionBlock = nullptr;

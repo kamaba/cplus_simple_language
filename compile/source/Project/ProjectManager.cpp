@@ -1,19 +1,26 @@
+//****************************************************************************
+//  File:      ProjectManager.cpp
+// ------------------------------------------------
+//  Copyright (c) kamaba233@gmail.com
+//  DateTime: 2022/11/30 12:00:00
+//  Description:  manager project enter and compile 
+//****************************************************************************
+
+
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
 #include "ProjectManager.h"
 #include "ProjectData.h"
 #include "ProjectCompile.h"
 #include "ProjectClass.h"
 #include "../Core/MetaData.h"
-#include "../Define.h"
-#include <algorithm>
-#include <iostream>
+
+using namespace SimpleLanguage::Core;
 
 namespace SimpleLanguage {
 namespace Project {
-
-    CommandInputArgs::CommandInputArgs(const char* args)
-    {
-
-    }
 // CommandInputArgs implementation
 CommandInputArgs::CommandInputArgs(const std::vector<std::string>& args) {
     // Parse command line arguments
@@ -26,7 +33,7 @@ CommandInputArgs::CommandInputArgs(const std::vector<std::string>& args) {
     }
 }
 
-// ProjectManager static members
+// ProjectManager static members initialization
 std::string ProjectManager::projectPath = "";
 ProjectData* ProjectManager::m_Data = new ProjectData("ProjectData", false);
 EUseDefineType ProjectManager::useDefineNamespaceType = EUseDefineType::NoUseProjectConfigNamespace;
@@ -36,7 +43,7 @@ bool ProjectManager::isUseNamespaceSearch = true;
 bool ProjectManager::isUseForceSemiColonInLineEnd = false;
 bool ProjectManager::isFirstPosMustUseThisBaseOrStaticClassName = false;
 std::string ProjectManager::rootPath = "";
-MetaData* ProjectManager::globalData = new MetaData("global", false, true, false);
+Core::MetaData* ProjectManager::globalData = new Core::MetaData("global", false, true, false);
 
 ProjectData* ProjectManager::GetData() {
     return m_Data;
@@ -50,7 +57,7 @@ void ProjectManager::Run(const std::string& path, CommandInputArgs* cinputArgs) 
 
     ProjectCompile::Compile(path, m_Data);
 
-    if (!cinputArgs->isTest()) {
+    if (!cinputArgs->GetIsTest()) {
         ProjectClass::RunMain();
     } else {
         ProjectClass::RunTest();

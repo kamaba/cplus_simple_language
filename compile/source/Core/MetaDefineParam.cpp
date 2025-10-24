@@ -26,6 +26,7 @@ MetaDefineParam::MetaDefineParam(MetaMemberFunction* ownerFunction, void* param)
     m_MetaVariable = nullptr;
     // 这里需要根据实际的 param 类型来处理
 }
+bool MetaDefineParam::IsExtendParams() const { return m_FileMetaParamter != nullptr && m_FileMetaParamter->GetParamsToken() != nullptr; }
 
 void MetaDefineParam::ParseMetaDefineType() {
     // 解析元定义类型的逻辑

@@ -170,7 +170,7 @@ namespace SimpleLanguage
 			}
 			for (size_t i = 0; i < m_FileSearchNamespaceList.size(); i++) {
 				auto fmn = m_FileSearchNamespaceList[i];
-				if (SimpleLanguage::Project::ProjectManager::useDefineNamespaceType != SimpleLanguage::Project::EUseDefineType::NoUseProjectConfigNamespace) {
+				if (SimpleLanguage::Project::ProjectManager::GetUseDefineNamespaceType() != SimpleLanguage::Project::EUseDefineType::NoUseProjectConfigNamespace) {
 					if (!(SimpleLanguage::Project::ProjectManager::GetData()->IsIncludeDefineStruct(fmn->GetNamespaceStatementBlock()->NamespaceList()))) {
 						SimpleLanguage::Debug::Log::AddInStructFileMeta(SimpleLanguage::Debug::EError::None, "Error 暂不允许使用namespace 定义命名空间!!!" + fmn->ToFormatString() + " 位置: " + fmn->GetToken()->ToLexemeAllString());
 					}

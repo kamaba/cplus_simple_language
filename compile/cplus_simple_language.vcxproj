@@ -138,7 +138,7 @@
     <ClCompile Include="source\Compile\FileMeta\FileMetaExpress.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaGlobalSyntax.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaMemberData.cpp" />
-    <ClCompile Include="source\Compile\FileMeta\FileMetaMemberMethod.cpp" />
+    <ClCompile Include="source\Compile\FileMeta\FileMetaMemberFunction.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaMemberVariable.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaNamespace.cpp" />
     <ClCompile Include="source\Compile\FileMeta\FileMetaSyntax.cpp" />
@@ -269,7 +269,7 @@
     <ClInclude Include="source\Compile\FileMeta\FileMetaExpress.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaGlobalSyntax.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaMemberData.h" />
-    <ClInclude Include="source\Compile\FileMeta\FileMetaMemberMethod.h" />
+    <ClInclude Include="source\Compile\FileMeta\FileMetaMemberFunction.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaMemberVariable.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaNamespace.h" />
     <ClInclude Include="source\Compile\FileMeta\FileMetaSyntax.h" />

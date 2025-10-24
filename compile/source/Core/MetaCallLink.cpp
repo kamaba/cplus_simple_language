@@ -10,14 +10,18 @@
 #include "MetaCallNode.h"
 #include "MetaClass.h"
 #include "Statements/MetaBlockStatements.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
 #include "MetaType.h"
 #include "MetaVariable.h"
 #include "AllowUseSettings.h"
 #include "../Compile/Token.h"
 #include "MetaExpressNode/MetaExpressBase.h"
+#include "MetaExpressNode/MetaExpressConst.h"
 #include "../Compile/FileMeta/FileMetaCommon.h"
+#include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include <sstream>
+#include "MetaVisitCall.h"
 
 using namespace SimpleLanguage::Debug;
 
@@ -62,15 +66,15 @@ Token* MetaCallLink::GetToken() {
 
 bool MetaCallLink::Parse(AllowUseSettings* _useConst) {
     m_AllowUseSettings = new AllowUseSettings(*_useConst);
-    m_AllowUseSettings->setterFunction = false;
-    m_AllowUseSettings->getterFunction = true;
+    m_AllowUseSettings->SetSetterFunction(false) ;
+    m_AllowUseSettings->SetGetterFunction(true);
     bool flag = true;
     
     for (size_t i = 0; i < m_CallNodeList.size(); i++) {
         if (flag) {
             if (i == m_CallNodeList.size() - 1) {
-                m_AllowUseSettings->setterFunction = _useConst->setterFunction;
-                m_AllowUseSettings->getterFunction = _useConst->getterFunction;
+                m_AllowUseSettings->SetSetterFunction(_useConst->GetSetterFunction() );
+                m_AllowUseSettings->SetGetterFunction( _useConst->GetGetterFunction() );
             }
             flag = m_CallNodeList[i]->ParseNode(m_AllowUseSettings);
 
@@ -119,11 +123,11 @@ bool MetaCallLink::Parse(AllowUseSettings* _useConst) {
                     MetaVisitNode* fvn = m_VisitNodeList[m_VisitNodeList.size() - 1];
                     m_VisitNodeList.pop_back();
 
-                    std::string name = "auto_constvalue_" + fvn->GetConstValueExpress()->GetEType().ToString() + "_" + fvn->GetConstValueExpress()->GetValue().ToString();
+                    std::string name = "auto_constvalue_" + fvn->constValueExpress()->GetETypeString() + "_" + fvn->constValueExpress()->GetValue().ToString();
                     newmv = frontNode->GetOwnerMetaFunctionBlock()->GetMetaVariable(name);
                     if (newmv == nullptr) {
-                        auto mccm = CoreMetaClassManager::GetInstance().GetMetaClassByEType(fvn->GetConstValueExpress()->GetEType());
-                        newmv = new MetaVariable(name, MetaVariable::EVariableFrom::LocalStatement,
+                        auto mccm = CoreMetaClassManager::GetInstance().GetMetaClassByEType(fvn->constValueExpress()->GetEType());
+                        newmv = new MetaVariable(name, EVariableFrom::LocalStatement,
                             frontNode->GetOwnerMetaFunctionBlock(), frontNode->GetMetaType()->GetMetaClass(), new MetaType(mccm));
 
                         frontNode->GetOwnerMetaFunctionBlock()->AddMetaVariable(newmv);
@@ -132,23 +136,23 @@ bool MetaCallLink::Parse(AllowUseSettings* _useConst) {
                     MetaVisitNode* mvn1 = MetaVisitNode::CraeteByNewClass(frontNode->GetMetaType(), nullptr, newmv);
                     m_VisitNodeList.push_back(mvn1);
 
-                    mmc = new MetaMethodCall(mcn->GetCallNodeType()->GetMetaClass(), mcn->GetCallNodeType()->GetTemplateMetaTypeList(),
-                        mcn->GetMetaFunction(), mcn->GetMetaTemplateParamsList(), mcn->GetMetaInputParamCollection(), newmv, mcn->GetStoreMetaVariable());
+                    mmc = new MetaMethodCall(mcn->GetCallMetaType()->GetMetaClass(), mcn->GetCallMetaType()->GetTemplateMetaTypeList(),
+                        (MetaFunction*)mcn->GetMetaFunction(), mcn->GetMetaTemplateParamsList(), mcn->GetMetaInputParamCollection(), newmv, mcn->GetStoreMetaVariable());
                 }
                 else {
                     auto retmv = frontNode != nullptr ? frontNode->GetMetaVariable() : nullptr;
                     if (m_VisitNodeList.size() > 0 && retmv != nullptr) {
                         m_VisitNodeList.pop_back();
                     }
-                    mmc = new MetaMethodCall(mcn->GetCallNodeType()->GetMetaClass(), mcn->GetCallNodeType()->GetTemplateMetaTypeList(),
-                        mcn->GetMetaFunction(), mcn->GetMetaTemplateParamsList(), mcn->GetMetaInputParamCollection(), retmv, mcn->GetStoreMetaVariable());
+                    mmc = new MetaMethodCall(mcn->GetCallMetaType()->GetMetaClass(), mcn->GetCallMetaType()->GetTemplateMetaTypeList(),
+                        (MetaFunction*)mcn->GetMetaFunction(), mcn->GetMetaTemplateParamsList(), mcn->GetMetaInputParamCollection(), retmv, mcn->GetStoreMetaVariable());
                 }
 
                 MetaVisitNode* mvn2 = MetaVisitNode::CreateByMethodCall(mmc);
                 m_VisitNodeList.push_back(mvn2);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::ConstValue) {
-                MetaVisitNode* mvn = MetaVisitNode::CreateByConstExpress(mcn->GetMetaExpressValue(), mcn->GetMetaVariable());
+                MetaVisitNode* mvn = MetaVisitNode::CreateByConstExpress(dynamic_cast<MetaConstExpressNode*>(mcn->GetMetaExpressValue()), mcn->GetMetaVariable());
                 m_VisitNodeList.push_back(mvn);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::NewClass) {
@@ -156,9 +160,11 @@ bool MetaCallLink::Parse(AllowUseSettings* _useConst) {
                     MetaVisitNode* mvn = MetaVisitNode::CraeteByNewClass(mcn->GetMetaType(), mcn->GetMetaBraceStatementsContent(), mcn->GetMetaVariable());
                     m_VisitNodeList.push_back(mvn);
 
-                    if (mcn->getMetaFunction() != nullptr) {
-                        MetaMethodCall* mmc = new MetaMethodCall(mcn->GetMetaType()->GetMetaClass(), nullptr, mcn->GetMetaFunction(), 
-                            nullptr, mcn->GetMetaInputParamCollection(), nullptr, mcn->GetStoreMetaVariable());
+                    if (mcn->GetMetaFunction() != nullptr) {
+                        MetaFunction* mf = (MetaFunction*)(mcn->GetMetaFunction());
+                        std::vector<MetaType*> svmeVec;
+                        MetaMethodCall* mmc = new MetaMethodCall(mcn->GetMetaType()->GetMetaClass(), svmeVec, mf,
+                            svmeVec, mcn->GetMetaInputParamCollection(), nullptr, mcn->GetStoreMetaVariable());
                         mvn->SetMethodCall(mmc);
                     }
                 }
@@ -167,41 +173,43 @@ bool MetaCallLink::Parse(AllowUseSettings* _useConst) {
                 }
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::NewTemplate) {
-                MetaVisitNode* mvn = MetaVisitNode::CreateByNewTemplate(mcn->getMetaType(), mcn->getMetaFunction(), mcn->getStoreMetaVariable());
+                MetaFunction* mf = (MetaFunction*)mcn->GetMetaFunction();
+                MetaVisitNode* mvn = MetaVisitNode::CreateByNewTemplate(mcn->GetMetaType(), mf, mcn->GetStoreMetaVariable());
                 MetaClass* cmc = mcn->GetMetaType()->GetMetaClass();
-                MetaMethodCall* mmc = new MetaMethodCall(mcn->getMetaType()->GetMetaClass(), nullptr, mcn->getMetaFunction(), 
-                    nullptr, mcn->getMetaInputParamCollection(), nullptr, mcn->getStoreMetaVariable());
+                std::vector<MetaType*> svmeVec;
+                MetaMethodCall* mmc = new MetaMethodCall(mcn->GetMetaType()->GetMetaClass(), svmeVec, mf,
+                    svmeVec, mcn->GetMetaInputParamCollection(), nullptr, mcn->GetStoreMetaVariable());
                 mvn->SetMethodCall(mmc);
                 m_VisitNodeList.push_back(mvn);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::NewData) {
-                MetaVisitNode* mvn = MetaVisitNode::CraeteByNewData(mcn->getMetaType(), mcn->GetMetaBraceStatementsContent());
+                MetaVisitNode* mvn = MetaVisitNode::CraeteByNewData(mcn->GetMetaType(), mcn->GetMetaBraceStatementsContent());
                 m_VisitNodeList.push_back(mvn);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::EnumName) {
                 // Debug::Write("Meta Common Parse IteratorVariable----------------------------------------------------");
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::EnumValueArray) {
-                MetaVisitNode* mvn = MetaVisitNode::CreateByEnumDefaultValue(mcn->getMetaType(), mcn->getMetaVariable());
+                MetaVisitNode* mvn = MetaVisitNode::CreateByEnumDefaultValue(mcn->GetMetaType(), mcn->GetMetaVariable());
                 m_VisitNodeList.push_back(mvn);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::VisitVariable) {
-                MetaVisitNode* mvn = MetaVisitNode::CreateByVisitVariable(mcn->getMetaVariable());
+                MetaVisitNode* mvn = MetaVisitNode::CreateByVisitVariable(dynamic_cast<MetaVisitVariable*>(mcn->GetMetaVariable()));
                 m_VisitNodeList.push_back(mvn);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::IteratorVariable) {
                 Log::AddInStructMeta(EError::None, "Meta Common Parse IteratorVariable----------------------------------------------------");
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::DataName) {
-                MetaVisitNode* mvn = MetaVisitNode::CreateByVariable(mcn->getMetaVariable());
+                MetaVisitNode* mvn = MetaVisitNode::CreateByVariable(mcn->GetMetaVariable());
                 m_VisitNodeList.push_back(mvn);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::EnumDefaultValue) {
-                MetaVisitNode* mvn = MetaVisitNode::CreateByEnumDefaultValue(mcn->getMetaType(), mcn->getMetaVariable());
+                MetaVisitNode* mvn = MetaVisitNode::CreateByEnumDefaultValue(mcn->GetMetaType(), mcn->GetMetaVariable());
                 m_VisitNodeList.push_back(mvn);
             }
             else if (mcn->GetCallNodeType() == ECallNodeType::MemberDataName) {
-                MetaVisitNode* mvn = MetaVisitNode::CreateByVariable(mcn->getMetaVariable());
+                MetaVisitNode* mvn = MetaVisitNode::CreateByVariable(mcn->GetMetaVariable());
                 m_VisitNodeList.push_back(mvn);
                 // Debug::Write("Meta Common Parse MemberDataName----------------------------------------------------");
             }
@@ -213,7 +221,7 @@ bool MetaCallLink::Parse(AllowUseSettings* _useConst) {
         m_FinalCallNode = m_VisitNodeList[m_VisitNodeList.size() - 1];
     }
     else {
-        Log::AddInStructMeta(EError::None, "Error 解析执行链出错");
+        //Log::AddInStructMeta(EError::None, "Error 解析执行链出错");
         flag = false;
     }
 

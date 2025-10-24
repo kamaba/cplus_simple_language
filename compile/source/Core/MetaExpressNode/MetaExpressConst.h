@@ -45,6 +45,7 @@ public:
     // 属性访问器
     Compile::MultiData GetValue() const { return m_Value; }
     EType GetEType() const { return m_EType; }
+    std::string GetETypeString() { std::stringstream ss; ss << (int)m_EType; return ss.str(); }
     
     // 重写的方法
     virtual void CalcReturnType() override;

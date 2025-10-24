@@ -16,20 +16,19 @@
 #include "MetaMemberFunction.h"
 #include "MetaMemberData.h"
 #include "Statements/MetaBlockStatements.h"
-#include "MetaInputParamCollection.h"
-#include "MetaBraceOrBracketStatementsContent.h"
-#include "MetaConstExpressNode.h"
-#include "MetaVisitVariable.h"
+#include "MetaParam.h"
+#include "MetaTemplate.h"
+#include "MetaExpressNode/MetaExpressConst.h"
+#include "MetaExpressNode/MetaExpressNewObject.h"
 #include "MetaMemberEnum.h"
 #include "MetaGenTemplateClass.h"
-#include "MetaGenTempalteFunction.h"
-#include "MetaInputTemplateCollection.h"
 #include "MetaCallLink.h"
 #include "ExpressManager.h"
 #include "TypeManager.h"
 #include "ClassManager.h"
-#include "ProjectManager.h"
-#include "CoreMetaClassManager.h"
+#include "MetaGenTemplateFunction.h"
+#include "../Project/ProjectManager.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/Token.h"
 #include "../Compile/FileMeta/FileMetaBase.h"
 #include "../Compile/FileMeta/FileMetaCommon.h"
@@ -48,7 +47,7 @@ MetaCallNode::MetaCallNode() : MetaBase() {
     m_CallNodeType = ECallNodeType::Null;
 }
 
-MetaCallNode::MetaCallNode(FileMetaCallNode* fmcn1, FileMetaCallNode* fmcn2, MetaClass* mc, MetaBlockStatements* mbs, MetaType* fdmt) : MetaBase() {
+MetaCallNode::MetaCallNode( Compile::FileMetaCallNode* fmcn1, Compile::FileMetaCallNode* fmcn2, MetaClass* mc, MetaBlockStatements* mbs, MetaType* fdmt) : MetaBase() {
     m_FileMetaCallSign = fmcn1;
     m_FileMetaCallNode = fmcn2;
     m_Token = m_FileMetaCallNode->GetToken();
@@ -58,8 +57,8 @@ MetaCallNode::MetaCallNode(FileMetaCallNode* fmcn1, FileMetaCallNode* fmcn2, Met
     m_IsFunction = m_FileMetaCallNode->IsCallFunction();
     m_IsArray = m_FileMetaCallNode->IsArray();
 
-    for (size_t i = 0; i < m_FileMetaCallNode->GetArrayNodeList().size(); i++) {
-        MetaCallLink* cmcl = new MetaCallLink(m_FileMetaCallNode->GetArrayNodeList()[i], mc, mbs, fdmt, m_DefineMetaVariable);
+    for (size_t i = 0; i < m_FileMetaCallNode->arrayNodeList().size(); i++) {
+        MetaCallLink* cmcl = new MetaCallLink(m_FileMetaCallNode->arrayNodeList()[i], mc, mbs, fdmt, m_DefineMetaVariable);
         m_MetaArrayCallNodeList.push_back(cmcl);
     }
 }
@@ -117,12 +116,12 @@ bool MetaCallNode::ParseNode(AllowUseSettings* _auc) {
 
 bool MetaCallNode::CreateCallNode() {
     int tokenLine = m_FileMetaCallNode->GetToken() != nullptr ? m_FileMetaCallNode->GetToken()->GetSourceBeginLine() : -1;
-    m_Name = m_FileMetaCallNode->GetName();
+    m_Name = m_FileMetaCallNode->Name();
 
     std::string fatherName = m_FrontCallNode != nullptr ? m_FrontCallNode->GetName() : "";
-    bool isAt = m_FileMetaCallNode->GetAtToken() != nullptr;
+    bool isAt = m_FileMetaCallNode->AtToken() != nullptr;
     bool isFirst = m_FrontCallNode == nullptr;
-    int templateCount = static_cast<int>(m_FileMetaCallNode->GetInputTemplateNodeList().size());
+    int templateCount = static_cast<int>(m_FileMetaCallNode->InputTemplateNodeList().size());
 
     ETokenType etype = m_Token->GetType();
     ECallNodeType frontCNT = ECallNodeType::Null;
@@ -151,7 +150,7 @@ bool MetaCallNode::CreateCallNode() {
             if (mv->IsArray()) {
                 if (isAt) {
                     std::string inputMVName = m_Name;
-                    m_MetaVariable = mv->GetMetaVaraible(inputMVName);
+                    m_MetaVariable = mv->GetMetaVariable(inputMVName);
                     if (m_MetaVariable == nullptr) {
                         m_MetaVariable = new MetaVisitVariable(inputMVName, m_OwnerMetaClass, m_OwnerMetaFunctionBlock, mv, nullptr);
                         mv->AddMetaVariable(m_MetaVariable);
@@ -186,10 +185,10 @@ bool MetaCallNode::CreateCallNode() {
             m_CallNodeType = ECallNodeType::ConstValue;
             m_ExpressNode = new MetaConstExpressNode(m_Token->GetEType(), m_Token->GetLexeme());
             m_MetaClass = CoreMetaClassManager::GetInstance().GetMetaClassByEType(m_Token->GetEType());
-            m_MetaVariable = m_OwnerMetaFunctionBlock->GetMetaVariable(m_Token->GetHashCode().ToString());
+            m_MetaVariable = m_OwnerMetaFunctionBlock->GetMetaVariable(m_Token->GetHashCodeString());
             if (m_MetaVariable == nullptr) {
-                m_MetaVariable = new MetaVariable(m_Token->GetHashCode().ToString(),
-                    MetaVariable::EVariableFrom::LocalStatement, m_OwnerMetaFunctionBlock, m_OwnerMetaClass,
+                m_MetaVariable = new MetaVariable(m_Token->GetHashCodeString(),
+                    EVariableFrom::LocalStatement, m_OwnerMetaFunctionBlock, m_OwnerMetaClass,
                     new MetaType(m_MetaClass));
                 m_OwnerMetaFunctionBlock->AddMetaVariable(m_MetaVariable);
             }
@@ -201,12 +200,12 @@ bool MetaCallNode::CreateCallNode() {
                 Log::AddInStructMeta(EError::None, "Error 不允许global的函数形式!!");
             }
             else {
-                m_MetaData = ProjectManager::GetInstance().GetGlobalData();
+                m_MetaData = Project::ProjectManager::GetGlobalData();
                 m_CallNodeType = ECallNodeType::Global;
             }
         }
         else {
-            Log::AddInStructMeta(EError::None, "Error  不允许 使用global 只有第一位置可以使用This关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error  不允许 使用global 只有第一位置可以使用This关键字" + m_Token->ToLexemeAllString());
         }
     }
     else if (etype == ETokenType::New) {
@@ -248,10 +247,10 @@ bool MetaCallNode::CreateCallNode() {
         }
     }
     else if (etype == ETokenType::This) {
-        if (this->m_AllowUseSettings->parseFrom == EParseFrom::MemberVariableExpress) {
+        if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::MemberVariableExpress) {
             Log::AddInStructMeta(EError::None, "Error 不允许在成员变量中使用this关键字" + m_Token->ToLexemeAllString());
         }
-        if (this->m_AllowUseSettings->parseFrom == EParseFrom::InputParamExpress) {
+        if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress) {
             Log::AddInStructMeta(EError::None, "Error 不允许在输入变量中中使用this关键字" + m_Token->ToLexemeAllString());
         }
         if (isFirst) {
@@ -269,10 +268,10 @@ bool MetaCallNode::CreateCallNode() {
         }
     }
     else if (etype == ETokenType::Base) {
-        if (this->m_AllowUseSettings->parseFrom == EParseFrom::MemberVariableExpress) {
+        if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::MemberVariableExpress) {
             Log::AddInStructMeta(EError::None, "Error 不允许在成员变量中使用base关键字" + m_Token->ToLexemeAllString());
         }
-        if (this->m_AllowUseSettings->parseFrom == EParseFrom::InputParamExpress) {
+        if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress) {
             Log::AddInStructMeta(EError::None, "Error 不允许在输入变量中中使用base关键字" + m_Token->ToLexemeAllString());
         }
 
@@ -304,7 +303,7 @@ bool MetaCallNode::CreateCallNode() {
     }
     else if (etype == ETokenType::Identifier) {
         if (isFirst) {
-            if (GetFirstNode(m_Name, m_OwnerMetaClass, static_cast<int>(m_FileMetaCallNode->GetInputTemplateNodeList().size())) == false) {
+            if (GetFirstNode(m_Name, m_OwnerMetaClass, static_cast<int>(m_FileMetaCallNode->InputTemplateNodeList().size())) == false) {
                 return false;
             }
         }
@@ -313,7 +312,7 @@ bool MetaCallNode::CreateCallNode() {
             if (frontCNT == ECallNodeType::MetaNode) {
                 MetaNode* mn = nullptr;
                 if (m_FrontCallNode->GetMetaNode()->IsMetaNamespace()) {
-                    if (m_FrontCallNode->GetMetaNode()->GetMetaNamespace()->GetRefFromType() == RefFromType::CSharp) {
+                    /*if (m_FrontCallNode->GetMetaNode()->GetMetaNamespace()->GetRefFromType() == RefFromType::CSharp) {
                         mn = SimpleLanguage::CSharp::CSharpManager::FindAndCreateMetaNode(m_FrontCallNode->GetMetaNode(), m_Name);
                         if (mn->IsMetaClass()) {
                             m_MetaClass = mn->GetMetaClassByTemplateCount(0);
@@ -323,7 +322,7 @@ bool MetaCallNode::CreateCallNode() {
                             m_MetaNode = mn;
                             m_CallNodeType = ECallNodeType::MetaNode;
                         }
-                    }
+                    }*/
                 }
 
                 if (mn == nullptr) {
@@ -343,7 +342,7 @@ bool MetaCallNode::CreateCallNode() {
                             m_CallNodeType = ECallNodeType::EnumName;
                         }
                         else if (mn->IsMetaClass()) {
-                            m_MetaClass = mn->GetMetaClassByTemplateCount(static_cast<int>(m_FileMetaCallNode->GetInputTemplateNodeList().size()));
+                            m_MetaClass = mn->GetMetaClassByTemplateCount(static_cast<int>(m_FileMetaCallNode->InputTemplateNodeList().size()));
                             m_CallNodeType = ECallNodeType::ClassName;
                         }
                         else {
@@ -353,12 +352,12 @@ bool MetaCallNode::CreateCallNode() {
                 }
             }
             else if (frontCNT == ECallNodeType::ClassName || frontCNT == ECallNodeType::MetaType) {
-                if (GetFunctionOrVariableByOwnerClass(m_FrontCallNode->GetMetaClass(), m_Name) == false) {
+                if (GetFunctionOrVariableByOwnerClass(m_FrontCallNode->m_MetaClass, m_Name) == false) {
                     return false;
                 }
             }
             else if (frontCNT == ECallNodeType::Global || frontCNT == ECallNodeType::DataName) {
-                m_MetaVariable = GetDataValueByMetaData(m_FrontCallNode->GetMetaData(), m_Name);
+                m_MetaVariable = GetDataValueByMetaData(m_FrontCallNode->m_MetaData, m_Name);
                 m_CallNodeType = ECallNodeType::MemberDataName;
             }
             else if (frontCNT == ECallNodeType::MemberDataName) {
@@ -388,10 +387,10 @@ bool MetaCallNode::CreateCallNode() {
             }
             else if (frontCNT == ECallNodeType::EnumName) {
                 if (m_Name == "values") {
-                    m_MetaVariable = m_FrontCallNode->GetMetaEnum()->GetMetaVariable();
+                    m_MetaVariable = m_FrontCallNode->m_MetaEnum->GetMetaVariable();
                     if (m_MetaVariable == nullptr) {
-                        m_FrontCallNode->GetMetaEnum()->CreateValues();
-                        m_MetaVariable = m_FrontCallNode->GetMetaEnum()->GetMetaVariable();
+                        m_FrontCallNode->m_MetaEnum->CreateValues();
+                        m_MetaVariable = m_FrontCallNode->m_MetaEnum->GetMetaVariable();
                         if (m_MetaVariable == nullptr) {
                             return false;
                         }
@@ -399,7 +398,7 @@ bool MetaCallNode::CreateCallNode() {
                     m_CallNodeType = ECallNodeType::EnumValueArray;
                 }
                 else {
-                    MetaMemberEnum* mme = m_FrontCallNode->GetMetaEnum()->GetMemberEnumByName(m_Name);
+                    MetaMemberEnum* mme = m_FrontCallNode->m_MetaEnum->GetMemberEnumByName(m_Name);
                     if (mme != nullptr) {
                         if (m_IsFunction) {
                             Log::AddInStructMeta(EError::None, "不能使用Enum.metaVariable(2) 这样的格式!");
@@ -427,7 +426,7 @@ bool MetaCallNode::CreateCallNode() {
                         getmv2 = m_OwnerMetaFunctionBlock->GetMetaVariableByName(m_Name);
                         if (getmv2 != nullptr) {
                             std::string inputMVName = "Visit_" + m_Name;
-                            m_MetaVariable = mv->GetMetaVaraible(inputMVName);
+                            m_MetaVariable = mv->GetMetaVariable(inputMVName);
                             if (m_MetaVariable == nullptr) {
                                 m_MetaVariable = new MetaVisitVariable(inputMVName, m_OwnerMetaClass, m_OwnerMetaFunctionBlock, mv, getmv2);
                                 mv->AddMetaVariable(m_MetaVariable);
@@ -478,12 +477,12 @@ bool MetaCallNode::CreateCallNode() {
                 }
             }
             else if (frontCNT == ECallNodeType::This || frontCNT == ECallNodeType::Base || frontCNT == ECallNodeType::ConstValue) {
-                if (GetFunctionOrVariableByOwnerClass(m_FrontCallNode->GetMetaClass(), m_Name) == false) {
+                if (GetFunctionOrVariableByOwnerClass(m_FrontCallNode->m_MetaClass, m_Name) == false) {
                     return false;
                 }
             }
             else if (frontCNT == ECallNodeType::Express) {
-                if (GetFunctionOrVariableByOwnerClass(m_FrontCallNode->GetMetaClass(), m_Name) == false) {
+                if (GetFunctionOrVariableByOwnerClass(m_FrontCallNode->m_MetaClass, m_Name) == false) {
                     return false;
                 }
             }
@@ -500,14 +499,14 @@ bool MetaCallNode::CreateCallNode() {
                 }
             }
             else if (frontCNT == ECallNodeType::TemplateName) {
-                auto mt = m_FrontCallNode->GetMetaTemplate();
+                auto mt = m_FrontCallNode->m_MetaTemplate;
                 if (mt != nullptr) {
                     if (mt->GetExtendsMetaClass() != nullptr) {
                         GetFunctionOrVariableByOwnerClass(mt->GetExtendsMetaClass(), m_Name);
                     }
                     else {
                         if (m_Name == "instance") {
-                            m_MetaVariable = new MetaVariable("instance", MetaVariable::EVariableFrom::LocalStatement, m_OwnerMetaFunctionBlock, nullptr, nullptr);
+                            m_MetaVariable = new MetaVariable("instance", EVariableFrom::LocalStatement, m_OwnerMetaFunctionBlock, nullptr, nullptr);
                             m_CallNodeType = ECallNodeType::MemberVariableName;
                         }
                         else {
@@ -526,7 +525,7 @@ bool MetaCallNode::CreateCallNode() {
         // 处理模板名称的情况
     }
 
-    if (m_FileMetaCallNode->GetInputTemplateNodeList().size() > 0) {
+    if (m_FileMetaCallNode->InputTemplateNodeList().size() > 0) {
         MetaMemberFunction* tmf = dynamic_cast<MetaMemberFunction*>(m_OwnerMetaFunctionBlock->GetOwnerMetaFunction());
         if (m_MetaClass != nullptr || tmf != nullptr) {
             CreateMetaTemplateParams(m_MetaClass, tmf);
@@ -549,14 +548,14 @@ bool MetaCallNode::CreateCallNode() {
             if (mmf->IsTemplateFunction()) {
                 MetaClass* mcagm = m_MetaClass;
                 if (m_FrontCallNode != nullptr) {
-                    if (m_FrontCallNode->GetMetaClass() != nullptr) {
-                        mcagm = m_FrontCallNode->GetMetaClass();
+                    if (m_FrontCallNode->m_MetaClass != nullptr) {
+                        mcagm = m_FrontCallNode->m_MetaClass;
                     }
                     else if (m_FrontCallNode->GetMetaVariable() != nullptr) {
                         mcagm = m_FrontCallNode->GetMetaVariable()->GetRealMetaType()->GetMetaClass();
                     }
                 }
-                MetaGenTempalteFunction* mgtfind = mmf->AddGenTemplateMemberFunctionByMetaTypeList(mcagm, m_MetaTemplateParamsList);
+                MetaGenTemplateFunction* mgtfind = mmf->AddGenTemplateMemberFunctionByMetaTypeList(mcagm, m_MetaTemplateParamsList);
                 if (mgtfind != nullptr) {
                     m_MetaFunction = mgtfind;
                 }
@@ -606,7 +605,7 @@ bool MetaCallNode::CreateCallNode() {
             }
 
             if (m_FileMetaCallNode->GetFileMetaBraceTerm() != nullptr) {
-                if (m_AllowUseSettings->parseFrom == EParseFrom::InputParamExpress) {
+                if (m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress ) {
                     Log::AddInStructMeta(EError::None, "Error 在InputParam 里边，构建函数，只允许 使用ClassName() 的方式, 不允许使用 ClassName(){}的方式" + m_FileMetaCallNode->GetFileMetaBraceTerm()->ToTokenString());
                     return false;
                 }
@@ -618,7 +617,7 @@ bool MetaCallNode::CreateCallNode() {
         else if (m_MetaData != nullptr) {
             m_CallNodeType = ECallNodeType::NewData;
             if (m_FileMetaCallNode->GetFileMetaBraceTerm() != nullptr) {
-                if (m_AllowUseSettings->parseFrom == EParseFrom::InputParamExpress) {
+                if (m_AllowUseSettings->SetParseFrom( EParseFrom::InputParamExpress) ) {
                     Log::AddInStructMeta(EError::None, "Error 在InputParam 里边，构建函数，只允许 使用ClassName() 的方式, 不允许使用 ClassName(){}的方式" + m_FileMetaCallNode->GetFileMetaBraceTerm()->ToTokenString());
                     return false;
                 }

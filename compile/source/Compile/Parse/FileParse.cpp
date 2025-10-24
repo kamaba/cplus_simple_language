@@ -51,7 +51,7 @@ bool FileParse::IsExists()
 #else
     addsign = "/"; 
 #endif
-    ::std::string realpath = ProjectManager::projectPath + addsign + filePath;
+    ::std::string realpath = ProjectManager::GetProjectPath() + addsign + filePath;
     return FileExists(realpath.c_str());
 }
 static std::string AddPath(std::string path1, std::string path2)
@@ -72,7 +72,7 @@ bool FileParse::LoadFile()
 {
     m_FileCompileState->SetLoadState(FileMetaCompileState::ELoadState::LoadStart);
     
-    std::string realpath = AddPath(ProjectManager::projectPath, filePath );
+    std::string realpath = AddPath(ProjectManager::GetProjectPath(), filePath);
     
     std::ifstream file(realpath, std::ios::binary);
     if (!file.is_open()) {

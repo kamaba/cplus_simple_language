@@ -9,7 +9,7 @@
 #include "../FileMeta/FileMeta.h"
 #include "../FileMeta/FileMetaClass.h"
 #include "../FileMeta/FileMetaMemberData.h"
-#include "../FileMeta/FileMetaMemberMethod.h"
+#include "../FileMeta/FileMetaMemberFunction.h"
 #include "../FileMeta/FileMetaMemberVariable.h"
 #include "../FileMeta/FileMetaNamespace.h"
 #include "../FileMeta/FileMetaSyntax.h"
@@ -234,7 +234,7 @@ std::vector<Node*> StructParse::GetAllNodeToSemiColon(Node* pnode, bool isAddSel
         if (nextNode == nullptr) {
             break;
         }
-        if (ProjectManager::isUseForceSemiColonInLineEnd) {
+        if (ProjectManager::GetIsUseForceSemiColonInLineEnd() ) {
             if (nextNode->nodeType == ENodeType::SemiColon) {
                 isEnd = true;
             }
@@ -304,7 +304,7 @@ void StructParse::ParseNamespace(Node* pnode) {
                 }
             }
         } else if (nextNode->nodeType == ENodeType::LineEnd) {
-            if (ProjectManager::isUseForceSemiColonInLineEnd) {
+            if (ProjectManager::GetIsUseForceSemiColonInLineEnd() ) {
                 Log::AddInStructFileMeta(EError::None, 
                     "Error �ڽ���namespace �У���Ҫǿ��;����");
                 break;

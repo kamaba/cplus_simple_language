@@ -1,23 +1,36 @@
+//****************************************************************************
+//  File:      ProjectManager.h
+// ------------------------------------------------
+//  Copyright (c) kamaba233@gmail.com
+//  DateTime: 2022/11/30 12:00:00
+//  Description:  manager project enter and compile 
+//****************************************************************************
+
 #pragma once
 
-#include "../Core/MetaData.h"
-#include "../Define.h"
 #include <string>
 #include <vector>
 
 namespace SimpleLanguage {
+    namespace Core {
+        class MetaData;;
+    }
 namespace Project {
+
+// Forward declarations
+class ProjectData;
 
 class CommandInputArgs {
 public:
-    CommandInputArgs(const char* args);
     CommandInputArgs(const std::vector<std::string>& args);
+    virtual ~CommandInputArgs() = default;
+
+    // Properties
+    bool GetIsTest() const { return m_IsTest; }
+    void SetIsTest(bool value) { m_IsTest = value; }
     
-    bool isTest() const { return m_IsTest; }
-    void setTest(bool value) { m_IsTest = value; }
-    
-    bool isPrintToken() const { return m_IsPrintToken; }
-    void setPrintToken(bool value) { m_IsPrintToken = value; }
+    bool GetIsPrintToken() const { return m_IsPrintToken; }
+    void SetIsPrintToken(bool value) { m_IsPrintToken = value; }
 
 private:
     bool m_IsTest = false;
@@ -25,30 +38,50 @@ private:
 };
 
 enum class EUseDefineType {
-    NoUseProjectConfigNamespace,        // ²»Ê¹ÓÃÏîÄ¿ÄÚ²¿ÅäÖÃ
-    LimitUseProjectConfigNamespace,     // ÏŞÖÆÊ¹ÓÃÅäÖÃºóµÄÃüÃû¿Õ¼ä Àà×ÔÓÉ´´×÷
-    LimitUseProjectConfigNamespaceAndClass, // ÏŞÖÆÊ¹ÓÃÅäÖÃºóµÄÃüÃû¿Õ¼äÓëÀà
+    NoUseProjectConfigNamespace = 0,        // ä¸ä½¿ç”¨é¡¹ç›®å†…éƒ¨é…ç½®
+    LimitUseProjectConfigNamespace = 1,     // é™åˆ¶ä½¿ç”¨é…ç½®åçš„å‘½åç©ºé—´ ç±»è‡ªç”±åˆ›ä½œ
+    LimitUseProjectConfigNamespaceAndClass = 2, // é™åˆ¶ä½¿ç”¨é…ç½®åçš„å‘½åç©ºé—´ä¸ç±»
 };
 
 class ProjectManager {
 public:
-    static std::string projectPath;
-    static class ProjectData* GetData();
-    static EUseDefineType useDefineNamespaceType;
+    // Static properties
+    static std::string GetProjectPath() { return projectPath; }
+    static void SetProjectPath(const std::string& path) { projectPath = path; }
+    static ProjectData* GetData();
+    static EUseDefineType GetUseDefineNamespaceType() { return useDefineNamespaceType; }
+    static void SetUseDefineNamespaceType(EUseDefineType type) { useDefineNamespaceType = type; }
     
+    static bool GetUseGenMetaClass() { return useGenMetaClass; }
+    static void SetUseGenMetaClass(bool value) { useGenMetaClass = value; }
+    static bool GetCompileUseTemplateClassGenClassFunction() { return compileUseTemplateClassGenClassFunction; }
+    static void SetCompileUseTemplateClassGenClassFunction(bool value) { compileUseTemplateClassGenClassFunction = value; }
+    static bool GetIsUseNamespaceSearch() { return isUseNamespaceSearch; }
+    static void SetIsUseNamespaceSearch(bool value) { isUseNamespaceSearch = value; }
+    static bool GetIsUseForceSemiColonInLineEnd() { return isUseForceSemiColonInLineEnd; }
+    static void SetIsUseForceSemiColonInLineEnd(bool value) { isUseForceSemiColonInLineEnd = value; }
+    static bool GetIsFirstPosMustUseThisBaseOrStaticClassName() { return isFirstPosMustUseThisBaseOrStaticClassName; }
+    static void SetIsFirstPosMustUseThisBaseOrStaticClassName(bool value) { isFirstPosMustUseThisBaseOrStaticClassName = value; }
+    
+    static std::string GetRootPath() { return rootPath; }
+    static void SetRootPath(const std::string& path) { rootPath = path; }
+    static Core::MetaData* GetGlobalData() { return globalData; }
+    static void SetGlobalData(Core::MetaData* data) { globalData = data; }
+    
+    // Static methods
+    static void Run(const std::string& path, CommandInputArgs* cinputArgs);
+
+private:
+    static std::string projectPath;
+    static ProjectData* m_Data;
+    static EUseDefineType useDefineNamespaceType;
     static bool useGenMetaClass;
     static bool compileUseTemplateClassGenClassFunction;
     static bool isUseNamespaceSearch;
     static bool isUseForceSemiColonInLineEnd;
     static bool isFirstPosMustUseThisBaseOrStaticClassName;
-    
     static std::string rootPath;
-    static class MetaData* globalData;
-    
-    static void Run(const std::string& path, CommandInputArgs* cinputArgs);
-
-private:
-    static class ProjectData* m_Data;
+    static Core::MetaData* globalData;
 };
 
 } // namespace Parse

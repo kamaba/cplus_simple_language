@@ -16,352 +16,734 @@
 #include "MetaBlockStatements.h"
 #include "MetaStatements.h"
 #include "MetaVariable.h"
+#include "MetaGenTemplateFunction.h"
+#include "../Compile/FileMeta/FileMetaMember.h"
+#include "../Compile/FileMeta/FileMetaSyntax.h"
+#include "../Compile/Token.h"
 #include "../Debug/Log.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
+#include "TypeManager.h"
+#include "ClassManager.h"
+#include "Statements/MetaDefineVarStatements.h"
+#include "Statements/MetaAssignStatements.h"
+#include "Statements/MetaCallStatements.h"
+#include "Statements/MetaReturnStatements.h"
+#include "Statements/MetaTRStatements.h"
+#include "Statements/MetaGotoLabelStatements.h"
+#include "Statements/MetaIfStatements.h"
+#include "Statements/MetaSwitchStatements.h"
+#include "Statements/MetaForStatements.h"
+#include "Statements/MetaWhileDoWhileStatements.h"
+#include "Statements/MetaBreakStatements.h"
+#include "Statements/MetaContinueStatements.h"
 #include <sstream>
+#include <algorithm>
 
 namespace SimpleLanguage {
 namespace Core {
 
-    // MetaMemberFunctionTemplateNode  µœ÷
-    MetaMemberFunctionTemplateNode::MetaMemberFunctionTemplateNode()
-    {
+// MetaMemberFunctionTemplateNode implementation
+MetaMemberFunctionTemplateNode::MetaMemberFunctionTemplateNode() {
+}
+
+void MetaMemberFunctionTemplateNode::SetDeep(int deep) {
+    // Implementation
+}
+
+MetaMemberFunction* MetaMemberFunctionTemplateNode::IsSameMetaMemeberFunction(MetaMemberFunction* mmf) {
+    MetaMemberFunctionNode* find = nullptr;
+    auto it = m_MetaTemplateFunctionNodeDict.find(mmf->GetMetaMemberTemplateCollection()->GetCount());
+    if (it != m_MetaTemplateFunctionNodeDict.end()) {
+        find = it->second;
+    } else {
+        find = new MetaMemberFunctionNode();
+    }
+    return find->IsSameMetaMemeberFunction(mmf);
+}
+
+bool MetaMemberFunctionTemplateNode::AddMetaMemberFunction(MetaMemberFunction* mmf) {
+    MetaMemberFunctionNode* find = nullptr;
+    auto it = m_MetaTemplateFunctionNodeDict.find(mmf->GetMetaMemberTemplateCollection()->GetCount());
+    if (it != m_MetaTemplateFunctionNodeDict.end()) {
+        find = it->second;
+    } else {
+        find = new MetaMemberFunctionNode();
+        m_MetaTemplateFunctionNodeDict[mmf->GetMetaMemberTemplateCollection()->GetCount()] = find;
+    }
+    return find->AddMetaMemberFunction(mmf);
+}
+
+void MetaMemberFunctionTemplateNode::ParseMemberFunctionDefineMetaType() {
+    for (auto& v : m_MetaTemplateFunctionNodeDict) {
+        v.second->ParseMemberFunctionDefineMetaType();
+    }
+}
+
+// MetaMemberFunctionNode implementation
+MetaMemberFunctionNode::MetaMemberFunctionNode() {
+}
+
+void MetaMemberFunctionNode::SetDeep(int deep) {
+    // Implementation
+}
+
+MetaMemberFunction* MetaMemberFunctionNode::IsSameMetaMemeberFunction(MetaMemberFunction* mmf) {
+    std::vector<MetaMemberFunction*> list;
+    auto it = m_MetaParamFunctionDict.find(mmf->GetMetaMemberParamCollection()->GetMetaDefineParamList().size());
+    if (it != m_MetaParamFunctionDict.end()) {
+        list = it->second;
+    } else {
+        list = std::vector<MetaMemberFunction*>();
     }
 
-    void MetaMemberFunctionTemplateNode::SetDeep(int deep)
-    {
-        // ºÚªØ µœ÷
+    MetaMemberFunction* find2 = nullptr;
+    for (size_t i = 0; i < list.size(); i++) {
+        MetaMemberFunction* curFun = list[i];
+        if (curFun->GetMetaMemberParamCollection()->IsEqualMetaDefineParamCollection(mmf->GetMetaMemberParamCollection())) {
+            find2 = curFun;
+            break;
+        }
     }
-
-    MetaMemberFunction* MetaMemberFunctionTemplateNode::IsSameMetaMemeberFunction(MetaMemberFunction* mmf)
-    {
-        // ºÚªØ µœ÷
+    if (find2 == nullptr) {
+        list.push_back(mmf);
         return nullptr;
+    } else {
+        return find2;
+    }
+}
+
+bool MetaMemberFunctionNode::AddMetaMemberFunction(MetaMemberFunction* mmf) {
+    std::vector<MetaMemberFunction*> list;
+    auto it = m_MetaParamFunctionDict.find(mmf->GetMetaMemberParamCollection()->GetMetaDefineParamList().size());
+    if (it != m_MetaParamFunctionDict.end()) {
+        list = it->second;
+    } else {
+        list = std::vector<MetaMemberFunction*>();
+        m_MetaParamFunctionDict[mmf->GetMetaMemberParamCollection()->GetMetaDefineParamList().size()] = list;
     }
 
-    bool MetaMemberFunctionTemplateNode::AddMetaMemberFunction(MetaMemberFunction* mmf)
-    {
-        // ºÚªØ µœ÷
+    MetaMemberFunction* find2 = nullptr;
+    for (size_t i = 0; i < list.size(); i++) {
+        MetaMemberFunction* curFun = list[i];
+        if (curFun->GetMetaMemberParamCollection()->IsEqualMetaDefineParamCollection(mmf->GetMetaMemberParamCollection())) {
+            find2 = curFun;
+            break;
+        }
+    }
+    if (find2 == nullptr) {
+        list.push_back(mmf);
         return true;
+    } else {
+        Log::AddInStructMeta(EError::None, "ÂèëÁé∞Â∑≤ÁªèÂÆö‰πâËøáÊüêÊüêÁ±ª2" + mmf->GetFunctionAllName());
+    }
+    return false;
+}
+
+void MetaMemberFunctionNode::ParseMemberFunctionDefineMetaType() {
+    for (auto& v : m_MetaParamFunctionDict) {
+        for (auto& v2 : v.second) {
+            v2->ParseDefineMetaType();
+        }
+    }
+}
+
+std::vector<MetaMemberFunction*> MetaMemberFunctionNode::GetMetaMemberFunctionListByParamCount(int count) {
+    auto it = m_MetaParamFunctionDict.find(count);
+    if (it != m_MetaParamFunctionDict.end()) {
+        return it->second;
+    }
+    return std::vector<MetaMemberFunction*>();
+}
+
+// MetaMemberFunction implementation
+MetaMemberFunction::MetaMemberFunction() : MetaFunction() {
+}
+
+MetaMemberFunction::MetaMemberFunction(MetaClass* mc) : MetaFunction(mc) {
+}
+
+MetaMemberFunction::MetaMemberFunction(MetaClass* mc, FileMetaMemberFunction* fmmf) : MetaFunction(mc) {
+    m_MetaMemberParamCollection = new MetaDefineParamCollection(true, false);
+    m_FileMetaMemberFunction = fmmf;
+    m_Name = fmmf->name;
+
+    m_IsStatic = fmmf->staticToken != nullptr;
+    m_IsGet = fmmf->getToken != nullptr;
+    m_IsSet = fmmf->setToken != nullptr;
+    m_IsFinal = fmmf->finalToken != nullptr;
+    if (fmmf->overrideToken != nullptr) {
+        if (fmmf->overrideToken->type == ETokenType::Override) {
+            m_IsOverrideFunction = true;
+        }
+    }
+    if (fmmf->interfaceToken != nullptr) {
+        m_IsWithInterface = true;
     }
 
-    void MetaMemberFunctionTemplateNode::ParseMemberFunctionDefineMetaType()
-    {
-        // ºÚªØ µœ÷
+    int paramCount = fmmf->metaParamtersList.size();
+    for (int i = 0; i < paramCount; i++) {
+        auto param = fmmf->metaParamtersList[i];
+        MetaDefineParam* mmp = new MetaDefineParam(this, param);
+        AddMetaDefineParam(mmp);
     }
 
-    // MetaMemberFunctionNode  µœ÷
-    MetaMemberFunctionNode::MetaMemberFunctionNode()
-    {
+    int templateCount = fmmf->metaTemplatesList.size();
+    for (int i = 0; i < templateCount; i++) {
+        m_IsTemplateFunction = true;
+
+        auto templateParam = fmmf->metaTemplatesList[i];
+
+        MetaTemplate* mdt = new MetaTemplate(ownerMetaClass, templateParam, mc->GetMetaTemplateList().size() + i);
+        AddMetaDefineTemplate(mdt);
+
+        if (templateParam->inClassNameTemplateNode != nullptr) {
+            auto inClassToken = templateParam->inClassNameTemplateNode;
+            MetaNode* mn = ClassManager::GetInstance().GetMetaClassByNameAndFileMeta(ownerMetaClass, inClassToken->fileMeta, inClassToken->nameList);
+            if (mn == nullptr) {
+                continue;
+            }
+            MetaClass* gmc = mn->GetMetaClassByTemplateCount(0);
+            if (gmc == nullptr) {
+                Log::AddInStructMeta(EError::None, "Error Ê≤°ÊúâÊü•ÊâæÂà∞inClassÁöÑÁ±ªÂêç, " + inClassToken->ToFormatString());
+                continue;
+            }
+            mdt->SetInConstraintMetaClass(gmc);
+        } else {
+            mdt->SetInConstraintMetaClass(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
+        }
+    }
+    m_MetaBlockStatements = new MetaBlockStatements(this, nullptr);
+    m_MetaBlockStatements->SetIsOnFunction(true);
+
+    Init();
+}
+
+MetaMemberFunction::MetaMemberFunction(MetaClass* mc, const std::string& name) : MetaFunction(mc) {
+    m_Name = name;
+    m_IsCanRewrite = true;
+    m_MetaMemberParamCollection->Clear();
+
+    m_MetaBlockStatements = new MetaBlockStatements(this, nullptr);
+    m_MetaBlockStatements->SetIsOnFunction(true);
+
+    Init();
+}
+
+MetaMemberFunction::MetaMemberFunction(const MetaMemberFunction& mmf) : MetaFunction(mmf) {
+    m_IsTemplateFunction = mmf.m_IsTemplateFunction;
+    m_ConstructInitFunction = mmf.m_ConstructInitFunction;
+    m_IsWithInterface = mmf.m_IsWithInterface;
+    m_FileMetaMemberFunction = mmf.m_FileMetaMemberFunction;
+    m_GenTempalteFunctionList = mmf.m_GenTempalteFunctionList;
+    m_SourceMetaMemberFunction = mmf.sourceMetaMemberFunction;
+}
+
+std::string MetaMemberFunction::GetFunctionAllName() const {
+    if (!m_FunctionAllName.empty()) {
+        return m_FunctionAllName;
+    }
+    return MetaBase::GetName();
+}
+
+int MetaMemberFunction::GetParseLevel() const {
+    if (m_IsTemplateFunction) {
+        return 0;
+    } else if (m_OwnerMetaClass && m_OwnerMetaClass->IsTemplateClass()) {
+        return 1;
+    } else {
+        return 2;
+    }
+}
+
+Token* MetaMemberFunction::GetToken() const {
+    if (m_FileMetaMemberFunction != nullptr && m_FileMetaMemberFunction->finalToken != nullptr) {
+        return m_FileMetaMemberFunction->finalToken;
+    }
+    return this->GetPingToken();
+}
+
+bool MetaMemberFunction::IsEqualWithMMFByNameAndParam(MetaMemberFunction* mmf) {
+    if (mmf->GetName() != m_Name) return false;
+
+    if (!m_MetaMemberParamCollection->IsEqualMetaDefineParamCollection(mmf->GetMetaMemberParamCollection())) {
+        return false;
     }
 
-    void MetaMemberFunctionNode::SetDeep(int deep)
-    {
-        // ºÚªØ µœ÷
-    }
+    return true;
+}
 
-    MetaMemberFunction* MetaMemberFunctionNode::IsSameMetaMemeberFunction(MetaMemberFunction* mmf)
-    {
-        // ºÚªØ µœ÷
+void MetaMemberFunction::AddMetaDefineParam(MetaDefineParam* mdp) {
+    m_MetaMemberParamCollection->AddMetaDefineParam(mdp);
+}
+
+void MetaMemberFunction::AddMetaDefineTemplate(MetaTemplate* mt) {
+    m_MetaMemberTemplateCollection->AddMetaDefineTemplate(mt);
+}
+
+MetaGenTemplateFunction* MetaMemberFunction::AddGenTemplateMemberFunctionByMetaTypeList(MetaClass* mc, const std::vector<MetaType*>& list) {
+    if (mc->IsTemplateClass()) {
         return nullptr;
     }
 
-    bool MetaMemberFunctionNode::AddMetaMemberFunction(MetaMemberFunction* mmf)
-    {
-        // ºÚªØ µœ÷
-        return true;
-    }
+    std::vector<MetaClass*> mcList;
 
-    void MetaMemberFunctionNode::ParseMemberFunctionDefineMetaType()
-    {
-        // ºÚªØ µœ÷
-    }
-
-    std::vector<MetaMemberFunction*> MetaMemberFunctionNode::GetMetaMemberFunctionListByParamCount(int count)
-    {
-        auto it = m_MetaParamFunctionDict.find(count);
-        if (it != m_MetaParamFunctionDict.end())
-        {
-            return it->second;
-        }
-        return std::vector<MetaMemberFunction*>();
-    }
-
-    // MetaMemberFunction  µœ÷
-    MetaMemberFunction::MetaMemberFunction()
-    {
-    }
-
-    MetaMemberFunction::MetaMemberFunction(MetaClass* mc)
-        : m_OwnerMetaClass(mc)
-    {
-    }
-
-    MetaMemberFunction::MetaMemberFunction(MetaClass* mc, void* fmmf)
-        : m_OwnerMetaClass(mc)
-        , m_FileMetaMemberFunction(fmmf)
-    {
-        // ºÚªØ µœ÷
-    }
-
-    MetaMemberFunction::MetaMemberFunction(MetaClass* mc, const std::string& name)
-        : m_OwnerMetaClass(mc)
-        , m_Name(name)
-        , m_IsCanRewrite(true)
-    {
-        init();
-    }
-
-    MetaMemberFunction::MetaMemberFunction(const MetaMemberFunction& mmf)
-        : MetaBase(mmf)
-        , m_IsTemplateFunction(mmf.m_IsTemplateFunction)
-        , m_ConstructInitFunction(mmf.m_ConstructInitFunction)
-        , m_IsWithInterface(mmf.m_IsWithInterface)
-        , m_FileMetaMemberFunction(mmf.m_FileMetaMemberFunction)
-        , m_GenTempalteFunctionList(mmf.m_GenTempalteFunctionList)
-        , m_SourceMetaMemberFunction(mmf.m_SourceMetaMemberFunction)
-    {
-    }
-
-    std::string MetaMemberFunction::GetFunctionAllName() const
-    {
-        if (!m_FunctionAllName.empty())
-        {
-            return m_FunctionAllName;
-        }
-        return MetaBase::GetName();
-    }
-
-    int MetaMemberFunction::GetParseLevel() const
-    {
-        if (m_IsTemplateFunction)
-        {
-            return 0;
-        }
-        else if (m_OwnerMetaClass && m_OwnerMetaClass->isTemplateClass())
-        {
-            return 1;
-        }
-        else
-        {
-            return 2;
+    for (auto& v : list) {
+        if (v->GetEType() == EMetaTypeType::MetaClass || v->GetEType() == EMetaTypeType::MetaGenClass) {
+            mcList.push_back(v->GetMetaClass());
         }
     }
-
-    void* MetaMemberFunction::GetToken() const
-    {
-        // ºÚªØ µœ÷
-        return nullptr;
+    if (mcList.size() == list.size()) {
+        return AddGenTemplateMemberFunctionBySelf(mc, mcList);
     }
+    return nullptr;
+}
 
-    bool MetaMemberFunction::IsEqualWithMMFByNameAndParam(MetaMemberFunction* mmf)
-    {
-        if (mmf->GetName() != m_Name) return false;
-        // ºÚªØ µœ÷£¨ µº –Ë“™±»Ωœ≤Œ ˝
-        return true;
+MetaGenTemplateFunction* MetaMemberFunction::AddGenTemplateMemberFunctionBySelf(MetaClass* mc, const std::vector<MetaClass*>& list) {
+    MetaGenTemplateFunction* mgtf = GetGenTemplateFunction(list);
+    if (mgtf == nullptr) {
+        std::vector<MetaGenTemplate*> mgtList;
+        for (size_t i = 0; i < list.size(); i++) {
+            auto l1 = this->m_MetaMemberTemplateCollection->GetMetaTemplateList()[i];
+            MetaGenTemplate* mgt = new MetaGenTemplate(l1, new MetaType(list[i]));
+            mgtList.push_back(mgt);
+        }
+        mgtf = new MetaGenTemplateFunction(this, mgtList);
+        mgtf->SetOwnerMetaClass(mc);
+
+        this->m_GenTempalteFunctionList.push_back(mgtf);
+
+        mgtf->Parse();
     }
+    return mgtf;
+}
 
-    void MetaMemberFunction::AddMetaDefineParam(MetaDefineParam* mdp)
-    {
-        if (m_MetaMemberParamCollection)
-        {
-            // m_MetaMemberParamCollection->addMetaDefineParam(mdp);
+MetaGenTemplateFunction* MetaMemberFunction::GetGenTemplateFunction(const std::vector<MetaClass*>& mcList) {
+    if (mcList.size() == m_GenTempalteFunctionList.size()) {
+        for (size_t i = 0; i < m_GenTempalteFunctionList.size(); i++) {
+            auto c = m_GenTempalteFunctionList[i];
+
+            if (c->MatchInputTemplateInsance(mcList)) {
+                return c;
+            }
         }
     }
+    return nullptr;
+}
 
-    void MetaMemberFunction::AddMetaDefineTemplate(MetaTemplate* mt)
-    {
-        if (m_MetaMemberTemplateCollection)
-        {
-            // m_MetaMemberTemplateCollection->addMetaDefineTemplate(mt);
+bool MetaMemberFunction::Parse() {
+    bool flag = MetaFunction::Parse();
+
+    UpdateVritualFunctionName();
+
+    return flag;
+}
+
+void MetaMemberFunction::ParseDefineMetaType() {
+    if (this->m_FileMetaMemberFunction != nullptr) {
+        if (m_FileMetaMemberFunction->defineMetaClass != nullptr) {
+            FileMetaClassDefine* cmr = m_FileMetaMemberFunction->defineMetaClass;
+            MetaType* defineMetaType = TypeManager::GetInstance().GetMetaTypeByTemplateFunction(m_OwnerMetaClass, this, cmr);
+
+            if (m_ConstructInitFunction && defineMetaType->GetMetaClass() != CoreMetaClassManager::GetInstance().GetVoidMetaClass()) {
+                Log::AddInStructMeta(EError::None, "Error ÂΩìÂâçÁ±ª:" + m_AllName + " ÊòØÊûÑÂª∫InitÁ±ªÔºå‰∏çÂÖÅËÆ∏ÊúâËøîÂõûÁ±ªÂûã ");
+            } else {
+                m_ReturnMetaVariable->SetMetaDefineType(defineMetaType);
+                m_ReturnMetaVariable->SetRealMetaType(defineMetaType);
+            }
         }
     }
-
-    void* MetaMemberFunction::AddGenTemplateMemberFunctionByMetaTypeList(MetaClass* mc, const std::vector<MetaType*>& list)
-    {
-        // ºÚªØ µœ÷
-        return nullptr;
+    for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
+        MetaDefineParam* mpl = m_MetaMemberParamCollection->GetMetaDefineParamList()[i];
+        mpl->ParseMetaDefineType();
     }
+    UpdateVritualFunctionName();
+}
 
-    void* MetaMemberFunction::AddGenTemplateMemberFunctionBySelf(MetaClass* mc, const std::vector<MetaClass*>& list)
-    {
-        // ºÚªØ µœ÷
-        return nullptr;
+void MetaMemberFunction::CreateMetaExpress() {
+    for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
+        MetaDefineParam* mpl = m_MetaMemberParamCollection->GetMetaDefineParamList()[i];
+        mpl->CreateExpress();
     }
+}
 
-    void* MetaMemberFunction::GetGenTemplateFunction(const std::vector<MetaClass*>& mcList)
-    {
-        // ºÚªØ µœ÷
-        return nullptr;
+bool MetaMemberFunction::ParseMetaExpress() {
+    for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
+        MetaDefineParam* mpl = m_MetaMemberParamCollection->GetMetaDefineParamList()[i];
+        mpl->Parse();
+        mpl->CalcReturnType();
     }
+    return true;
+}
 
-    bool MetaMemberFunction::Parse()
-    {
-        bool flag = Parse();
-        UpdateVritualFunctionName();
-        return flag;
+void MetaMemberFunction::ParseStatements() {
+    bool nohasContent = false;
+    if (this->m_FileMetaMemberFunction != nullptr) {
+        if (m_ThisMetaVariable != nullptr) {
+            m_ThisMetaVariable->AddPingToken(m_FileMetaMemberFunction->token);
+        }
+        if (m_FileMetaMemberFunction->fileMetaBlockSyntax != nullptr) {
+            Token* beginToken = m_FileMetaMemberFunction->fileMetaBlockSyntax->beginBlock;
+            Token* endToken = m_FileMetaMemberFunction->fileMetaBlockSyntax->endBlock;
+            m_MetaBlockStatements->SetFileMetaBlockSyntax(m_FileMetaMemberFunction->fileMetaBlockSyntax);
+            m_MetaBlockStatements->SetMetaMemberParamCollection(m_MetaMemberParamCollection);
+            CreateMetaSyntax(m_FileMetaMemberFunction->fileMetaBlockSyntax, m_MetaBlockStatements);
+        } else {
+            nohasContent = true;
+        }
     }
-
-    void MetaMemberFunction::ParseDefineMetaType()
-    {
-        // ºÚªØ µœ÷
+    if (!m_IsWithInterface || this->m_OwnerMetaClass->IsInterfaceClass()) {
+    } else {
+        if (nohasContent) {
+            Log::AddInStructMeta(EError::None, "Error Á±ª[" + this->m_OwnerMetaClass->GetAllClassName() + "] ËØ•ÂáΩÊï∞[" + this->GetFunctionAllName() + "] Ê≤°ÊúâÂÆö‰πâÂáΩÊï∞ÂÜÖÂÆπÔºÅÔºÅ");
+        }
     }
+}
 
-    void MetaMemberFunction::CreateMetaExpress()
-    {
-        // ºÚªØ µœ÷
+void MetaMemberFunction::UpdateVritualFunctionName() {
+    std::ostringstream sb;
+    sb << m_Name;
+    sb << "_";
+    if (m_ReturnMetaVariable != nullptr) {
+        sb << m_ReturnMetaVariable->GetMetaDefineType()->ToFormatString();
     }
-
-    bool MetaMemberFunction::ParseMetaExpress()
-    {
-        // ºÚªØ µœ÷
-        return true;
+    sb << "_";
+    if (m_MetaMemberParamCollection != nullptr) {
+        sb << m_MetaMemberParamCollection->GetMaxParamCount();
     }
-
-    void MetaMemberFunction::ParseStatements()
-    {
-        // ºÚªØ µœ÷
-    }
-
-    void MetaMemberFunction::UpdateVritualFunctionName()
-    {
-        std::ostringstream sb;
-        sb << m_Name;
+    if (m_MetaMemberParamCollection != nullptr && m_MetaMemberParamCollection->GetMaxParamCount() > 0) {
         sb << "_";
-        if (m_ReturnMetaVariable)
-        {
-            sb << m_ReturnMetaVariable->GetMetaDefineType()->ToFormatString();
+        for (int i = 0; i < m_MetaMemberParamCollection->GetMaxParamCount(); i++) {
+            auto mdp = m_MetaMemberParamCollection->GetMetaDefineParamList()[i];
+            sb << mdp->GetMetaVariable()->GetMetaDefineType()->ToString();
+            if (i < m_MetaMemberParamCollection->GetMaxParamCount() - 1) {
+                sb << "_";
+            }
         }
-        sb << "_";
-        if (m_MetaMemberParamCollection)
-        {
-            sb << m_MetaMemberParamCollection->GetMaxParamCount();
-        }
-        m_VirtualFunctionName = sb.str();
     }
+    m_VirtualFunctionName = sb.str();
+}
 
-    MetaType* MetaMemberFunction::AddMetaPreTemplateFunction(MetaType* mt, bool& isGenMetaClass)
-    {
-        // ºÚªØ µœ÷
-        isGenMetaClass = false;
-        return mt;
-    }
-
-    MetaType* MetaMemberFunction::FindBindStructTemplateFunctionMtList(MetaType* mt)
-    {
-        // ºÚªØ µœ÷
+MetaType* MetaMemberFunction::AddMetaPreTemplateFunction(MetaType* mt, bool& isGenMetaClass) {
+    isGenMetaClass = false;
+    if (mt->GetMetaClass() == nullptr) {
         return nullptr;
     }
-
-    MetaType* MetaMemberFunction::FindBindStructTemplateFunctionAndClassMtList(MetaType* mt)
-    {
-        // ºÚªØ µœ÷
-        return nullptr;
+    bool isIncludeTemplateClass = mt->IsIncludeClassTemplate(m_OwnerMetaClass);
+    std::vector<MetaClass*> mcList;
+    for (size_t i = 0; i < mt->GetTemplateMetaTypeList().size(); i++) {
+        auto mtc = mt->GetTemplateMetaTypeList()[i];
+        if (mtc->GetEType() == EMetaTypeType::MetaClass) {
+            mcList.push_back(mtc->GetMetaClass());
+        }
     }
-
-    MetaStatements* MetaMemberFunction::CreateMetaSyntax(void* rootMs, MetaBlockStatements* currentBlockStatements)
-    {
-        // ºÚªØ µœ÷
-        return nullptr;
+    if (mcList.size() == mt->GetTemplateMetaTypeList().size()) {
+        MetaGenTemplateClass* mgtc = mt->GetMetaClass()->AddInstanceMetaClass(mcList);
+        isGenMetaClass = true;
+        return new MetaType(mgtc);
     }
-
-    MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* currentBlockStatements, 
-                                                       MetaStatements*& beforeStatements,
-                                                       void* childFms)
-    {
-        // ºÚªØ µœ÷
-        return nullptr;
+    if (isIncludeTemplateClass) {
+        auto find = FindBindStructTemplateFunctionAndClassMtList(mt);
+        if (find == nullptr) {
+            this->m_BindStructTemplateFunctionAndClassMtList.push_back(new MetaType(*mt));
+        }
+    } else {
+        auto find = FindBindStructTemplateFunctionMtList(mt);
+        if (find == nullptr) {
+            this->m_BindStructTemplateFunctionMtList.push_back(new MetaType(*mt));
+        }
     }
+    return mt;
+}
 
-    std::string MetaMemberFunction::ToString() const
-    {
-        std::ostringstream sb;
-        if (m_ReturnMetaVariable)
-        {
-            sb << m_ReturnMetaVariable->GetMetaDefineType()->toFormatString();
+MetaType* MetaMemberFunction::FindBindStructTemplateFunctionMtList(MetaType* mt) {
+    for (auto& v : m_BindStructTemplateFunctionMtList) {
+        if (MetaType::EqualMetaDefineType(v, mt)) {
+            return v;
         }
-        sb << " ";
-        
-        if (m_OwnerMetaClass)
-        {
-            sb << m_OwnerMetaClass->GetAllClassName();
-            sb << ".";
-        }
-        sb << m_Name;
-        sb << "()";
-        return sb.str();
     }
+    return nullptr;
+}
 
-    std::string MetaMemberFunction::ToFormatString() const
-    {
-        std::ostringstream sb;
-
-        for (int i = 0; i < GetRealDeep(); i++)
-            sb << Global::tabChar;
-
-        sb << GetPermissionString() << " ";
-        if (IsStatic())
-        {
-            sb << " static";
+MetaType* MetaMemberFunction::FindBindStructTemplateFunctionAndClassMtList(MetaType* mt) {
+    for (auto& v : m_BindStructTemplateFunctionAndClassMtList) {
+        if (MetaType::EqualMetaDefineType(v, mt)) {
+            return v;
         }
-        if (IsOverrideFunction())
-        {
-            sb << " override";
-        }
-        if (IsGet())
-        {
-            sb << " get";
-        }
-        if (IsSet())
-        {
-            sb << " set";
-        }
-        if (IsWithInterface())
-        {
-            sb << " interface";
-        }
-        sb << " ";
-        if (m_ReturnMetaVariable)
-        {
-            sb << m_ReturnMetaVariable->GetMetaDefineType()->toFormatString();
-        }
-        sb << " " << GetName();
-        sb << "()";
-        sb << "\n";
-
-        if (m_MetaBlockStatements)
-            sb << m_MetaBlockStatements->toFormatString();
-
-        sb << "\n";
-        return sb.str();
     }
+    return nullptr;
+}
 
-    void MetaMemberFunction::init()
-    {
-        m_ConstructInitFunction = (m_Name == "_init_");
-
-        MetaType* defineMetaType = nullptr;
-        if (m_ConstructInitFunction)
-        {
-            // defineMetaType = new MetaType(CoreMetaClassManager::voidMetaClass);
-        }
-        else
-        {
-            // defineMetaType = new MetaType(CoreMetaClassManager::objectMetaClass);
-        }
-        
-        if (IsSet() && !IsGet())
-        {
-            // defineMetaType = new MetaType(CoreMetaClassManager::voidMetaClass);
-        }
-        
-        if (!IsStatic())
-        {
-            // ¥¥Ω® this ±‰¡ø
-            // m_ThisMetaVariable = new MetaVariable(m_OwnerMetaClass->getAllClassName() + "." + m_Name + ".this", MetaVariable::EVariableFrom::Argument, nullptr, m_OwnerMetaClass, mt);
-        }
-        
-        // m_ReturnMetaVariable = new MetaVariable(m_OwnerMetaClass->getAllClassName() + "." + m_Name + ".define", MetaVariable::EVariableFrom::Argument, nullptr, m_OwnerMetaClass, defineMetaType);
+MetaStatements* MetaMemberFunction::CreateMetaSyntax(Compile::FileMetaSyntax* rootMs, MetaBlockStatements* currentBlockStatements) {
+    MetaStatements* beforeStatements = currentBlockStatements;
+    while (rootMs->IsNotEnd()) {
+        auto childFms = rootMs->GetCurrentSyntaxAndMove();
+        HandleMetaSyntax(currentBlockStatements, beforeStatements, childFms);
     }
+    return beforeStatements;
+}
+
+MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* currentBlockStatements, 
+                                                   MetaStatements*& beforeStatements,
+                                                   Compile::FileMetaSyntax* childFms) {
+    // Ê†πÊçÆC#Ê∫êÁ†ÅÁöÑswitchËØ≠Âè•ÂÆûÁé∞
+    if (auto fmbs1 = dynamic_cast<FileMetaBlockSyntax*>(childFms)) {
+        auto createBlockStatements = new MetaBlockStatements(currentBlockStatements, fmbs1);
+        createBlockStatements->SetParent(currentBlockStatements);
+        auto cms = CreateMetaSyntax(fmbs1, createBlockStatements);
+        beforeStatements->SetNextStatements(createBlockStatements);
+        beforeStatements = createBlockStatements;
+    }
+    else if (auto fmkis = dynamic_cast<FileMetaKeyIfSyntax*>(childFms)) {
+        auto metaIfStatements = new MetaIfStatements(currentBlockStatements, fmkis);
+        beforeStatements->SetNextStatements(metaIfStatements);
+        beforeStatements = metaIfStatements;
+    }
+    else if (auto fmkss = dynamic_cast<FileMetaKeySwitchSyntax*>(childFms)) {
+        auto metaSwitchStatements = new MetaSwitchStatements(currentBlockStatements, fmkss);
+        beforeStatements->SetNextStatements(metaSwitchStatements);
+        beforeStatements = metaSwitchStatements;
+    }
+    else if (auto fmkfs = dynamic_cast<FileMetaKeyForSyntax*>(childFms)) {
+        auto metaForStatements = new MetaForStatements(currentBlockStatements, fmkfs);
+        beforeStatements->SetNextStatements(metaForStatements);
+        beforeStatements = metaForStatements;
+    }
+    else if (auto fmkes = dynamic_cast<FileMetaConditionExpressSyntax*>(childFms)) {
+        // dowhile/while conditionvariable
+        if (fmkes->token->type == ETokenType::While || fmkes->token->type == ETokenType::DoWhile) {
+            auto metaWhileStatements = new MetaWhileDoWhileStatements(currentBlockStatements, fmkes);
+            beforeStatements->SetNextStatements(metaWhileStatements);
+            beforeStatements = metaWhileStatements;
+        } else {
+            Log::AddInStructMeta(EError::None, "Error FileMetaConditionExpressSyntax: ÊöÇ‰∏çÊîØÊåÅËØ•Á±ªÂûãÁöÑËß£Êûê!!");
+        }
+    }
+    else if (auto fmoks = dynamic_cast<FileMetaKeyOnlySyntax*>(childFms)) {
+        if (fmoks->token->type == ETokenType::Break) {
+            auto metaBreakStatements = new MetaBreakStatements(currentBlockStatements, fmoks);
+            beforeStatements->SetNextStatements(metaBreakStatements);
+            beforeStatements = metaBreakStatements;
+        } else if (fmoks->token->type == ETokenType::Continue) {
+            auto metaContinueStatements = new MetaContinueStatements(currentBlockStatements, fmoks);
+            beforeStatements->SetNextStatements(metaContinueStatements);
+            beforeStatements = metaContinueStatements;
+        }
+    }
+    else if (auto fmos = dynamic_cast<FileMetaOpAssignSyntax*>(childFms)) {
+        bool isDefineVarStatements = false;
+        if (fmos->variableRef->isOnlyName) {
+            std::string name1 = fmos->variableRef->name;
+            if (fmos->hasDefine) {
+                if (currentBlockStatements->GetIsMetaVariable(name1)) {
+                    Log::AddInStructMeta(EError::None, "Error Â¶ÇÊûú‰ΩøÁî®‰∫Üvar/data/dynamic/int Á≠âÂâçÁºÄÔºåÊúâÈáçÂ§çÂÆö‰πâÁöÑË°å‰∏∫" + fmos->variableRef->ToTokenString());
+                    isDefineVarStatements = false;
+                } else {
+                    isDefineVarStatements = true;
+                }
+            } else {
+                if (!currentBlockStatements->GetIsMetaVariable(name1)) {
+                    auto ownerclass = currentBlockStatements->GetOwnerMetaClass();
+                    MetaBase* mb = ownerclass->GetMetaMemberVariableByName(name1);
+                    if (mb == nullptr) {
+                        isDefineVarStatements = true;
+                    }
+                }
+            }
+        }
+        if (isDefineVarStatements) {
+            auto mnvs11 = new MetaDefineVarStatements(currentBlockStatements, fmos);
+            beforeStatements->SetNextStatements(mnvs11);
+            beforeStatements = mnvs11;
+        } else {
+            auto mas = new MetaAssignStatements(currentBlockStatements, fmos);
+            beforeStatements->SetNextStatements(mas);
+            beforeStatements = mas;
+        }
+    }
+    else if (auto fmvs = dynamic_cast<FileMetaDefineVariableSyntax*>(childFms)) {
+        // x = 2;
+        bool isDefineVarStatements = false;
+        std::string name1 = fmvs->name;
+        if (currentBlockStatements->GetIsMetaVariable(name1)) {
+            isDefineVarStatements = true;
+            Log::AddInStructMeta(EError::None, "Error ÂÆö‰πâÂèòÈáèÂêçÁß∞‰∏éÁ±ªÂáΩÊï∞‰∏¥Êó∂ÂêçÁß∞‰∏ÄÊ†∑!!" + (fmvs->token ? fmvs->token->ToLexemeAllString() : ""));
+            return nullptr;
+        } else {
+            auto mv = currentBlockStatements->GetOwnerMetaClass()->GetMetaMemberVariableByName(name1);
+            if (mv == nullptr) {
+                isDefineVarStatements = true;
+            } else {
+                if (!mv->IsStatic()) {
+                    Log::AddInStructMeta(EError::None, "Error ÂÆö‰πâÂèòÈáèÂêçÁß∞‰∏éÁ±ªÂÆö‰πâÂêçÁß∞‰∏ÄÊ†∑ Â¶ÇÊûúË∞ÉÁî®ÊàêÂëòÂèòÈáèÔºåÈúÄË¶ÅÂú®ÂâçËæπ‰ΩøÁî®this.!!" + (fmvs->token ? fmvs->token->ToLexemeAllString() : ""));
+                    return nullptr;
+                }
+            }
+        }
+        if (isDefineVarStatements) {
+            auto mnvs11 = new MetaDefineVarStatements(currentBlockStatements, fmvs);
+            beforeStatements->SetNextStatements(mnvs11);
+            beforeStatements = mnvs11;
+        } else {
+            auto mas = new MetaAssignStatements(currentBlockStatements, fmvs);
+            beforeStatements->SetNextStatements(mas);
+            beforeStatements = mas;
+        }
+    }
+    else if (auto fmcs = dynamic_cast<FileMetaCallSyntax*>(childFms)) {
+        // a.value.SetH(100);
+        auto mcs = new MetaCallStatements(currentBlockStatements, fmcs);
+        beforeStatements->SetNextStatements(mcs);
+        beforeStatements = mcs;
+        return mcs;
+    }
+    else if (auto fmrs = dynamic_cast<FileMetaKeyReturnSyntax*>(childFms)) {
+        // ret 100
+        if (fmrs->token && fmrs->token->type == ETokenType::Return) {
+            auto mrs = new MetaReturnStatements(currentBlockStatements, fmrs);
+            beforeStatements->SetNextStatements(mrs);
+            beforeStatements = mrs;
+            return mrs;
+        } else if (fmrs->token && fmrs->token->type == ETokenType::Transience) {
+            auto mtrs = new MetaTRStatements(currentBlockStatements, fmrs);
+            beforeStatements->SetNextStatements(mtrs);
+            beforeStatements = mtrs;
+            return mtrs;
+        } else {
+            Log::AddInStructMeta(EError::None, "Error ÁîüÊàêMetaStatementsÂá∫ÈîôKeyReturnSyntaxÁ±ªÂûãÈîôËØØ!!");
+        }
+    }
+    else if (auto fmkgls = dynamic_cast<FileMetaKeyGotoLabelSyntax*>(childFms)) {
+        // goto 1// label 1
+        auto metaGotoStatements = new MetaGotoLabelStatements(currentBlockStatements, fmkgls);
+        beforeStatements->SetNextStatements(metaGotoStatements);
+        beforeStatements = metaGotoStatements;
+        return metaGotoStatements;
+    }
+    else {
+        Log::AddInStructMeta(EError::None, "Waning ËøòÊúâÊ≤°ÊúâËß£ÊûêÁöÑËØ≠Âè•!! MetaMemberFunction 314");
+    }
+    
+    return nullptr;
+}
+
+bool MetaMemberFunction::Equals(MetaBase* obj) const {
+    if (obj == nullptr) return false;
+
+    if (GetType() != obj->GetType()) return false;
+
+    MetaMemberFunction* rec = dynamic_cast<MetaMemberFunction*>(obj);
+    if (rec == nullptr) return false;
+
+    if (rec->GetName() == GetName() && rec->GetMetaMemberParamCollection()->Equals(GetMetaMemberParamCollection())) {
+        return true;
+    }
+    
+    return false;
+}
+
+std::string MetaMemberFunction::ToString() const {
+    std::ostringstream sb;
+    if (m_ReturnMetaVariable != nullptr) {
+        sb << m_ReturnMetaVariable->GetMetaDefineType()->ToFormatString();
+    }
+    sb << " ";
+    
+    if (m_OwnerMetaClass != nullptr) {
+        sb << m_OwnerMetaClass->GetAllClassName();
+        sb << ".";
+    }
+    sb << m_Name;
+    if (m_MetaMemberTemplateCollection != nullptr && m_MetaMemberTemplateCollection->GetMetaTemplateList().size() > 0) {
+        sb << "<";
+        for (size_t i = 0; i < m_MetaMemberTemplateCollection->GetMetaTemplateList().size(); i++) {
+            auto mtl = m_MetaMemberTemplateCollection->GetMetaTemplateList()[i];
+            sb << mtl->GetName();
+            if (i < m_MetaMemberTemplateCollection->GetMetaTemplateList().size() - 1) {
+                sb << ",";
+            }
+        }
+        sb << ">";
+    }
+    sb << "(");
+
+    for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
+        MetaDefineParam* mpl = m_MetaMemberParamCollection->GetMetaDefineParamList()[i];
+        sb << mpl->ToString();
+        if (i < m_MetaMemberParamCollection->GetMetaDefineParamList().size() - 1) {
+            sb << ",";
+        }
+    }
+    sb << ")";
+
+    return sb.str();
+}
+
+std::string MetaMemberFunction::ToFormatString() const {
+    std::ostringstream sb;
+
+    for (int i = 0; i < GetRealDeep(); i++)
+        sb << Global::tabChar;
+
+    sb << GetPermissionString() << " ";
+    if (IsStatic()) {
+        sb << " static";
+    }
+    if (IsOverrideFunction()) {
+        sb << " override";
+    }
+    if (IsGet()) {
+        sb << " get";
+    }
+    if (IsSet()) {
+        sb << " set";
+    }
+    if (IsWithInterface()) {
+        sb << " interface";
+    }
+    sb << " ";
+    if (m_ReturnMetaVariable != nullptr) {
+        sb << m_ReturnMetaVariable->GetMetaDefineType()->ToFormatString();
+    }
+    sb << " " << GetName();
+    sb << m_MetaMemberParamCollection->ToFormatString();
+    sb << "\n";
+
+    if (m_MetaBlockStatements != nullptr)
+        sb << m_MetaBlockStatements->ToFormatString();
+
+    sb << "\n";
+
+    return sb.str();
+}
+
+int MetaMemberFunction::GetHashCode() const {
+    return MetaBase::GetHashCode();
+}
+
+void MetaMemberFunction::Init() {
+    m_ConstructInitFunction = (m_Name == "_init_");
+
+    MetaType* defineMetaType = nullptr;
+    if (m_ConstructInitFunction) {
+        defineMetaType = new MetaType(CoreMetaClassManager::GetInstance().GetVoidMetaClass());
+    } else {
+        defineMetaType = new MetaType(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
+    }
+    if (IsSet() && !IsGet()) {
+        defineMetaType = new MetaType(CoreMetaClassManager::GetInstance().GetVoidMetaClass());
+    }
+    if (!IsStatic()) {
+        MetaType* mt = new MetaType(m_OwnerMetaClass);
+        if (m_OwnerMetaClass->IsTemplateClass()) {
+            auto tt = new MetaTemplate(m_OwnerMetaClass, "this");
+            tt->SetIndex(0);
+            tt->SetInConstraintMetaClass(m_OwnerMetaClass);
+            mt = new MetaType(tt);
+        }
+        m_ThisMetaVariable = new MetaVariable(m_OwnerMetaClass->GetAllClassName() + "." + m_Name + ".this", MetaVariable::EVariableFrom::Argument, nullptr, m_OwnerMetaClass, mt);
+    }
+    m_ReturnMetaVariable = new MetaVariable(m_OwnerMetaClass->GetAllClassName() + "." + m_Name + ".define", MetaVariable::EVariableFrom::Argument, nullptr, m_OwnerMetaClass, defineMetaType);
+}
 
 } // namespace Core
 } // namespace SimpleLanguage

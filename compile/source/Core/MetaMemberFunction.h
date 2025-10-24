@@ -16,149 +16,148 @@
 #include <memory>
 
 namespace SimpleLanguage {
+    namespace Compile {
+        class FileMetaMemberFunction;
+        class Token;
+        class FileMetaSyntax;
+    }
 namespace Core {
 
-    // «∞œÚ…˘√˜
-    class MetaClass;
-    class MetaType;
-    class MetaMemberFunction;
-    class MetaMemberFunctionTemplateNode;
-    class MetaMemberFunctionNode;
-    class MetaDefineParam;
-    class MetaDefineParamCollection;
-    class MetaTemplateCollection;
-    class MetaBlockStatements;
-    class MetaStatements;
+// Forward declarations
+class MetaClass;
+class MetaType;
+class MetaMemberFunction;
+class MetaDefineParam;
+class MetaDefineParamCollection;
+class MetaTemplateCollection;
+class MetaBlockStatements;
+class MetaStatements;
+class MetaGenTemplateFunction;
+class MetaMemberFunctionNode;
 
-    class MetaMemberFunctionTemplateNode
-    {
-    public:
-        MetaMemberFunctionTemplateNode();
-        virtual ~MetaMemberFunctionTemplateNode() = default;
+class MetaMemberFunctionTemplateNode {
+public:
+    MetaMemberFunctionTemplateNode();
+    virtual ~MetaMemberFunctionTemplateNode() = default;
 
-        const std::unordered_map<int, MetaMemberFunctionNode*>& GetMetaTemplateFunctionNodeDict() const { return m_MetaTemplateFunctionNodeDict; }
+    const std::unordered_map<int, MetaMemberFunctionNode*>& GetMetaTemplateFunctionNodeDict() const { return m_MetaTemplateFunctionNodeDict; }
 
-        void SetDeep(int deep);
-        MetaMemberFunction* IsSameMetaMemeberFunction(MetaMemberFunction* mmf);
-        bool AddMetaMemberFunction(MetaMemberFunction* mmf);
-        void ParseMemberFunctionDefineMetaType();
+    void SetDeep(int deep);
+    MetaMemberFunction* IsSameMetaMemeberFunction(MetaMemberFunction* mmf);
+    bool AddMetaMemberFunction(MetaMemberFunction* mmf);
+    void ParseMemberFunctionDefineMetaType();
 
-    private:
-        std::unordered_map<int, MetaMemberFunctionNode*> m_MetaTemplateFunctionNodeDict;
-    };
+private:
+    std::unordered_map<int, MetaMemberFunctionNode*> m_MetaTemplateFunctionNodeDict;
+};
 
-    class MetaMemberFunctionNode
-    {
-    public:
-        MetaMemberFunctionNode();
-        virtual ~MetaMemberFunctionNode() = default;
+class MetaMemberFunctionNode {
+public:
+    MetaMemberFunctionNode();
+    virtual ~MetaMemberFunctionNode() = default;
 
-        const std::unordered_map<int, std::vector<MetaMemberFunction*>>& GetMetaParamFunctionDict() const { return m_MetaParamFunctionDict; }
+    const std::unordered_map<int, std::vector<MetaMemberFunction*>>& GetMetaParamFunctionDict() const { return m_MetaParamFunctionDict; }
 
-        void SetDeep(int deep);
-        MetaMemberFunction* IsSameMetaMemeberFunction(MetaMemberFunction* mmf);
-        bool AddMetaMemberFunction(MetaMemberFunction* mmf);
-        void ParseMemberFunctionDefineMetaType();
-        std::vector<MetaMemberFunction*> GetMetaMemberFunctionListByParamCount(int count);
+    void SetDeep(int deep);
+    MetaMemberFunction* IsSameMetaMemeberFunction(MetaMemberFunction* mmf);
+    bool AddMetaMemberFunction(MetaMemberFunction* mmf);
+    void ParseMemberFunctionDefineMetaType();
+    std::vector<MetaMemberFunction*> GetMetaMemberFunctionListByParamCount(int count);
 
-    private:
-        std::unordered_map<int, std::vector<MetaMemberFunction*>> m_MetaParamFunctionDict;
-    };
+private:
+    std::unordered_map<int, std::vector<MetaMemberFunction*>> m_MetaParamFunctionDict;
+};
 
-    class MetaMemberFunction : public MetaFunction
-    {
-    public:
-        MetaMemberFunction();
-        MetaMemberFunction(MetaClass* mc);
-        MetaMemberFunction(MetaClass* mc, void* fmmf); // ºÚªØ µœ÷
-        MetaMemberFunction(MetaClass* mc, const std::string& name);
-        MetaMemberFunction(const MetaMemberFunction& mmf);
-        virtual ~MetaMemberFunction() = default;
+class MetaMemberFunction : public MetaFunction {
+public:
+    MetaMemberFunction();
+    MetaMemberFunction(MetaClass* mc);
+    MetaMemberFunction(MetaClass* mc, Compile::FileMetaMemberFunction* fmmf);
+    MetaMemberFunction(MetaClass* mc, const std::string& name);
+    MetaMemberFunction(const MetaMemberFunction& mmf);
+    virtual ~MetaMemberFunction() = default;
 
-        //  Ù–‘∑√Œ ∆˜
-        virtual std::string GetFunctionAllName() const;
-        int GetParseLevel() const;
-        bool IsTemplateFunction() const { return m_IsTemplateFunction; }
-        bool IsWithInterface() const { return m_IsWithInterface; }
-        bool IsOverrideFunction() const { return m_IsOverrideFunction; }
-        bool IsConstructInitFunction() const { return m_ConstructInitFunction; }
-        bool IsGet() const { return m_IsGet; }
-        bool IsSet() const { return m_IsSet; }
-        bool IsFinal() const { return m_IsFinal; }
-        bool IsCanRewrite() const { return m_IsCanRewrite; }
-        bool IsTemplateInParam() const { return m_IsTemplateInParam; }
-        void* GetFileMetaMemberFunction() const { return m_FileMetaMemberFunction; }
-        MetaMemberFunction* GetSourceMetaMemberFunction() const { return m_SourceMetaMemberFunction; }
-        const std::vector<MetaType*>& GetBindStructTemplateFunctionMtList() const { return m_BindStructTemplateFunctionMtList; }
-        const std::vector<MetaType*>& GetBindStructTemplateFunctionAndClassMtList() const { return m_BindStructTemplateFunctionAndClassMtList; }
+    // Properties
+    virtual std::string GetFunctionAllName() const override;
+    int GetParseLevel() const;
+    bool IsTemplateFunction() const { return m_IsTemplateFunction; }
+    bool IsWithInterface() const { return m_IsWithInterface; }
+    bool IsOverrideFunction() const { return m_IsOverrideFunction; }
+    bool IsConstructInitFunction() const { return m_ConstructInitFunction; }
+    bool IsGet() const { return m_IsGet; }
+    bool IsSet() const { return m_IsSet; }
+    bool IsFinal() const { return m_IsFinal; }
+    bool IsCanRewrite() const { return m_IsCanRewrite; }
+    bool IsTemplateInParam() const { return m_IsTemplateInParam; }
+    Compile::FileMetaMemberFunction* GetFileMetaMemberFunction() const { return m_FileMetaMemberFunction; }
+    MetaMemberFunction* GetSourceMetaMemberFunction() const { return m_SourceMetaMemberFunction; }
+    const std::vector<MetaType*>& GetBindStructTemplateFunctionMtList() const { return m_BindStructTemplateFunctionMtList; }
+    const std::vector<MetaType*>& GetBindStructTemplateFunctionAndClassMtList() const { return m_BindStructTemplateFunctionAndClassMtList; }
+    const std::vector<MetaGenTemplateFunction*>& GetGenTempalteFunctionList() const { return m_GenTempalteFunctionList; }
 
-        // …Ë÷√∑Ω∑®
-        void SetSourceMetaMemberFunction(MetaMemberFunction* mmf) { m_SourceMetaMemberFunction = mmf; }
-        void SetIsGet(bool isGet) { m_IsGet = isGet; }
-        void SetIsSet(bool isSet) { m_IsSet = isSet; }
-        void SetIsOverrideFunction(bool flag) { m_IsOverrideFunction = flag; }
+    // Setter methods
+    void SetSourceMetaMemberFunction(MetaMemberFunction* mmf);
+    void SetIsGet(bool isGet);
+    void SetIsSet(bool isSet);
+    void SetIsOverrideFunction(bool flag);
 
-        // ∑Ω∑®
-        void* GetToken() const;
-        bool IsEqualWithMMFByNameAndParam(MetaMemberFunction* mmf);
-        void AddMetaDefineParam(MetaDefineParam* mdp);
-        void AddMetaDefineTemplate(MetaTemplate* mt);
-        void* AddGenTemplateMemberFunctionByMetaTypeList(MetaClass* mc, const std::vector<MetaType*>& list);
-        void* AddGenTemplateMemberFunctionBySelf(MetaClass* mc, const std::vector<MetaClass*>& list);
-        void* GetGenTemplateFunction(const std::vector<MetaClass*>& mcList);
-        virtual bool Parse();
-        virtual void ParseDefineMetaType();
-        virtual void CreateMetaExpress();
-        virtual bool ParseMetaExpress();
-        void ParseStatements();
-        void UpdateVritualFunctionName();
-        MetaType* AddMetaPreTemplateFunction(MetaType* mt, bool& isGenMetaClass);
-        MetaType* FindBindStructTemplateFunctionMtList(MetaType* mt);
-        MetaType* FindBindStructTemplateFunctionAndClassMtList(MetaType* mt);
+    // Methods
+    Compile::Token* GetToken() const;
+    bool IsEqualWithMMFByNameAndParam(MetaMemberFunction* mmf);
+    void AddMetaDefineParam(MetaDefineParam* mdp);
+    void AddMetaDefineTemplate(MetaTemplate* mt);
+    MetaGenTemplateFunction* AddGenTemplateMemberFunctionByMetaTypeList(MetaClass* mc, const std::vector<MetaType*>& list);
+    MetaGenTemplateFunction* AddGenTemplateMemberFunctionBySelf(MetaClass* mc, const std::vector<MetaClass*>& list);
+    MetaGenTemplateFunction* GetGenTemplateFunction(const std::vector<MetaClass*>& mcList);
+    virtual bool Parse() override;
+    virtual void ParseDefineMetaType();
+    virtual void CreateMetaExpress();
+    virtual bool ParseMetaExpress();
+    void ParseStatements();
+    void UpdateVritualFunctionName();
+    MetaType* AddMetaPreTemplateFunction(MetaType* mt, bool& isGenMetaClass);
+    MetaType* FindBindStructTemplateFunctionMtList(MetaType* mt);
+    MetaType* FindBindStructTemplateFunctionAndClassMtList(MetaType* mt);
 
-        // æ≤Ã¨∑Ω∑®
-        static MetaStatements* CreateMetaSyntax(void* rootMs, MetaBlockStatements* currentBlockStatements);
-        static MetaStatements* HandleMetaSyntax(MetaBlockStatements* currentBlockStatements, 
-                                               MetaStatements*& beforeStatements,
-                                               void* childFms);
+    // Static methods
+    static MetaStatements* CreateMetaSyntax(Compile::FileMetaSyntax* rootMs, MetaBlockStatements* currentBlockStatements);
+    static MetaStatements* HandleMetaSyntax(MetaBlockStatements* currentBlockStatements, 
+                                           MetaStatements*& beforeStatements,
+        Compile::FileMetaSyntax* childFms);
 
-        // ∏Ò ΩªØ∑Ω∑®
-        std::string ToString() const;
-        std::string ToFormatString() const override;
+    // Override methods
+    virtual bool Equals(MetaBase* obj) const;
+    virtual std::string ToString() const override;
+    virtual std::string ToFormatString() const override;
+    virtual int GetHashCode() const;
 
-    protected:
-        void init();
+protected:
+    void Init();
 
-    private:
-        bool m_IsTemplateFunction = false;
-        bool m_IsOverrideFunction = false;
-        bool m_IsGet = false;
-        bool m_IsSet = false;
-        bool m_IsFinal = false;
-        bool m_IsCanRewrite = false;
-        bool m_IsTemplateInParam = false;
-        bool m_ConstructInitFunction = false;
-        bool m_IsWithInterface = false;
-        MetaMemberFunction* m_SourceMetaMemberFunction = nullptr;
-        void* m_FileMetaMemberFunction = nullptr; // ºÚªØ µœ÷
+private:
+    bool m_IsTemplateFunction = false;
+    bool m_IsOverrideFunction = false;
+    bool m_IsGet = false;
+    bool m_IsSet = false;
+    bool m_IsFinal = false;
+    bool m_IsCanRewrite = false;
+    bool m_IsTemplateInParam = false;
+    bool m_ConstructInitFunction = false;
+    bool m_IsWithInterface = false;
+    MetaMemberFunction* m_SourceMetaMemberFunction = nullptr;
+    Compile::FileMetaMemberFunction* m_FileMetaMemberFunction = nullptr;
 
-        // ∞Û∂®ππΩ®‘™¿‡–Õ
-        std::vector<MetaType*> m_BindStructTemplateFunctionMtList;
-        std::vector<MetaType*> m_BindStructTemplateFunctionAndClassMtList;
+    // ÁªëÂÆöÊûÑÂª∫ÂÖÉÁ±ªÂûã
+    std::vector<MetaType*> m_BindStructTemplateFunctionMtList;
+    std::vector<MetaType*> m_BindStructTemplateFunctionAndClassMtList;
 
-        // ƒ£∞Â…˙≥…∫Ø ˝
-        std::vector<void*> m_GenTempalteFunctionList; // ºÚªØ µœ÷
+    // Ê®°ÊùøÁîüÊàêÂáΩÊï∞
+    std::vector<MetaGenTemplateFunction*> m_GenTempalteFunctionList;
 
-        // ∆‰À˚≥…‘±
-        MetaDefineParamCollection* m_MetaMemberParamCollection = nullptr;
-        MetaTemplateCollection* m_MetaMemberTemplateCollection = nullptr;
-        MetaBlockStatements* m_MetaBlockStatements = nullptr;
-        MetaClass* m_OwnerMetaClass = nullptr;
-        MetaVariable* m_ThisMetaVariable = nullptr;
-        MetaVariable* m_ReturnMetaVariable = nullptr;
-        std::string m_VirtualFunctionName = "";
-        std::string m_FunctionAllName = "";
-    };
+    // ÂÖ∂‰ªñÊàêÂëò
+    std::string m_VirtualFunctionName = "";
+    std::string m_FunctionAllName = "";
+};
 
 } // namespace Core
 } // namespace SimpleLanguage

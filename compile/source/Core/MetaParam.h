@@ -13,9 +13,13 @@
 #include <memory>
 
 namespace SimpleLanguage {
-    class Compile::FileInputParamNode;
-    class Compile::FileMetaParamterDefine;
-    class Compile::FileMetaBracketTerm;
+    namespace Compile
+    {
+        class FileMetaParamterDefine;
+        class FileInputParamNode;
+        class FileMetaBracketTerm;
+        class FileMetaParTerm;
+    }
 namespace Core {
     class MetaClass;
     class MetaMethod;
@@ -55,7 +59,7 @@ public:
     MetaVariable* GetMetaVariable() const { return m_MetaVariable; }
     MetaExpressNode* GetExpressNode() const { return m_MetaExpressNode; }
     bool IsMust() const { return m_MetaExpressNode == nullptr; }
-    bool IsExtendParams() const { return m_FileMetaParamter != nullptr && m_FileMetaParamter->GetParamsToken() != nullptr; }
+    bool IsExtendParams() const;
 
     void ParseMetaDefineType();
     void CreateExpress();
