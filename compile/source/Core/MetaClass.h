@@ -41,6 +41,8 @@ class MetaExpressNode;
 class MetaTemplate;
 class MetaInputParamCollection;
 class MetaGenTemplateClass;
+class MetaGenTemplate;
+class MetaInputTemplateCollection;
 
 class MetaClass : public MetaBase
 {
@@ -132,7 +134,6 @@ public:
 
     // File meta class binding and parsing methods
     void BindFileMetaClass(Compile::FileMetaClass* fmc);
-    void ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc);
     void ParseFileMetaClassMemeberVarAndFunc(Compile::FileMetaClass* fmc);
 
     // Format methods
@@ -145,6 +146,20 @@ public:
     bool IsTemplateClass() const { return m_IsTemplateClass; }
     virtual bool IsGenTemplate() const { return m_IsGenTemplate; }
     const std::vector<MetaTemplate*>& GetMetaTemplateList() const { return m_MetaTemplateList; }
+    const std::vector<MetaGenTemplateClass*>& GetMetaGenTemplateClassList() const { return m_MetaGenTemplateClassList; }
+
+    // Template related methods from MetaTemplateClass.cs
+    bool IsDefineTemplate(const std::string& name);
+    void ParseMetaInConstraint();
+    MetaClass* ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc);
+    bool CompareInputTemplateList(MetaInputTemplateCollection* mitc);
+    MetaTemplate* GetMetaTemplateByName(const std::string& name);
+    MetaTemplate* GetMetaTemplateByIndex(int index);
+    bool IsTemplateMetaClassByName(const std::string& name);
+    void AddGenTemplateMetaClass(MetaGenTemplateClass* mtc);
+    MetaGenTemplateClass* GetGenTemplateMetaClass(MetaInputTemplateCollection* mitc);
+    MetaGenTemplateClass* AddInstanceMetaClass(const std::vector<MetaType*>& inputlist);
+    MetaGenTemplateClass* GetGenTemplateMetaClassByTemplateList(const std::vector<MetaGenTemplate*>& list);
 
 protected:
     int m_ExtendLevel = 0;
@@ -170,6 +185,7 @@ protected:
 
     // Template related
     std::vector<MetaTemplate*> m_MetaTemplateList;
+    std::vector<MetaGenTemplateClass*> m_MetaGenTemplateClassList;
     bool m_IsTemplateClass = false;
     bool m_IsGenTemplate = false;
 };

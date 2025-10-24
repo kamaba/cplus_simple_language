@@ -23,6 +23,7 @@ class FileMetaBaseTerm;
 class FileMetaCallTerm;
 class FileMetaConstValueTerm;
 class FileMetaBracketTerm;
+class Token;
 
 class FileMetaMemberVariable : public FileMetaBase {
 public:

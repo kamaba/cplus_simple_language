@@ -20,6 +20,10 @@ namespace SimpleLanguage {
         class FileMetaOpAssignSyntax;
         class FileMetaDefineVariableSyntax;
         class FileMetaParTerm;
+        class FileMetaCallLink;
+        class FileMetaBraceTerm;
+        class FileMetaBaseTerm;
+        class FileMetaCallTerm;
     }
 namespace Core {
 
@@ -40,6 +44,7 @@ class ExpressManager;
 class CreateExpressParam;
 class MetaBlockStatements;
 class MetaMethodCall;
+class MetaCallLink;
 class MetaBraceAssignStatements;
 
 // MetaBraceAssignStatements class

@@ -12,7 +12,7 @@
 #include "MetaType.h"
 #include "MetaMemberVariable.h"
 #include "MetaMemberFunction.h"
-#include "MetaExpressNode.h"
+#include "MetaExpressNode/MetaExpressBase.h"
 #include "MetaTemplate.h"
 #include "MetaParam.h"
 #include "MetaGenTemplateClass.h"
@@ -366,11 +366,16 @@ void MetaClass::ParseDefineComplete() {
 }
 
 void MetaClass::ParseGenTemplateClassMetaType() {
-    // 解析生成模板类元类型
+    auto list = std::vector<MetaGenTemplateClass*>(m_MetaGenTemplateClassList);
+    for (auto v : list) {
+        v->Parse();
+    }
 }
 
 void MetaClass::ParseMetaInConstraint() {
-    // 解析元约束
+    for (auto it : m_MetaTemplateList) {
+        it->ParseInConstraint();
+    }
 }
 
 void MetaClass::BindFileMetaClass(Compile::FileMetaClass* fmc) {
@@ -386,8 +391,17 @@ void MetaClass::BindFileMetaClass(Compile::FileMetaClass* fmc) {
 }
 
 void MetaClass::ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc) {
-    // 解析文件元类模板
-    // 这里需要实现模板解析逻辑
+    if (fmc->GetTemplateDefineList().size() > 0) {
+        for (size_t i = 0; i < fmc->GetTemplateDefineList().size(); i++) {
+            std::string tTemplateName = fmc->GetTemplateDefineList()[i]->name;
+            if (IsDefineTemplate(tTemplateName)) {
+                Log::AddInStructMeta(EError::None, "Error 定义模式名称重复!!");
+            } else {
+                MetaTemplate* mt = new MetaTemplate(this, fmc->GetTemplateDefineList()[i], i);
+                m_MetaTemplateList.push_back(mt);
+            }
+        }
+    }
 }
 
 void MetaClass::ParseFileMetaClassMemeberVarAndFunc(Compile::FileMetaClass* fmc) {
@@ -732,24 +746,124 @@ MetaType* MetaClass::BindStructTemplateMetaClassList(MetaType* mt) {
     return nullptr;
 }
 
-// CRITICAL MISSING METHOD: AddInstanceMetaClass
-MetaGenTemplateClass* MetaClass::AddInstanceMetaClass(const std::vector<MetaClass*>& mcList) {
-    // 这个方法在C#源码中非常重要，用于创建模板类的实例
-    // 在C#中，这个方法会创建一个MetaGenTemplateClass实例
-    // 这里需要实现具体的逻辑来创建和管理模板类实例
-    
-    // 创建新的MetaGenTemplateClass实例
-    MetaGenTemplateClass* mgtc = new MetaGenTemplateClass();
-    
-    // 设置模板参数
-    for (size_t i = 0; i < mcList.size(); i++) {
-        mgtc->AddTemplateParameter(mcList[i]);
+// Template related methods implementation
+bool MetaClass::IsDefineTemplate(const std::string& name) {
+    return std::find_if(m_MetaTemplateList.begin(), m_MetaTemplateList.end(),
+        [&name](MetaTemplate* mt) { return mt->GetName() == name; }) != m_MetaTemplateList.end();
+}
+
+void MetaClass::ParseMetaInConstraint() {
+    for (auto it : m_MetaTemplateList) {
+        it->ParseInConstraint();
     }
-    
-    // 注册到ClassManager中
-    ClassManager::GetInstance().AddMetaGenTemplateClass(mgtc);
-    
-    return mgtc;
+}
+
+MetaClass* MetaClass::ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc) {
+    if (fmc->GetTemplateDefineList().size() > 0) {
+        for (size_t i = 0; i < fmc->GetTemplateDefineList().size(); i++) {
+            std::string tTemplateName = fmc->GetTemplateDefineList()[i]->name;
+            if (IsDefineTemplate(tTemplateName)) {
+                Log::AddInStructMeta(EError::None, "Error 定义模式名称重复!!");
+            } else {
+                MetaTemplate* mt = new MetaTemplate(this, fmc->GetTemplateDefineList()[i], i);
+                m_MetaTemplateList.push_back(mt);
+            }
+        }
+    }
+    return this;
+}
+
+bool MetaClass::CompareInputTemplateList(MetaInputTemplateCollection* mitc) {
+    if (mitc == nullptr || mitc->GetMetaTemplateParamsList().size() == 0) {
+        if (this->m_MetaTemplateList.size() == 0)
+            return true;
+        return false;
+    }
+    if (mitc->GetMetaTemplateParamsList().size() == this->m_MetaTemplateList.size()) {
+        for (size_t i = 0; i < mitc->GetMetaTemplateParamsList().size(); i++) {
+            auto mtpl = mitc->GetMetaTemplateParamsList()[i];
+            auto ctpl = this->m_MetaTemplateList[i];
+            return true;
+        }
+    }
+    return false;
+}
+
+MetaTemplate* MetaClass::GetMetaTemplateByName(const std::string& name) {
+    auto it = std::find_if(m_MetaTemplateList.begin(), m_MetaTemplateList.end(),
+        [&name](MetaTemplate* mt) { return mt->GetName() == name; });
+    return it != m_MetaTemplateList.end() ? *it : nullptr;
+}
+
+MetaTemplate* MetaClass::GetMetaTemplateByIndex(int index) {
+    if (index < 0 || index >= static_cast<int>(m_MetaTemplateList.size())) {
+        return nullptr;
+    }
+    return m_MetaTemplateList[index];
+}
+
+bool MetaClass::IsTemplateMetaClassByName(const std::string& name) {
+    return std::any_of(m_MetaTemplateList.begin(), m_MetaTemplateList.end(),
+        [&name](MetaTemplate* mt) { return mt->GetName() == name; });
+}
+
+void MetaClass::AddGenTemplateMetaClass(MetaGenTemplateClass* mtc) {
+    m_MetaGenTemplateClassList.push_back(mtc);
+    ClassManager::GetInstance().AddGenTemplateClass(mtc);
+}
+
+MetaGenTemplateClass* MetaClass::GetGenTemplateMetaClass(MetaInputTemplateCollection* mitc) {
+    for (auto item : m_MetaGenTemplateClassList) {
+        if (item->Adapter(mitc)) {
+            return item;
+        }
+    }
+    return nullptr;
+}
+
+MetaGenTemplateClass* MetaClass::AddInstanceMetaClass(const std::vector<MetaType*>& inputlist) {
+    std::vector<MetaClass*> list;
+    for (auto item : inputlist) {
+        if (!item->IsTemplate()) {
+            list.push_back(item->GetMetaClass());
+        }
+    }
+    return AddInstanceMetaClass(list);
+}
+
+MetaGenTemplateClass* MetaClass::AddInstanceMetaClass(const std::vector<MetaClass*>& mcList) {
+    if (mcList.size() == 0) {
+        return nullptr;
+    }
+    if (this->m_MetaTemplateList.size() == mcList.size()) {
+        std::vector<MetaGenTemplate*> list2;
+        for (size_t i = 0; i < this->m_MetaTemplateList.size(); i++) {
+            if (mcList[i]->IsTemplateClass()) {
+                return nullptr;
+            }
+
+            auto classTemplate = this->m_MetaTemplateList[i];
+            MetaGenTemplate* mgt = new MetaGenTemplate(classTemplate, new MetaType(mcList[i]));
+            list2.push_back(mgt);
+        }
+
+        MetaGenTemplateClass* tmc = GetGenTemplateMetaClassByTemplateList(list2);
+        if (tmc == nullptr) {
+            tmc = new MetaGenTemplateClass(this, list2);
+            this->AddGenTemplateMetaClass(tmc);
+        }
+        return tmc;
+    }
+    return nullptr;
+}
+
+MetaGenTemplateClass* MetaClass::GetGenTemplateMetaClassByTemplateList(const std::vector<MetaGenTemplate*>& list) {
+    for (auto v : m_MetaGenTemplateClassList) {
+        if (v->IsMatchByMetaTemplateClass(list)) {
+            return v;
+        }
+    }
+    return nullptr;
 }
 
 std::string MetaClass::ToString() const {

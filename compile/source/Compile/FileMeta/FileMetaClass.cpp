@@ -10,7 +10,7 @@
 #include "FileMeta.h"
 #include "FileMetaNamespace.h"
 #include "FileMetaMemberVariable.h"
-#include "FileMetaMemberMethod.h"
+#include "FileMetaMemberFunction.h"
 #include "FileMetaMemberData.h"
 #include "FileMetaCommon.h"
 #include "../../Debug/Log.h"

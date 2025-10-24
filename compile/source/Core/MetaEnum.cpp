@@ -15,8 +15,10 @@
 #include "MetaType.h"
 #include "MetaExpressNode/MetaExpressBase.h"
 #include "MetaExpressNode/MetaExpressConst.h"
+#include "MetaExpressNode/MetaExpressNewObject.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
+#include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include <sstream>
 #include <stdexcept>
@@ -79,7 +81,7 @@ void MetaEnum::ParseFileMetaEnumMemeberEnum(Compile::FileMetaClass* fmc) {
     for (auto v : fmc->GetMemberVariableList()) {
         MetaBase* mb = GetMemberVariableByName(v->GetName());
         if (mb != nullptr) {
-            Log::AddInStructMeta(EError::None, "Error Enum MetaMemberData已有定义类: " + m_AllName + "中 已有: " + (v->GetToken() ? v->GetToken()->ToLexemeAllString() : "") + "的元素!!");
+            Log::AddInStructMeta(EError::None, "Error Enum MetaMemberData已有定义类: " + m_AllName + "中 已有: " + (v->GetToken() != nullptr ? v->GetToken()->ToLexemeAllString() : "") + "的元素!!");
             isHave = true;
         }
         else {
@@ -158,7 +160,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetByteMetaClass()) {
                     try {
-                        indexdynamic = static_cast<long long>(std::stoi(pair.second->GetConstExpressNode()->GetValue().GetStringValue()));
+                        indexdynamic = static_cast<long long>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
                         Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
@@ -167,7 +169,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetSByteMetaClass()) {
                     try {
-                        indexdynamic = static_cast<signed char>(std::stoi(pair.second->GetConstExpressNode()->GetValue().GetStringValue()));
+                        indexdynamic = static_cast<signed char>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
                         Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
@@ -176,7 +178,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetUInt16MetaClass()) {
                     try {
-                        indexdynamic = static_cast<unsigned short>(std::stoi(pair.second->GetConstExpressNode()->GetValue().GetStringValue()));
+                        indexdynamic = static_cast<unsigned short>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
                         Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
@@ -185,7 +187,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetInt16MetaClass()) {
                     try {
-                        indexdynamic = static_cast<short>(std::stoi(pair.second->GetConstExpressNode()->GetValue().GetStringValue()));
+                        indexdynamic = static_cast<short>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
                         Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
@@ -194,7 +196,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetInt32MetaClass()) {
                     try {
-                        indexdynamic = std::stoi(pair.second->GetConstExpressNode()->GetValue().GetStringValue());
+                        indexdynamic = std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val);
                     }
                     catch (const std::exception& ex) {
                         Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
@@ -203,7 +205,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetUInt32MetaClass()) {
                     try {
-                        indexdynamic = static_cast<unsigned int>(std::stoi(pair.second->GetConstExpressNode()->GetValue().GetStringValue()));
+                        indexdynamic = static_cast<unsigned int>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
                         Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
@@ -211,16 +213,15 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                     }
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetInt64MetaClass()) {
-                    indexdynamic = std::stoll(pair.second->GetConstExpressNode()->GetValue().GetStringValue());
+                    indexdynamic = std::stoll(pair.second->GetConstExpressNode()->GetValue().data.string_val );
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetUInt64MetaClass()) {
-                    indexdynamic = static_cast<unsigned long long>(std::stoull(pair.second->GetConstExpressNode()->GetValue().GetStringValue()));
+                    indexdynamic = static_cast<unsigned long long>(std::stoull(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                 }
             }
             else {
                 // 创建常量表达式节点
-                MultiData value;
-                value.SetIntValue(indexdynamic++);
+                MultiData value(indexdynamic++);
                 pair.second->SetExpress(new MetaConstExpressNode(m_ExtendClass->GetEType(), value));
             }
         }
@@ -295,7 +296,7 @@ std::string MetaEnum::ToFormatString() const {
     stringBuilder.clear();
     for (int i = 0; i < GetRealDeep(); i++)
         stringBuilder << "\t";
-    stringBuilder << GetPermission().ToFormatString();
+    stringBuilder << (int)GetPermission();
     stringBuilder << " ";
     stringBuilder << "enum ";
     stringBuilder << GetName();

@@ -243,7 +243,7 @@ bool MetaCallNode::CreateCallNode() {
             }
         }
         else {
-            Log::AddInStructMeta(EError::None, "Error 只有第一位置可以使用new关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error 只有第一位置可以使用new关键字" + m_Token->ToLexemeAllString());
         }
     }
     else if (etype == ETokenType::This) {
@@ -592,7 +592,7 @@ bool MetaCallNode::CreateCallNode() {
                 retMt->SetTemplateMetaClass(m_MetaClass);
             }
             if (m_DefineMetaVariable == nullptr) {
-                m_MetaVariable = new MetaVariable("new_" + curmc->GetAllClassName() + "_" + std::to_string(curmc->GetHashCode()), MetaVariable::EVariableFrom::LocalStatement, m_OwnerMetaFunctionBlock, m_OwnerMetaClass, retMt);
+                m_MetaVariable = new MetaVariable("new_" + curmc->GetAllClassName() + "_" + std::to_string(curmc->GetHashCode()), EVariableFrom::LocalStatement, m_OwnerMetaFunctionBlock, m_OwnerMetaClass, retMt);
                 m_OwnerMetaFunctionBlock->AddMetaVariable(m_MetaVariable);
             }
             else {
@@ -617,7 +617,7 @@ bool MetaCallNode::CreateCallNode() {
         else if (m_MetaData != nullptr) {
             m_CallNodeType = ECallNodeType::NewData;
             if (m_FileMetaCallNode->GetFileMetaBraceTerm() != nullptr) {
-                if (m_AllowUseSettings->SetParseFrom( EParseFrom::InputParamExpress) ) {
+                if (m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress ) {
                     Log::AddInStructMeta(EError::None, "Error 在InputParam 里边，构建函数，只允许 使用ClassName() 的方式, 不允许使用 ClassName(){}的方式" + m_FileMetaCallNode->GetFileMetaBraceTerm()->ToTokenString());
                     return false;
                 }
@@ -640,7 +640,7 @@ bool MetaCallNode::CreateCallNode() {
     else {
         if (m_MetaVariable != nullptr) {
             auto tmv = m_MetaVariable;
-            if (m_AllowUseSettings->useNotStatic == false && m_MetaVariable->IsStatic()) {
+            if (m_AllowUseSettings->GetUseNotStatic() == false && m_MetaVariable->IsStatic()) {
                 if (frontCNT == ECallNodeType::FunctionInnerVariableName || frontCNT == ECallNodeType::MemberVariableName || frontCNT == ECallNodeType::This || frontCNT == ECallNodeType::Base) {
                     Log::AddInStructMeta(EError::None, "Error 1 静态调用，不能调用非静态字段!!");
                     return false;
@@ -651,7 +651,7 @@ bool MetaCallNode::CreateCallNode() {
                     MetaCallNode* fmcn1 = nullptr;
                     if (fmcn1 != nullptr && fmcn1->GetCallNodeType() == ECallNodeType::ConstValue) {
                         std::string tname = dynamic_cast<MetaConstExpressNode*>(fmcn1->GetMetaExpressValue())->GetValue().ToString();
-                        m_MetaVariable = m_MetaVariable->GetMetaVaraible(tname);
+                        m_MetaVariable = m_MetaVariable->GetMetaVariable(tname);
                         if (m_MetaVariable == nullptr) {
                             m_MetaVariable = new MetaVisitVariable(tname, m_OwnerMetaClass, m_OwnerMetaFunctionBlock, m_MetaVariable, nullptr);
                             tmv->AddMetaVariable(m_MetaVariable);
@@ -660,7 +660,7 @@ bool MetaCallNode::CreateCallNode() {
                     else if (fmcn1 != nullptr && fmcn1->GetCallNodeType() == ECallNodeType::FunctionInnerVariableName) {
                         auto gmv = fmcn1->GetMetaVariable();
                         std::string tname = "VarName_" + gmv->GetName() + "_VarHashCode_" + std::to_string(gmv->GetHashCode());
-                        m_MetaVariable = tmv->GetMetaVaraible(tname);
+                        m_MetaVariable = tmv->GetMetaVariable(tname);
                         if (m_MetaVariable == nullptr) {
                             m_MetaVariable = new MetaVisitVariable(tname, m_OwnerMetaClass, m_OwnerMetaFunctionBlock, tmv, gmv);
                             tmv->AddMetaVariable(m_MetaVariable);
@@ -704,12 +704,13 @@ bool MetaCallNode::CreateCallNode() {
 }
 
 bool MetaCallNode::GetFirstNode(const std::string& inputname, MetaClass* mc, int count) {
-    if (m_AllowUseSettings->parseFrom == EParseFrom::MemberVariableExpress) {
+    if (m_AllowUseSettings->GetParseFrom() == EParseFrom::MemberVariableExpress) {
         // 处理成员变量表达式的情况
     }
     MetaNode* retMC = nullptr;
     
-    if (m_Token->GetExtend() != nullptr) {
+    //if (m_Token->GetExtend().type != nullptr)
+    {
         EType etype = EType::None;
         // 尝试解析扩展类型
         auto retMC2 = CoreMetaClassManager::GetInstance().GetMetaClassByEType(etype);
@@ -835,8 +836,8 @@ MetaMemberData* MetaCallNode::GetDataValueByMetaMemberData(MetaMemberData* md, c
 }
 
 bool MetaCallNode::CreateMetaTemplateParams(MetaClass* mc, MetaMemberFunction* mmf) {
-    for (size_t i = 0; i < m_FileMetaCallNode->GetInputTemplateNodeList().size(); i++) {
-        auto itnlc = m_FileMetaCallNode->GetInputTemplateNodeList()[i];
+    for (size_t i = 0; i < m_FileMetaCallNode->InputTemplateNodeList().size(); i++) {
+        auto itnlc = m_FileMetaCallNode->InputTemplateNodeList()[i];
         auto ct = TypeManager::GetInstance().RegisterTemplateDefineMetaTemplateFunction(m_OwnerMetaClass, mc, mmf, itnlc, true);
         if (ct != nullptr) {
             m_MetaTemplateParamsList.push_back(ct);
@@ -856,14 +857,14 @@ bool MetaCallNode::GetFunctionOrVariableByOwnerClass(MetaClass* mc, const std::s
         if (inputname == "cast") {
             HandleCastFunction(mc);
         }
-        mmf = mc->GetMetaMemberFunctionByNameAndInputTemplateInputParamCount(inputname, static_cast<int>(m_FileMetaCallNode->GetInputTemplateNodeList().size()), m_MetaInputParamCollection, true);
+        mmf = mc->GetMetaMemberFunctionByNameAndInputTemplateInputParamCount(inputname, static_cast<int>(m_FileMetaCallNode->InputTemplateNodeList().size()), m_MetaInputParamCollection, true);
     }
     else {
         mmv = mc->GetMetaMemberVariableByName(inputname);
         if (mmv == nullptr) {
             mmf = mc->GetMetaDefineGetSetMemberFunctionByName(inputname, m_MetaInputParamCollection,
-                m_AllowUseSettings->getterFunction,
-                m_AllowUseSettings->setterFunction);
+                m_AllowUseSettings->GetGetterFunction(),
+                m_AllowUseSettings->GetSetterFunction() );
         }
     }
 
@@ -952,7 +953,7 @@ std::string MetaCallNode::ToFormatString() const {
             sb << (m_MetaType != nullptr ? m_MetaType->ToString() : "");
         }
         else if (m_CallNodeType == ECallNodeType::ConstValue) {
-            sb << (m_ExpressNode != nullptr ? m_ExpressNode->ToString() : "");
+            //sb << (m_ExpressNode != nullptr ? m_ExpressNode->ToString() : "");
         }
         else {
             sb << (m_Token != nullptr ? m_Token->GetLexeme().ToString() : "") + "Error(CurrentMetaBase is Null!)";
