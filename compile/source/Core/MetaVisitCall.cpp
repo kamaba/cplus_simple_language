@@ -7,14 +7,18 @@
 //****************************************************************************
 
 #include "MetaVisitCall.h"
-#include "MetaInputParamCollection.h"
-#include "MetaBraceOrBracketStatementsContent.h"
-#include "MetaConstExpressNode.h"
-#include "MetaVisitVariable.h"
-#include "CoreMetaClassManager.h"
+#include "MetaExpressNode/MetaExpressConst.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
+#include "MetaParam.h"
+#include "MetaFunction.h"
+#include "MetaMemberFunction.h"
+#include "MetaClass.h"
+#include "MetaType.h"
+#include "MetaVariable.h"
 #include "../Debug/Log.h"
 #include <sstream>
 
+using namespace SimpleLanguage::Debug;
 namespace SimpleLanguage {
 namespace Core {
 
@@ -29,14 +33,14 @@ MetaMethodCall::MetaMethodCall(MetaClass* staticMc, const std::vector<MetaType*>
     }
 
     std::vector<MetaDefineParam*> mpList;
-    if (m_VMCallMetaFunction != nullptr && m_VMCallMetaFunction->metaMemberParamCollection != nullptr) {
-        mpList = m_VMCallMetaFunction->metaMemberParamCollection->metaDefineParamList;
+    if (m_VMCallMetaFunction != nullptr && m_VMCallMetaFunction->GetMetaMemberParamCollection() != nullptr) {
+        mpList = m_VMCallMetaFunction->GetMetaMemberParamCollection()->GetMetaDefineParamList();
     }
-    int defineCount = m_VMCallMetaFunction != nullptr ? m_VMCallMetaFunction->metaMemberParamCollection->maxParamCount : 0;
-    int inputCount = paramCollection != nullptr ? paramCollection->metaInputParamList.size() : 0;
+    int defineCount = m_VMCallMetaFunction != nullptr ? m_VMCallMetaFunction->GetMetaMemberParamCollection()->GetMaxParamCount() : 0;
+    int inputCount = paramCollection != nullptr ? paramCollection->metaInputParamList().size() : 0;
     for (int i = 0; i < defineCount; i++) {
         if (i < inputCount) {
-            MetaInputParam* mip = paramCollection->metaInputParamList[i];
+            MetaInputParam* mip = paramCollection->metaInputParamList()[i];
             m_MetaInputParamList.push_back(mip->express);
         } else {
             MetaDefineParam* mdp = mpList[i];
@@ -68,7 +72,7 @@ MetaFunction* MetaMethodCall::GetTemplateMemberFunction() {
 std::string MetaMethodCall::ToCommonString() const {
     std::ostringstream sb;
     if (m_VMCallMetaFunction != nullptr) {
-        sb << m_VMCallMetaFunction->name << "(";
+        sb << m_VMCallMetaFunction->GetName() << "(";
         int inputCount = m_MetaInputParamList.size();
         for (int i = 0; i < inputCount; i++) {
             sb << m_MetaInputParamList[i]->ToFormatString();
@@ -86,17 +90,17 @@ std::string MetaMethodCall::ToFormatString() const {
 
     if (loadMetaVariable() != nullptr) {
         sb << "[";
-        sb << m_VMCallMetaFunction->ownerMetaClass->allClassName;
+        sb << m_VMCallMetaFunction->GetOwnerMetaClass()->allClassName;
         sb << "]";
 
         sb << loadMetaVariable()->name;
         sb << ".";
     } else {
-        sb << m_VMCallMetaFunction->ownerMetaClass->allClassName;
+        sb << m_VMCallMetaFunction->GetOwnerMetaClass()->allClassName;
         sb << ".";
     }
     if (m_VMCallMetaFunction != nullptr) {
-        sb << m_VMCallMetaFunction->name << "(";
+        sb << m_VMCallMetaFunction->GetName() << "(";
         int inputCount = m_MetaInputParamList.size();
         for (int i = 0; i < inputCount; i++) {
             sb << m_MetaInputParamList[i]->ToFormatString();
@@ -124,7 +128,7 @@ MetaVisitNode* MetaVisitNode::CreateByNewTemplate(MetaType* mt, MetaFunction* mf
     vn->m_CallMetaType = mt;
     vn->m_VisitType = EVisitType::New;
     vn->m_Variable = mv;
-    vn->m_MethodCall = new MetaMethodCall(mt->metaClass, {}, mf, {}, nullptr, nullptr, mv);
+    vn->m_MethodCall = new MetaMethodCall(mt->GetMetaClass(), {}, mf, {}, nullptr, nullptr, mv);
     return vn;
 }
 
@@ -135,8 +139,8 @@ MetaVisitNode* MetaVisitNode::CraeteByNewClass(MetaType* mt, MetaBraceOrBracketS
     vn->m_MetaBraceStatementsContent = mb;
     vn->m_VisitType = EVisitType::New;
     vn->m_Variable = mv;
-    if (dynamic_cast<MetaGenTemplateClass*>(mt->metaClass) != nullptr) {
-        MetaGenTemplateClass* mgtc = dynamic_cast<MetaGenTemplateClass*>(mt->metaClass);
+    if (dynamic_cast<MetaGenTemplateClass*>(mt->GetMetaClass()) != nullptr) {
+        MetaGenTemplateClass* mgtc = dynamic_cast<MetaGenTemplateClass*>(mt->GetMetaClass());
         vn->m_ReturnMetaType = new MetaType(mgtc);
     }
 
@@ -228,10 +232,10 @@ MetaVariable* MetaVisitNode::GetOrgTemplateMetaVariable() {
 
     MetaVariable* t = m_Variable;
     while (t != nullptr) {
-        if (t->sourceMetaVariable == nullptr) {
+        if (t->GetSourceMetaVariable() == nullptr) {
             break;
         }
-        t = t->sourceMetaVariable;
+        t = t->GetSourceMetaVariable();
     }
     return t;
 }
@@ -242,16 +246,16 @@ MetaType* MetaVisitNode::GetMetaDefineType() {
     }
     switch (m_VisitType) {
         case EVisitType::MethodCall: {
-            if (m_MethodCall->metaMemberFunction != nullptr) {
-                return m_MethodCall->metaMemberFunction->returnMetaVariable->metaDefineType;
+            if (m_MethodCall->metaMemberFunction() != nullptr) {
+                return m_MethodCall->metaMemberFunction()->GetReturnMetaVariable()->GetMetaDefineType();
             }
-            return m_MethodCall->function()->returnMetaVariable->metaDefineType;
+            return m_MethodCall->function()->GetReturnMetaVariable()->GetMetaDefineType();
         }
         case EVisitType::VisitVariable: {
-            return m_VisitVariable->metaDefineType;
+            return m_VisitVariable->GetMetaDefineType();
         }
         case EVisitType::Variable: {
-            return m_Variable->metaDefineType;
+            return m_Variable->GetMetaDefineType();
         }
         case EVisitType::New: {
             return m_CallMetaType;

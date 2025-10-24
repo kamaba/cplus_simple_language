@@ -20,6 +20,7 @@
 #include "MetaVariable.h"
 #include "MetaVisitCall.h"
 #include "AllowUseSettings.h"
+#include "MetaMemberFunction.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/FileMeta/FileMetaBase.h"
 #include "../Compile/FileMeta/FileMetaCommon.h"
@@ -296,25 +297,25 @@ void ExpressManager::CreateNewOrCalllink(const CreateExpressParam& cep, MetaNewO
     bool isNewClass = false;
     bool isNewData = false;
     bool isNewEnum = false;
-    if (mcl->GetFinalCallNode() != nullptr && mcl->GetFinalCallNode()->GetVisitType() == MetaVisitNode::EVisitType::New) {
-        if (mcl->GetFinalCallNode()->GetCallMetaType()->IsData()) {
+    if (mcl->GetFinalCallNode() != nullptr && mcl->GetFinalCallNode()->visitType() == EVisitType::New) {
+        if (mcl->GetFinalCallNode()->callMetaType()->IsData()) {
             isNewData = true;
         } else {
             isNewClass = true;
         }
     }
     
-    if (mcl->GetFinalCallNode() != nullptr && mcl->GetFinalCallNode()->GetMethodCall() != nullptr) {
-        if (dynamic_cast<MetaMemberFunction*>(mcl->GetFinalCallNode()->GetMethodCall()->GetFunction())->IsConstructInitFunction()) {
+    if (mcl->GetFinalCallNode() != nullptr && mcl->GetFinalCallNode()->methodCall() != nullptr) {
+        if (dynamic_cast<MetaMemberFunction*>(mcl->GetFinalCallNode()->methodCall()->function())->IsConstructInitFunction()) {
             isNewClass = true;
         }
     }
     
     MetaType* retmt = mcl->GetMetaDeineType();
     if (isNewClass) {
-        mnoen = new MetaNewObjectExpressNode(fmct, mcl, retmt, omc, mbs, mcl->GetFinalCallNode()->GetMethodCall());
+        mnoen = new MetaNewObjectExpressNode(fmct, mcl, retmt, omc, mbs, mcl->GetFinalCallNode()->methodCall());
     } else if (isNewData) {
-        mnoen = new MetaNewObjectExpressNode(fmct, mcl, retmt, omc, mbs, mcl->GetFinalCallNode()->GetMethodCall());
+        mnoen = new MetaNewObjectExpressNode(fmct, mcl, retmt, omc, mbs, mcl->GetFinalCallNode()->methodCall());
     } else if (isNewEnum) {
         mnoen = new MetaNewObjectExpressNode(fmct, mcl, retmt, omc, mbs, nullptr);
     } else {

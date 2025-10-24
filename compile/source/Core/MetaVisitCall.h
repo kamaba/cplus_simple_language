@@ -32,6 +32,7 @@ class MetaVisitVariable;
 class MetaBraceOrBracketStatementsContent;
 class MetaConstExpressNode;
 class MetaGenTempalteFunction;
+class MetaGenTemplateClass;
 
 enum class EVisitType : uint8_t {
     ConstValue = 0,

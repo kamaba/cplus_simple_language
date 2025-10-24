@@ -57,7 +57,7 @@ void MetaVariable::SetOwnerMetaClass(MetaClass* ownerclass) {
 }
 
 MetaClass* MetaVariable::GetOwnerClassTemplateClass() const {
-    // ������Ҫ����ʵ�ʵ� MetaGenTemplateClass �ṹ������
+    // ������Ҫ����ʵ�ʵ� MetaGenTemplateClass �ṹ������
     // if (auto mgtc = dynamic_cast<MetaGenTemplateClass*>(m_OwnerMetaClass)) {
     //     return mgtc->GetMetaTemplateClass();
     // }
@@ -133,11 +133,131 @@ std::vector<MetaVariable*> MetaVariable::GetAllMetaVariableList() const {
 }
 
 std::string MetaVariable::ToFormatString() const {
-    std::string result = m_Name;
-    if (m_DefineMetaType != nullptr) {
-        result += " : " + m_DefineMetaType->ToFormatString();
+    std::ostringstream sb;
+    sb << "[" << m_DefineMetaType->ToFormatString() << "]";
+    sb << m_Name;
+    return sb.str();
+}
+
+std::string MetaVariable::ToString() const {
+    return m_Name;
+}
+
+// MetaVisitVariable implementation
+MetaVisitVariable::MetaVisitVariable(MetaVariable* source, MetaVariable* target) : MetaVariable() {
+    m_VisitType = EVisitType::Link;
+    m_SourceMetaVariable = source;
+    m_TargetMetaVariable = target;
+    m_DefineMetaType = new MetaType(*target->GetMetaDefineType());
+}
+
+MetaVisitVariable::MetaVisitVariable(const std::string& name, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* lmv, MetaVariable* vmv) : MetaVariable() {
+    m_Name = name;
+    m_AtName = name;
+    m_OwnerMetaClass = mc;
+    m_SourceMetaVariable = lmv;
+    if (lmv->IsArray()) {
+        if (vmv == nullptr && m_AtName.empty()) {
+            Log::AddInStructMeta(EError::None, "Error VisitMetaVariable访问变量访问位置不能同时为空!!");
+            return;
+        }
+        m_TargetMetaVariable = vmv;
+
+        MetaType* gmit = m_SourceMetaVariable->GetMetaDefineType()->GetMetaInputTemplateByIndex();
+        if (gmit == nullptr) {
+            Log::AddInStructMeta(EError::None, "Error 访问的Array中，没有找到模版 名称!!");
+            return;
+        }
+        m_DefineMetaType = new MetaType(*gmit);
     }
-    return result;
+}
+
+int MetaVisitVariable::GetIRMemberIndex() {
+    MetaMemberVariable* mmv = dynamic_cast<MetaMemberVariable*>(m_SourceMetaVariable);
+    if (mmv != nullptr) {
+        // return mmv->GetOwnerMetaClass()->GetLocalMemberVariableIndex(mmv);
+    }
+    return -1;
+}
+
+std::string MetaVisitVariable::ToFormatString() const {
+    std::ostringstream sb;
+
+    if (m_VisitType == EVisitType::Link) {
+        if (m_SourceMetaVariable != nullptr) {
+            sb << "[" << m_SourceMetaVariable->GetMetaDefineType()->GetName() << "]";
+            sb << m_SourceMetaVariable->GetName();
+            sb << ".";
+        }
+        sb << "[" << m_TargetMetaVariable->GetMetaDefineType()->GetName() << "]";
+        sb << m_TargetMetaVariable->GetName();
+    } else {
+        sb << m_SourceMetaVariable->GetName();
+        if (m_SourceMetaVariable->IsArray()) {
+            sb << "[";
+            sb << m_Name;
+            sb << "]";
+        } else {
+            sb << m_TargetMetaVariable->GetName();
+        }
+    }
+
+    return sb.str();
+}
+
+// MetaIteratorVariable implementation
+MetaIteratorVariable::MetaIteratorVariable(const std::string& name, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* lmv, MetaType* orgMC) : MetaVariable() {
+    m_Name = name;
+    m_OwnerMetaClass = mc;
+    m_OwnerMetaBlockStatements = mbs;
+    m_LocalMetaVariable = lmv;
+    m_OrgMetaDefineType = orgMC;
+    m_IndexMetaVariable = new MetaVariable("index", EVariableFrom::ArrayInner, mbs, mc, new MetaType(CoreMetaClassManager::GetInstance().GetInt32MetaClass()));
+    m_ValueMetaVariable = new MetaVariable("value", EVariableFrom::ArrayInner, mbs, mc, new MetaType(orgMC->GetMetaClass()));
+    m_IndexMetaVariable->AddPingToken(lmv->GetPingToken());
+    m_ValueMetaVariable->AddPingToken(lmv->GetPingToken());
+    if (lmv->IsArray()) {
+        MetaType* gmit = m_LocalMetaVariable->GetMetaDefineType()->GetMetaInputTemplateByIndex();
+        if (gmit == nullptr) {
+            Log::AddInStructMeta(EError::None, "Error 访问的Array中，没有找到模版 名称!!");
+            return;
+        }
+        m_DefineMetaType = new MetaType(*gmit);
+    } else {
+        m_DefineMetaType = new MetaType(*lmv->GetMetaDefineType());
+    }
+}
+MetaClass* MetaIteratorVariable::GetIteratorMetaClass() const { return m_OrgMetaDefineType->GetMetaClass(); }
+
+
+MetaVariable* MetaIteratorVariable::GetMetaVariable(const std::string& name) const {
+    if (name == "index") {
+        return m_IndexMetaVariable;
+    } else if (name == "value") {
+        return m_ValueMetaVariable;
+    }
+    auto it = m_MetaVariableDict.find(name);
+    if (it != m_MetaVariableDict.end()) {
+        return it->second;
+    }
+    return m_OrgMetaDefineType->GetMetaClass()->GetMetaMemberVariableByName(name);
+}
+
+std::string MetaIteratorVariable::ToFormatString() const {
+    std::ostringstream sb;
+
+    sb << m_LocalMetaVariable->GetName();
+    if (m_LocalMetaVariable->IsArray()) {
+        sb << "[";
+        sb << m_Name;
+        sb << "]";
+    }
+
+    return sb.str();
+}
+
+std::string MetaIteratorVariable::ToString() const {
+    return m_Name;
 }
 
 } // namespace Core
