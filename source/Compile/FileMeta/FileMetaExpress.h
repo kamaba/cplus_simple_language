@@ -24,6 +24,10 @@ class FileMetaBracketTerm;
 class FileMetaIfSyntaxTerm;
 class FileMetaThreeItemSyntaxTerm;
 class FileMetaMatchSyntaxTerm;
+class FileMetaCallLink;
+class FileMetaSyntax;
+class FileMetaKeyIfSyntax;
+class FileMetaKeySwitchSyntax;
 
 class FileMetaBaseTerm : public FileMetaBase {
 public:
@@ -31,30 +35,31 @@ public:
     virtual ~FileMetaBaseTerm() = default;
 
     // Properties
-    bool GetDirty() const { return m_IsDirty; }
-    void SetDirty(bool value) { m_IsDirty = value; }
+    bool GetDirty() const;
+    void SetDirty(bool value);
     
-    int GetPriority() const { return m_Priority; }
-    void SetPriority(int value) { m_Priority = value; }
+    int GetPriority() const;
+    void SetPriority(int value);
     
-    bool IsOnlyOne() const { return GetLeft() == nullptr && GetRight() == nullptr; }
-    const std::vector<FileMetaBaseTerm*>& GetFileMetaExpressList() const { return m_FileMetaExpressList; }
+    bool IsOnlyOne() const;
+    const std::vector<FileMetaBaseTerm*>& GetFileMetaExpressList() const;
     
-    FileMetaBaseTerm* GetLeft() const { return m_Left; }
-    void setLeft(FileMetaBaseTerm* value) {
-        m_Left = value;
-        m_IsDirty = true;
-    }
+    FileMetaBaseTerm* GetLeft() const;
+    void SetLeft(FileMetaBaseTerm* value);
     
-    FileMetaBaseTerm* GetRight() const { return m_Right; }
-    void SetRight(FileMetaBaseTerm* value) {
-        m_Right = value;
-        m_IsDirty = true;
-    }
+    FileMetaBaseTerm* GetRight() const;
+    void SetRight(FileMetaBaseTerm* value);
     
-    virtual FileMetaBaseTerm* Root() const;
-    virtual void BuildAST() = 0;
+    virtual FileMetaBaseTerm* GetRoot() const;
+    
+    // Methods
+    std::vector<FileMetaBaseTerm*> SplitParamList();
+    virtual void ClearDirty();
+    virtual void AddFileMetaTerm(FileMetaBaseTerm* fmn);
+    virtual void AddRangeFileMetaTerm(const std::vector<FileMetaBaseTerm*>& fmn);
+    virtual bool BuildAST();
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const;
 
 protected:
     bool m_IsDirty = false;
@@ -62,6 +67,7 @@ protected:
     std::vector<FileMetaBaseTerm*> m_FileMetaExpressList;
     FileMetaBaseTerm* m_Left = nullptr;
     FileMetaBaseTerm* m_Right = nullptr;
+    FileMetaBaseTerm* m_Root = nullptr;
 };
 
 class FileMetaSymbolTerm : public FileMetaBaseTerm {
@@ -69,28 +75,34 @@ public:
     FileMetaSymbolTerm(FileMeta* fm, Token* token);
     virtual ~FileMetaSymbolTerm() = default;
 
-    Token* symbolToken() const { return m_SymbolToken; }
-    virtual void BuildAST() override;
+    ETokenType GetSymbolType() const;
+    Token* GetToken() const;
+    
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const override;
 
 private:
-    Token* m_SymbolToken = nullptr;
+    void SetPriority();
+    Token* m_Token = nullptr;
 };
 
 class FileMetaConstValueTerm : public FileMetaBaseTerm {
 public:
     FileMetaConstValueTerm(FileMeta* fm, Token* token);
-    FileMetaConstValueTerm(FileMeta* fm, Token* valueToken, Token* signalToken);
+    FileMetaConstValueTerm(FileMeta* fm, Token* valueToken, Token* plusMinusToken);
     virtual ~FileMetaConstValueTerm() = default;
 
-    Token* ValueToken() const { return m_ValueToken; }
-    Token* SignalToken() const { return m_SignalToken; }
-    virtual void BuildAST() override;
+    Token* GetValueToken() const;
+    Token* GetPlusOrMinusToken() const;
+    
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const override;
 
 private:
     Token* m_ValueToken = nullptr;
-    Token* m_SignalToken = nullptr;
+    Token* m_PlusOrMinusToken = nullptr;
 };
 
 class FileMetaCallTerm : public FileMetaBaseTerm {
@@ -98,12 +110,15 @@ public:
     FileMetaCallTerm(FileMeta* fm, Node* node);
     virtual ~FileMetaCallTerm() = default;
 
-    Node* CallNode() const { return m_CallNode; }
-    virtual void BuildAST() override;
+    FileMetaCallLink* GetCallLink() const;
+    Node* GetCallNode() const;
+    
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const override;
 
 private:
-    Node* m_CallNode = nullptr;
+    FileMetaCallLink* m_CallLink = nullptr;
 };
 
 class FileMetaParTerm : public FileMetaBaseTerm {
@@ -111,14 +126,17 @@ public:
     FileMetaParTerm(FileMeta* fm, Node* node, FileMetaTermExpress::EExpressType expressType);
     virtual ~FileMetaParTerm() = default;
 
-    Node* ParNode() const { return m_ParNode; }
-    Token* EndToken() const { return m_EndToken; }
-    FileMetaTermExpress::EExpressType ExpressType() const { return m_ExpressType; }
-    virtual void BuildAST() override;
+    Node* GetParNode() const;
+    Token* GetEndToken() const;
+    FileMetaTermExpress::EExpressType GetExpressType() const;
+    
+    virtual void ClearDirty() override;
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const override;
 
 private:
-    Node* m_ParNode = nullptr;
+    Node* m_Node = nullptr;
     Token* m_EndToken = nullptr;
     FileMetaTermExpress::EExpressType m_ExpressType;
 };
@@ -128,68 +146,100 @@ public:
     FileMetaBraceTerm(FileMeta* fm, Node* node);
     virtual ~FileMetaBraceTerm() = default;
 
-    Node* BraceNode() const { return m_BraceNode; }
-    virtual void BuildAST() override;
+    const std::vector<FileMetaSyntax*>& GetFileMetaAssignSyntaxList() const;
+    const std::vector<FileMetaCallLink*>& GetFileMetaCallLinkList() const;
+    bool IsArray() const;
+    void SetIsArray(bool value);
+    
+    virtual void ClearDirty() override;
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const override;
 
 private:
-    Node* m_BraceNode = nullptr;
+    void HandleBraceTerm();
+    
+    std::vector<FileMetaSyntax*> m_FileMetaAssignSyntaxList;
+    std::vector<FileMetaCallLink*> m_FileMetaCallLinkList;
+    bool m_IsArray = false;
+    Token* m_BraceEndToken = nullptr;
+    Node* m_Node = nullptr;
 };
 
 class FileMetaBracketTerm : public FileMetaBaseTerm {
 public:
-    FileMetaBracketTerm(FileMeta* fm, Node* node, int bracketType = 0);
+    FileMetaBracketTerm(FileMeta* fm, Node* node);
+    FileMetaBracketTerm(FileMeta* fm, Node* node, int bracketType);
     virtual ~FileMetaBracketTerm() = default;
 
-    Node* BracketNode() const { return m_BracketNode; }
-    int BracketType() const { return m_BracketType; }
-    Token* EndToken() { return m_BracketeEndToken;  }
-    virtual void BuildAST() override;
+    Node* GetBracketNode() const;
+    int GetBracketType() const;
+    Token* GetEndToken() const;
+    
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const override;
 
 private:
-    Token* m_BracketeEndToken;
+    Token* m_BracketeEndToken = nullptr;
     Node* m_BracketNode = nullptr;
     int m_BracketType = 0;
 };
 
 class FileMetaIfSyntaxTerm : public FileMetaBaseTerm {
 public:
-    FileMetaIfSyntaxTerm(FileMeta* fm, Node* node);
+    FileMetaIfSyntaxTerm(FileMeta* fm, FileMetaKeyIfSyntax* ifSyntax);
     virtual ~FileMetaIfSyntaxTerm() = default;
 
-    Node* IfNode() const { return m_IfNode; }
-    virtual void BuildAST() override;
+    FileMetaKeyIfSyntax* GetIfSyntax() const;
+    
+    virtual void SetDeep(int deep) override;
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
 
 private:
-    Node* m_IfNode = nullptr;
+    FileMetaKeyIfSyntax* m_IfSyntax = nullptr;
 };
 
 class FileMetaThreeItemSyntaxTerm : public FileMetaBaseTerm {
 public:
-    FileMetaThreeItemSyntaxTerm(FileMeta* fm, Node* node);
+    FileMetaThreeItemSyntaxTerm(FileMeta* fm);
     virtual ~FileMetaThreeItemSyntaxTerm() = default;
 
-    Node* ThreeItemNode() const { return m_ThreeItemNode; }
-    virtual void BuildAST() override;
+    FileMetaBaseTerm* GetReturn1Term() const;
+    void SetReturn1Term(FileMetaBaseTerm* value);
+    
+    FileMetaBaseTerm* GetReturn2Term() const;
+    void SetReturn2Term(FileMetaBaseTerm* value);
+    
+    FileMetaBaseTerm* GetConditionTerm() const;
+    void SetConditionTerm(FileMetaBaseTerm* value);
+    
+    void SetItemTerm(int i, FileMetaBaseTerm* fmbt);
+    
+    virtual void SetDeep(int deep) override;
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
 
 private:
-    Node* m_ThreeItemNode = nullptr;
+    FileMetaBaseTerm* m_Return1Term = nullptr;
+    FileMetaBaseTerm* m_Return2Term = nullptr;
+    FileMetaBaseTerm* m_ConditionTerm = nullptr;
 };
 
 class FileMetaMatchSyntaxTerm : public FileMetaBaseTerm {
 public:
-    FileMetaMatchSyntaxTerm(FileMeta* fm, Node* node);
+    FileMetaMatchSyntaxTerm(FileMeta* fm, FileMetaKeySwitchSyntax* switchSyntax);
     virtual ~FileMetaMatchSyntaxTerm() = default;
 
-    Node* MatchNode() const { return m_MatchNode; }
-    virtual void BuildAST() override;
+    FileMetaKeySwitchSyntax* GetSwitchSyntax() const;
+    
+    virtual void SetDeep(int deep) override;
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
 
 private:
-    Node* m_MatchNode = nullptr;
+    FileMetaKeySwitchSyntax* m_SwitchSyntax = nullptr;
 };
 
 class FileMetaTermExpress : public FileMetaBaseTerm {
@@ -203,14 +253,23 @@ public:
     FileMetaTermExpress(FileMeta* fm, const std::vector<Node*>& nodeList, EExpressType expressType);
     virtual ~FileMetaTermExpress() = default;
 
-    const std::vector<Node*>& NodeList() const { return m_NodeList; }
-    EExpressType ExpressType() const { return m_ExpressType; }
-    virtual void BuildAST() override;
+    const std::vector<Node*>& GetNodeList() const;
+    EExpressType GetExpressType() const;
+    bool GetCanUseDoublePlusOrMinus() const;
+    void SetCanUseDoublePlusOrMinus(bool value);
+    
+    virtual void SetDeep(int deep) override;
+    virtual bool BuildAST() override;
     virtual std::string ToFormatString() const override;
+    virtual std::string ToTokenString() const override;
 
 private:
+    void CreateFileMetaExpressByChildList(const std::vector<Node*>& nodeList);
+    bool BuildTst(std::vector<FileMetaBaseTerm*>& list);
+    
     std::vector<Node*> m_NodeList;
     EExpressType m_ExpressType;
+    bool m_CanUseDoublePlusOrMinus = false;
 };
 
 } // namespace Compile

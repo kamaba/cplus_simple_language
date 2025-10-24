@@ -8,24 +8,23 @@
 
 #include "MetaMemberData.h"
 #include "MetaVariable.h"
-#include "MetaExpressNode.h"
+#include "MetaExpressNode/MetaExpressBase.h"
 #include "MetaType.h"
 #include "MetaData.h"
-#include "FileMetaMemberData.h"
-#include "FileMetaOpAssignSyntax.h"
-#include "MetaConstExpressNode.h"
-#include "MetaCallLinkExpressNode.h"
-#include "MetaNewObjectExpressNode.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
+#include "../Compile/FileMeta/FileMetaSyntax.h"
+#include "../Compile/FileMeta/FileMetaExpress.h"
 #include "MetaVariableManager.h"
-#include "Log.h"
-#include "CoreMetaClassManager.h"
+#include "../Debug/Log.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
 #include "ExpressManager.h"
 #include "AllowUseSettings.h"
-#include "CreateExpressParam.h"
-#include "Global.h"
 #include <unordered_map>
 #include <string>
 #include <sstream>
+
+using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -384,7 +383,7 @@ std::string MetaMemberData::ToFormatString2(bool isDynamic) {
     return sb.str();
 }
 
-std::string MetaMemberData::ToString() {
+std::string MetaMemberData::ToString() const {
     std::stringstream sb;
     if (m_IsWithName) {
         sb << m_Name;

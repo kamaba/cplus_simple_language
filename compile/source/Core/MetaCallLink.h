@@ -12,15 +12,13 @@
 #include <vector>
 #include <memory>
 
-
-
 namespace SimpleLanguage {
     namespace Compile{
         class FileMetaCallLink;
     }
 namespace Core {
 
-// Ç°ÏòÉùÃ÷
+// å‰å‘å£°æ˜
 class MetaVisitNode;
 class MetaClass;
 class MetaBlockStatements;
@@ -28,34 +26,34 @@ class MetaType;
 class MetaVariable;
 class AllowUseSettings;
 class MetaCallNode;
+class Token;
+class MetaExpressNode;
 
 class MetaCallLink {
 public:
+    // æ„é€ å‡½æ•°
     MetaCallLink(SimpleLanguage::Compile::FileMetaCallLink* fmcl, MetaClass* metaClass, MetaBlockStatements* mbs, MetaType* frontDefineMt, MetaVariable* mv);
     ~MetaCallLink() = default;
 
-    // ÊôĞÔ·ÃÎÊÆ÷
+    // å±æ€§è®¿é—®å™¨
     MetaVisitNode* GetFinalCallNode() const { return m_FinalCallNode; }
     const std::vector<MetaVisitNode*>& GetCallNodeList() const { return m_VisitNodeList; }
     AllowUseSettings* GetAllowUseSettings() const { return m_AllowUseSettings; }
 
-    // ·½·¨
-    void Parse(AllowUseSettings* auc);
+    // æ ¸å¿ƒæ–¹æ³•
+    Token* GetToken();
+    bool Parse(AllowUseSettings* _useConst);
+    int CalcParseLevel(int level);
     void CalcReturnType();
+    MetaVariable* ExecuteGetMetaVariable();
+    MetaClass* ExecuteGetMetaClass();
+    MetaExpressNode* GetMetaExpressNode();
+    MetaType* GetMetaDeineType();
     std::string ToFormatString() const;
     std::string ToTokenString() const;
-    MetaCallLink* Clone() const;
 
 private:
     void CreateCallLinkNode(MetaType* frontDefineMt, MetaVariable* mv);
-    void ParseCallNodeList(AllowUseSettings* auc);
-    void CalcCallNodeListReturnType();
-    void CreateVisitNodeList();
-    void ParseVisitNodeList(AllowUseSettings* auc);
-    void CalcVisitNodeListReturnType();
-    void CreateFinalCallNode();
-    void ParseFinalCallNode(AllowUseSettings* auc);
-    void CalcFinalCallNodeReturnType();
 
     SimpleLanguage::Compile::FileMetaCallLink* m_FileMetaCallLink = nullptr;
     MetaClass* m_OwnerMetaClass = nullptr;
@@ -68,4 +66,3 @@ private:
 
 } // namespace Core
 } // namespace SimpleLanguage
-

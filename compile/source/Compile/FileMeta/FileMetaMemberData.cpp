@@ -1,6 +1,7 @@
 #include "FileMetaMemberData.h"
 #include "FileMeta.h"
 #include "FileMetaExpress.h"
+#include "../../Core/MetaMemberData.h"
 #include "../../Debug/Log.h"
 #include "../../Define.h"
 #include "../Parse/Node.h"
@@ -75,7 +76,7 @@ void FileMetaMemberData::SetDeep(int _deep) {
     }
 }
 
-void FileMetaMemberData::SetMetaMemberData(MetaMemberData* mmd) {
+void FileMetaMemberData::SetMetaMemberData(Core::MetaMemberData* mmd) {
     // Implementation for setting meta member data
 }
 

@@ -8,56 +8,96 @@
 
 #pragma once
 
+#include "MetaBase.h"
 #include <vector>
 #include <string>
 
 namespace SimpleLanguage {
 namespace Core {
 
-    enum class EMetaTypeType : uint8_t
-    {
-        MetaClass = 0,
-        MetaGenClass = 1,
-        TemplateClassWithTemplate = 2
-    };
+// Forward declarations
+class MetaClass;
+class MetaTemplate;
+class MetaGenTemplateClass;
+class MetaInputTemplateCollection;
+class MetaInputParamCollection;
+class MetaMemberFunction;
+class MetaMemberEnum;
+class MetaExpressNode;
+class MetaGenTemplate;
 
-    class MetaClass;
-    class MetaTemplate;
+enum class EMetaTypeType : uint8_t
+{
+    None = 0,
+    MetaClass = 1,
+    MetaGenClass = 2,
+    Template = 3,
+    TemplateClassWithTemplate = 4
+};
 
-    class MetaType
-    {
-    public:
-        MetaType();
-        MetaType(MetaClass* metaClass);
-        MetaType(const MetaType& mt);
-        virtual ~MetaType() = default;
+class MetaType : public MetaBase
+{
+public:
+    // Properties
+    std::string GetName() const override;
+    EMetaTypeType GetEType() const { return m_EType; }
+    MetaClass* GetMetaClass() const { return m_MetaClass; }
+    MetaClass* GetTypeInferenceClass() const { return m_TypeInferenceClass; }
+    bool IsEnum() const;
+    bool IsData() const;
+    bool IsTemplate() const { return m_EType == EMetaTypeType::Template; }
+    MetaMemberEnum* GetEnumValue() const { return m_EnumValue; }
+    const std::vector<MetaType*>& GetTemplateMetaTypeList() const { return m_TemplateMetaTypeList; }
+    bool IsArray() const;
+    bool IsDynamicClass() const;
+    bool IsDynamicData() const;
+    bool IsDefineMetaClass() const { return m_IsDefineMetaClass; }
+    MetaTemplate* GetMetaTemplate() const { return m_MetaTemplate; }
 
-        // ÊôÐÔ·ÃÎÊÆ÷
-        EMetaTypeType GetEType() const { return m_EType; }
-        MetaClass* GetMetaClass() const { return m_MetaClass; }
-        const std::vector<MetaType*>& GetTemplateMetaTypeList() const { return m_TemplateMetaTypeList; }
-        bool IsTemplate() const { return m_IsTemplate; }
-        bool IsIncludeTemplate() const { return m_IsIncludeTemplate; }
-        bool IsArray();
+    // Constructors
+    MetaType();
+    MetaType(MetaTemplate* mt);
+    MetaType(MetaGenTemplateClass* mgtc, const std::vector<MetaType*>& mtList);
+    MetaType(MetaClass* mc);
+    MetaType(MetaClass* mc, const std::vector<MetaType*>& mtList);
+    MetaType(MetaClass* mc, MetaClass* templatemc, MetaInputTemplateCollection* mitc);
+    MetaType(const MetaType& mt);
 
-        // ÉèÖÃ·½·¨
-        void SetMetaClass(MetaClass* metaClass) { m_MetaClass = metaClass; }
-        void SetEType(EMetaTypeType eType) { m_EType = eType; }
-        void SetTemplate(bool isTemplate) { m_IsTemplate = isTemplate; }
-        void SetIncludeTemplate(bool include) { m_IsIncludeTemplate = include; }
+    // Methods
+    bool IsCanForIn() const;
+    MetaClass* GetTemplateMetaClass(bool& isGTC) const;
+    MetaClass* GetTemplateMetaClass() const;
+    bool IsIncludeTemplate() const;
+    bool IsIncludeClassTemplate(MetaClass* ownerClass) const;
+    bool IsIncludeFunctionTemplate(MetaMemberFunction* mmf) const;
+    MetaMemberFunction* FindTemplateFunctionTemplate(MetaMemberFunction* mmf) const;
+    void AddTemplateMetaType(MetaType* mt);
+    MetaMemberFunction* GetMetaMemberConstructFunction(MetaInputParamCollection* input = nullptr) const;
+    static bool EqualMetaDefineType(const MetaType* mdtL, const MetaType* mdtR);
+    void SetMetaClass(MetaClass* mc);
+    void SetMetaTemplate(MetaTemplate* mt);
+    void SetTypeInferenceClass(MetaClass* mc);
+    void SetTemplateMetaClass(MetaClass* mc);
+    void UpdateMetaClassByRawMetaClassAndInputTemplateCollection();
+    MetaClass* UpdateMetaGenTemplate(const std::vector<MetaGenTemplate*>& metaGenTemplateList);
+    MetaType* GetMetaInputTemplateByIndex(int index = 0) const;
+    MetaExpressNode* GetDefaultExpressNode() const;
 
-        // ·½·¨
-        std::string ToFormatString() const;
-        bool IsIncludeClassTemplate(MetaClass* metaClass) const;
-        static bool EqualMetaDefineType(const MetaType* v, const MetaType* mt);
+    // Override methods
+    std::string ToFormatString() const override;
+    std::string ToString() const;
 
-    private:
-        EMetaTypeType m_EType = EMetaTypeType::MetaClass;
-        MetaClass* m_MetaClass = nullptr;
-        std::vector<MetaType*> m_TemplateMetaTypeList;
-        bool m_IsTemplate = false;
-        bool m_IsIncludeTemplate = false;
-    };
+private:
+    EMetaTypeType m_EType = EMetaTypeType::None;
+    MetaClass* m_MetaClass = nullptr;                       // int a = 0; => int  List<int> => List<int>
+    MetaClass* m_TypeInferenceClass = nullptr;              // æŽ¨ç†ç±»
+    MetaType* m_ParentMetaType = nullptr;
+    MetaTemplate* m_MetaTemplate = nullptr;
+    MetaExpressNode* m_DefaultExpressNode = nullptr;        // int a => a = 0;
+    MetaMemberEnum* m_EnumValue = nullptr;                  // Enum{ a = 1; } Enum e = Enum.a(20)=> Enum.a(20)
+    bool m_IsDefineMetaClass = false;
+    std::vector<MetaType*> m_TemplateMetaTypeList;          // Map<T1,T2> ä¸€èˆ¬ç”¨åœ¨è¿”å›žå€¼ç±»åž‹å®šä¹‰ä¸­
+};
 
 } // namespace Core
 } // namespace SimpleLanguage

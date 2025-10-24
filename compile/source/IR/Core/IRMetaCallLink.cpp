@@ -10,7 +10,6 @@
 #include <sstream>
 
 namespace SimpleLanguage {
-namespace Core {
 namespace IR {
 
 void IRMetaCallLink::ParseToIRDataList(IRMethod* irMethod, const std::vector<MetaVisitNode*>& cnlist) {
@@ -183,5 +182,4 @@ std::string IRMetaCallLink::ToIRString() {
 }
 
 } // namespace IR
-} // namespace Core
 } // namespace SimpleLanguage

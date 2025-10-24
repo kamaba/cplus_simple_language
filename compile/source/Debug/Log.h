@@ -126,6 +126,7 @@ public:
     static LogData* AddInStructMeta(EError err, const std::string& msg, Compile::Token* token);
     static LogData* AddGenIR(EError err, const std::string& msg);
     static LogData* AddVM(EError err, const std::string& msg);
+    static void Write(const char* msg) {};
     
 private:
     static void AddLog(Compile::Token* token, EError err, const std::string& msg);

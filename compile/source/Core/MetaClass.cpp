@@ -6,8 +6,8 @@
 //  Description: Meta class's attribute
 //****************************************************************************
 
-#include "../Compile/FileMeta/FileMetaClass.h"
 #include "MetaClass.h"
+#include "../Compile/FileMeta/FileMetaClass.h"
 #include "MetaNode.h"
 #include "MetaType.h"
 #include "MetaMemberVariable.h"
@@ -21,7 +21,6 @@
 #include "MetaVariableManager.h"
 #include "MethodManager.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
-
 #include "../Debug/Log.h"
 #include <algorithm>
 #include <sstream>
@@ -221,9 +220,6 @@ void MetaClass::HandleExtendMemberVariable() {
             auto c = pair.second;
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
                 auto ld = Log::AddInStructMeta(EError::None, "Error 继承的类123:" + m_AllName + " 在继承的父类" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " 中已包含:" + c->GetName() + " ");
-                // ld.valDict.Add(EMetaType.MetaClass, this);
-                // ld.valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
-                // ld.valDict.Add(EMetaType.MetaMemberVariable, c);
                 continue;
             }
             this->m_MetaExtendMemeberVariableDict[c->GetName()] = c;
@@ -232,9 +228,6 @@ void MetaClass::HandleExtendMemberVariable() {
             auto c = pair.second;
             if (this->m_MetaMemberVariableDict.find(c->GetName()) != this->m_MetaMemberVariableDict.end()) {
                 auto ld = Log::AddInStructMeta(EError::None, "Error 继承的类123:" + m_AllName + " 在继承的父类" + (m_ExtendClass ? m_ExtendClass->m_AllName : "null") + " 中已包含:" + c->GetName() + " ");
-                // ld.valDict.Add(EMetaType.MetaClass, this);
-                // ld.valDict.Add(EMetaType.MetaExtendsClass, m_ExtendClass);
-                // ld.valDict.Add(EMetaType.MetaMemberVariable, c);
                 continue;
             }
             this->m_MetaExtendMemeberVariableDict[c->GetName()] = c;
@@ -737,6 +730,26 @@ MetaType* MetaClass::BindStructTemplateMetaClassList(MetaType* mt) {
         }
     }
     return nullptr;
+}
+
+// CRITICAL MISSING METHOD: AddInstanceMetaClass
+MetaGenTemplateClass* MetaClass::AddInstanceMetaClass(const std::vector<MetaClass*>& mcList) {
+    // 这个方法在C#源码中非常重要，用于创建模板类的实例
+    // 在C#中，这个方法会创建一个MetaGenTemplateClass实例
+    // 这里需要实现具体的逻辑来创建和管理模板类实例
+    
+    // 创建新的MetaGenTemplateClass实例
+    MetaGenTemplateClass* mgtc = new MetaGenTemplateClass();
+    
+    // 设置模板参数
+    for (size_t i = 0; i < mcList.size(); i++) {
+        mgtc->AddTemplateParameter(mcList[i]);
+    }
+    
+    // 注册到ClassManager中
+    ClassManager::GetInstance().AddMetaGenTemplateClass(mgtc);
+    
+    return mgtc;
 }
 
 std::string MetaClass::ToString() const {

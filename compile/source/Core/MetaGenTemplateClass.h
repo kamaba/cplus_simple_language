@@ -17,18 +17,25 @@
 namespace SimpleLanguage {
 namespace Core {
 
+// Forward declarations
+class MetaGenTemplate;
+class MetaType;
+class MetaMemberVariable;
+class MetaMemberFunction;
+class MetaInputTemplateCollection;
+
 class MetaGenTemplateClass : public MetaClass {
 public:
-    // 构造函数
+    // Constructor
     MetaGenTemplateClass(MetaClass* mtc, const std::vector<MetaGenTemplate*>& list);
     virtual ~MetaGenTemplateClass() = default;
 
-    // 属性访问器
+    // Property accessors
     MetaClass* GetMetaTemplateClass() const { return m_MetaTemplateClass; }
     const std::vector<MetaGenTemplate*>& GetMetaGenTemplateList() const { return m_MetaGenTemplateList; }
     virtual bool IsGenTemplate() const override { return true; }
 
-    // 方法
+    // Methods
     void UpdateRegsterGenMetaClass();
     virtual void SetDeep(int deep) override;
     MetaType* GetGenTemplateByIndex(int index);
@@ -52,6 +59,9 @@ public:
     virtual std::string ToString() const override;
     virtual std::string ToDefineTypeString() const override;
     virtual std::string ToFormatString() const override;
+
+    // CRITICAL MISSING METHOD: AddTemplateParameter
+    void AddTemplateParameter(MetaClass* metaClass);
 
 private:
     std::vector<MetaGenTemplate*> m_MetaGenTemplateList;

@@ -175,6 +175,7 @@
     <ClCompile Include="source\Core\MetaDefineParam.cpp" />
     <ClCompile Include="source\Core\MetaDynamicClass.cpp" />
     <ClCompile Include="source\Core\MetaEnum.cpp" />
+    <ClCompile Include="source\Core\MetaExpressNode\MetaExecuteStatementsNode.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressBase.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressCalllink.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExpressConst.cpp" />

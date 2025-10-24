@@ -43,4 +43,3 @@ protected:
 
 } // namespace Compile
 } // namespace SimpleLanguage
-

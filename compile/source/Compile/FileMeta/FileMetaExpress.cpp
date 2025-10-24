@@ -1,10 +1,24 @@
+//****************************************************************************
+//  File:      FileMetaExpress.cpp
+// ------------------------------------------------
+//  Copyright (c) kamaba233@gmail.com
+//  DateTime: 2023/5/12 12:00:00
+//  Description: 
+//****************************************************************************
+
 #include "FileMetaExpress.h"
 #include "FileMeta.h"
+#include "FileMetaCommon.h"
+#include "FileMetaSyntax.h"
 #include "FileMetatUtil.h"
 #include "../../Debug/Log.h"
 #include "../../Define.h"
+#include "../Parse/StructParse.h"
 #include <algorithm>
 #include <limits>
+#include <sstream>
+
+using namespace SimpleLanguage::Debug;
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -13,264 +27,116 @@ namespace Compile {
 FileMetaBaseTerm::FileMetaBaseTerm(FileMeta* fm) 
 {
     m_FileMeta = fm;
+    m_Root = this;
 }
 
-FileMetaBaseTerm* FileMetaBaseTerm::Root() const {
-    const FileMetaBaseTerm* current = this;
-    while (current->GetLeft() != nullptr) {
-        current = current->GetLeft();
+bool FileMetaBaseTerm::IsOnlyOne() const {
+    return GetLeft() == nullptr && GetRight() == nullptr;
+}
+
+void FileMetaBaseTerm::SetLeft(FileMetaBaseTerm* value) {
+    m_Left = value;
+    m_IsDirty = true;
+}
+
+void FileMetaBaseTerm::SetRight(FileMetaBaseTerm* value) {
+    m_Right = value;
+    m_IsDirty = true;
+}
+
+std::vector<FileMetaBaseTerm*> FileMetaBaseTerm::SplitParamList() {
+    std::vector<FileMetaBaseTerm*> paramFileMetaTermList;
+    
+    std::vector<std::vector<FileMetaBaseTerm*>> fmbtListList;
+    std::vector<FileMetaBaseTerm*> fmbtList;
+    
+    bool isComma = false;
+    for (size_t i = 0; i < m_FileMetaExpressList.size(); i++) {
+        auto fmen = m_FileMetaExpressList[i];
+        auto fmst = dynamic_cast<FileMetaSymbolTerm*>(fmen);
+        if (fmst != nullptr && fmst->GetToken() != nullptr && 
+            fmst->GetToken()->GetType() == ETokenType::Comma) {
+            if (isComma) {
+                Log::AddInStructFileMeta(EError::None, "Error 多重逗号，导致解析无法解析!!");
+                break;
+            }
+            if (fmbtList.empty()) {
+                Log::AddInStructFileMeta(EError::None, "Error 首符号不能为逗号");
+                break;
+            }
+            isComma = true;
+            fmbtListList.push_back(fmbtList);
+            fmbtList.clear();
+        } else {
+            isComma = false;
+            fmbtList.push_back(fmen);
+        }
     }
-    return const_cast<FileMetaBaseTerm*>(current);
+    if (fmbtList.empty()) {
+        return paramFileMetaTermList;
+    }
+    fmbtListList.push_back(fmbtList);
+    
+    for (size_t i = 0; i < fmbtListList.size(); i++) {
+        auto fmbt2 = fmbtListList[i];
+        
+        if (fmbt2.size() == 1) {
+            paramFileMetaTermList.push_back(fmbt2[0]);
+        } else {
+            paramFileMetaTermList.insert(paramFileMetaTermList.end(), fmbt2.begin(), fmbt2.end());
+        }
+    }
+    return paramFileMetaTermList;
+}
+
+void FileMetaBaseTerm::ClearDirty() {
+    m_IsDirty = false;
+    for (size_t i = 0; i < m_FileMetaExpressList.size(); i++) {
+        auto fme = m_FileMetaExpressList[i];
+        fme->ClearDirty();
+    }
+}
+
+void FileMetaBaseTerm::AddFileMetaTerm(FileMetaBaseTerm* fmn) {
+    if (fmn != nullptr) {
+        fmn->SetFileMeta(m_FileMeta);
+        m_FileMetaExpressList.push_back(fmn);
+    }
+}
+
+void FileMetaBaseTerm::AddRangeFileMetaTerm(const std::vector<FileMetaBaseTerm*>& fmn) {
+    for (size_t i = 0; i < fmn.size(); i++) {
+        if (fmn[i] != nullptr) {
+            fmn[i]->SetFileMeta(m_FileMeta);
+        }
+    }
+    m_FileMetaExpressList.insert(m_FileMetaExpressList.end(), fmn.begin(), fmn.end());
 }
 
 std::string FileMetaBaseTerm::ToFormatString() const {
+    if (m_Token != nullptr) {
+        return m_Token->GetLexemeString();
+    }
     return "";
 }
 
-// FileMetaSymbolTerm implementation
-FileMetaSymbolTerm::FileMetaSymbolTerm(FileMeta* fm, Token* token) : FileMetaBaseTerm(fm), m_SymbolToken(token) {
-    if (token != nullptr) {
-    //    m_Priority = SimpleLanguage::SignComputePriority::GetPriority(token->type());
-    }
-}
-
-void FileMetaSymbolTerm::BuildAST() {
-    // Implementation for building AST for symbol term
-}
-
-std::string FileMetaSymbolTerm::ToFormatString() const {
-    return m_SymbolToken ? m_SymbolToken->GetLexemeString() : "";
-}
-
-// FileMetaConstValueTerm implementation
-FileMetaConstValueTerm::FileMetaConstValueTerm(FileMeta* fm, Token* token) 
-    : FileMetaBaseTerm(fm), m_ValueToken(token) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-FileMetaConstValueTerm::FileMetaConstValueTerm(FileMeta* fm, Token* valueToken, Token* signalToken)
-    : FileMetaBaseTerm(fm), m_ValueToken(valueToken), m_SignalToken(signalToken) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaConstValueTerm::BuildAST() {
-    // Implementation for building AST for const value term
-}
-
-std::string FileMetaConstValueTerm::ToFormatString() const {
+std::string FileMetaBaseTerm::ToTokenString() const {
     std::ostringstream sb;
-    if (m_SignalToken != nullptr) {
-        sb << m_SignalToken->GetLexemeString();
-    }
-    if (m_ValueToken != nullptr) {
-        sb << m_ValueToken->GetLexemeString();
-    }
-    return sb.str();
-}
-
-// FileMetaCallTerm implementation
-FileMetaCallTerm::FileMetaCallTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_CallNode(node) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaCallTerm::BuildAST() {
-    // Implementation for building AST for call term
-}
-
-std::string FileMetaCallTerm::ToFormatString() const {
-    if (m_CallNode == nullptr) return "";
     
-    std::ostringstream sb;
-    if (m_CallNode->token != nullptr) {
-        sb << m_CallNode->token->GetLexemeString();
+    if (m_Token != nullptr) {
+        sb << m_Token->ToLexemeAllString();
     }
     
-    if (m_CallNode->parNode != nullptr) {
-        sb << "(";
-        // Add parameter formatting
-        sb << ")";
+    if (GetLeft() != nullptr) {
+        // Handle left side
+    }
+    if (GetRight() != nullptr) {
+        // Handle right side
     }
     
-    if (m_CallNode->bracketNode != nullptr) {
-        sb << "[";
-        // Add bracket content formatting
-        sb << "]";
-    }
-    
-    return sb.str();
-}
-
-// FileMetaParTerm implementation
-FileMetaParTerm::FileMetaParTerm(FileMeta* fm, Node* node, EExpressType expressType)
-    : FileMetaBaseTerm(fm), m_ParNode(node), m_ExpressType(expressType) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaParTerm::BuildAST() {
-    if (m_ParNode == nullptr) return;
-    
-    // Create expression from par node content
-    std::vector<Node*> parContent;
-    for (auto child : m_ParNode->childList) {
-        if (child->nodeType != SimpleLanguage::Compile::ENodeType::LineEnd &&
-            child->nodeType != SimpleLanguage::Compile::ENodeType::SemiColon) {
-            parContent.push_back(child);
-        }
-    }
-    
-    if (!parContent.empty()) {
-     //   m_Express = SimpleLanguage::Compile::FileMetatUtil::CreateFileMetaExpress(m_FileMeta, parContent, m_ExpressType);
-    }
-}
-
-std::string FileMetaParTerm::ToFormatString() const {
-    std::ostringstream sb;
-    sb << "(";
-    //if (m_Express != nullptr) {
-    //    sb << m_Express->ToFormatString();
-    //}
-    sb << ")";
-    return sb.str();
-}
-
-// FileMetaBraceTerm implementation
-FileMetaBraceTerm::FileMetaBraceTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_BraceNode(node) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaBraceTerm::BuildAST() {
-    // Implementation for building AST for brace term
-}
-
-std::string FileMetaBraceTerm::ToFormatString() const {
-    std::ostringstream sb;
-    sb << "{";
-    // Add brace content formatting
-    sb << "}";
-    return sb.str();
-}
-
-// FileMetaBracketTerm implementation
-FileMetaBracketTerm::FileMetaBracketTerm(FileMeta* fm, Node* node, int bracketType)
-    : FileMetaBaseTerm(fm), m_BracketNode(node), m_BracketType(bracketType) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaBracketTerm::BuildAST() {
-    // Implementation for building AST for bracket term
-}
-
-std::string FileMetaBracketTerm::ToFormatString() const {
-    std::ostringstream sb;
-    sb << "[";
-    // Add bracket content formatting
-    sb << "]";
-    return sb.str();
-}
-
-// FileMetaIfSyntaxTerm implementation
-FileMetaIfSyntaxTerm::FileMetaIfSyntaxTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_IfNode(node) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaIfSyntaxTerm::BuildAST() {
-    // Implementation for building AST for if syntax term
-}
-
-std::string FileMetaIfSyntaxTerm::ToFormatString() const {
-    std::ostringstream sb;
-    sb << "if (";
-    // Add if condition formatting
-    sb << ") {";
-    // Add if body formatting
-    sb << "}";
-    return sb.str();
-}
-
-// FileMetaThreeItemSyntaxTerm implementation
-FileMetaThreeItemSyntaxTerm::FileMetaThreeItemSyntaxTerm(FileMeta* fm, Node* node) 
-    : FileMetaBaseTerm(fm), m_ThreeItemNode(node) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaThreeItemSyntaxTerm::BuildAST() {
-    // Implementation for building AST for three item syntax term
-}
-
-std::string FileMetaThreeItemSyntaxTerm::ToFormatString() const {
-    std::ostringstream sb;
-    sb << "? ";
-    // Add three item formatting
-    sb << " : ";
-    return sb.str();
-}
-
-// FileMetaMatchSyntaxTerm implementation
-FileMetaMatchSyntaxTerm::FileMetaMatchSyntaxTerm(FileMeta* fm, Node* node) : FileMetaBaseTerm(fm), m_MatchNode(node) {
-    m_Priority = SimpleLanguage::SignComputePriority::Level1;
-}
-
-void FileMetaMatchSyntaxTerm::BuildAST() {
-    // Implementation for building AST for match syntax term
-}
-
-std::string FileMetaMatchSyntaxTerm::ToFormatString() const {
-    std::ostringstream sb;
-    sb << "match (";
-    // Add match expression formatting
-    sb << ") {";
-    // Add match cases formatting
-    sb << "}";
-    return sb.str();
-}
-
-// FileMetaTermExpress implementation
-FileMetaTermExpress::FileMetaTermExpress(FileMeta* fm, const std::vector<Node*>& nodeList, EExpressType expressType)
-    : FileMetaBaseTerm(fm), m_NodeList(nodeList), m_ExpressType(expressType) {
-}
-
-void FileMetaTermExpress::BuildAST() {
-    if (m_NodeList.empty()) return;
-    
-    // Convert nodes to terms
-    std::vector<FileMetaBaseTerm*> terms;
-    for (auto node : m_NodeList) {
-        auto term = SimpleLanguage::Compile::FileMetatUtil::CreateFileOneTerm(m_FileMeta, node, m_ExpressType);
-        if (term != nullptr) {
-            terms.push_back(term);
-        }
-    }
-    
-    if (terms.empty()) return;
-    
-    // Build AST from terms
-    // This is a simplified implementation
-    if (terms.size() == 1) {
-        m_Left = terms[0];
-    } else {
-        // Build binary tree from terms
-        for (size_t i = 0; i < terms.size() - 1; i++) {
-            if (i == 0) {
-                m_Left = terms[i];
-            } else {
-                auto current = m_Left;
-                while (current->GetRight() != nullptr) {
-                    current = current->GetRight();
-                }
-                current->SetRight(terms[i]);
-            }
-        }
-        m_Right = terms[terms.size() - 1];
-    }
-}
-
-std::string FileMetaTermExpress::ToFormatString() const {
-    std::ostringstream sb;
-    if (m_Left != nullptr) {
-        sb << m_Left->ToFormatString();
-    }
-    if (m_Right != nullptr) {
-        sb << " " << m_Right->ToFormatString();
+    for (size_t i = 0; i < m_FileMetaExpressList.size(); i++) {
+        auto fme = m_FileMetaExpressList[i];
+        sb << " " << fme->ToTokenString();
     }
     return sb.str();
 }

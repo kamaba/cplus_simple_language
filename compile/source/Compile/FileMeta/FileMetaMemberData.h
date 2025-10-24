@@ -6,13 +6,16 @@
 #include "FileMetaBase.h"
 
 namespace SimpleLanguage {
+    namespace Core
+    {
+        class MetaMemberData;;
+    }
 namespace Compile {
 
 // Forward declarations
 class FileMeta;
 class FileMetaConstValueTerm;
 class FileMetaCallTerm;
-class MetaMemberData;
 class Node;
 class Token;
 
@@ -41,7 +44,7 @@ public:
     // Methods
     void AddFileMemberData(FileMetaMemberData* fmmd);
     virtual void SetDeep(int _deep) override;
-    void SetMetaMemberData(MetaMemberData* mmd);
+    void SetMetaMemberData(Core::MetaMemberData* mmd);
     FileMetaMemberData* GetFileMetaMemberDataByName(const std::string& name);
     virtual std::string ToFormatString() const override;
     virtual std::string ToString() const override;

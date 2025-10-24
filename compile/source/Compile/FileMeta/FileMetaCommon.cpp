@@ -311,7 +311,7 @@ bool FileMetaCallLink::IsOnlyName() const {
     return false;
 }
 
-std::string FileMetaCallLink::Name() const {
+std::string FileMetaCallLink::GetName() const {
     if (m_CallNodeList.size() >= 1) {
         return m_CallNodeList[0]->Name();
     }

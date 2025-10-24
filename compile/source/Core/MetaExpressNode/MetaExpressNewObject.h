@@ -9,270 +9,153 @@
 #pragma once
 
 #include "MetaExpressBase.h"
-#include "../MetaType.h"
-#include "../MetaClass.h"
-#include "../MetaBlockStatements.h"
-#include "../MetaMethodCall.h"
-#include "../MetaBraceOrBracketStatementsContent.h"
-#include "../BaseMetaClass/CoreMetaClassManager.h"
-#include "../Compile/CoreFileMeta/FileMetaBraceTerm.h"
-#include "../Compile/CoreFileMeta/FileMetaBracketTerm.h"
-#include "../Compile/CoreFileMeta/FileMetaCallTerm.h"
-#include "../Compile/CoreFileMeta/FileMetaConstValueTerm.h"
-#include "../Compile/CoreFileMeta/FileMetaParTerm.h"
 #include <string>
 #include <vector>
 
 namespace SimpleLanguage {
+    namespace Compile {
+        class Token;
+        class FileMetaOpAssignSyntax;
+        class FileInputParamNode;
+        class FileMetaOpAssignSyntax;
+        class FileMetaDefineVariableSyntax;
+        class FileMetaParTerm;
+    }
 namespace Core {
 
-class MetaNewObjectExpressNode : public MetaExpressNode {
+// Forward declarations
+    class MetaExpressNode;
+class MetaCallLinkExpressNode;
+class MetaConstExpressNode;
+class MetaInputParamCollection;
+class MetaInputTemplateCollection;
+class MetaDynamicClass;
+class MetaMemberVariable;
+class MetaData;
+class MetaMemberData;
+class MetaType;
+class MetaClass;
+class ClassManager;
+class ExpressManager;
+class CreateExpressParam;
+class MetaBlockStatements;
+class MetaMethodCall;
+class MetaBraceAssignStatements;
+
+// MetaBraceAssignStatements class
+class MetaBraceAssignStatements {
+public:
+    // Properties
+    MetaMemberVariable* GetMetaMemberVariable() const { return m_MetaMemberVariable; }
+    MetaMemberData* GetMetaMemberData() const { return m_MetaMemberData; }
+    MetaExpressNode* GetExpressNode() const { return m_MetaExpress; }
+    int GetOpLevel() const { return m_MetaExpress != nullptr ? m_MetaExpress->GetOpLevel() : 0; }
+
+    // Constructors
+    MetaBraceAssignStatements(MetaBlockStatements* mbs, MetaType* mt, Compile::FileMetaCallLink* fmcl);
+    MetaBraceAssignStatements(MetaBlockStatements* mbs, MetaType* mc, MetaExpressNode* men);
+    MetaBraceAssignStatements(MetaBlockStatements* mbs, MetaExpressNode* men, MetaMemberVariable* mmv);
+    MetaBraceAssignStatements(MetaBlockStatements* mbs, MetaType* mt, Compile::FileMetaOpAssignSyntax* fmos);
+    MetaBraceAssignStatements(MetaBlockStatements* mbs, MetaType* mt, Compile::FileMetaDefineVariableSyntax* fmdvs);
+
+    // Methods
+    MetaClass* GetRetMetaClass();
+    void SetDefineName(const std::string& definaname);
+    bool CalcReturnType();
+    MetaExpressNode* CreateExpressNodeInNewObjectStatements(MetaVariable* mv, MetaBlockStatements* mbs, Compile::FileMetaBaseTerm* fme);
+    std::string ToFormatString();
+
 private:
+    MetaMemberVariable* m_MetaMemberVariable = nullptr;
+    MetaMemberData* m_MetaMemberData = nullptr;
+    Compile::Token* m_AssignToken = nullptr;
+    MetaExpressNode* m_MetaExpress = nullptr;
+    MetaBlockStatements* m_OwnerMetaBlockStatements = nullptr;
+    std::string m_DefineName = "";
+    Compile::FileMetaDefineVariableSyntax* m_FileMetaDefineVariableSyntax = nullptr;
+    Compile::FileMetaOpAssignSyntax* m_FileMetaOpAssignSyntax = nullptr;
+};
+
+// MetaBraceOrBracketStatementsContent class
+class MetaBraceOrBracketStatementsContent {
+public:
+    enum class EStatementsContentType {
+        None,
+        ArrayValue,
+        ClassValueAssign,
+        DataValueAssign,
+        DynamicClass,
+        DynamicData,
+    };
+
+    // Properties
+    EStatementsContentType GetContentType() const { return m_ContentType; }
+    int GetCount() const { return static_cast<int>(m_AssignStatementsList.size()); }
+    const std::vector<MetaBraceAssignStatements*>& GetAssignStatementsList() const { return m_AssignStatementsList; }
+    MetaType* GetDefineMetaType() const { return m_DefineMetaType; }
+
+    // Constructors
+    MetaBraceOrBracketStatementsContent(MetaBlockStatements* mbs, MetaClass* mc);
+    MetaBraceOrBracketStatementsContent(Compile::FileMetaBraceTerm* fileMetaBraceTerm, MetaBlockStatements* mbs, MetaClass* mc);
+    MetaBraceOrBracketStatementsContent(Compile::FileMetaBraceTerm* fileMetaBraceTerm, MetaBlockStatements* mbs, MetaClass* mc, MetaVariable* parentMt);
+    MetaBraceOrBracketStatementsContent(Compile::FileMetaBracketTerm* fileMetaBracketTerm, MetaBlockStatements* mbs, MetaClass* mc, MetaVariable* parentMt);
+
+    // Methods
+    void SetMetaType(MetaType* mt);
+    void Parse();
+    MetaClass* GetMaxLevelMetaClassType();
+    std::string ToFormatString();
+
+private:
+    std::vector<MetaBraceAssignStatements*> m_AssignStatementsList;
+    Compile::FileMetaBraceTerm* m_FileMetaBraceTerm = nullptr;
+    Compile::FileMetaBracketTerm* m_FileMetaBracketTerm = nullptr;
+    MetaClass* m_OwnerMetaClass = nullptr;
+    MetaBlockStatements* m_OwnerMetaBlockStatements = nullptr;
+    MetaType* m_DefineMetaType = nullptr;
+    MetaVariable* m_EqualMetaVariable = nullptr;
+    MetaData* m_NewMetaData = nullptr;
+    MetaData* m_NewTempMetaData = nullptr;
+    EStatementsContentType m_ContentType = EStatementsContentType::None;
+};
+
+// MetaNewObjectExpressNode class
+class MetaNewObjectExpressNode : public MetaExpressNode {
+public:
+    // Properties
+    MetaMethodCall* GetConstructFunctionCall() const { return m_MetaConstructFunctionCall; }
+    MetaBraceOrBracketStatementsContent* GetMetaBraceOrBracketStatementsContent() const { return m_MetaBraceOrBracketStatementsContent; }
+
+    // Constructors
+    MetaNewObjectExpressNode(MetaClass* ownermc, const std::vector<MetaDynamicClass*>& list);
+    MetaNewObjectExpressNode(Compile::FileMetaConstValueTerm* arrayLinkToken, MetaClass* ownerMC, MetaBlockStatements* mbs);
+    MetaNewObjectExpressNode(MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs);
+    MetaNewObjectExpressNode(Compile::FileMetaCallTerm* fmct, MetaCallLink* mcl, MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs, MetaMethodCall* mmf);
+    MetaNewObjectExpressNode(Compile::FileMetaBraceTerm* fmbt, MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs, MetaVariable* equalMV);
+    MetaNewObjectExpressNode(Compile::FileMetaParTerm* fmpt, MetaType* mt, MetaClass* mc, MetaBlockStatements* mbs);
+    MetaNewObjectExpressNode(Compile::FileMetaBracketTerm* fmbt, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* equalMV);
+
+    // Override methods
+    virtual void Parse(AllowUseSettings* auc) override;
+    virtual int CalcParseLevel(int level) override;
+    virtual void CalcReturnType() override;
+    virtual MetaType* GetReturnMetaDefineType() override;
+    virtual std::string ToTokenString() override;
+    virtual std::string ToFormatString() override;
+
+    // Static factory method
+    static MetaNewObjectExpressNode* CreateNewObjectExpressNodeByPar(Compile::FileMetaParTerm* root, MetaType* mt, MetaClass* omc, MetaBlockStatements* mbs);
+
+private:
+    void Init();
+
     MetaMethodCall* m_MetaConstructFunctionCall = nullptr;
     MetaExpressNode* m_MetaEnumValue = nullptr;
     MetaBraceOrBracketStatementsContent* m_MetaBraceOrBracketStatementsContent = nullptr;
-    
-    FileMetaParTerm* m_FileMetaParTerm = nullptr;
-    FileMetaCallTerm* m_FileMetaCallTerm = nullptr;
-    FileMetaConstValueTerm* m_FileMetaConstValueTerm = nullptr;
 
-public:
-    MetaMethodCall* GetConstructFunctionCall() const { return m_MetaConstructFunctionCall; }
-    MetaBraceOrBracketStatementsContent* GetMetaBraceOrBracketStatementsContent() const { return m_MetaBraceOrBracketStatementsContent; }
-    
-    // Constructor for array of dynamic classes
-    MetaNewObjectExpressNode(MetaClass* ownermc, const std::vector<MetaDynamicClass*>& list) {
-        m_OwnerMetaClass = ownermc;
-        m_OwnerMetaBlockStatements = nullptr;
-        m_MetaBraceOrBracketStatementsContent = nullptr;
-        
-        auto metaInputTemplateCollection = new MetaInputTemplateCollection();
-        m_MetaDefineType = new MetaType(CoreMetaClassManager::GetInstance().GetArrayMetaClass(), nullptr, metaInputTemplateCollection);
-    }
-    
-    // Constructor for range (1..x)
-    MetaNewObjectExpressNode(FileMetaConstValueTerm* arrayLinkToken, MetaClass* ownerMC, MetaBlockStatements* mbs) {
-        m_FileMetaConstValueTerm = arrayLinkToken;
-        m_OwnerMetaClass = ownerMC;
-        m_OwnerMetaBlockStatements = mbs;
-        
-        auto metaInputTemplateCollection = new MetaInputTemplateCollection();
-        MetaType* mitp = new MetaType(CoreMetaClassManager::GetInstance().GetInt32MetaClass());
-        metaInputTemplateCollection->AddMetaTemplateParamsList(mitp);
-        
-        m_MetaDefineType = new MetaType(CoreMetaClassManager::GetInstance().GetRangeMetaClass(), nullptr, metaInputTemplateCollection);
-        
-        MetaInputParamCollection* mdpc = new MetaInputParamCollection(ownerMC, mbs);
-        std::string name = m_FileMetaConstValueTerm->GetName();
-        std::vector<std::string> arr = SplitString(name, "..");
-        
-        if (arr.size() == 2) {
-            int arr0 = 0;
-            if (TryParseInt(arr[0], arr0)) {
-                MetaConstExpressNode* mcen1 = new MetaConstExpressNode(EType::Int32, arr0);
-                MetaInputParam* mip = new MetaInputParam(mcen1);
-                mdpc->AddMetaInputParam(mip);
-            }
-            
-            int arr1 = 0;
-            if (TryParseInt(arr[1], arr1)) {
-                MetaConstExpressNode* mcen2 = new MetaConstExpressNode(EType::Int32, arr1);
-                MetaInputParam* mip2 = new MetaInputParam(mcen2);
-                mdpc->AddMetaInputParam(mip2);
-            }
-            
-            MetaInputParam* mip3 = new MetaInputParam(new MetaConstExpressNode(EType::Int32, 1));
-            mdpc->AddMetaInputParam(mip3);
-        }
-        
-        auto tfunction = m_MetaDefineType->GetMetaMemberConstructFunction(mdpc);
-        if (tfunction != nullptr) {
-            m_MetaConstructFunctionCall = new MetaMethodCall(nullptr, nullptr, tfunction, nullptr, mdpc, nullptr, nullptr);
-        }
-        
-        Init();
-    }
-    
-    // Constructor for simple type
-    MetaNewObjectExpressNode(MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs) {
-        m_OwnerMetaClass = ownerMC;
-        m_OwnerMetaBlockStatements = mbs;
-        m_MetaDefineType = new MetaType(mt);
-        Init();
-        m_MetaConstructFunctionCall = new MetaMethodCall(mt->GetMetaClass(), mt->GetTemplateMetaTypeList(), m_OwnerMetaBlockStatements->GetOwnerMetaFunction(), nullptr, nullptr, nullptr, nullptr);
-    }
-    
-    // Constructor for call term with method call
-    MetaNewObjectExpressNode(FileMetaCallTerm* fmct, MetaCallLink* mcl, MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs, MetaMethodCall* mmf) {
-        m_FileMetaCallTerm = fmct;
-        m_OwnerMetaClass = ownerMC;
-        m_OwnerMetaBlockStatements = mbs;
-        m_MetaConstructFunctionCall = mmf;
-        m_MetaDefineType = new MetaType(mt);
-        
-        // Implementation details would go here...
-        Init();
-    }
-    
-    // Constructor for brace term
-    MetaNewObjectExpressNode(FileMetaBraceTerm* fmbt, MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs, MetaVariable* equalMV) {
-        m_MetaBraceOrBracketStatementsContent = new MetaBraceOrBracketStatementsContent(fmbt, mbs, ownerMC, equalMV);
-        m_OwnerMetaClass = ownerMC;
-        m_OwnerMetaBlockStatements = mbs;
-        m_MetaDefineType = new MetaType(mt);
-        m_MetaBraceOrBracketStatementsContent->SetMetaType(m_MetaDefineType);
-        m_MetaBraceOrBracketStatementsContent->Parse();
-        
-        if (m_MetaBraceOrBracketStatementsContent->GetContentType() == MetaBraceOrBracketStatementsContent::EStatementsContentType::DynamicClass) {
-            m_MetaDefineType = m_MetaBraceOrBracketStatementsContent->GetDefineMetaType();
-        }
-        if (m_MetaBraceOrBracketStatementsContent->GetContentType() == MetaBraceOrBracketStatementsContent::EStatementsContentType::DynamicData) {
-            m_MetaDefineType = m_MetaBraceOrBracketStatementsContent->GetDefineMetaType();
-        } else if (m_MetaBraceOrBracketStatementsContent->GetContentType() == MetaBraceOrBracketStatementsContent::EStatementsContentType::ArrayValue) {
-            auto metaInputTemplateCollection = new MetaInputTemplateCollection();
-            MetaClass* mc = m_MetaBraceOrBracketStatementsContent->GetMaxLevelMetaClassType();
-            metaInputTemplateCollection->AddMetaTemplateParamsList(new MetaType(mc));
-            m_MetaDefineType = new MetaType(CoreMetaClassManager::GetInstance().GetArrayMetaClass(), nullptr, metaInputTemplateCollection);
-        }
-        Init();
-    }
-    
-    // Constructor for par term
-    MetaNewObjectExpressNode(FileMetaParTerm* fmpt, MetaType* mt, MetaClass* mc, MetaBlockStatements* mbs) {
-        m_FileMetaParTerm = fmpt;
-        m_OwnerMetaClass = mc;
-        m_OwnerMetaBlockStatements = mbs;
-        auto mmf = new MetaMethodCall(nullptr, nullptr, mbs->GetOwnerMetaFunction(), nullptr, nullptr, nullptr, nullptr);
-        m_MetaConstructFunctionCall = mmf;
-        m_MetaDefineType = new MetaType(mt);
-        Init();
-    }
-    
-    // Constructor for bracket term
-    MetaNewObjectExpressNode(FileMetaBracketTerm* fmbt, MetaClass* mc, MetaBlockStatements* mbs, MetaVariable* equalMV) {
-        m_OwnerMetaClass = mc;
-        m_OwnerMetaBlockStatements = mbs;
-        m_MetaBraceOrBracketStatementsContent = new MetaBraceOrBracketStatementsContent(fmbt, m_OwnerMetaBlockStatements, m_OwnerMetaClass, equalMV);
-        m_MetaBraceOrBracketStatementsContent->Parse();
-        MetaClass* inputType = m_MetaBraceOrBracketStatementsContent->GetMaxLevelMetaClassType();
-        
-        auto metaInputTemplateCollection = new MetaInputTemplateCollection();
-        MetaType* mitp = new MetaType(inputType);
-        metaInputTemplateCollection->AddMetaTemplateParamsList(mitp);
-        m_MetaDefineType = new MetaType(CoreMetaClassManager::GetInstance().GetArrayMetaClass(), nullptr, metaInputTemplateCollection);
-        
-        MetaInputParamCollection* mipc = new MetaInputParamCollection(mc, mbs);
-        mipc->AddMetaInputParam(new MetaInputParam(new MetaConstExpressNode(EType::Int32, m_MetaBraceOrBracketStatementsContent->GetCount())));
-        MetaMemberFunction* mmf = m_MetaDefineType->GetMetaClass()->GetMetaMemberConstructFunction(mipc);
-        
-        m_MetaConstructFunctionCall = new MetaMethodCall(nullptr, nullptr, mmf, nullptr, mipc, nullptr, nullptr);
-    }
-    
-private:
-    void Init() {
-        // Initialization logic
-    }
-    
-    std::vector<std::string> SplitString(const std::string& str, const std::string& delimiter) {
-        std::vector<std::string> result;
-        size_t start = 0;
-        size_t end = str.find(delimiter);
-        
-        while (end != std::string::npos) {
-            result.push_back(str.substr(start, end - start));
-            start = end + delimiter.length();
-            end = str.find(delimiter, start);
-        }
-        result.push_back(str.substr(start));
-        return result;
-    }
-    
-    bool TryParseInt(const std::string& str, int& result) {
-        try {
-            result = std::stoi(str);
-            return true;
-        } catch (...) {
-            return false;
-        }
-    }
-
-public:
-    virtual void Parse(AllowUseSettings* auc) override {
-        // Parse implementation
-    }
-    
-    virtual int CalcParseLevel(int level) override {
-        return level;
-    }
-    
-    virtual void CalcReturnType() override {
-        MetaExpressNode::CalcReturnType();
-    }
-    
-    virtual MetaType* GetReturnMetaDefineType() override {
-        if (m_MetaDefineType != nullptr) {
-            return m_MetaDefineType;
-        }
-        if (m_MetaConstructFunctionCall != nullptr) {
-            m_MetaDefineType = m_MetaConstructFunctionCall->GetMetaDefineType();
-        }
-        return m_MetaDefineType;
-    }
-    
-    virtual std::string ToTokenString() override {
-        return MetaExpressNode::ToTokenString();
-    }
-    
-    virtual std::string ToFormatString() override {
-        std::string result;
-        
-        if (m_MetaDefineType != nullptr && m_MetaDefineType->IsEnum()) {
-            result = m_MetaDefineType->GetName() + "." + m_MetaDefineType->GetEnumValue()->GetName();
-            if (m_MetaEnumValue != nullptr) {
-                result += "(" + m_MetaEnumValue->ToFormatString() + ")";
-            }
-        } else if (m_MetaDefineType != nullptr && m_MetaDefineType->IsData()) {
-            result = m_MetaDefineType->GetName() + "{";
-            if (m_MetaBraceOrBracketStatementsContent != nullptr) {
-                for (int i = 0; i < m_MetaBraceOrBracketStatementsContent->GetCount(); i++) {
-                    auto bsc = m_MetaBraceOrBracketStatementsContent->GetAssignStatementsList()[i];
-                    if (bsc == nullptr) continue;
-                    
-                    result += bsc->GetMetaMemberData()->ToFormatString2(m_MetaDefineType->IsDynamicData());
-                    
-                    if (i < m_MetaBraceOrBracketStatementsContent->GetCount() - 1) {
-                        result += ",";
-                    }
-                }
-            }
-            result += "}";
-        } else {
-            if (m_MetaDefineType != nullptr) {
-                result = m_MetaDefineType->GetName() + "()";
-                result += ".";
-            }
-            result += m_MetaBraceOrBracketStatementsContent ? m_MetaBraceOrBracketStatementsContent->ToFormatString() : "";
-        }
-        
-        return result;
-    }
-    
-    static MetaNewObjectExpressNode* CreateNewObjectExpressNodeByPar(FileMetaParTerm* root, MetaType* mt, MetaClass* omc, MetaBlockStatements* mbs) {
-        if (root == nullptr || mt == nullptr) return nullptr;
-        
-        MetaInputParamCollection* mpc = new MetaInputParamCollection(root, omc, mbs);
-        
-        if (mpc->GetMetaInputParamList().size() > 0) {
-            MetaMemberFunction* mmf = mt->GetMetaMemberConstructFunction(mpc);
-            if (mmf == nullptr) return nullptr;
-            
-            MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(root, mt, omc, mbs);
-            return mnoen;
-        } else {
-            MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(root, mt, omc, mbs);
-            return mnoen;
-        }
-    }
+    Compile::FileMetaParTerm* m_FileMetaParTerm = nullptr;
+    Compile::FileMetaCallTerm* m_FileMetaCallTerm = nullptr;
+    Compile::FileMetaConstValueTerm* m_FileMetaConstValueTerm = nullptr;
 };
 
 } // namespace Core

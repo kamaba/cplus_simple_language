@@ -8,11 +8,9 @@
 
 #include "MetaGenTemplateClass.h"
 #include "MetaClass.h"
-#include "MetaGenTemplate.h"
 #include "MetaType.h"
 #include "MetaMemberVariable.h"
 #include "MetaMemberFunction.h"
-#include "MetaInputTemplateCollection.h"
 #include "TypeManager.h"
 #include "../Debug/Log.h"
 #include <sstream>
@@ -44,7 +42,7 @@ MetaGenTemplateClass::MetaGenTemplateClass(MetaClass* mtc, const std::vector<Met
 }
 
 void MetaGenTemplateClass::UpdateRegsterGenMetaClass() {
-    // ��������� �� ԭ��ע�������T�����е���
+    // 这个过程是 绑定 原来注册过来的T的已有的类
     for (size_t i = 0; i < this->m_MetaTemplateClass->GetBindStructTemplateMetaClassList().size(); i++) {
         m_MetaTemplateClass->GetBindStructTemplateMetaClassList()[i]->UpdateMetaGenTemplate(m_MetaGenTemplateList);
     }
@@ -272,6 +270,35 @@ void MetaGenTemplateClass::UpdateTemplateInstanceStatement(MetaMemberFunction* m
     }
 }
 
+// CRITICAL MISSING METHOD: AddTemplateParameter
+void MetaGenTemplateClass::AddTemplateParameter(MetaClass* metaClass) {
+    // 这个方法在C#源码中非常重要，用于添加模板参数
+    // 在C#中，这个方法会创建一个MetaGenTemplate实例并添加到列表中
+    
+    // 创建新的MetaGenTemplate实例
+    MetaGenTemplate* mgt = new MetaGenTemplate();
+    
+    // 设置模板参数
+    mgt->SetMetaClass(metaClass);
+    
+    // 添加到模板列表中
+    m_MetaGenTemplateList.push_back(mgt);
+    
+    // 更新类名以反映新的模板参数
+    std::stringstream sb;
+    sb << m_MetaTemplateClass->GetPathName();
+    sb << "<";
+    for (size_t i = 0; i < m_MetaGenTemplateList.size(); i++) {
+        auto v = m_MetaGenTemplateList[i];
+        sb << v->ToDefineTypeString();
+        if (i < m_MetaGenTemplateList.size() - 1) {
+            sb << ",";
+        }
+    }
+    sb << ">";
+    this->m_AllName = sb.str();
+}
+
 std::string MetaGenTemplateClass::ToString() const {
     return this->ToDefineTypeString();
 }
@@ -307,7 +334,7 @@ std::string MetaGenTemplateClass::ToFormatString() const {
     }
 
     for (const auto& v : m_MetaMemberFunctionTemplateNodeDict) {
-        // ����������Ӻ���ģ��ڵ�ĸ�ʽ���߼�
+        // 这里需要实现模板节点的格式化逻辑
     }
 
     stringBuilder << std::endl;

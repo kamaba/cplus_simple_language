@@ -136,7 +136,7 @@ public:
     virtual ~FileMetaCallLink() = default;
 
     bool IsOnlyName() const;
-    std::string Name() const;
+    std::string GetName() const;
     const std::vector<FileMetaCallNode*>& GetCallNodeList() const { return m_CallNodeList; }
 
     std::string ToFormatString() const;

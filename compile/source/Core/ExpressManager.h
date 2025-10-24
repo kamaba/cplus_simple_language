@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include "AllowUseSettings.h"
 
 namespace SimpleLanguage {
     namespace Compile {
@@ -71,7 +72,7 @@ struct CreateExpressParam {
     bool allowUseSwitchSyntax = false;
     bool allowUseParSyntax = false;
     bool allowUseBraceSyntax = false;
-    EParseFrom parsefrom = EParseFrom::None;
+    EParseFrom parseFrom = EParseFrom::None;
 
     CreateExpressParam() = default;
     CreateExpressParam(const CreateExpressParam& clone);

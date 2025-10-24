@@ -10,15 +10,21 @@
 #include "MetaExpressNode/MetaExpressBase.h"
 #include "MetaExpressNode/MetaExpressConst.h"
 #include "MetaExpressNode/MetaExecuteStatementsNode.h"
+#include "MetaExpressNode/MetaExpressNewObject.h"
+#include "MetaExpressNode/MetaExpressCalllink.h"
+#include "MetaExpressNode/MetaExpressOperator.h"
 #include "MetaCallLink.h"
 #include "Statements/MetaBlockStatements.h"
 #include "MetaClass.h"
 #include "MetaType.h"
 #include "MetaVariable.h"
+#include "MetaVisitCall.h"
 #include "AllowUseSettings.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/FileMeta/FileMetaBase.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
 #include "../Compile/FileMeta/FileMetaExpress.h"
+#include "../Compile/FileMeta/FileMetaSyntax.h"
 #include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include <iostream>
@@ -50,7 +56,7 @@ CreateExpressParam::CreateExpressParam(const CreateExpressParam& clone) {
     allowUseSwitchSyntax = clone.allowUseSwitchSyntax;
     allowUseParSyntax = clone.allowUseParSyntax;
     allowUseBraceSyntax = clone.allowUseBraceSyntax;
-    parsefrom = clone.parsefrom;
+    parseFrom = clone.parseFrom;
 }
 
 void CreateExpressParam::SetOwnerMBS(MetaBlockStatements* mbs) {
@@ -101,8 +107,8 @@ void CreateExpressParam::SetAllowUseBraceSyntax(bool allow) {
     allowUseBraceSyntax = allow;
 }
 
-void CreateExpressParam::SetParseFrom(EParseFrom parseFrom) {
-    parsefrom = parseFrom;
+void CreateExpressParam::SetParseFrom(EParseFrom _parseFrom) {
+    parseFrom = _parseFrom;
 }
 
 bool ExpressManager::IsCanExpressCampute(MetaClass* mc) {
@@ -281,10 +287,10 @@ void ExpressManager::CreateNewOrCalllink(const CreateExpressParam& cep, MetaNewO
     if (fmct->GetCallLink()->GetCallNodeList().size() <= 0) return;
 
     AllowUseSettings aus;
-    aus.parseFrom = cep.parsefrom;
+    aus.SetParseFrom( cep.parseFrom );
 
     MetaCallLink* mcl = new MetaCallLink(fmct->GetCallLink(), cep.ownerMetaClass, cep.ownerMBS, cep.metaType, cep.equalMetaVariable);
-    if (!mcl->Parse(aus)) return;
+    if (!mcl->Parse(&aus)) return;
     mcl->CalcReturnType();
 
     bool isNewClass = false;

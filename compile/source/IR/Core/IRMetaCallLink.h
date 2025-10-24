@@ -26,7 +26,6 @@
 #include <string>
 
 namespace SimpleLanguage {
-namespace Core {
 namespace IR {
 
 class IRMetaCallLink {
@@ -46,5 +45,4 @@ public:
 };
 
 } // namespace IR
-} // namespace Core
 } // namespace SimpleLanguage

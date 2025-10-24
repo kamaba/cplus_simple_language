@@ -15,6 +15,11 @@
 #include <sstream>
 
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class FileMetaOpAssignSyntax;
+        class FileMetaMemberData;
+    }
 namespace Core {
 
 enum class EMemberDataType {
@@ -25,8 +30,10 @@ enum class EMemberDataType {
     MemberClass
 };
 
-class FileMetaOpAssignSyntax;
-class FileMetaMemberData;
+
+class MetaData;
+class MetaVariable;
+class MetaExpressNode;
 
 class MetaMemberData : public MetaVariable {
 public:
@@ -38,9 +45,9 @@ public:
     const std::unordered_map<std::string, MetaMemberData*>& GetMetaMemberDataDict() const { return m_MetaMemberDataDict; }
 
     // Constructors
-    MetaMemberData(MetaData* mc, FileMetaOpAssignSyntax* fmoa);
-    MetaMemberData(MetaData* mc, FileMetaMemberData* fmmd, int index, bool isStatic);
-    MetaMemberData(MetaMemberData* parentNode, FileMetaMemberData* fmmd, int index, bool isEnd = false);
+    MetaMemberData(MetaData* mc, Compile::FileMetaOpAssignSyntax* fmoa);
+    MetaMemberData(MetaData* mc, Compile::FileMetaMemberData* fmmd, int index, bool isStatic);
+    MetaMemberData(MetaMemberData* parentNode, Compile::FileMetaMemberData* fmmd, int index, bool isEnd = false);
     MetaMemberData(MetaMemberData* parentNode, const std::string& name, int index, MetaExpressNode* men);
 
     // Methods
@@ -70,8 +77,8 @@ private:
 
     std::unordered_map<std::string, MetaMemberData*> m_MetaMemberDataDict;
 
-    FileMetaMemberData* m_FileMetaMemeberData = nullptr;
-    FileMetaOpAssignSyntax* m_FileMetaOpAssignSyntax = nullptr;
+    Compile::FileMetaMemberData* m_FileMetaMemeberData = nullptr;
+    Compile::FileMetaOpAssignSyntax* m_FileMetaOpAssignSyntax = nullptr;
 };
 
 } // namespace Core

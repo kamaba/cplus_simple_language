@@ -15,21 +15,15 @@
 
 namespace SimpleLanguage {
 namespace Compile {
-class Node;
-class FileMetaMemberVariable;
-class FileMetaMemberFunction;
-class FileMeta;
-class FileMetaSyntax;
-class FileMetaMemberData;
-class FileMetaNamespace;
-class FileMetaClass;
-class FileMetaImportSyntax;
-class FileMetaIfStatements;
-class FileMetaWhileDoWhileStatements;
-class FileMetaSwitchStatements;
-class FileMetaReturnStatements;
-class FileMetaBreakContinueGoStatements;
-class FileMetaCallStatements;
+
+    class Node;
+    class FileMeta;
+    class FileMetaNamespace;
+    class FileMetaClass;
+    class FileMetaMemberData;
+    class FileMetaMemberVariable;
+    class FileMetaMemberFunction;
+    class FileMetaSyntax;
 
 class StructParse {
 public:
