@@ -12,6 +12,8 @@
 #include "MetaParam.h"
 #include "MetaFunction.h"
 #include "MetaMemberFunction.h"
+#include "MetaGenTemplateClass.h"
+#include "MetaGenTemplateFunction.h"
 #include "MetaClass.h"
 #include "MetaType.h"
 #include "MetaVariable.h"
@@ -37,15 +39,15 @@ MetaMethodCall::MetaMethodCall(MetaClass* staticMc, const std::vector<MetaType*>
         mpList = m_VMCallMetaFunction->GetMetaMemberParamCollection()->GetMetaDefineParamList();
     }
     int defineCount = m_VMCallMetaFunction != nullptr ? m_VMCallMetaFunction->GetMetaMemberParamCollection()->GetMaxParamCount() : 0;
-    int inputCount = paramCollection != nullptr ? paramCollection->metaInputParamList().size() : 0;
+    int inputCount = paramCollection != nullptr ? paramCollection->GetMetaInputParamList().size() : 0;
     for (int i = 0; i < defineCount; i++) {
         if (i < inputCount) {
-            MetaInputParam* mip = paramCollection->metaInputParamList()[i];
-            m_MetaInputParamList.push_back(mip->express);
+            MetaInputParam* mip = paramCollection->GetMetaInputParamList()[i];
+            m_MetaInputParamList.push_back(mip->GetExpress());
         } else {
             MetaDefineParam* mdp = mpList[i];
             if (mdp != nullptr) {
-                m_MetaInputParamList.push_back(mdp->expressNode);
+                m_MetaInputParamList.push_back( mdp->GetExpressNode() );
             }
         }
     }
@@ -58,13 +60,13 @@ void MetaMethodCall::SetStoreMetaVariable(MetaVariable* mv) {
 }
 
 MetaType* MetaMethodCall::GeMetaDefineType() {
-    return m_VMCallMetaFunction->metaDefineType;
+    return m_VMCallMetaFunction->GetMetaDefineType();
 }
 
 MetaFunction* MetaMethodCall::GetTemplateMemberFunction() {
-    if (dynamic_cast<MetaGenTempalteFunction*>(m_VMCallMetaFunction) != nullptr) {
-        MetaGenTempalteFunction* mgtf = dynamic_cast<MetaGenTempalteFunction*>(m_VMCallMetaFunction);
-        return mgtf->sourceTemplateFunctionMetaMemberFunction;
+    if (dynamic_cast<MetaGenTemplateFunction*>(m_VMCallMetaFunction) != nullptr) {
+        MetaGenTemplateFunction* mgtf = dynamic_cast<MetaGenTemplateFunction*>(m_VMCallMetaFunction);
+        return mgtf->GetSourceTemplateFunctionMetaMemberFunction();
     }
     return m_VMCallMetaFunction;
 }

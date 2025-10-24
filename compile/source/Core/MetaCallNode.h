@@ -10,6 +10,7 @@
 
 #include "MetaBase.h"
 #include "../Define.h"
+#include "AllowUseSettings.h"
 #include <string>
 #include <vector>
 #include <memory>
@@ -58,13 +59,6 @@ enum class ECallNodeType : uint8_t {
     Express = 24
 };
 
-enum class EParseFrom : uint8_t {
-    None = 0,
-    MemberVariableExpress = 1,
-    InputParamExpress = 2,
-    StatementLeftExpress = 3,
-    StatementRightExpress = 4
-};
 
 class AllowUseSettings {
 public:

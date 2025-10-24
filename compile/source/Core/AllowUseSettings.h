@@ -13,14 +13,13 @@
 namespace SimpleLanguage {
 namespace Core {
 
-// 解析来源枚举
-enum class EParseFrom {
-    None,
-    MemberVariableExpress,
-    InputParamExpress,
-    StatementLeftExpress,
-    StatementRightExpress
-};
+    enum class EParseFrom : uint8_t {
+        None = 0,
+        MemberVariableExpress = 1,
+        InputParamExpress = 2,
+        StatementLeftExpress = 3,
+        StatementRightExpress = 4
+    };
 
 // 允许使用设置类
 class AllowUseSettings {
