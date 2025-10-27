@@ -8,10 +8,14 @@
 
 #include "MetaClass.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
+#include "../Compile/FileMeta/FileMetaMemberFunction.h"
+#include "../Compile/FileMeta/FileMetaMemberVariable.h"
 #include "MetaNode.h"
 #include "MetaType.h"
 #include "MetaMemberVariable.h"
 #include "MetaMemberFunction.h"
+#include "MetaGenTemplateFunction.h"
 #include "MetaExpressNode/MetaExpressBase.h"
 #include "MetaTemplate.h"
 #include "MetaParam.h"
@@ -358,7 +362,7 @@ void MetaClass::ParseDefineComplete() {
         }
         auto defaultFunction = GetMetaMemberConstructDefaultFunction();
         if (defaultFunction == nullptr) {
-            Log::AddInStructMeta(EError::None, "没有找发现默认构造函数");
+            //Log::AddInStructMeta(EError::None, "没有找发现默认构造函数");
             return;
         }
         // m_DefaultExpressNode = new MetaNewObjectExpressNode(mdt, this, defaultFunction->GetMetaBlockStatements());
@@ -390,10 +394,10 @@ void MetaClass::BindFileMetaClass(Compile::FileMetaClass* fmc) {
     }
 }
 
-void MetaClass::ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc) {
+MetaClass* MetaClass::ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc) {
     if (fmc->GetTemplateDefineList().size() > 0) {
         for (size_t i = 0; i < fmc->GetTemplateDefineList().size(); i++) {
-            std::string tTemplateName = fmc->GetTemplateDefineList()[i]->name;
+            std::string tTemplateName = fmc->GetTemplateDefineList()[i]->GetName();
             if (IsDefineTemplate(tTemplateName)) {
                 Log::AddInStructMeta(EError::None, "Error 定义模式名称重复!!");
             } else {
@@ -402,6 +406,7 @@ void MetaClass::ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc) {
             }
         }
     }
+    return this;
 }
 
 void MetaClass::ParseFileMetaClassMemeberVarAndFunc(Compile::FileMetaClass* fmc) {
@@ -431,7 +436,7 @@ void MetaClass::ParseFileMetaClassMemeberVarAndFunc(Compile::FileMetaClass* fmc)
             mmv->SetName(mmv->GetName() + "__repeat__");
         }
         m_FileCollectMetaMemberVariable.push_back(mmv);
-        MetaVariableManager::GetInstance().AddMetaMemberVariable(mmv);
+        MetaVariableManager::Instance().AddMetaMemberVariable(mmv);
     }
     for (auto v2 : fmc->GetMemberFunctionList()) {
         auto mn = this->m_MetaNode->GetChildrenMetaNodeByName(v2->GetName());
@@ -490,7 +495,7 @@ void MetaClass::AddMetaMemberVariable(MetaMemberVariable* mmv, bool isAddManager
     }
     m_MetaMemberVariableDict[mmv->GetName()] = mmv;
     if (isAddManager) {
-        MetaVariableManager::GetInstance().AddMetaMemberVariable(mmv);
+        MetaVariableManager::Instance().AddMetaMemberVariable(mmv);
     }
 }
 
@@ -599,11 +604,11 @@ MetaMemberFunction* MetaClass::GetMetaDefineGetSetMemberFunctionByName(const std
     }
     auto tfunctionNode = it2->second;
 
-    auto list = tfunctionNode->GetMetaMemberFunctionListByParamCount(inputParam != nullptr ? inputParam->GetCount() : 0);
-    if (list == nullptr) return nullptr;
+    std::vector<MetaMemberFunction*> list = tfunctionNode->GetMetaMemberFunctionListByParamCount(inputParam != nullptr ? inputParam->GetCount() : 0);
+    if (list.size() == 0 ) return nullptr;
 
-    for (size_t i = 0; i < list->size(); i++) {
-        auto fun = (*list)[i];
+    for (size_t i = 0; i < list.size(); i++) {
+        auto fun = (list)[i];
         if (fun->IsTemplateFunction()) {
             return fun;
         }
@@ -628,10 +633,10 @@ MetaMemberFunction* MetaClass::GetMetaMemberFunctionByNameAndInputTemplateInputP
     auto tfunctionNode = it2->second;
 
     auto list = tfunctionNode->GetMetaMemberFunctionListByParamCount(inputParam != nullptr ? inputParam->GetCount() : 0);
-    if (list == nullptr) return nullptr;
+    if (list.size() == 0 ) return nullptr;
 
-    for (size_t i = 0; i < list->size(); i++) {
-        auto fun = (*list)[i];
+    for (size_t i = 0; i < list.size(); i++) {
+        auto fun = (list)[i];
         if (fun->IsTemplateFunction()) {
             return fun;
         }
@@ -660,14 +665,14 @@ MetaMemberFunction* MetaClass::GetMetaMemberFunctionByNameAndInputTemplateInputP
     auto tfunctionNode = it2->second;
 
     auto list = tfunctionNode->GetMetaMemberFunctionListByParamCount(inputParam != nullptr ? inputParam->GetCount() : 0);
-    if (list == nullptr) return nullptr;
+    if (list.size() == 0 ) return nullptr;
 
-    for (size_t i = 0; i < list->size(); i++) {
-        auto fun = (*list)[i];
+    for (size_t i = 0; i < list.size(); i++) {
+        auto fun = (list)[i];
         if (fun->IsTemplateFunction()) {
-            auto gfun = fun->GetGenTemplateFunction(mtList);
+            MetaGenTemplateFunction* gfun = fun->GetGenTemplateFunction(mtList);
             if (gfun != nullptr) {
-                return gfun;
+                return dynamic_cast<MetaMemberFunction*>(gfun);
             }
             return fun;
         }
@@ -751,28 +756,6 @@ bool MetaClass::IsDefineTemplate(const std::string& name) {
     return std::find_if(m_MetaTemplateList.begin(), m_MetaTemplateList.end(),
         [&name](MetaTemplate* mt) { return mt->GetName() == name; }) != m_MetaTemplateList.end();
 }
-
-void MetaClass::ParseMetaInConstraint() {
-    for (auto it : m_MetaTemplateList) {
-        it->ParseInConstraint();
-    }
-}
-
-MetaClass* MetaClass::ParseFileMetaClassTemplate(Compile::FileMetaClass* fmc) {
-    if (fmc->GetTemplateDefineList().size() > 0) {
-        for (size_t i = 0; i < fmc->GetTemplateDefineList().size(); i++) {
-            std::string tTemplateName = fmc->GetTemplateDefineList()[i]->name;
-            if (IsDefineTemplate(tTemplateName)) {
-                Log::AddInStructMeta(EError::None, "Error 定义模式名称重复!!");
-            } else {
-                MetaTemplate* mt = new MetaTemplate(this, fmc->GetTemplateDefineList()[i], i);
-                m_MetaTemplateList.push_back(mt);
-            }
-        }
-    }
-    return this;
-}
-
 bool MetaClass::CompareInputTemplateList(MetaInputTemplateCollection* mitc) {
     if (mitc == nullptr || mitc->GetMetaTemplateParamsList().size() == 0) {
         if (this->m_MetaTemplateList.size() == 0)
@@ -898,7 +881,7 @@ std::string MetaClass::GetFormatString(bool isShowNamespace) const {
     stringBuilder.clear();
     for (int i = 0; i < GetRealDeep(); i++)
         stringBuilder << "\t";
-    stringBuilder << GetPermission().ToFormatString();
+    stringBuilder << (int)GetPermission();
     stringBuilder << " ";
     if (isShowNamespace) {
         stringBuilder << "class ";

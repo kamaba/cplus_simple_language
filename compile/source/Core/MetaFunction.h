@@ -25,6 +25,7 @@ namespace Core {
     class MetaDefineTemplateCollection;
     class MetaTemplate;
     class MetaInputTemplateCollection;
+    class MetaInputParamCollection;
 enum class EMethodCallType : uint8_t {
     Local = 0,
     CSharp = 1,

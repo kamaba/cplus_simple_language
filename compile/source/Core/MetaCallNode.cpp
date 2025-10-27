@@ -248,10 +248,10 @@ bool MetaCallNode::CreateCallNode() {
     }
     else if (etype == ETokenType::This) {
         if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::MemberVariableExpress) {
-            Log::AddInStructMeta(EError::None, "Error 不允许在成员变量中使用this关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error 不允许在成员变量中使用this关键字" + m_Token->ToLexemeAllString());
         }
         if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress) {
-            Log::AddInStructMeta(EError::None, "Error 不允许在输入变量中中使用this关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error 不允许在输入变量中中使用this关键字" + m_Token->ToLexemeAllString());
         }
         if (isFirst) {
             if (m_IsFunction) {
@@ -264,26 +264,26 @@ bool MetaCallNode::CreateCallNode() {
             }
         }
         else {
-            Log::AddInStructMeta(EError::None, "Error 只有第一位置可以使用This关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error 只有第一位置可以使用This关键字" + m_Token->ToLexemeAllString());
         }
     }
     else if (etype == ETokenType::Base) {
         if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::MemberVariableExpress) {
-            Log::AddInStructMeta(EError::None, "Error 不允许在成员变量中使用base关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error 不允许在成员变量中使用base关键字" + m_Token->ToLexemeAllString());
         }
         if (this->m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress) {
-            Log::AddInStructMeta(EError::None, "Error 不允许在输入变量中中使用base关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error 不允许在输入变量中中使用base关键字" + m_Token->ToLexemeAllString());
         }
 
         MetaClass* parentClass = m_OwnerMetaClass->GetMetaNode()->GetParentNode()->GetMetaClassByTemplateCount(0);
         if (parentClass == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error 使用base没有找到父节点!!");
+            //Log::AddInStructMeta(EError::None, "Error 使用base没有找到父节点!!");
             return false;
         }
 
         if (isFirst) {
             if (m_IsFunction) {
-                Log::AddInStructMeta(EError::None, "Error 不允许base的函数形式!!");
+               // Log::AddInStructMeta(EError::None, "Error 不允许base的函数形式!!");
             }
             else {
                 m_MetaClass = parentClass;
@@ -291,7 +291,7 @@ bool MetaCallNode::CreateCallNode() {
             }
         }
         else {
-            Log::AddInStructMeta(EError::None, "Error 只有第一位置可以使用base关键字" + m_Token->ToLexemeAllString());
+            //Log::AddInStructMeta(EError::None, "Error 只有第一位置可以使用base关键字" + m_Token->ToLexemeAllString());
         }
     }
     else if (etype == ETokenType::Type) {
@@ -606,7 +606,7 @@ bool MetaCallNode::CreateCallNode() {
 
             if (m_FileMetaCallNode->GetFileMetaBraceTerm() != nullptr) {
                 if (m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress ) {
-                    Log::AddInStructMeta(EError::None, "Error 在InputParam 里边，构建函数，只允许 使用ClassName() 的方式, 不允许使用 ClassName(){}的方式" + m_FileMetaCallNode->GetFileMetaBraceTerm()->ToTokenString());
+                    //Log::AddInStructMeta(EError::None, "Error 在InputParam 里边，构建函数，只允许 使用ClassName() 的方式, 不允许使用 ClassName(){}的方式" + m_FileMetaCallNode->GetFileMetaBraceTerm()->ToTokenString());
                     return false;
                 }
                 m_MetaBraceStatementsContent = new MetaBraceOrBracketStatementsContent(m_FileMetaCallNode->GetFileMetaBraceTerm(), m_OwnerMetaFunctionBlock, m_OwnerMetaClass);
@@ -618,7 +618,7 @@ bool MetaCallNode::CreateCallNode() {
             m_CallNodeType = ECallNodeType::NewData;
             if (m_FileMetaCallNode->GetFileMetaBraceTerm() != nullptr) {
                 if (m_AllowUseSettings->GetParseFrom() == EParseFrom::InputParamExpress ) {
-                    Log::AddInStructMeta(EError::None, "Error 在InputParam 里边，构建函数，只允许 使用ClassName() 的方式, 不允许使用 ClassName(){}的方式" + m_FileMetaCallNode->GetFileMetaBraceTerm()->ToTokenString());
+                    //Log::AddInStructMeta(EError::None, "Error 在InputParam 里边，构建函数，只允许 使用ClassName() 的方式, 不允许使用 ClassName(){}的方式" + m_FileMetaCallNode->GetFileMetaBraceTerm()->ToTokenString());
                     return false;
                 }
                 m_MetaBraceStatementsContent = new MetaBraceOrBracketStatementsContent(m_FileMetaCallNode->GetFileMetaBraceTerm(), m_OwnerMetaFunctionBlock, m_OwnerMetaClass);
@@ -754,7 +754,7 @@ bool MetaCallNode::GetFirstNode(const std::string& inputname, MetaClass* mc, int
             m_MetaClass = retMC->GetMetaClassByTemplateCount(count);
             m_CallNodeType = ECallNodeType::ClassName;
             if (m_MetaClass == nullptr) {
-                Log::AddInStructMeta(EError::None, "找到" + retMC->GetAllName() + " 里边模板数据为" + std::to_string(count) + " 没有找到相关的类!");
+                //Log::AddInStructMeta(EError::None, "找到" + retMC->GetAllName() + " 里边模板数据为" + std::to_string(count) + " 没有找到相关的类!");
                 return false;
             }
             m_MetaType = new MetaType(m_MetaClass);

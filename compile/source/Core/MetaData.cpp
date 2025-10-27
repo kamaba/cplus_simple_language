@@ -10,17 +10,21 @@
 #include "MetaMemberData.h"
 #include "MetaNode.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
+#include "../Compile/FileMeta/FileMetaMemberData.h"
 #include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include <sstream>
 
 using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
+
 namespace SimpleLanguage {
 namespace Core {
 
     MetaData::MetaData(Compile::FileMetaClass* md) {
-        m_Name = md->Name();
-        m_AllName = md->Name();
+        m_Name = md->GetName();
+        m_AllName = md->GetName();
         m_Type = EType::Data;
         m_IsConst = md->IsConst();
         m_IsStatic = md->IsStatic();
@@ -68,9 +72,9 @@ namespace Core {
         bool isHave = false;
         for (size_t i = 0; i < fmc->GetMemberDataList().size(); i++) {
             auto v = fmc->GetMemberDataList()[i];
-            MetaNode* mb = m_MetaNode->GetChildrenMetaNodeByName(v->Name());
+            MetaNode* mb = m_MetaNode->GetChildrenMetaNodeByName(v->GetName());
             if (mb != nullptr) {
-                Debug::Log::AddInStructMeta(EError::None, "Error MetaData MetaDataMember已有定义类: " + m_AllName + "中 已有: " + (v->GetToken() ? v->GetToken()->ToLexemeAllString() : "null") + "的元素!!");
+                Debug::Log::AddInStructMeta(EError::None, "Error MetaData MetaDataMember已有定义类: " + m_AllName + "中 已有: " + (v->GetToken() != nullptr ? v->GetToken()->ToLexemeAllString() : "null") + "的元素!!");
                 isHave = true;
             } else {
                 isHave = false;

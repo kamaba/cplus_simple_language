@@ -7,11 +7,14 @@
 //****************************************************************************
 
 #include "MethodManager.h"
-#include "MetaClass.h"
 #include "MetaMemberFunction.h"
 #include "MetaFunction.h"
 #include "MetaVariable.h"
+#include "MetaClass.h"
+#include "MetaType.h"
+#include "MetaMemberVariable.h"
 #include "../Compile/FileMeta/FileMetaBase.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
 #include "../Debug/Log.h"
 #include <algorithm>
 
@@ -31,7 +34,7 @@ MetaVariable* MethodManager::GetMetaVariableInMetaClass(MetaClass* mc, Compile::
     for (size_t i = 0; i < fmcl->GetCallNodeList().size(); i++) {
         auto cnl = fmcl->GetCallNodeList()[i];
 
-        mv = mb->GetMetaMemberVariableByName(cnl->GetName());
+        mv = mb->GetMetaMemberVariableByName(cnl->Name());
         if (mv == nullptr) {
             return nullptr;
         }

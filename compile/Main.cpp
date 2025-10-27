@@ -9,7 +9,8 @@ using namespace SimpleLanguage::Project;
 int main( const char* args )
 {
     std::cout << "Hello World!\n";
-    CommandInputArgs* inputArgs = new CommandInputArgs("");
+    std::vector<std::string> sss;
+    CommandInputArgs* inputArgs = new CommandInputArgs(sss);
     ProjectManager::Run("../../../test/BaseTest", inputArgs);
 
     system("pause");

@@ -172,7 +172,6 @@
     <ClCompile Include="source\Core\MetaCallNode.cpp" />
     <ClCompile Include="source\Core\MetaClass.cpp" />
     <ClCompile Include="source\Core\MetaData.cpp" />
-    <ClCompile Include="source\Core\MetaDefineParam.cpp" />
     <ClCompile Include="source\Core\MetaDynamicClass.cpp" />
     <ClCompile Include="source\Core\MetaEnum.cpp" />
     <ClCompile Include="source\Core\MetaExpressNode\MetaExecuteStatementsNode.cpp" />
@@ -198,6 +197,7 @@
     <ClCompile Include="source\Core\MetaVariable.cpp" />
     <ClCompile Include="source\Core\MetaVariableManager.cpp" />
     <ClCompile Include="source\Core\MetaVisitCall.cpp" />
+    <ClCompile Include="source\Core\MethodManager.cpp" />
     <ClCompile Include="source\Core\ModuleManager.cpp" />
     <ClCompile Include="source\Core\NamespaceManager.cpp" />
     <ClCompile Include="source\Core\Statements\MetaAssignStatements.cpp" />
@@ -308,7 +308,6 @@
     <ClInclude Include="source\Core\MetaCallNode.h" />
     <ClInclude Include="source\Core\MetaClass.h" />
     <ClInclude Include="source\Core\MetaData.h" />
-    <ClInclude Include="source\Core\MetaDefineParam.h" />
     <ClInclude Include="source\Core\MetaDynamicClass.h" />
     <ClInclude Include="source\Core\MetaEnum.h" />
     <ClInclude Include="source\Core\MetaExpressNode\MetaExecuteStatementsNode.h" />
@@ -334,6 +333,7 @@
     <ClInclude Include="source\Core\MetaVariable.h" />
     <ClInclude Include="source\Core\MetaVariableManager.h" />
     <ClInclude Include="source\Core\MetaVisitCall.h" />
+    <ClInclude Include="source\Core\MethodManager.h" />
     <ClInclude Include="source\Core\ModuleManager.h" />
     <ClInclude Include="source\Core\NamespaceManager.h" />
     <ClInclude Include="source\Core\Statements\MetaAssignStatements.h" />

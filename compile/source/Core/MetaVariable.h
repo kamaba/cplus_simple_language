@@ -78,6 +78,8 @@ public:
     void SetVariableFrom(EVariableFrom from) { m_VariableFrom = from; }
     void SetOwnerMetaBlockStatements(MetaBlockStatements* mbs) { m_OwnerMetaBlockStatements = mbs; }
     void SetSourceMetaVariable(MetaVariable* mv) { m_SourceMetaVariable = mv; }
+    void SetDefineMetaClass(MetaClass* defineClass);
+    void SetMetaDefineType(MetaType* mdt) { m_DefineMetaType = mdt; }
 
     // ����
     MetaClass* GetOwnerClassTemplateClass() const;
@@ -93,7 +95,10 @@ public:
 
     // �鷽��
     virtual void ParseDefineMetaType() {}
+    virtual bool Parse() { return true; }
+    virtual void CreateMetaExpress() {}
     virtual bool ParseMetaExpress() { return true; }
+    virtual std::string ToStatementString() const { return ""; }
     virtual std::string ToFormatString() const;
     virtual std::string ToString() const;
 };

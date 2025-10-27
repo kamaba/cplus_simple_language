@@ -21,11 +21,11 @@ class MetaVariableManager {
 public:
     static MetaVariableManager* s_Instance;
     
-    static MetaVariableManager* Instance() {
+    static MetaVariableManager Instance() {
         if (s_Instance == nullptr) {
             s_Instance = new MetaVariableManager();
         }
-        return s_Instance;
+        return *s_Instance;
     }
     
     std::vector<MetaMemberVariable*> metaMemeberVariableList;

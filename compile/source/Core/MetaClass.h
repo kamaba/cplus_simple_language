@@ -98,7 +98,6 @@ public:
     virtual bool CheckInterface();
     virtual void ParseDefineComplete();
     virtual void ParseGenTemplateClassMetaType();
-    virtual void ParseMetaInConstraint();
 
     // Search methods
     virtual MetaMemberVariable* GetMetaMemberVariableByName(const std::string& name);

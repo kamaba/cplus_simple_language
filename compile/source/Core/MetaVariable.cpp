@@ -56,6 +56,12 @@ void MetaVariable::SetOwnerMetaClass(MetaClass* ownerclass) {
     m_OwnerMetaClass = ownerclass;
 }
 
+void MetaVariable::SetDefineMetaClass(MetaClass* defineClass) {
+    if (m_DefineMetaType != nullptr) {
+        m_DefineMetaType->SetMetaClass(defineClass);
+    }
+}
+
 MetaClass* MetaVariable::GetOwnerClassTemplateClass() const {
     // ������Ҫ����ʵ�ʵ� MetaGenTemplateClass �ṹ������
     // if (auto mgtc = dynamic_cast<MetaGenTemplateClass*>(m_OwnerMetaClass)) {
@@ -79,7 +85,20 @@ void MetaVariable::AddPingToken(const std::string& path, int beginline, int begi
 }
 
 void MetaVariable::AddPingToken(Compile::Token* token) {
-    if (token != nullptr) {
+    if (token == nullptr) {
+        return;
+    }
+    
+    auto find1 = std::find_if(m_PintTokenList.begin(), m_PintTokenList.end(),
+        [token](Compile::Token* t) {
+            return t->GetSourceBeginLine() == token->GetSourceBeginLine()
+                && t->GetSourceBeginChar() == token->GetSourceBeginChar()
+                && t->GetSourceEndLine() == token->GetSourceEndLine()
+                && t->GetSourceEndChar() == token->GetSourceEndChar()
+                && t->GetPath() == token->GetPath();
+        });
+    
+    if (find1 == m_PintTokenList.end()) {
         m_PintTokenList.push_back(token);
     }
 }
