@@ -16,6 +16,7 @@ namespace SimpleLanguage {
         class Token;
         class FileMetaOpAssignSyntax;
         class FileMetaDefineVariableSyntax;
+        class FileMetaOpAssignSyntax;
     }
 namespace Core {
 
@@ -81,7 +82,7 @@ private:
 public:
     virtual void UpdateOwnerMetaClass(MetaClass* ownerclass) override;
     virtual std::string ToFormatString() const override;
-    virtual std::string GetFormatString();
+    virtual std::string GetFormatString() const override;
 };
 
 } // namespace Core

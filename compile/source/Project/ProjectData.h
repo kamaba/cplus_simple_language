@@ -8,12 +8,16 @@
 
 
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class FileMetaClass;
+    }
+    namespace Core
+    {
+        class MetaMemberData;
+        class MetaVariable;
+    }
 namespace Project {
-
-// Forward declarations
-class MetaMemberData;
-class MetaVariable;
-class FileMetaClass;
 
 class CompileFileData {
 public:
@@ -24,7 +28,7 @@ public:
 
     class CompileFileDataUnit {
     public:
-        CompileFileDataUnit(MetaMemberData* mmd);
+        CompileFileDataUnit( Core::MetaMemberData* mmd);
         
         std::string path() const { return m_Path; }
         void setPath(const std::string& value) { m_Path = value; }
@@ -50,7 +54,7 @@ public:
     };
 
     std::vector<CompileFileDataUnit*> compileFileDataUnitList() const { return m_CompileFileDataUnitList; }
-    void Parse(MetaMemberData* mmd);
+    void Parse(Core::MetaMemberData* mmd);
 
 private:
     std::vector<CompileFileDataUnit*> m_CompileFileDataUnitList;
@@ -64,7 +68,7 @@ public:
     bool isSupportDoublePlus() const { return m_IsSupportDoublePlus; }
     void setSupportDoublePlus(bool value) { m_IsSupportDoublePlus = value; }
 
-    void Parse(MetaMemberData* mmd);
+    void Parse(Core::MetaMemberData* mmd);
 
 private:
     bool m_IsForceUseClassKey = false;
@@ -84,7 +88,7 @@ public:
 
     bool IsIncludeInGroup(const std::string& group);
     bool IsIncludeInTag(const std::string& tag);
-    bool Parse(MetaMemberData* mmd);
+    bool Parse(Core::MetaMemberData* mmd);
 
 private:
     std::vector<std::string> m_GroupList;
@@ -109,7 +113,7 @@ public:
     };
 
     const std::vector<ImportModuleDataUnit*>& importModuleDataUnitList() const { return m_ImportModuleDataUnitList; }
-    bool Parse(MetaMemberData* mmd);
+    bool Parse(Core::MetaMemberData* mmd);
 
 private:
     std::vector<ImportModuleDataUnit*> m_ImportModuleDataUnitList;
@@ -131,7 +135,7 @@ public:
         std::string m_Path;
     };
 
-    void Parse(MetaMemberVariable* mmd);
+    void Parse(Core::MetaMemberVariable* mmd);
 
 private:
     std::vector<CompileModuleDataUnit*> m_CompileModuleDataUnitList;
@@ -155,9 +159,9 @@ public:
     EDefineStructType type() const { return m_Type; }
     void setType(EDefineStructType value) { m_Type = value; }
     
-    const std::vector<DefineStruct*>& childDefineStruct() const { return m_ChildDefineStruct; }
+    const std::vector<DefineStruct*>& childDefineStruct() { return m_ChildDefineStruct; }
 
-    DefineStruct* Parse(MetaMemberData* mmd);
+    DefineStruct* Parse(Core::MetaMemberData* mmd);
 
 private:
     std::string m_Name = "";
@@ -167,17 +171,17 @@ private:
 
 class GlobalVariableData {
 public:
-    const std::unordered_map<std::string, MetaVariable*>& variableDict() const { return m_VariableDict; }
-    void Parse(MetaMemberData* mmd);
+    const std::unordered_map<std::string, Core::MetaVariable*>& variableDict() const { return m_VariableDict; }
+    void Parse(Core::MetaMemberData* mmd);
 
 private:
-    std::unordered_map<std::string, MetaVariable*> m_VariableDict;
+    std::unordered_map<std::string, Core::MetaVariable*> m_VariableDict;
 };
 
 class GlobalImportData {
 public:
     const std::vector<std::string>& globalImportList() const { return m_GlobalImportList; }
-    void Parse(MetaMemberData* mmd);
+    void Parse(Core::MetaMemberData* mmd);
 
 private:
     std::vector<std::string> m_GlobalImportList;
@@ -185,7 +189,7 @@ private:
 
 class GlobalReplaceData {
 public:
-    void Parse(MetaMemberData* mmd);
+    void Parse(Core::MetaMemberData* mmd);
 
 private:
     std::unordered_map<std::string, std::string> m_ReplaceStringDict;
@@ -196,7 +200,7 @@ public:
     std::string spaceName() const { return m_SpaceName; }
     void setSpaceName(const std::string& value) { m_SpaceName = value; }
 
-    void Parse(MetaMemberData* mmd);
+    void Parse(Core::MetaMemberData* mmd);
 
 private:
     std::string m_SpaceName = "";
@@ -204,7 +208,7 @@ private:
 
 class MemorySetData {
 public:
-    void Parse(MetaMemberData* mmd);
+    void Parse(Core::MetaMemberData* mmd);
 };
 
 class ProjectData : public SimpleLanguage::Core::MetaData {
@@ -244,8 +248,8 @@ public:
     ImportModuleData* importModuleData() const { return m_ImportModuleData; }
     MemorySetData* memorySetData() const { return m_MemorySetData; }
 
-    virtual void ParseFileMetaDataMemeberData(FileMetaClass* fmc);
-    void ParseBlockNode(MetaMemberData* mmd);
+    virtual void ParseFileMetaDataMemeberData(Compile::FileMetaClass* fmc);
+    void ParseBlockNode(Core::MetaMemberData* mmd);
     void ParseGlobalVariable();
     bool IsIncludeDefineStruct(const std::vector<std::string>& liststr);
 

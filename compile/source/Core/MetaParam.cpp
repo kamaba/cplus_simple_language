@@ -6,26 +6,32 @@
 //  Description: Meta params about info class!
 //****************************************************************************
 
+#include "../Compile/FileMeta/FileMetaBase.h"
+#include "../Compile/FileMeta/FileMetaSyntax.h"
+#include "../Compile/FileMeta/FileMetaExpress.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
+#include "../Compile/FileMeta/FileMetaMemberFunction.h"
+
 #include "MetaParam.h"
 #include "MetaType.h"
 #include "MetaVariable.h"
 #include "MetaClass.h"
-#include "MetaMethod.h"
-#include "MetaExpressNode.h"
-#include "MetaBlockStatements.h"
-#include "../Compile/FileMeta/FileInputParamNode.h"
-#include "../Compile/FileMeta/FileMetaParamterDefine.h"
-#include "../Compile/FileMeta/FileMetaParTerm.h"
-#include "../Compile/FileMeta/FileMetaBracketTerm.h"
+#include "MetaMemberFunction.h"
+#include "MetaExpressNode/MetaExpressBase.h"
+#include "MetaFunction.h"
+#include "MetaExpressNode/MetaExpressBase.h"
+#include "Statements/MetaBlockStatements.h"
 #include "../Debug/Log.h"
 #include "ClassManager.h"
-#include "CoreMetaClassManager.h"
+#include "AllowUseSettings.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
 #include "TypeManager.h"
 #include "ExpressManager.h"
 #include <sstream>
 #include <algorithm>
 
 using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -39,11 +45,11 @@ MetaInputParam::MetaInputParam(Compile::FileInputParamNode* fipn, MetaClass* mc,
     CreateExpressParam cep;
     cep.ownerMBS = m_OwnerMetaBlockStatements;
     cep.ownerMetaClass = m_OwnerMetaClass;
-    cep.metaType = new MetaType(CoreMetaClassManager::ObjectMetaClass);
-    cep.fme = m_FileInputParamNode->GetExpress();
+    cep.metaType = new MetaType(CoreMetaClassManager::objectMetaClass);
+    cep.fme = m_FileInputParamNode->Express();
     cep.isStatic = false;
     cep.isConst = false;
-    cep.parsefrom = EParseFrom::InputParamExpress;
+    cep.parseFrom = EParseFrom::InputParamExpress;
     m_Express = ExpressManager::CreateExpressNode(cep);
 }
 
@@ -54,12 +60,12 @@ MetaInputParam::MetaInputParam(MetaExpressNode* inputExpress) {
 void MetaInputParam::Parse() {
     if (m_Express != nullptr) {
         AllowUseSettings auc;
-        auc.parseFrom = EParseFrom::InputParamExpress;
-        m_Express->Parse(auc);
+        auc.SetParseFrom( EParseFrom::InputParamExpress );
+        m_Express->Parse(&auc);
     }
 }
 
-void MetaInputParam::CaleReturnType() {
+void MetaInputParam::CalcReturnType() {
     if (m_Express != nullptr) {
         m_Express->CalcReturnType();
     }
@@ -69,7 +75,7 @@ MetaClass* MetaInputParam::GetRetMetaClass() {
     if (m_Express != nullptr) {
         return m_Express->GetReturnMetaClass();
     }
-    return CoreMetaClassManager::ObjectMetaClass;
+    return CoreMetaClassManager::objectMetaClass;
 }
 
 std::string MetaInputParam::ToFormatString() {
@@ -88,10 +94,10 @@ std::string MetaInputParam::ToStatementString() {
 }
 
 // MetaDefineParam implementation
-MetaDefineParam::MetaDefineParam(const std::string& _name, MetaMethod* mf) {
+MetaDefineParam::MetaDefineParam(const std::string& _name, MetaFunction* mf) {
     m_Name = _name;
     m_OwnerMetaFunction = mf;
-    m_MetaVariable = new MetaVariable(m_Name, MetaVariable::EVariableFrom::Argument,
+    m_MetaVariable = new MetaVariable(m_Name, EVariableFrom::Argument,
         nullptr, m_OwnerMetaFunction->GetOwnerMetaClass(), nullptr);
 }
 
@@ -104,17 +110,17 @@ MetaDefineParam::MetaDefineParam(const MetaDefineParam& mdp) {
     m_MetaVariable = new MetaVariable(*mdp.m_MetaVariable);
 }
 
-MetaDefineParam::MetaDefineParam(MetaMethod* mf, Compile::FileMetaParamterDefine* fmp) {
+MetaDefineParam::MetaDefineParam(MetaFunction* mf, Compile::FileMetaParamterDefine* fmp) {
     m_OwnerMetaFunction = mf;
     m_FileMetaParamter = fmp;
     m_Name = m_FileMetaParamter->GetName();
 
-    m_MetaVariable = new MetaVariable(m_Name, MetaVariable::EVariableFrom::Argument,
+    m_MetaVariable = new MetaVariable(m_Name, EVariableFrom::Argument,
         nullptr, m_OwnerMetaFunction->GetOwnerMetaClass(), nullptr);
 }
 
 void MetaDefineParam::ParseMetaDefineType() {
-    MetaType* mdt = new MetaType(CoreMetaClassManager::ObjectMetaClass);
+    MetaType* mdt = new MetaType(CoreMetaClassManager::objectMetaClass);
     if (this->m_FileMetaParamter != nullptr && this->m_FileMetaParamter->GetClassDefineRef() != nullptr) {
         mdt = TypeManager::GetInstance().GetMetaTypeByTemplateFunction(m_OwnerMetaFunction->GetOwnerMetaClass(), 
             dynamic_cast<MetaMemberFunction*>(m_OwnerMetaFunction), m_FileMetaParamter->GetClassDefineRef());
@@ -129,11 +135,11 @@ void MetaDefineParam::CreateExpress() {
     if (m_FileMetaParamter != nullptr && m_FileMetaParamter->GetExpress() != nullptr) {
         CreateExpressParam cep;
         cep.ownerMBS = nullptr;
-        cep.metaType = new MetaType(CoreMetaClassManager::ObjectMetaClass);
+        cep.metaType = new MetaType(CoreMetaClassManager::objectMetaClass);
         cep.fme = m_FileMetaParamter->GetExpress();
         cep.isStatic = false;
         cep.isConst = false;
-        cep.parsefrom = EParseFrom::InputParamExpress;
+        cep.SetParseFrom( EParseFrom::InputParamExpress );
         m_MetaExpressNode = ExpressManager::CreateExpressNode(cep);
     }
 }
@@ -141,11 +147,11 @@ void MetaDefineParam::CreateExpress() {
 void MetaDefineParam::Parse() {
     if (m_MetaExpressNode != nullptr) {
         AllowUseSettings auc;
-        auc.useNotConst = false;
-        auc.useNotStatic = false;
-        auc.callConstructFunction = true;
-        auc.callFunction = true;
-        m_MetaExpressNode->Parse(auc);
+        auc.SetUseNotConst( false );
+        auc.SetUseNotStatic(false);
+        auc.SetCallConstructFunction(true);
+        auc.SetCallFunction(true);
+        m_MetaExpressNode->Parse(&auc);
     }
 }
 
@@ -168,7 +174,7 @@ bool MetaDefineParam::EqualsInputMetaParam(MetaInputParam* mip) {
         auto retMC = mip->GetRetMetaClass();
         auto relation = ClassManager::ValidateClassRelationByMetaClass(m_MetaVariable->GetMetaDefineType()->GetMetaClass(), retMC);
 
-        if (relation == ClassManager::EClassRelation::Same || relation == ClassManager::EClassRelation::Child) {
+        if (relation == EClassRelation::Same || relation == EClassRelation::Child) {
             return true;
         }
     }
@@ -420,12 +426,12 @@ void MetaInputParamCollection::AddMetaInputParam(MetaInputParam* mip) {
 void MetaInputParamCollection::CaleReturnType() {
     for (size_t i = 0; i < m_MetaInputParamList.size(); i++) {
         m_MetaInputParamList[i]->Parse();
-        m_MetaInputParamList[i]->CaleReturnType();
+        m_MetaInputParamList[i]->CalcReturnType();
     }
 }
 
 MetaClass* MetaInputParamCollection::GetMaxLevelMetaClassType() {
-    MetaClass* mc = CoreMetaClassManager::ObjectMetaClass;
+    MetaClass* mc = CoreMetaClassManager::objectMetaClass;
     bool isAllSame = true;
     for (size_t i = 0; i < m_MetaInputParamList.size() - 1; i++) {
         MetaInputParam* cmc = m_MetaInputParamList[i];
@@ -436,10 +442,10 @@ MetaClass* MetaInputParamCollection::GetMaxLevelMetaClassType() {
                 auto cur = cmc->GetRetMetaClass();
                 auto next = nmc->GetRetMetaClass();
                 auto relation = ClassManager::ValidateClassRelationByMetaClass(cur, next);
-                if (relation == ClassManager::EClassRelation::Same
-                    || relation == ClassManager::EClassRelation::Child) {
+                if (relation == EClassRelation::Same
+                    || relation == EClassRelation::Child) {
                     mc = next;
-                } else if (relation == ClassManager::EClassRelation::Parent) {
+                } else if (relation == EClassRelation::Parent) {
                     mc = cur;
                 } else {
                     isAllSame = false;
@@ -510,7 +516,7 @@ std::vector<MetaClass*> MetaInputTemplateCollection::GetMetaClassParamsList() {
 }
 
 MetaClass* MetaInputTemplateCollection::GetMaxLevelMetaClassType() {
-    MetaClass* mc = CoreMetaClassManager::ObjectMetaClass;
+    MetaClass* mc = CoreMetaClassManager::objectMetaClass;
     bool isAllSame = true;
     for (size_t i = 0; i < m_MetaTemplateParamsList.size() - 1; i++) {
         MetaType* cmdt = m_MetaTemplateParamsList[i];

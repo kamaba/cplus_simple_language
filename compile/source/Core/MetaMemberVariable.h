@@ -95,6 +95,7 @@ public:
     MetaExpressNode* CreateExpressNodeInClassMetaVariable();
     void ParseChildMemberData();
     std::string ToTokenString() const;
+    void CalcDefineClassType();
     
     // ¾²Ì¬·½·¨
     static int GetConstLevel() { return s_ConstLevel; }

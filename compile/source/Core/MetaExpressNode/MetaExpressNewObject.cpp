@@ -12,9 +12,13 @@
 #include "../Statements/MetaBlockStatements.h"
 #include "../BaseMetaClass/CoreMetaClassManager.h"
 #include "../MetaDynamicClass.h"
+#include "../MetaVisitCall.h"
 #include "../MetaParam.h"
 #include "../MetaData.h"
 #include "../MetaType.h"
+#include "../MetaClass.h"
+#include "../MetaFunction.h"
+#include "../MetaMemberFunction.h"
 #include "../MetaMemberData.h"
 #include "../MetaMemberVariable.h"
 #include "../ClassManager.h"
@@ -69,7 +73,7 @@ MetaBraceAssignStatements::MetaBraceAssignStatements(MetaBlockStatements* mbs, M
             if (mt->IsDynamicClass()) {
                 m_MetaMemberVariable = new MetaMemberVariable(nullptr, m_DefineName);
             } else if (mt->IsDynamicData()) {
-                m_MetaMemberData = new MetaMemberData(mt->GetMetaClass(), fmos);
+                m_MetaMemberData = new MetaMemberData( dynamic_cast<MetaData*>(mt->GetMetaClass() ), fmos);
                 m_MetaMemberData->SetOwnerBlockstatements(m_OwnerMetaBlockStatements);
                 m_MetaMemberData->ParseDefineMetaType();
                 m_MetaExpress = m_MetaMemberData->GetExpressNode();
@@ -79,24 +83,24 @@ MetaBraceAssignStatements::MetaBraceAssignStatements(MetaBlockStatements* mbs, M
                 if (mt->IsData()) {
                     m_MetaMemberData = dynamic_cast<MetaData*>(mt->GetMetaClass())->GetMemberDataByName(m_DefineName);
                     if (m_MetaMemberData == nullptr) {
-                        Log::Write("Error 在类" + mt->GetMetaClass()->GetAllClassName() + "函数: " + mbs->GetOwnerMetaFunction()->GetName()
-                            + " 没有找到: 类" + mt->GetMetaClass()->GetAllClassName() + " 变量:" + m_DefineName);
+                        //Log::Write("Error 在类" + mt->GetMetaClass()->GetAllClassName() + "函数: " + mbs->GetOwnerMetaFunction()->GetName()
+                        //    + " 没有找到: 类" + mt->GetMetaClass()->GetAllClassName() + " 变量:" + m_DefineName);
                     }
                     m_MetaExpress = CreateExpressNodeInNewObjectStatements(m_MetaMemberData, m_OwnerMetaBlockStatements, m_FileMetaOpAssignSyntax->GetExpress());
                 } else if (mt->IsEnum()) {
-                    Log::Write("-----------------------------------Enum-------------------------");
+                    //Log::Write("-----------------------------------Enum-------------------------");
                 } else {
                     m_MetaMemberVariable = mt->GetMetaClass()->GetMetaMemberVariableByName(m_DefineName);
                     if (m_MetaMemberVariable == nullptr) {
-                        Log::Write("Error 在类" + mt->GetMetaClass()->GetAllClassName() + "函数: " + mbs->GetOwnerMetaFunction()->GetName()
-                            + " 没有找到: 类" + mt->GetMetaClass()->GetAllClassName() + " 变量:" + m_DefineName);
+                        //Log::Write("Error 在类" + mt->GetMetaClass()->GetAllClassName() + "函数: " + mbs->GetOwnerMetaFunction()->GetName()
+                        //    + " 没有找到: 类" + mt->GetMetaClass()->GetAllClassName() + " 变量:" + m_DefineName);
                     }
                     m_MetaExpress = CreateExpressNodeInNewObjectStatements(m_MetaMemberVariable, m_OwnerMetaBlockStatements, m_FileMetaOpAssignSyntax->GetExpress());
                 }
             }
         } else {
-            Log::Write("Error 在类" + mbs->GetOwnerMetaClass()->GetAllClassName() + "函数: " + mbs->GetOwnerMetaFunction()->GetName()
-                + " 语句: " + fmos->GetVariableRef()->ToTokenString());
+            //Log::Write("Error 在类" + mbs->GetOwnerMetaClass()->GetAllClassName() + "函数: " + mbs->GetOwnerMetaFunction()->GetName()
+            //    + " 语句: " + fmos->GetVariableRef()->ToTokenString());
         }
     }
 }
@@ -261,7 +265,7 @@ void MetaBraceOrBracketStatementsContent::Parse() {
             cep->SetMetaType(new MetaType(CoreMetaClassManager::GetInstance().GetInt32MetaClass()));
             cep->SetFme(fas);
             cep->SetEqualMetaVariable(m_EqualMetaVariable);
-            MetaExpressNode* men = ExpressManager::GetInstance().CreateExpressNode(cep);
+            MetaExpressNode* men = ExpressManager::GetInstance().CreateExpressNode(*cep);
             MetaBraceAssignStatements* mas = new MetaBraceAssignStatements(m_OwnerMetaBlockStatements, new MetaType(m_OwnerMetaClass), men);
             mas->CalcReturnType();
             m_AssignStatementsList.push_back(mas);
@@ -346,7 +350,7 @@ void MetaBraceOrBracketStatementsContent::Parse() {
                             MetaBraceAssignStatements* mas = new MetaBraceAssignStatements(m_OwnerMetaBlockStatements, m_DefineMetaType, foas);
                             m_AssignStatementsList.push_back(mas);
                         } else {
-                            Log::Write("Error 该处应该是使用赋值，不能有其它表达式!!" + (fas->GetToken() != nullptr ? fas->GetToken()->ToLexemeAllString() : ""));
+                            //Log::Write("Error 该处应该是使用赋值，不能有其它表达式!!" + (fas->GetToken() != nullptr ? fas->GetToken()->ToLexemeAllString() : ""));
                             continue;
                         }
                     }
@@ -405,7 +409,7 @@ void MetaBraceOrBracketStatementsContent::Parse() {
                             MetaBraceAssignStatements* mas = new MetaBraceAssignStatements(m_OwnerMetaBlockStatements, m_DefineMetaType, foas);
                             m_AssignStatementsList.push_back(mas);
                         } else {
-                            Log::Write("Error 该处应该是使用赋值，不能有其它表达式!!" + (fas->GetToken() != nullptr ? fas->GetToken()->ToLexemeAllString() : ""));
+                            //Log::Write("Error 该处应该是使用赋值，不能有其它表达式!!" + (fas->GetToken() != nullptr ? fas->GetToken()->ToLexemeAllString() : ""));
                             continue;
                         }
                     }
@@ -430,9 +434,9 @@ MetaClass* MetaBraceOrBracketStatementsContent::GetMaxLevelMetaClassType() {
                 auto next = nmc->GetRetMetaClass();
                 auto relation = ClassManager::GetInstance().ValidateClassRelationByMetaClass(cur, next);
                 
-                if (relation == ClassManager::EClassRelation::Same || relation == ClassManager::EClassRelation::Child) {
+                if (relation == EClassRelation::Same || relation == EClassRelation::Child) {
                     mc = next;
-                } else if (relation == ClassManager::EClassRelation::Parent) {
+                } else if (relation == EClassRelation::Parent) {
                     mc = cur;
                 } else {
                     isAllSame = false;
@@ -526,7 +530,7 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaConstValueTe
 MetaNewObjectExpressNode::MetaNewObjectExpressNode(MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs) {
     m_OwnerMetaClass = ownerMC;
     m_OwnerMetaBlockStatements = mbs;
-    m_MetaDefineType = new MetaType(mt);
+    m_MetaDefineType = new MetaType(*mt);
     Init();
     m_MetaConstructFunctionCall = new MetaMethodCall(mt->GetMetaClass(), mt->GetTemplateMetaTypeList(), m_OwnerMetaBlockStatements->GetOwnerMetaFunction(),
         nullptr, nullptr, nullptr, nullptr);
@@ -537,7 +541,7 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaCallTerm* fm
     m_OwnerMetaClass = ownerMC;
     m_OwnerMetaBlockStatements = mbs;
     m_MetaConstructFunctionCall = mmf;
-    m_MetaDefineType = new MetaType(mt);
+    m_MetaDefineType = new MetaType(*mt);
     auto fmcn = mcl->GetFinalCallNode();
     
     bool needByFileMetaParTermSetTemplate = false;
@@ -545,11 +549,11 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaCallTerm* fm
     MetaClass* createMC = nullptr;
     
     if (!m_MetaDefineType->IsDefineMetaClass()) {
-        if (fmcn->GetVisitType() == MetaVisitNode::EVisitType::New) {
+        if (fmcn->GetVisitType() == EVisitType::New) {
             m_MetaDefineType->SetMetaClass(fmcn->GetMethodCall()->GetFunction()->GetOwnerMetaClass());
         }
-    } else if (fmcn->GetVisitType() == MetaVisitNode::EVisitType::MethodCall) {
-        createMC = mmf->GetFunction()->GetOwnerMetaClass();
+    } else if (fmcn->GetVisitType() == EVisitType::MethodCall) {
+        createMC = mmf->function()->GetOwnerMetaClass();
         m_MetaDefineType->SetMetaClass(createMC);
         if (createMC->GetMetaTemplateList().size() > 0) {
             // Handle template parameters
@@ -610,7 +614,7 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaBraceTerm* f
     m_MetaBraceOrBracketStatementsContent = new MetaBraceOrBracketStatementsContent(fmbt, mbs, ownerMC, equalMV);
     m_OwnerMetaClass = ownerMC;
     m_OwnerMetaBlockStatements = mbs;
-    m_MetaDefineType = new MetaType(mt);
+    m_MetaDefineType = new MetaType(*mt);
     m_MetaBraceOrBracketStatementsContent->SetMetaType(m_MetaDefineType);
     m_MetaBraceOrBracketStatementsContent->Parse();
     
@@ -634,7 +638,7 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaParTerm* fmp
     m_OwnerMetaBlockStatements = mbs;
     auto mmf = new MetaMethodCall(nullptr, nullptr, mbs->GetOwnerMetaFunction(), nullptr, nullptr, nullptr, nullptr);
     m_MetaConstructFunctionCall = mmf;
-    m_MetaDefineType = new MetaType(mt);
+    m_MetaDefineType = new MetaType(*mt);
     Init();
 }
 

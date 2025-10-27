@@ -9,6 +9,7 @@
 #include "MetaTemplate.h"
 #include "MetaClass.h"
 #include "MetaType.h""
+#include "MetaParam.h"
 #include "../Compile/FileMeta/FileMetaCommon.h"
 #include "../Debug/Log.h"
 #include "ClassManager.h"
@@ -21,7 +22,7 @@ namespace Core {
 
     // MetaTemplate implementation
     MetaTemplate::MetaTemplate(MetaClass* mc, Compile::FileMetaTemplateDefine* fmtd, int index) {
-        m_Name = fmtd->Name();
+        m_Name = fmtd->GetName();
         m_FileMetaTemplateDefine = fmtd;
         m_OwnerClass = mc;
         this->m_Index = index;
@@ -38,10 +39,10 @@ namespace Core {
 
     void MetaTemplate::ParseInConstraint() {
         if (m_FileMetaTemplateDefine != nullptr) {
-            if (m_FileMetaTemplateDefine->GetInClassNameTemplateNode() != nullptr) {
-                m_ExtendsMetaClass = ClassManager::GetInstance().GetMetaClassByInputTemplateAndFileMeta(m_OwnerClass, m_FileMetaTemplateDefine->GetInClassNameTemplateNode());
+            if (m_FileMetaTemplateDefine->InClassNameTemplateNode() != nullptr) {
+                m_ExtendsMetaClass = ClassManager::GetInstance().GetMetaClassByInputTemplateAndFileMeta(m_OwnerClass, m_FileMetaTemplateDefine->InClassNameTemplateNode());
             } else {
-                m_ExtendsMetaClass = CoreMetaClassManager::ObjectMetaClass;
+                m_ExtendsMetaClass = CoreMetaClassManager::objectMetaClass;
             }
         }
     }

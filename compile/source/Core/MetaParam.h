@@ -22,7 +22,7 @@ namespace SimpleLanguage {
     }
 namespace Core {
     class MetaClass;
-    class MetaMethod;
+    class MetaFunction;
     class MetaBlockStatements;
     class MetaExpressNode;
 
@@ -35,7 +35,7 @@ public:
 
     MetaExpressNode* GetExpress() const { return m_Express; }
     virtual void Parse();
-    virtual void CaleReturnType();
+    virtual void CalcReturnType();
     MetaClass* GetRetMetaClass();
     virtual std::string ToFormatString();
     std::string ToStatementString();
@@ -50,9 +50,9 @@ protected:
 // MetaDefineParam class
 class MetaDefineParam {
 public:
-    MetaDefineParam(const std::string& _name, MetaMethod* mf);
+    MetaDefineParam(const std::string& _name, MetaFunction* mf);
     MetaDefineParam(const MetaDefineParam& mdp);
-    MetaDefineParam(MetaMethod* mf, Compile::FileMetaParamterDefine* fmp);
+    MetaDefineParam(MetaFunction* mf, Compile::FileMetaParamterDefine* fmp);
     virtual ~MetaDefineParam() = default;
 
     std::string GetName() const { return m_Name; }

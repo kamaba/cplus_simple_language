@@ -92,13 +92,13 @@ std::string MetaMethodCall::ToFormatString() const {
 
     if (loadMetaVariable() != nullptr) {
         sb << "[";
-        sb << m_VMCallMetaFunction->GetOwnerMetaClass()->allClassName;
+        sb << m_VMCallMetaFunction->GetOwnerMetaClass()->GetAllClassName();
         sb << "]";
 
-        sb << loadMetaVariable()->name;
+        sb << loadMetaVariable()->GetName();
         sb << ".";
     } else {
-        sb << m_VMCallMetaFunction->GetOwnerMetaClass()->allClassName;
+        sb << m_VMCallMetaFunction->GetOwnerMetaClass()->GetAllClassName();
         sb << ".";
     }
     if (m_VMCallMetaFunction != nullptr) {
@@ -276,7 +276,7 @@ MetaClass* MetaVisitNode::GetMetaClass() {
         Log::AddInStructMeta(EError::None, "Error");
         return nullptr;
     }
-    return mt->metaClass;
+    return mt->GetMetaClass();
 }
 
 MetaVariable* MetaVisitNode::GetRetMetaVariable() {
@@ -285,7 +285,7 @@ MetaVariable* MetaVisitNode::GetRetMetaVariable() {
             return m_Variable;
         }
         case EVisitType::MethodCall: {
-            return m_MethodCall->function()->returnMetaVariable;
+            return m_MethodCall->function()->GetReturnMetaVariable();
         }
         case EVisitType::New: {
             return m_Variable;
@@ -322,7 +322,7 @@ std::string MetaVisitNode::ToFormatString() const {
         }
         break;
         case EVisitType::ConstValue: {
-            sb << m_ConstValueExpress->value;
+            sb << m_ConstValueExpress->GetValue().data.byte_val;
         }
         break;
         case EVisitType::Variable: {

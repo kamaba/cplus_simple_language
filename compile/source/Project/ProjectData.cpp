@@ -11,7 +11,7 @@ namespace SimpleLanguage {
 namespace Project {
 
 // CompileFileData::CompileFileDataUnit implementation
-CompileFileData::CompileFileDataUnit::CompileFileDataUnit(MetaMemberData* mmd) {
+CompileFileData::CompileFileDataUnit::CompileFileDataUnit(Core::MetaMemberData* mmd) {
     std::string findPath = mmd->GetString("path", true);
     if (findPath.empty()) {
         std::cout << "Error ProjectConfig 中的CompileFileData缺少path字段!!" << std::endl;
@@ -21,14 +21,14 @@ CompileFileData::CompileFileDataUnit::CompileFileDataUnit(MetaMemberData* mmd) {
     m_CompileState = ECompileState::Default;
 }
 
-void CompileFileData::Parse(MetaMemberData* mmd) {
+void CompileFileData::Parse(Core::MetaMemberData* mmd) {
     for (auto& v : mmd->metaMemberDataDict()) {
         m_CompileFileDataUnitList.push_back(new CompileFileDataUnit(v.second));
     }
 }
 
 // CompileOptionData implementation
-void CompileOptionData::Parse(MetaMemberData* mmd) {
+void CompileOptionData::Parse(Core::MetaMemberData* mmd) {
     // Implementation for parsing compile options
 }
 
@@ -45,7 +45,7 @@ bool CompileFilterData::IsIncludeInTag(const std::string& tag) {
     return std::find(m_TagList.begin(), m_TagList.end(), tag) != m_TagList.end();
 }
 
-bool CompileFilterData::Parse(MetaMemberData* mmd) {
+bool CompileFilterData::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return false;
     }
@@ -53,12 +53,12 @@ bool CompileFilterData::Parse(MetaMemberData* mmd) {
 }
 
 // ImportModuleData implementation
-bool ImportModuleData::Parse(MetaMemberData* mmd) {
+bool ImportModuleData::Parse(Core::MetaMemberData* mmd) {
     return true;
 }
 
 // CompileModuleData implementation
-void CompileModuleData::Parse(MetaMemberVariable* mmd) {
+void CompileModuleData::Parse(Core::MetaMemberVariable* mmd) {
     // Implementation for parsing compile module data
 }
 
@@ -66,7 +66,7 @@ void CompileModuleData::Parse(MetaMemberVariable* mmd) {
 DefineStruct::DefineStruct(EDefineStructType edst) : m_Type(edst) {
 }
 
-DefineStruct* DefineStruct::Parse(MetaMemberData* mmd) {
+DefineStruct* DefineStruct::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return nullptr;
     }
@@ -74,11 +74,11 @@ DefineStruct* DefineStruct::Parse(MetaMemberData* mmd) {
 
     std::string usetype = "namespace";
 
-    std::vector<MetaMemberData*> mdChild;
+    std::vector<Core::MetaMemberData*> mdChild;
     for (auto& ns : mmd->metaMemberDataDict()) {
-        MetaMemberData* cmmd = dynamic_cast<MetaMemberData*>(ns.second);
+        Core::MetaMemberData* cmmd = dynamic_cast<Core::MetaMemberData*>(ns.second);
         if (cmmd != nullptr) {
-            if (cmmd->Name() == "type") {
+            if (cmmd->GetName() == "type") {
                 usetype = cmmd->GetString("type");
 
                 if (usetype == "namespace") {
@@ -89,9 +89,9 @@ DefineStruct* DefineStruct::Parse(MetaMemberData* mmd) {
                     std::cout << "Error 未识别的" << usetype << std::endl;
                     continue;
                 }
-            } else if (cmmd->Name() == "child") {
-                for (auto& ns2 : cmmd->metaMemberDataDict()) {
-                    MetaMemberData* cmmd2 = ns2.second;
+            } else if (cmmd->GetName() == "child") {
+                for (auto& ns2 : cmmd->GetMetaMemberDataDict()) {
+                    Core::MetaMemberData* cmmd2 = ns2.second;
                     if (cmmd2 != nullptr) {
                         DefineStruct* ds = new DefineStruct(EDefineStructType::Namespace);
                         m_ChildDefineStruct.push_back(ds->Parse(cmmd2));
@@ -104,7 +104,7 @@ DefineStruct* DefineStruct::Parse(MetaMemberData* mmd) {
 }
 
 // GlobalVariableData implementation
-void GlobalVariableData::Parse(MetaMemberData* mmd) {
+void GlobalVariableData::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return;
     }
@@ -112,7 +112,7 @@ void GlobalVariableData::Parse(MetaMemberData* mmd) {
 }
 
 // GlobalImportData implementation
-void GlobalImportData::Parse(MetaMemberData* mmd) {
+void GlobalImportData::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return;
     }
@@ -120,7 +120,7 @@ void GlobalImportData::Parse(MetaMemberData* mmd) {
 }
 
 // GlobalReplaceData implementation
-void GlobalReplaceData::Parse(MetaMemberData* mmd) {
+void GlobalReplaceData::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return;
     }
@@ -128,7 +128,7 @@ void GlobalReplaceData::Parse(MetaMemberData* mmd) {
 }
 
 // ExportDllData implementation
-void ExportDllData::Parse(MetaMemberData* mmd) {
+void ExportDllData::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return;
     }
@@ -136,7 +136,7 @@ void ExportDllData::Parse(MetaMemberData* mmd) {
 }
 
 // MemorySetData implementation
-void MemorySetData::Parse(MetaMemberData* mmd) {
+void MemorySetData::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return;
     }
@@ -147,7 +147,7 @@ void MemorySetData::Parse(MetaMemberData* mmd) {
 ProjectData::ProjectData(const std::string& _name, bool isConst) : MetaData(_name, isConst, false, false) {
 }
 
-void ProjectData::ParseFileMetaDataMemeberData(FileMetaClass* fmc) {
+void ProjectData::ParseFileMetaDataMemeberData(Compile::FileMetaClass* fmc) {
     m_Deep = 0;
     for (size_t i = 0; i < fmc->memberDataList().size(); i++) {
         auto v = fmc->memberDataList()[i];
@@ -155,7 +155,7 @@ void ProjectData::ParseFileMetaDataMemeberData(FileMetaClass* fmc) {
         if (v->name() == "globalVariable")
             continue;
 
-        auto mmd = new MetaMemberData(this, v, i, true);
+        auto mmd = new Core::MetaMemberData(this, v, i, true);
         mmd->ParseDefineMetaType();
         mmd->ParseMetaExpress();
         AddMetaMemberData(mmd);
@@ -163,13 +163,13 @@ void ProjectData::ParseFileMetaDataMemeberData(FileMetaClass* fmc) {
 
         ParseBlockNode(mmd);
     }
-    int ct = this->metaMemberDataDict().size();
-    if (!fmc->memberVariableList().empty() || !fmc->memberFunctionList().empty()) {
+    int ct = this->GetMetaMemberDataDict().size();
+    if (!fmc->GetMemberVariableList().empty() || !fmc->GetMemberFunctionList().empty()) {
         std::cout << "Error Data中不允许有Variable 和 Function!!" << std::endl;
     }
 }
 
-void ProjectData::ParseBlockNode(MetaMemberData* mmd) {
+void ProjectData::ParseBlockNode(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) return;
 
     std::string _name = mmd->name();
@@ -201,8 +201,8 @@ void ProjectData::ParseBlockNode(MetaMemberData* mmd) {
     } else if (_name == "globalVariable") {
         m_GlobalVariableData->Parse(mmd);
     } else if (_name == "proojectStruct") {
-        for (auto& ns : mmd->metaMemberDataDict()) {
-            MetaMemberData* cmmd = ns.second;
+        for (auto& ns : mmd->GetMetaMemberDataDict()) {
+            Core::MetaMemberData* cmmd = ns.second;
             if (cmmd != nullptr) {
                 DefineStruct* ds = new DefineStruct(DefineStruct::EDefineStructType::Namespace);
                 ds->Parse(cmmd);

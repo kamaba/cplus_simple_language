@@ -5,9 +5,11 @@
 #include <string>
 #include <vector>
 
-class SimpleLanguage::Compile::FileMeta;
-
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class FileMeta;
+    }
 namespace Project {
 
 // Forward declarations
@@ -19,7 +21,7 @@ class ProjectData;
 
 class ProjectParse {
 public:
-    ProjectParse(FileMeta* fm, ProjectData* pd);
+    ProjectParse(Compile::FileMeta* fm, ProjectData* pd);
     virtual ~ProjectParse() = default;
 
     void ParseProject();
@@ -30,7 +32,7 @@ public:
 
 private:
     ProjectData* m_ProjectData = nullptr;
-    FileMeta* m_FileMetaData = nullptr;
+    Compile::FileMeta* m_FileMetaData = nullptr;
 };
 
 } // namespace Project

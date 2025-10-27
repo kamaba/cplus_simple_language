@@ -7,22 +7,33 @@
 //****************************************************************************
 
 #include "MetaAssignStatements.h"
+#include "MetaBlockStatements.h"
+
+#include "../../Compile/FileMeta/FileMetaSyntax.h"
+#include "../../Compile/FileMeta/FileMetaCommon.h"
+#include "../../Compile/FileMeta/FileMetaExpress.h"
+#include "../../Compile/Token.h"
+
+#include "../BaseMetaClass/CoreMetaClassManager.h"
+
 #include "../MetaExpressNode/MetaExpressBase.h"
 #include "../MetaExpressNode/MetaExpressCalllink.h"
 #include "../MetaExpressNode/MetaExpressConst.h"
 #include "../MetaExpressNode/MetaExpressOperator.h"
 #include "../MetaExpressNode/MetaExecuteStatementsNode.h"
+
+#include "../MetaParam.h"
 #include "../MetaVariable.h"
+#include "../MetaMemberVariable.h"
+#include "../MetaMemberFunction.h"
 #include "../MetaType.h"
 #include "../MetaClass.h"
-#include "MetaBlockStatements.h"
+#include "../MetaVisitCall.h"
 #include "../MetaCallLink.h"
-#include "../BaseMetaClass/CoreMetaClassManager.h"
 #include "../ClassManager.h"
 #include "../ExpressManager.h"
 #include "../AllowUseSettings.h"
-#include "../../Compile/FileMeta/FileMetaSyntax.h"
-#include "../../Compile/Token.h"
+
 #include "../../Debug/Log.h"
 #include <string>
 #include <sstream>
@@ -65,7 +76,7 @@ void MetaAssignManager::CreateMetaVariable() {
     } else if (auto mconen = dynamic_cast<MetaConstExpressNode*>(m_ExpressNode)) {
         Log::AddInStructMeta(EError::None, "Error -------------------------------------------");
     } else if (auto moen = dynamic_cast<MetaOpExpressNode*>(m_ExpressNode)) {
-        if (moen->IsEqualType()) {
+        if (moen->isEqualType ) {
             // m_JudgmentValueMetaVariable = CreateOptimizeAfterExpress;
         } else {
             // Log::AddInStructMeta(EError::None, "Error 返回的判断语句: " + mcen->ToTokenString() + "   并非是boolean类型!");
@@ -77,7 +88,7 @@ void MetaAssignManager::CreateMetaVariable() {
     if (m_JudgmentValueMetaVariable == nullptr) {
         m_IsNeedSetMetaVariable = true;
         std::string name = "autocreate_" + std::to_string(reinterpret_cast<uintptr_t>(this));
-        m_JudgmentValueMetaVariable = new MetaVariable(name, MetaVariable::EVariableFrom::LocalStatement, m_MetaBlockStatements, m_MetaBlockStatements->GetOwnerMetaClass(), m_MetaDefineType);
+        m_JudgmentValueMetaVariable = new MetaVariable(name, EVariableFrom::LocalStatement, m_MetaBlockStatements, m_MetaBlockStatements->GetOwnerMetaClass(), m_MetaDefineType);
     }
 }
 
@@ -129,7 +140,7 @@ void MetaAssignStatements::Parse() {
     }
     
     if (metaCallLink == nullptr) {
-        Log::AddInStructMeta(EError::None, "Error MetaAssignStatements ParseDefine!!!" + (m_FileMetaOpAssignSyntax ? m_FileMetaOpAssignSyntax->GetVariableRef()->ToTokenString() : ""));
+        Log::AddInStructMeta(EError::None, "Error MetaAssignStatements ParseDefine!!!" + (m_FileMetaOpAssignSyntax != nullptr ? m_FileMetaOpAssignSyntax->GetVariableRef()->ToTokenString() : ""));
         return;
     }
     
@@ -191,8 +202,8 @@ void MetaAssignStatements::Parse() {
     m_LeftMetaExpress->Parse(auc);
     m_LeftMetaExpress->CalcReturnType();
     
-    if (m_LeftMetaExpress->GetMetaCallLink()->GetFinalCallNode()->GetVisitType() == MetaVisitNode::EVisitType::MethodCall) {
-        auto fun = m_LeftMetaExpress->GetMetaCallLink()->GetFinalCallNode()->GetMethodCall()->GetFunction();
+    if (m_LeftMetaExpress->GetMetaCallLink()->GetFinalCallNode()->visitType() == EVisitType::MethodCall) {
+        MetaFunction* fun = m_LeftMetaExpress->GetMetaCallLink()->GetFinalCallNode()->methodCall()->function();
         if (auto mmf = dynamic_cast<MetaMemberFunction*>(fun)) {
             if (mmf->IsSet()) {
                 m_IsSetStatements = true;
@@ -233,7 +244,7 @@ void MetaAssignStatements::Parse() {
         cep->SetIsConst(false);
         cep->SetParseFrom(EParseFrom::StatementRightExpress);
         cep->SetEqualMetaVariable(m_MetaVariable);
-        m_ExpressNode = ExpressManager::CreateExpressNodeByCEP(cep);
+        m_ExpressNode = ExpressManager::CreateExpressNodeByCEP(*cep);
         
         if (m_ExpressNode == nullptr) {
             Log::AddInStructMeta(EError::None, "Error 解析新建变量语句时，表达式解析为空!!");
@@ -275,18 +286,18 @@ void MetaAssignStatements::Parse() {
         if (expressRetMetaDefineType->GetMetaClass() == CoreMetaClassManager::GetInstance().GetNullMetaClass()) {
             // 允许null赋值
         } else {
-            ClassManager::EClassRelation relation = ClassManager::EClassRelation::No;
+            EClassRelation relation = EClassRelation::No;
             MetaClass* curClass = mdt->GetMetaClass();
             
             MetaClass* compareClass = nullptr;
             auto constExpressNode = dynamic_cast<MetaConstExpressNode*>(m_ExpressNode);
             if (constExpressNode != nullptr && constExpressNode->GetEType() == EType::Null) {
-                relation = ClassManager::EClassRelation::Same;
+                relation = EClassRelation::Same;
             } else {
                 compareClass = expressRetMetaDefineType->GetMetaClass();
                 if (mdt->IsTemplate()) {
                     if (curClass == compareClass) {
-                        relation = ClassManager::EClassRelation::Same;
+                        relation = EClassRelation::Same;
                     }
                 } else {
                     relation = ClassManager::ValidateClassRelationByMetaClass(curClass, compareClass);
@@ -299,27 +310,27 @@ void MetaAssignStatements::Parse() {
             if (curClass != nullptr) {
                 sb << " 定义类 : " << curClass->GetAllClassName();
             }
-            sb << " 名称为: " << (m_Name ? m_Name->ToString() : "");
+            sb << " 名称为: " << m_Name;
             sb << "与后边赋值语句中 ";
             if (compareClass != nullptr) {
                 sb << "表达式类为: " << compareClass->GetAllClassName();
             }
             
-            if (relation == ClassManager::EClassRelation::No) {
+            if (relation == EClassRelation::No) {
                 sb << "类型不相同，可能会有强转，强转后可能默认值为null";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
-            } else if (relation == ClassManager::EClassRelation::Similar) {
+            } else if (relation == EClassRelation::Similar) {
                 sb << "数字类型相似，可能会有强转会有精度的丢失!";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
-            } else if (relation == ClassManager::EClassRelation::Same) {
+            } else if (relation == EClassRelation::Same) {
                 // 类型相同，无需转换
-            } else if (relation == ClassManager::EClassRelation::Parent) {
+            } else if (relation == EClassRelation::Parent) {
                 sb << "类型不相同，可能会有强转， 返回值是父类型向子类型转换，存在错误转换!!";
                 Log::AddInStructMeta(EError::None, sb.str());
                 m_IsNeedCastState = true;
-            } else if (relation == ClassManager::EClassRelation::Child) {
+            } else if (relation == EClassRelation::Child) {
                 if (compareClass != nullptr) {
                     m_MetaVariable->SetMetaDefineType(expressRetMetaDefineType);
                 }
@@ -342,7 +353,8 @@ void MetaAssignStatements::UpdateOwnerMetaClass(MetaClass* ownerclass) {
 }
 
 std::string MetaAssignStatements::ToFormatString() const {
-    std::string result = GetFormatString();
+    std::string result;
+    result += GetFormatString().c_str();
     result += ";";
     result += "\n";
     if (m_NextMetaStatements != nullptr) {
@@ -351,7 +363,7 @@ std::string MetaAssignStatements::ToFormatString() const {
     return result;
 }
 
-std::string MetaAssignStatements::GetFormatString() {
+std::string MetaAssignStatements::GetFormatString() const{
     std::string result;
     for (int i = 0; i < GetRealDeep(); i++) {
         result += Global::tabChar;

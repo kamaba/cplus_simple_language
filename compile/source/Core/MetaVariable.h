@@ -61,6 +61,7 @@ public:
     bool IsGlobal() const { return m_VariableFrom == EVariableFrom::Global; }
     bool IsArray() const;
 
+    virtual void SetOwnerBlockstatements(MetaBlockStatements* mbs){ m_OwnerMetaBlockStatements = mbs;}
     MetaBlockStatements* GetOwnerMetaBlockStatements() const { return m_OwnerMetaBlockStatements; }
     EVariableFrom GetVariableFrom() const { return m_VariableFrom; }
     MetaType* GetMetaDefineType() const { return m_DefineMetaType; }

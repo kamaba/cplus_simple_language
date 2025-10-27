@@ -13,10 +13,15 @@
 #include "TypeManager.h"
 #include "ExpressManager.h"
 #include "ClassManager.h"
+#include "MetaExpressNode/MetaExpressConst.h"
+#include "MetaExpressNode/MetaExpressOperator.h"
+#include "MetaExpressNode/MetaExpressCalllink.h"
 #include "../Compile/FileMeta/FileMetaMemberVariable.h"
 #include "../Compile/CompilerUtil.h"
 #include "../Debug/Log.h"
 #include <sstream>
+
+using namespace SimpleLanguage::Debug;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -228,7 +233,7 @@ MetaExpressNode* MetaMemberVariable::CreateExpressNodeInClassMetaVariable() {
     cep->SetAllowUseBraceSyntax(m_IsSupportConstructionFunctionOnlyBraceType);
     // cep->SetFme(root);
 
-    MetaExpressNode* mn = ExpressManager::CreateExpressNode(cep);
+    MetaExpressNode* mn = ExpressManager::CreateExpressNode(*cep);
     return mn;
 }
 
@@ -258,7 +263,7 @@ std::string MetaMemberVariable::ToFormatString() const {
         sb << Global::GetTabChar();
     }
 
-    sb << GetPermission().ToFormatString() << " ";
+    sb << (int)GetPermission() << " ";
     if (IsConst()) {
         sb << "const ";
     }
@@ -307,14 +312,14 @@ void MetaMemberVariable::CalcDefineClassType() {
     }
     else {
         if (m_Express != nullptr) {
-            ClassManager::EClassRelation relation = ClassManager::EClassRelation::No;
+            EClassRelation relation = EClassRelation::No;
             auto constExpressNode = dynamic_cast<MetaConstExpressNode*>(m_Express);
             MetaClass* curClass = m_DefineMetaType->GetMetaClass();
 
             MetaClass* compareClass = nullptr;
             MetaType* expressRetMetaDefineType = nullptr;
             if (constExpressNode != nullptr && constExpressNode->GetEType() == EType::Null) {
-                relation = ClassManager::EClassRelation::Same;
+                relation = EClassRelation::Same;
             }
             else {
                 expressRetMetaDefineType = m_Express->GetReturnMetaDefineType();
@@ -339,11 +344,11 @@ void MetaMemberVariable::CalcDefineClassType() {
                 sb << "表达式类为: " << compareClass->GetAllClassName();
             }
             
-            if (relation == ClassManager::EClassRelation::No) {
+            if (relation == EClassRelation::No) {
                 sb << "类型不相同，可能会有强转，强转后可能默认值为null";
                 Log::AddInStructMeta(EError::None, sb.str());
             }
-            else if (relation == ClassManager::EClassRelation::Same) {
+            else if (relation == EClassRelation::Same) {
                 if (!(constExpressNode != nullptr && constExpressNode->GetEType() == EType::Null)) {
                     if (expressRetMetaDefineType->GetMetaClass() == GetOwnerMetaClass() && !IsStatic()) {
                         Log::AddInStructMeta(EError::None, "Error 自己类内部不允许包含 自己的实体，必须赋值为null");
@@ -352,11 +357,11 @@ void MetaMemberVariable::CalcDefineClassType() {
                     SetRealMetaType(expressRetMetaDefineType);
                 }
             }
-            else if (relation == ClassManager::EClassRelation::Parent) {
+            else if (relation == EClassRelation::Parent) {
                 sb << "类型不相同，可能会有强转， 返回值是父类型向子类型转换，存在错误转换!!";
                 Log::AddInStructMeta(EError::None, sb.str());
             }
-            else if (relation == ClassManager::EClassRelation::Child) {
+            else if (relation == EClassRelation::Child) {
                 if (compareClass != nullptr) {
                     if (expressRetMetaDefineType->GetMetaClass() == GetOwnerMetaClass()) {
                         Log::AddInStructMeta(EError::None, "Error 自己类内部不允许包含 自己的实体，必须赋值为null");

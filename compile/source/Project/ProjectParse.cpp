@@ -15,7 +15,7 @@ using namespace SimpleLanguage::Compile;
 namespace SimpleLanguage {
 namespace Project {
 
-ProjectParse::ProjectParse(FileMeta* fm, ProjectData* pd) 
+ProjectParse::ProjectParse(Compile::FileMeta* fm, ProjectData* pd)
     : m_FileMetaData(fm), m_ProjectData(pd) {
 }
 

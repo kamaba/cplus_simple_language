@@ -18,6 +18,7 @@
 #include "MetaExpressNode/MetaExpressNewObject.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
+#include "../Compile/FileMeta/FileMetaMemberVariable.h"
 #include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include <sstream>
@@ -81,7 +82,7 @@ void MetaEnum::ParseFileMetaEnumMemeberEnum(Compile::FileMetaClass* fmc) {
     for (auto v : fmc->GetMemberVariableList()) {
         MetaBase* mb = GetMemberVariableByName(v->GetName());
         if (mb != nullptr) {
-            Log::AddInStructMeta(EError::None, "Error Enum MetaMemberData已有定义类: " + m_AllName + "中 已有: " + (v->GetToken() != nullptr ? v->GetToken()->ToLexemeAllString() : "") + "的元素!!");
+            //Log::AddInStructMeta(EError::None, "Error Enum MetaMemberData已有定义类: " + m_AllName + "中 已有: " + (v->GetToken() != nullptr ? v->GetToken()->ToLexemeAllString() : "") + "的元素!!");
             isHave = true;
         }
         else {
@@ -129,7 +130,7 @@ void MetaEnum::ParseDefineComplete() {
 
 void MetaEnum::ParseMemberMetaEnumExpress() {
     if (m_MetaMemberEnumDict.size() == 0) {
-        Log::AddInStructMeta(EError::None, "Warning 在enum : " + GetName() + " 没有发现有任何成员");
+        //Log::AddInStructMeta(EError::None, "Warning 在enum : " + GetName() + " 没有发现有任何成员");
         return;
     }
 
@@ -149,13 +150,13 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
 
             if (i++ == 0) {
                 if (pair.second->GetExpress() == nullptr) {
-                    Log::AddInStructMeta(EError::None, "Warning Enum Member Enum 成员第一位必须有=号");
+                    //Log::AddInStructMeta(EError::None, "Warning Enum Member Enum 成员第一位必须有=号");
                     continue;
                 }
             }
             if (pair.second->GetExpress() != nullptr) {
                 if (pair.second->GetConstExpressNode() == nullptr) {
-                    Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用const值类变量");
+                    //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用const值类变量");
                     continue;
                 }
                 else if (m_ExtendClass == CoreMetaClassManager::GetInstance().GetByteMetaClass()) {
@@ -163,7 +164,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                         indexdynamic = static_cast<long long>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
-                        Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
+                        //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
                         continue;
                     }
                 }
@@ -172,7 +173,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                         indexdynamic = static_cast<signed char>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
-                        Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
+                        //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
                         continue;
                     }
                 }
@@ -181,7 +182,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                         indexdynamic = static_cast<unsigned short>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
-                        Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
+                        //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
                         continue;
                     }
                 }
@@ -190,7 +191,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                         indexdynamic = static_cast<short>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
-                        Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
+                        //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
                         continue;
                     }
                 }
@@ -199,7 +200,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                         indexdynamic = std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val);
                     }
                     catch (const std::exception& ex) {
-                        Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
+                        //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
                         continue;
                     }
                 }
@@ -208,7 +209,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                         indexdynamic = static_cast<unsigned int>(std::stoi(pair.second->GetConstExpressNode()->GetValue().data.string_val ));
                     }
                     catch (const std::exception& ex) {
-                        Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
+                        //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内部int转byte出错");
                         continue;
                     }
                 }
@@ -230,15 +231,15 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
         for (const auto& pair : m_MetaMemberEnumDict) {
             pair.second->ParseDefineMetaType();
             if (pair.second->GetExpress() == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error Enum Member Enum String成员必须有=号" + pair.first);
+                //Log::AddInStructMeta(EError::None, "Error Enum Member Enum String成员必须有=号" + pair.first);
                 continue;
             }
             if (pair.second->GetConstExpressNode() == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用const值类变量");
+                //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用const值类变量");
                 continue;
             }
             if (pair.second->GetConstExpressNode()->GetEType() != EType::String) {
-                Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用string值类变量");
+                //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用string值类变量");
                 continue;
             }
         }
@@ -247,7 +248,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
         for (const auto& pair : m_MetaMemberEnumDict) {
             pair.second->ParseDefineMetaType();
             if (pair.second->GetExpress() == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error Enum Member Enum 动态成员第一位必须有=号");
+                //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 动态成员第一位必须有=号");
                 continue;
             }
             pair.second->ParseMetaExpress();
@@ -256,11 +257,11 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                     // 处理数据类型的逻辑
                 }
                 else {
-                    Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用data值类变量, 不允许其它类型");
+                    //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用data值类变量, 不允许其它类型");
                 }
             }
             else {
-                Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用data new 值类变量");
+                //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用data new 值类变量");
             }
         }
     }
@@ -268,7 +269,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
         for (const auto& pair : m_MetaMemberEnumDict) {
             pair.second->ParseDefineMetaType();
             if (pair.second->GetExpress() == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error Enum Member Enum 成员第一位必须有=号");
+                //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 成员第一位必须有=号");
                 continue;
             }
             pair.second->ParseMetaExpress();
