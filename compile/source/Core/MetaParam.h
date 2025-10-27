@@ -22,9 +22,11 @@ namespace SimpleLanguage {
     }
 namespace Core {
     class MetaClass;
+    class MetaClass;
     class MetaFunction;
     class MetaBlockStatements;
     class MetaExpressNode;
+    class MetaVariable;
 
 // MetaInputParam class
 class MetaInputParam {
@@ -147,7 +149,7 @@ public:
     virtual ~MetaInputTemplateCollection() = default;
 
     bool IsTemplateName() const { return m_IsTemplateName; }
-    const std::vector<MetaType*>& GetMetaTemplateParamsList() const { return m_MetaTemplateParamsList; }
+    std::vector<MetaType*>& GetMetaTemplateParamsList() { return m_MetaTemplateParamsList; }
 
     std::vector<MetaClass*> GetMetaClassList(bool& isAllMetaClass);
     void AddMetaTemplateParamsList(MetaType* mp);

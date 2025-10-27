@@ -7,6 +7,7 @@
 //****************************************************************************
 
 #include "MetaVariable.h"
+#include "MetaMemberVariable.h"
 #include "MetaType.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/CompilerUtil.h"
@@ -177,14 +178,14 @@ MetaVisitVariable::MetaVisitVariable(const std::string& name, MetaClass* mc, Met
     m_SourceMetaVariable = lmv;
     if (lmv->IsArray()) {
         if (vmv == nullptr && m_AtName.empty()) {
-            Log::AddInStructMeta(EError::None, "Error VisitMetaVariable访问变量访问位置不能同时为空!!");
+            //Log::AddInStructMeta(EError::None, "Error VisitMetaVariable访问变量访问位置不能同时为空!!");
             return;
         }
         m_TargetMetaVariable = vmv;
 
         MetaType* gmit = m_SourceMetaVariable->GetMetaDefineType()->GetMetaInputTemplateByIndex();
         if (gmit == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error 访问的Array中，没有找到模版 名称!!");
+            //Log::AddInStructMeta(EError::None, "Error 访问的Array中，没有找到模版 名称!!");
             return;
         }
         m_DefineMetaType = new MetaType(*gmit);
@@ -238,7 +239,7 @@ MetaIteratorVariable::MetaIteratorVariable(const std::string& name, MetaClass* m
     if (lmv->IsArray()) {
         MetaType* gmit = m_LocalMetaVariable->GetMetaDefineType()->GetMetaInputTemplateByIndex();
         if (gmit == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error 访问的Array中，没有找到模版 名称!!");
+            //Log::AddInStructMeta(EError::None, "Error 访问的Array中，没有找到模版 名称!!");
             return;
         }
         m_DefineMetaType = new MetaType(*gmit);

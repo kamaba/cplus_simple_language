@@ -10,6 +10,7 @@
 #include "MetaNamespace.h"
 #include "MetaNode.h"
 #include "ModuleManager.h"
+#include "MetaModule.h"
 #include "../Compile/FileMeta/FileMetaNamespace.h"
 #include "../Compile/FileMeta/FileMetaCommon.h"
 #include "../Compile/CompilerUtil.h"
@@ -75,7 +76,7 @@ MetaNode* NamespaceManager::GetParentChildrenNode(SimpleLanguage::Compile::FileM
 }
 
 MetaNode* NamespaceManager::SearchFinalNamespace(SimpleLanguage::Compile::FileMetaNamespace* fns) {
-    MetaNode* findNode = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
+    MetaNode* findNode = ModuleManager::GetInstance().GetSelfModule()->GetMetaNode();
 
     std::vector<SimpleLanguage::Compile::FileMetaNamespace*> list;
 
@@ -105,7 +106,7 @@ MetaNode* NamespaceManager::SearchFinalNamespace(SimpleLanguage::Compile::FileMe
 void NamespaceManager::CreateMetaNamespaceByFineDefineNamespace(SimpleLanguage::Compile::FileMetaNamespace* fns, MetaNode* parentNode) {
     SimpleLanguage::Compile::FileMetaNamespace* fnsc = fns;
     if (parentNode == nullptr) {
-        parentNode = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
+        parentNode = ModuleManager::GetInstance().GetSelfModule()->GetMetaNode();
     }
     parentNode = SearchTopLevelFileMetaNamespace(fns, parentNode);
 
@@ -115,7 +116,7 @@ void NamespaceManager::CreateMetaNamespaceByFineDefineNamespace(SimpleLanguage::
 void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::FileMetaNamespace* fns, MetaNode* parentNode) {
     MetaNode* mnode = parentNode;
     if (parentNode == nullptr) {
-        parentNode = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
+        parentNode = ModuleManager::GetInstance().GetSelfModule()->GetMetaNode();
     }
     //fns.metaNamespaceList.Clear();
     for (size_t i = 0; i < fns->GetNamespaceStatementBlock()->GetTokenList().size(); i++) {
@@ -133,7 +134,7 @@ void NamespaceManager::CreateMetaNamespaceHandle(SimpleLanguage::Compile::FileMe
         }
         if (isCreate) {
             MetaNamespace* mn = new MetaNamespace(name);
-            if (ProjectManager::useDefineNamespaceType != EUseDefineType::NoUseProjectConfigNamespace) {
+            if (ProjectManager::GetUseDefineNamespaceType() != EUseDefineType::NoUseProjectConfigNamespace) {
                 mn->SetIsNowAllowCreateName( true );
                 Log::AddInStructMeta(EError::None, "Error 在使用namespace 时，在项目定义中，没有找到相关的定义!!  位置:" + fns->GetNamespaceStatementBlock()->GetTokenList()[i]->ToLexemeAllString());
             }
@@ -156,7 +157,7 @@ MetaNode* NamespaceManager::FindFinalMetaNamespaceByNSBlock(SimpleLanguage::Comp
     }
 
     if (root == nullptr) {
-        root = ModuleManager::GetInstance()->GetSelfModule()->GetMetaNode();
+        root = ModuleManager::GetInstance().GetSelfModule()->GetMetaNode();
     }
     for (size_t i = 0; i < nsb->GetTokenList().size(); i++) {
         std::string name = nsb->GetTokenList()[i]->GetLexemeString();
@@ -179,7 +180,7 @@ void NamespaceManager::AddNamespaceString(const std::string& nsString) {
         return;
     }
     std::vector<std::string> list;
-    MetaModule* selfModule = ModuleManager::GetInstance()->GetSelfModule();
+    MetaModule* selfModule = ModuleManager::GetInstance().GetSelfModule();
     std::string tempname = "";
     if (SimpleLanguage::Compile::CompilerUtil::CheckNameList(nsString, &list)) {
         //MetaNamespace parentMetaNamespace = nullptr;
