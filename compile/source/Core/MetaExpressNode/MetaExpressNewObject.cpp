@@ -314,9 +314,9 @@ void MetaBraceOrBracketStatementsContent::Parse() {
                             foas->GetExpress()->BuildAST();
                             mas = new MetaBraceAssignStatements(m_OwnerMetaBlockStatements, m_DefineMetaType, foas);
                         } else if (fdvs != nullptr) {
-                            Log::Write("Error 不允许的表达式类形在 a = { int a; } 这种的形式里边");
+                            //Log::Write("Error 不允许的表达式类形在 a = { int a; } 这种的形式里边");
                         } else {
-                            Log::Write("Error 不允许的表达式类形在 a = {} 这种的形式里边");
+                            //Log::Write("Error 不允许的表达式类形在 a = {} 这种的形式里边");
                         }
                         if (mas != nullptr) {
                             mas->CalcReturnType();

@@ -22,7 +22,7 @@ public:
     virtual ~FileMetaBase() = default;
 
     // Properties
-    Token* GetToken() const { return m_Token; }
+    Token* GetToken() { return m_Token; }
     int Deep() const { return m_Deep; }
     virtual std::string GetName() const;
     FileMeta* GetFileMeta() const { return m_FileMeta; }

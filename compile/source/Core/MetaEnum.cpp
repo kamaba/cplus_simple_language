@@ -279,7 +279,7 @@ void MetaEnum::ParseMemberMetaEnumExpress() {
                     // 处理数据类型的逻辑
                 }
                 else {
-                    Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用data值类变量, 不允许其它类型");
+                    //Log::AddInStructMeta(EError::None, "Error Enum Member Enum 内允许使用data值类变量, 不允许其它类型");
                 }
             }
             else if (pair.second->GetConstExpressNode() != nullptr) {

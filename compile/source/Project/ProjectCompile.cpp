@@ -3,6 +3,7 @@
 #include "ProjectParse.h"
 #include "ProjectClass.h"
 #include "../Compile/FileMeta/FileMeta.h"
+#include "../Compile/FileMeta/FileMetaClass.h"
 #include "../Compile/Parse/FileParse.h"
 #include "../Compile/Parse/LexerParse.h"
 #include "../Compile/Parse/TokenParse.h"
@@ -11,12 +12,17 @@
 #include "../Define.h"
 #include "../Core/ClassManager.h"
 #include "../Core/MetaVariableManager.h"
+#include "../Core/MethodManager.h"
+#include "../Core/MetaModule.h"
 #include "../Core/ModuleManager.h"
 #include "../Core/NamespaceManager.h"
-#include "../IR/IRManager.h"
+#include "../Core/BaseMetaClass/CoreMetaClassManager.h"
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+
+using namespace SimpleLanguage::Compile;
+using namespace SimpleLanguage::Core;
 
 namespace SimpleLanguage {
 namespace Project {
@@ -34,13 +40,13 @@ int ProjectCompile::s_StructParseCount = 0;
 int ProjectCompile::s_BuildParseCount = 0;
 int ProjectCompile::s_GrammerParseCount = 0;
 int ProjectCompile::s_ParseListCount = 0;
-std::vector<FileParse*> ProjectCompile::s_FileParseList;
+//std::vector<Compile::FileParse*> ProjectCompile::s_FileParseList;
 
 ProjectCompile::ProjectCompile() {
 }
 
 void ProjectCompile::LoadProject() {
-    ::std::filesystem::path directory(ProjectManager::projectPath);
+    /*::std::filesystem::path directory(ProjectManager::projectPath);
 
     if (!::std::filesystem::exists(directory)) {
         std::cout << "Error 项目加载路径不正确!!" << std::endl;
@@ -60,11 +66,13 @@ void ProjectCompile::LoadProject() {
     if (!::std::filesystem::exists(paths[0])) {
         std::cout << "Error 项目加载路径不正确!!" << std::endl;
         return;
-    }
-    
-    s_ProjectFile = new FileMeta(paths[0]);
+    }*/
 
-    std::ifstream file(paths[0], std::ios::binary);
+    std::string path = "";
+    
+    s_ProjectFile = new FileMeta(path);
+
+    std::ifstream file(path, std::ios::binary);
     if (file.is_open()) {
         std::ostringstream buffer;
         buffer << file.rdbuf();
@@ -72,13 +80,13 @@ void ProjectCompile::LoadProject() {
         file.close();
     }
 
-    s_LexerParse = new LexerParse(paths[0], s_FileContentString);
+    s_LexerParse = new LexerParse(path, s_FileContentString);
     s_LexerParse->ParseToTokenList();
 
     s_TokenParse = new TokenParse(s_ProjectFile, s_LexerParse->GetListTokensWidthEnd());
     s_TokenParse->BuildStruct();
 
-    s_ProjectBuild = new StructParse(s_ProjectFile, s_TokenParse->rootNode());
+    s_ProjectBuild = new StructParse(s_ProjectFile, s_TokenParse->GetRootNode());
     s_ProjectBuild->ParseRootNodeToFileMeta();
 
     s_ProjectParse = new ProjectParse(s_ProjectFile, s_Data);
@@ -93,7 +101,7 @@ void ProjectCompile::LoadProject() {
 
 void ProjectCompile::Compile(const std::string& path, ProjectData* pd) {
     if (!s_IsLoaded) {
-        ProjectManager::projectPath = path;
+        ProjectManager::SetProjectPath( path );
         s_Data = pd;
         s_IsLoaded = true;
         LoadProject();
@@ -101,7 +109,7 @@ void ProjectCompile::Compile(const std::string& path, ProjectData* pd) {
 
     ProjectClass::ProjectCompileBefore();
 
-    CoreMetaClassManager::instance().Init();
+    CoreMetaClassManager::GetInstance().Init();
 
     s_StructParseCount = 0;
     s_BuildParseCount = 0;
@@ -111,21 +119,21 @@ void ProjectCompile::Compile(const std::string& path, ProjectData* pd) {
 
     FileListStructParse();
 
-    ClassManager::instance().AddMetaClass(ProjectManager::globalData);
+    ClassManager::GetInstance().AddMetaClass(ProjectManager::GetGlobalData() );
 
     ProjectClass::ProjectCompileAfter();
 
-    std::cout << ModuleManager::instance().selfModule()->metaNode()->ToFormatString() << std::endl;
+    std::cout << ModuleManager::GetInstance().GetSelfModule()->GetMetaNode()->ToFormatString() << std::endl;
 
-    IRManager::instance().TranslateIR();
+    //IRManager::instance().TranslateIR();
 }
 
 void ProjectCompile::AddFileParse(const std::string& path) {
-    auto fp = new FileParse(std::filesystem::path(ProjectManager::rootPath) / path, new ParseFileParam());
+   /* auto fp = new FileParse(std::filesystem::path(ProjectManager::rootPath) / path, new ParseFileParam());
     fp->setStructParseComplete(StructParseComplete);
     fp->setBuildParseComplete(BuildParseComplete);
     fp->setGrammerParseComplete(GrammerParseComplete);
-    s_FileParseList.push_back(fp);
+    s_FileParseList.push_back(fp);*/
 }
 
 bool ProjectCompile::CheckFileList() {
@@ -133,7 +141,7 @@ bool ProjectCompile::CheckFileList() {
     for (size_t i = 0; i < s_FileParseList.size(); i++) {
         if (!s_FileParseList[i]->IsExists()) {
             isSuccess = false;
-            std::cout << "没有找到要编译的文件: " << s_FileParseList[i]->filePath() << std::endl;
+            std::cout << "没有找到要编译的文件: " << s_FileParseList[i]->filePath << std::endl;
             break;
         }
     }
@@ -143,10 +151,10 @@ bool ProjectCompile::CheckFileList() {
 void ProjectCompile::FileListStructParse() {
     if (!CheckFileList()) return;
     for (size_t i = 0; i < s_FileParseList.size(); i++) {
-        s_FileParseList[i]->StructParse();
+        s_FileParseList[i]->HandleStructParse();
 
-        Log::AddProcess(SimpleLanguage::Core::EProcess::StructMeta, SimpleLanguage::Debug::EError::StructFileMetaEnd, 
-                       s_FileParseList[i]->ToFormatString());
+        //Log::AddProcess(SimpleLanguage::Core::EProcess::StructMeta, SimpleLanguage::Debug::EError::StructFileMetaEnd, 
+        //               s_FileParseList[i]->ToFormatString());
     }
 }
 
@@ -185,36 +193,36 @@ void ProjectCompile::CompileFileAllEnd() {
         s_FileParseList[i]->CombineFileMeta();
     }
 
-    for (size_t i = 0; i < s_ProjectFile->fileMetaClassList().size(); i++) {
-        auto fns = s_ProjectFile->fileMetaClassList()[i];
+    for (size_t i = 0; i < s_ProjectFile->FileMetaClassList().size(); i++) {
+        auto fns = s_ProjectFile->FileMetaClassList()[i];
 
-        if (fns->name() == "ProJectConfig" || fns->name() == "Compile") {
+        if (fns->GetName() == "ProJectConfig" || fns->GetName() == "Compile") {
             continue;
         }
-        ClassManager::instance().AddClass(fns);
+        ClassManager::GetInstance().AddClass(fns);
     }
 
-    ClassManager::instance().ParseInitMetaClassList();
+    ClassManager::GetInstance().ParseInitMetaClassList();
     s_ProjectParse->ParseGlobalVariable();
 
-    ClassManager::instance().HandleExtendMember();
-    ClassManager::instance().CheckInterfaces();
-    ClassManager::instance().ParseDefineComplete();
+    ClassManager::GetInstance().HandleExtendMember();
+    ClassManager::GetInstance().CheckInterfaces();
+    ClassManager::GetInstance().ParseDefineComplete();
 
-    ClassManager::instance().ParseMemberEnumExpress();
-    MetaVariableManager::instance().ParseMetaDataMemberExpress();
-    MetaVariableManager::instance().ParseMetaClassMemberExpress();
+    ClassManager::GetInstance().ParseMemberEnumExpress();
+    MetaVariableManager::Instance().ParseMetaDataMemberExpress();
+    MetaVariableManager::Instance().ParseMetaClassMemberExpress();
 
-    MethodManager::instance().ParseStatements();
+    MethodManager::GetInstance().ParseStatements();
 
-    ModuleManager::instance().selfModule()->metaNode()->SetDeep(0);
+    ModuleManager::GetInstance().GetSelfModule()->GetMetaNode()->SetDeep(0);
 
-    ClassManager::instance().PrintAlllClassContent();
+    ClassManager::GetInstance().PrintAlllClassContent();
 
-    Log::PrintLog();
+    //Log::PrintLog();
 
     std::cout << "-------------------------解析完成后的格式输出 开始--------------------------" << std::endl;
-    std::cout << ModuleManager::instance().selfModule()->metaNode()->ToFormatString() << std::endl;
+    std::cout << ModuleManager::GetInstance().GetSelfModule()->GetMetaNode()->ToFormatString() << std::endl;
     std::cout << "-------------------------解析完成后的格式输出 结束--------------------------" << std::endl;
 }
 

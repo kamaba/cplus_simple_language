@@ -52,7 +52,7 @@ public:
     virtual std::string ToFormatString() override;
     virtual std::string ToTokenString() override;
 
-private:
+public:
     void Parse(EType eType, const Compile::MultiData& val);
     void ComputeAddRight(const MetaConstExpressNode& right);
     void ComputeMinusRight(const MetaConstExpressNode& right);

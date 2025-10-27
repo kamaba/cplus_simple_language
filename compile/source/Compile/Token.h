@@ -20,10 +20,14 @@ namespace Compile {
 
     union DataUnion 
     {
-        int8_t byte_val;
+        int8_t sbyte_val;
+        uint8_t byte_val;
         int16_t short_val;
+        uint16_t ushort_val;
         int32_t int_val;
+        uint32_t uint_val;
         int64_t long_val;
+        uint64_t ulong_val;
         float float_val;
         double double_val;
         const char* string_val;
@@ -52,18 +56,19 @@ namespace Compile {
 
         MultiData() {};
         // 构造函数（省略，同上一条回复）
-        MultiData(int8_t val) : type(DataType::SByte) { data.byte_val = val; }
+        MultiData(int8_t val) : type(DataType::SByte) { data.sbyte_val = val; }
         MultiData(uint8_t val) : type(DataType::Byte) { data.byte_val = val; }
         MultiData(int16_t val) : type(DataType::Short) { data.short_val = val; }
-        MultiData(uint16_t val) : type(DataType::UShort) { data.short_val = val; }
+        MultiData(uint16_t val) : type(DataType::UShort) { data.ushort_val = val; }
         MultiData(int32_t val) : type(DataType::Int) { data.int_val = val; }
-        MultiData(uint32_t val) : type(DataType::UInt) { data.int_val = val; }
+        MultiData(uint32_t val) : type(DataType::UInt) { data.uint_val = val; }
         MultiData(int64_t val) : type(DataType::Long) { data.long_val = val; }
-        MultiData(uint64_t val) : type(DataType::ULong) { data.long_val = val; }
+        MultiData(uint64_t val) : type(DataType::ULong) { data.ulong_val = val; }
         MultiData(float_t val) : type(DataType::Float) { data.float_val = val; }
         MultiData(double_t val) : type(DataType::Double) { data.double_val = val; }
         MultiData(const std::string& val) : type(DataType::String) {data.string_val = val.c_str();}
         MultiData(const char* cchar) :type(DataType::String) { data.string_val = cchar; }
+        MultiData(void* ptr) :type(DataType::Object) { data.object_valptr = ptr; }
         // 核心方法：将内部数据转换为 std::string
         std::string ToString() const
         {

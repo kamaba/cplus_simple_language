@@ -22,7 +22,7 @@ namespace SimpleLanguage {
     }
 namespace Core {
     class MetaClass;
-    class MetaClass;
+    class MetaType;
     class MetaFunction;
     class MetaBlockStatements;
     class MetaExpressNode;

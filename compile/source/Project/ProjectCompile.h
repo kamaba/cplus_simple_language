@@ -9,16 +9,19 @@
 
 namespace SimpleLanguage 
 {
-	namespace Project
+	namespace Compile
 	{
-		// Forward declarations
-		class ProjectData;
 		class LexerParse;
 		class TokenParse;
 		class StructParse;
 		class ProjectParse;
 		class FileMeta;
 		class FileParse;
+	}
+	namespace Project
+	{
+		// Forward declarations
+		class ProjectData;
 
 		class ProjectCompile {
 		public:
@@ -30,13 +33,13 @@ namespace SimpleLanguage
 			void SetThreadCompile(bool value) { m_IsThreadCompile = value; }
 
 			static bool IsLoaded() { return s_IsLoaded; }
-			static FileMeta* ProjectFileMeta() { return s_ProjectFile; }
+			static Compile::FileMeta* ProjectFileMeta() { return s_ProjectFile; }
 
 			static int StructParseCount() { return s_StructParseCount; }
 			static int BuildParseCount() { return s_BuildParseCount; }
 			static int GrammerParseCount() { return s_GrammerParseCount; }
 			static int ParseListCount() { return s_ParseListCount; }
-			static const std::vector<FileParse*>& FileParseList() { return s_FileParseList; }
+			static const std::vector<Compile::FileParse*>& FileParseList() { return s_FileParseList; }
 
 			// Methods
 			static void LoadProject();

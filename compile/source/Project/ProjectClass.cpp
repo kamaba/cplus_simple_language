@@ -3,15 +3,19 @@
 #include "ProjectData.h"
 #include "ProjectManager.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
+#include "../Compile/FileMeta/FileMeta.h"
 #include "../Core/ClassManager.h"
 #include "../Core/ModuleManager.h"
 #include "../Core/NamespaceManager.h"
-#include "../Core/CoreMetaClassManager.h"
-#include "../Core/Log.h"
-#include "../Core/Define.h"
-#include "../IR/IRManager.h"
-#include "../VM/InnerCLRRuntime/InnerCLRRRuntimeVM.h"
+#include "../Core/MetaMemberFunction.h"
+#include "../Core/ModuleManager.h"
+#include "../Core/MetaModule.h"
+#include "../Core/BaseMetaClass/CoreMetaClassManager.h"
+#include "../Debug/Log.h"
+#include "../Define.h"
 #include <iostream>
+
+using namespace SimpleLanguage::Core;
 
 namespace SimpleLanguage {
 namespace Project {
@@ -29,24 +33,24 @@ MetaFunction* ProjectClass::s_CompileBeforeFunction = nullptr;
 MetaFunction* ProjectClass::s_CompileAfterFunction = nullptr;
 
 void ProjectClass::ParseCompileClass() {
-    FileMetaClass* fmc = ProjectCompile::projectFileMeta()->GetFileMetaClassByName("Compile");
+    Compile::FileMetaClass* fmc = ProjectCompile::ProjectFileMeta()->GetFileMetaClassByName("Compile");
 
     if (fmc == nullptr) return;
 
-    ClassManager::instance().AddClass(fmc);
+    Core::ClassManager::GetInstance().AddClass(fmc);
     
-    compile = fmc->metaClass();
+    compile = fmc->GetMetaClass();
     if (compile == nullptr) return;
 
     compile->ParseDefineComplete();
-    auto flist = compile->staticMetaMemberFunctionList();
+    auto flist = compile->GetStaticMetaMemberFunctionList();
     for (size_t i = 0; i < flist.size(); i++) {
         flist[i]->ParseStatements();
     }
 }
 
 void ProjectClass::RunTest() {
-    MetaClass* project = ClassManager::instance().GetClassByName("Project");
+    MetaClass* project = ClassManager::GetInstance().GetClassByName("Project");
     if (project == nullptr) {
         std::cout << "Error project!!" << std::endl;
         return;
@@ -60,7 +64,7 @@ void ProjectClass::RunTest() {
 }
 
 void ProjectClass::RunMain() {
-    MetaClass* projectEntoer = ClassManager::instance().GetClassByName("S.Project", 0);
+    MetaClass* projectEntoer = ClassManager::GetInstance().GetClassByName("S.Project", 0);
     if (projectEntoer == nullptr) {
         std::cout << "Error 没有找到Project!!" << std::endl;
         return;
@@ -70,9 +74,9 @@ void ProjectClass::RunMain() {
         std::cout << "Error 没有找到Project.Main函数!!" << std::endl;
         return;
     }
-    auto irmethod = IRManager::instance().GetIRMethod(mmf->functionAllName());
+   /* auto irmethod = IRManager::instance().GetIRMethod(mmf->functionAllName());
     InnerCLRRuntimeVM::Init();
-    InnerCLRRuntimeVM::RunIRMethod(nullptr, irmethod);
+    InnerCLRRuntimeVM::RunIRMethod(nullptr, irmethod);*/
 }
 
 void ProjectClass::AddDefineNamespace(MetaNode* parentRoot, DefineStruct* dns, bool isAddCurrent) {
@@ -97,11 +101,11 @@ void ProjectClass::AddDefineNamespace(MetaNode* parentRoot, DefineStruct* dns, b
                     parMS = parentRoot->AddMetaNamespace(nodeNS);
                 }
             } else {
-                if (!(cfindNode->isMetaNamespace())) {
-                    Log::AddInStructMeta(SimpleLanguage::Debug::EError::None, "Error 解析namespace添加命名空间节点时，发现已有定义类!!");
+                if (!(cfindNode->IsMetaNamespace())) {
+                    //Log::AddInStructMeta(SimpleLanguage::Debug::EError::None, "Error 解析namespace添加命名空间节点时，发现已有定义类!!");
                     return;
                 }
-                nodeNS = cfindNode->metaNamespace();
+                nodeNS = cfindNode->GetMetaNamespace();
                 parMS = parentRoot->AddMetaNamespace(nodeNS);
             }
         } else {
@@ -114,10 +118,10 @@ void ProjectClass::AddDefineNamespace(MetaNode* parentRoot, DefineStruct* dns, b
 }
 
 void ProjectClass::ProjectCompileBefore() {
-    NamespaceManager::instance().metaNamespaceDict().clear();
+    NamespaceManager::GetInstance().metaNamespaceDict.clear();
 
-    ProjectData* data = ProjectManager::data();
-    AddDefineNamespace(ModuleManager::instance().selfModule()->metaNode(), data->namespaceRoot(), false);
+    ProjectData* data = ProjectManager::GetData();
+    AddDefineNamespace(ModuleManager::GetInstance().GetSelfModule()->GetMetaNode(), data->namespaceRoot(), false);
 
     auto fileList = data->compileFileData()->compileFileDataUnitList();
     auto filter = data->compileFilterData();

@@ -41,6 +41,7 @@ class MetaData;
 class MetaMemberData;
 class MetaType;
 class MetaClass;
+class MetaVariable;
 class ClassManager;
 class ExpressManager;
 class CreateExpressParam;

@@ -7,11 +7,11 @@
 //****************************************************************************
 
 #include "MetaVariable.h"
-#include "MetaMemberVariable.h"
 #include "MetaType.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/CompilerUtil.h"
 #include "../Compile/Token.h"
+#include "../Debug/Log.h"
 #include <algorithm>
 
 namespace SimpleLanguage {
@@ -193,10 +193,11 @@ MetaVisitVariable::MetaVisitVariable(const std::string& name, MetaClass* mc, Met
 }
 
 int MetaVisitVariable::GetIRMemberIndex() {
-    MetaMemberVariable* mmv = dynamic_cast<MetaMemberVariable*>(m_SourceMetaVariable);
-    if (mmv != nullptr) {
-        // return mmv->GetOwnerMetaClass()->GetLocalMemberVariableIndex(mmv);
-    }
+    // 使用前向声明，避免循环依赖
+    // MetaMemberVariable* mmv = dynamic_cast<MetaMemberVariable*>(m_SourceMetaVariable);
+    // if (mmv != nullptr) {
+    //     // return mmv->GetOwnerMetaClass()->GetLocalMemberVariableIndex(mmv);
+    // }
     return -1;
 }
 

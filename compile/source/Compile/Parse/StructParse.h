@@ -57,6 +57,7 @@ public:
     StructParse(FileMeta* fm, Node* node);
     virtual ~StructParse() = default;
     
+    Node* GetRootNode() { return m_RootNode; }
     void ParseRootNodeToFileMeta();
     std::vector<Node*> GetAllNodeToSemiColon(Node* pnode, bool isAddSelf = false);
     void ParseImport(Node* pnode);
