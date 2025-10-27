@@ -159,7 +159,7 @@ public:
     EDefineStructType type() const { return m_Type; }
     void setType(EDefineStructType value) { m_Type = value; }
     
-    const std::vector<DefineStruct*>& childDefineStruct() { return m_ChildDefineStruct; }
+    std::vector<DefineStruct*>& childDefineStruct() { return m_ChildDefineStruct; }
 
     DefineStruct* Parse(Core::MetaMemberData* mmd);
 

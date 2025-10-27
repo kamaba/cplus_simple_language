@@ -6,6 +6,7 @@
 //  Description: 
 //****************************************************************************
 
+#include "MetaExpressBase.h"
 #include "MetaExpressNewObject.h"
 #include "MetaExpressCallLink.h"
 #include "MetaExpressConst.h"
@@ -18,12 +19,12 @@
 #include "../MetaType.h"
 #include "../MetaClass.h"
 #include "../MetaFunction.h"
+#include "../MetaCallLink.h"
 #include "../MetaMemberFunction.h"
 #include "../MetaMemberData.h"
 #include "../MetaMemberVariable.h"
 #include "../ClassManager.h"
 #include "../ExpressManager.h"
-#include "MetaExpressBase.h"
 #include "../../Compile/FileMeta/FileMetaBase.h"
 #include "../../Compile/FileMeta/FileMetaClass.h"
 #include "../../Compile/FileMeta/FileMetaExpress.h"
@@ -503,7 +504,7 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaConstValueTe
         std::string arr1 = name.substr(pos + 2);
         
         int val0 = 0, val1 = 0;
-        if (std::stoi(arr0, &val0)) {
+        /*if (std::stoi(arr0, &val0)) {
             MetaConstExpressNode* mcen1 = new MetaConstExpressNode(EType::Int32, val0);
             MetaInputParam* mip = new MetaInputParam(mcen1);
             mdpc->AddMetaInputParam(mip);
@@ -513,7 +514,7 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaConstValueTe
             MetaConstExpressNode* mcen2 = new MetaConstExpressNode(EType::Int32, val1);
             MetaInputParam* mip2 = new MetaInputParam(mcen2);
             mdpc->AddMetaInputParam(mip2);
-        }
+        }*/
         
         MetaInputParam* mip3 = new MetaInputParam(new MetaConstExpressNode(EType::Int32, 1));
         mdpc->AddMetaInputParam(mip3);
@@ -521,7 +522,8 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaConstValueTe
     
     auto tfunction = m_MetaDefineType->GetMetaMemberConstructFunction(mdpc);
     if (tfunction != nullptr) {
-        m_MetaConstructFunctionCall = new MetaMethodCall(nullptr, nullptr, tfunction, nullptr, mdpc, nullptr, nullptr);
+        std::vector<MetaType*> mtlist;
+        m_MetaConstructFunctionCall = new MetaMethodCall(nullptr, mtlist, tfunction, mtlist, mdpc, nullptr, nullptr);
     }
     
     Init();
@@ -532,8 +534,9 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(MetaType* mt, MetaClass* owne
     m_OwnerMetaBlockStatements = mbs;
     m_MetaDefineType = new MetaType(*mt);
     Init();
+    std::vector<MetaType*> mtlist;
     m_MetaConstructFunctionCall = new MetaMethodCall(mt->GetMetaClass(), mt->GetTemplateMetaTypeList(), m_OwnerMetaBlockStatements->GetOwnerMetaFunction(),
-        nullptr, nullptr, nullptr, nullptr);
+        mtlist, nullptr, nullptr, nullptr);
 }
 
 MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaCallTerm* fmct, MetaCallLink* mcl, MetaType* mt, MetaClass* ownerMC, MetaBlockStatements* mbs, MetaMethodCall* mmf) {
@@ -549,10 +552,10 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaCallTerm* fm
     MetaClass* createMC = nullptr;
     
     if (!m_MetaDefineType->IsDefineMetaClass()) {
-        if (fmcn->GetVisitType() == EVisitType::New) {
-            m_MetaDefineType->SetMetaClass(fmcn->GetMethodCall()->GetFunction()->GetOwnerMetaClass());
+        if (fmcn->visitType() == EVisitType::New) {
+            m_MetaDefineType->SetMetaClass(fmcn->methodCall()->function()->GetOwnerMetaClass());
         }
-    } else if (fmcn->GetVisitType() == EVisitType::MethodCall) {
+    } else if (fmcn->visitType() == EVisitType::MethodCall) {
         createMC = mmf->function()->GetOwnerMetaClass();
         m_MetaDefineType->SetMetaClass(createMC);
         if (createMC->GetMetaTemplateList().size() > 0) {
@@ -636,7 +639,9 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaParTerm* fmp
     m_FileMetaParTerm = fmpt;
     m_OwnerMetaClass = mc;
     m_OwnerMetaBlockStatements = mbs;
-    auto mmf = new MetaMethodCall(nullptr, nullptr, mbs->GetOwnerMetaFunction(), nullptr, nullptr, nullptr, nullptr);
+
+    std::vector<MetaType*> mtlist;
+    auto mmf = new MetaMethodCall(nullptr, mtlist, mbs->GetOwnerMetaFunction(), mtlist, nullptr, nullptr, nullptr);
     m_MetaConstructFunctionCall = mmf;
     m_MetaDefineType = new MetaType(*mt);
     Init();
@@ -657,8 +662,9 @@ MetaNewObjectExpressNode::MetaNewObjectExpressNode(Compile::FileMetaBracketTerm*
     MetaInputParamCollection* mipc = new MetaInputParamCollection(mc, mbs);
     mipc->AddMetaInputParam(new MetaInputParam(new MetaConstExpressNode(EType::Int32, m_MetaBraceOrBracketStatementsContent->GetCount())));
     MetaMemberFunction* mmf = m_MetaDefineType->GetMetaClass()->GetMetaMemberConstructFunction(mipc);
-    
-    m_MetaConstructFunctionCall = new MetaMethodCall(nullptr, nullptr, mmf, nullptr, mipc, nullptr, nullptr);
+
+    std::vector<MetaType*> mtlist;
+    m_MetaConstructFunctionCall = new MetaMethodCall(nullptr, mtlist, mmf, mtlist, mipc, nullptr, nullptr);
 }
 
 void MetaNewObjectExpressNode::Init() {

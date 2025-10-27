@@ -64,7 +64,7 @@ public:
     virtual void SetOwnerBlockstatements(MetaBlockStatements* mbs){ m_OwnerMetaBlockStatements = mbs;}
     MetaBlockStatements* GetOwnerMetaBlockStatements() const { return m_OwnerMetaBlockStatements; }
     EVariableFrom GetVariableFrom() const { return m_VariableFrom; }
-    MetaType* GetMetaDefineType() const { return m_DefineMetaType; }
+    MetaType* GetMetaDefineType(){ return m_DefineMetaType; }
     MetaType* GetRealMetaType() const { return m_RealMetaType; }
     MetaClass* GetOwnerMetaClass() const { return m_OwnerMetaClass; }
     MetaVariable* GetSourceMetaVariable() const { return m_SourceMetaVariable; }

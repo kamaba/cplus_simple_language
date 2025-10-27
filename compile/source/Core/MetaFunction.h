@@ -19,6 +19,7 @@ namespace Core {
     class MetaVariable;
     class MetaStatements;
     class MetaClass;
+    class MetaType;
     class MetaDefineParam;
     class MetaDefineParamCollection;
     class MetaBlockStatements;
@@ -53,7 +54,7 @@ public:
     virtual void SetDeep(int deep);
 
     //  Ù–‘∑√Œ ∆˜
-    MetaType* GetMetaDefineType() const;
+    MetaType* GetMetaDefineType();
     Compile::Token* GetPingToken() const;
     virtual bool IsStatic() const { return m_IsStatic; }
     virtual bool IsParsed() const { return m_IsParsed; }

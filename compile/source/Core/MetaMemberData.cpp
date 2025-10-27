@@ -9,11 +9,15 @@
 #include "MetaMemberData.h"
 #include "MetaVariable.h"
 #include "MetaExpressNode/MetaExpressBase.h"
+#include "MetaExpressNode/MetaExpressConst.h"
+#include "MetaExpressNode/MetaExpressCalllink.h"
+#include "MetaExpressNode/MetaExpressNewObject.h"
 #include "MetaType.h"
 #include "MetaData.h"
 #include "../Compile/FileMeta/FileMetaCommon.h"
 #include "../Compile/FileMeta/FileMetaSyntax.h"
 #include "../Compile/FileMeta/FileMetaExpress.h"
+#include "../Compile/FileMeta/FileMetaMemberData.h"
 #include "MetaVariableManager.h"
 #include "../Debug/Log.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
@@ -40,7 +44,7 @@ MetaMemberData::MetaMemberData(MetaData* mc, FileMetaOpAssignSyntax* fmoa) {
 MetaMemberData::MetaMemberData(MetaData* mc, FileMetaMemberData* fmmd, int index, bool isStatic) {
     m_FileMetaMemeberData = fmmd;
     fmmd->SetMetaMemberData(this);
-    m_Name = fmmd->Name();
+    m_Name = fmmd->GetName();
     m_Index = index;
     m_IsStatic = isStatic;
     m_IsWithName = m_FileMetaMemeberData->IsWithName();
@@ -74,7 +78,7 @@ void MetaMemberData::SetIndex(int index) {
 }
 
 std::string MetaMemberData::GetString(const std::string& name, bool isInChildren) {
-    auto constExpress = dynamic_cast<MetaConstExpressNode*>(m_Express);
+    MetaConstExpressNode* constExpress = dynamic_cast<MetaConstExpressNode*>(m_Express);
     if (constExpress != nullptr) {
         return constExpress->GetValue().ToString();
     } else {
@@ -89,7 +93,7 @@ std::string MetaMemberData::GetString(const std::string& name, bool isInChildren
 }
 
 int MetaMemberData::GetInt(const std::string& name, int defaultValue) {
-    auto constExpress = dynamic_cast<MetaConstExpressNode*>(m_Express);
+    MetaConstExpressNode* constExpress = dynamic_cast<MetaConstExpressNode*>(m_Express);
     if (constExpress != nullptr) {
         if (constExpress->GetEType() == EType::Int16 ||
             constExpress->GetEType() == EType::UInt16 ||
@@ -117,7 +121,7 @@ bool MetaMemberData::AddMetaMemberData(MetaMemberData* mmd) {
     }
     m_MetaMemberDataDict[mmd->GetName()] = mmd;
 
-    MetaVariableManager::Instance()->AddMetaDataVariable(mmd);
+    MetaVariableManager::Instance().AddMetaDataVariable(mmd);
 
     return true;
 }
@@ -126,7 +130,7 @@ void MetaMemberData::ParseName() {
     if (m_FileMetaMemeberData != nullptr) {
         m_IsWithName = m_FileMetaMemeberData->IsWithName();
         if (m_IsWithName) {
-            m_Name = m_FileMetaMemeberData->Name();
+            m_Name = m_FileMetaMemeberData->GetName();
         } else {
             m_Name = std::to_string(m_Index);
         }
@@ -137,7 +141,7 @@ void MetaMemberData::ParseName() {
 
 void MetaMemberData::ParseDefineMetaType() {
     if (m_FileMetaMemeberData != nullptr) {
-        switch (m_FileMetaMemeberData->GetDataType()) {
+        switch (m_FileMetaMemeberData->GetMemberDataType()) {
             case FileMetaMemberData::EMemberDataType::Data: {
                 m_MemberDataType = EMemberDataType::MemberData;
             }
@@ -173,7 +177,7 @@ void MetaMemberData::ParseDefineMetaType() {
             cep.metaType = m_DefineMetaType;
             cep.equalMetaVariable = this;
             cep.ownerMBS = m_OwnerMetaBlockStatements;
-            cep.parsefrom = EParseFrom::StatementRightExpress;
+            cep.SetParseFrom( EParseFrom::StatementRightExpress );
             m_Express = ExpressManager::CreateExpressNode(cep);
             if (m_Express == nullptr) {
                 Log::AddInStructMeta(EError::None, "Error 没有解析到Express的内容 在MetaMemberData 里边 372");
@@ -185,8 +189,8 @@ void MetaMemberData::ParseDefineMetaType() {
 bool MetaMemberData::ParseMetaExpress() {
     if (m_Express != nullptr) {
         AllowUseSettings auc;
-        auc.parseFrom = EParseFrom::MemberVariableExpress;
-        m_Express->Parse(auc);
+        auc.SetParseFrom( EParseFrom::MemberVariableExpress );
+        m_Express->Parse(&auc);
         m_Express->CalcReturnType();
         m_DefineMetaType = m_Express->GetReturnMetaDefineType();
         if (m_DefineMetaType == nullptr) {
@@ -311,16 +315,16 @@ std::string MetaMemberData::ToFormatString2(bool isDynamic) {
                 }
                 sb << "}";
             } else {
-                for (int i = 0; i < realDeep; i++)
+                for (int i = 0; i < GetRealDeep(); i++)
                     sb << Global::GetTabChar();
                 sb << m_Name << std::endl;
-                for (int i = 0; i < realDeep; i++)
+                for (int i = 0; i < GetRealDeep(); i++)
                     sb << Global::GetTabChar();
                 sb << "{" << std::endl;
                 for (const auto& v : m_MetaMemberDataDict) {
                     sb << v.second->ToFormatString() << std::endl;
                 }
-                for (int i = 0; i < realDeep; i++)
+                for (int i = 0; i < GetRealDeep(); i++)
                     sb << Global::GetTabChar();
                 sb << "}";
             }
@@ -332,11 +336,11 @@ std::string MetaMemberData::ToFormatString2(bool isDynamic) {
                 sb << " = ";
                 sb << m_Express->ToFormatString();
             } else {
-                for (int i = 0; i < realDeep; i++)
+                for (int i = 0; i < GetRealDeep(); i++)
                     sb << Global::GetTabChar();
                 sb << m_Name + " = ";
                 sb << m_Express->ToFormatString();
-                for (int i = 0; i < realDeep; i++)
+                for (int i = 0; i < GetRealDeep(); i++)
                     sb << Global::GetTabChar();
             }
         }
@@ -351,7 +355,7 @@ std::string MetaMemberData::ToFormatString2(bool isDynamic) {
                 sb << "]";
             } else {
                 int i = 0;
-                for (i = 0; i < realDeep; i++)
+                for (i = 0; i < GetRealDeep(); i++)
                     sb << Global::GetTabChar();
                 sb << m_Name + " = [";
                 i = 0;
@@ -369,7 +373,7 @@ std::string MetaMemberData::ToFormatString2(bool isDynamic) {
             if (isDynamic) {
                 sb << m_Express->ToFormatString();
             } else {
-                for (int i = 0; i < realDeep; i++)
+                for (int i = 0; i < GetRealDeep(); i++)
                     sb << Global::GetTabChar();
                 sb << m_Express->ToFormatString();
             }

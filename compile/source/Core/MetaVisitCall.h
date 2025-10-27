@@ -62,7 +62,7 @@ public:
 
     // Methods
     void SetStoreMetaVariable(MetaVariable* mv);
-    MetaType* GeMetaDefineType();
+    MetaType* GetMetaDefineType();
     MetaFunction* GetTemplateMemberFunction();
     std::string ToCommonString() const;
     std::string ToFormatString() const;

@@ -7,6 +7,8 @@
 #include "../Core/ModuleManager.h"
 #include "../Core/NamespaceManager.h"
 #include "../Core/ClassManager.h"
+#include "../Core/MetaModule.h"
+#include "../Core/MetaNode.h"
 #include <iostream>
 
 using namespace SimpleLanguage::Core;
@@ -46,13 +48,13 @@ void ProjectParse::ParseGlobalVariable() {
 }
 
 void ProjectParse::BuildDefineNameStruct() {
-    BuildDefineNameStructNode(m_ProjectData->namespaceRoot(), ModuleManager::GetInstance().SelfModule()->metaNode());
+    BuildDefineNameStructNode(m_ProjectData->namespaceRoot(), Core::ModuleManager::GetInstance().GetSelfModule()->GetMetaNode());
 }
 
-void ProjectParse::BuildDefineNameStructNode(DefineStruct* ds, MetaNode* parentMb) {
+void ProjectParse::BuildDefineNameStructNode(DefineStruct* ds, Core::MetaNode* parentMb) {
     MetaNode* newParentMB = nullptr;
     if (ds->type() != DefineStruct::EDefineStructType::Module) {
-        if (parentMb->isMetaModule()) {
+        if (parentMb->IsMetaModule()) {
             if (ds->type() == DefineStruct::EDefineStructType::Namespace) {
                 MetaNamespace* mn = new MetaNamespace(ds->name());
                 newParentMB = parentMb->AddMetaNamespace(mn);
@@ -60,12 +62,12 @@ void ProjectParse::BuildDefineNameStructNode(DefineStruct* ds, MetaNode* parentM
                 MetaClass* mc = new MetaClass(ds->name(), SimpleLanguage::Core::EClassDefineType::StructDefine);
                 newParentMB = parentMb->AddMetaClass(mc);
             }
-        } else if (parentMb->isMetaNamespace()) {
+        } else if (parentMb->IsMetaNamespace()) {
             if (ds->type() == DefineStruct::EDefineStructType::Namespace) {
                 MetaNamespace* mn = new MetaNamespace(ds->name());
                 newParentMB = parentMb->AddMetaNamespace(mn);
             } else if (ds->type() == DefineStruct::EDefineStructType::Class) {
-                MetaClass* mc = new MetaClass(ds->name(), SimpleLanguage::Core::EType::Class);
+                MetaClass* mc = new MetaClass(ds->name(), EType::Class);
                 newParentMB = parentMb->AddMetaClass(mc);
             }
         } else if (parentMb->IsMetaClass()) {
@@ -73,7 +75,7 @@ void ProjectParse::BuildDefineNameStructNode(DefineStruct* ds, MetaNode* parentM
                 std::cout << "Error 不能在class中，添加namespace!" << std::endl;
                 return;
             } else if (ds->type() == DefineStruct::EDefineStructType::Class) {
-                MetaClass* mc = new MetaClass(ds->name(), SimpleLanguage::Core::EType::Class);
+                MetaClass* mc = new MetaClass(ds->name(), EType::Class);
                 newParentMB = parentMb->AddMetaClass(mc);
             }
         }

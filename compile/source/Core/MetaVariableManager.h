@@ -21,7 +21,7 @@ class MetaVariableManager {
 public:
     static MetaVariableManager* s_Instance;
     
-    static MetaVariableManager Instance() {
+    static MetaVariableManager& Instance() {
         if (s_Instance == nullptr) {
             s_Instance = new MetaVariableManager();
         }

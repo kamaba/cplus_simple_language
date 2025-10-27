@@ -10,14 +10,17 @@ namespace SimpleLanguage {
     {
         class FileMeta;
     }
+    namespace Core {
+        class MetaMemberData;
+        class MetaNode;
+        class MetaNamespace;
+        class MetaClass;
+    }
 namespace Project {
 
 // Forward declarations
-class MetaMemberData;
-class MetaNode;
-class MetaNamespace;
-class MetaClass;
 class ProjectData;
+class DefineStruct;
 
 class ProjectParse {
 public:
@@ -27,7 +30,7 @@ public:
     void ParseProject();
     void ParseGlobalVariable();
     void BuildDefineNameStruct();
-    void BuildDefineNameStructNode(DefineStruct* ds, MetaNode* parentMb);
+    void BuildDefineNameStructNode(DefineStruct* ds, Core::MetaNode* parentMb);
     void ParseDefineComplete();
 
 private:

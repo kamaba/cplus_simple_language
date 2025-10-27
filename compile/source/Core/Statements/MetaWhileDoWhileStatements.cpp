@@ -8,13 +8,18 @@
 
 #include "MetaWhileDoWhileStatements.h"
 #include "../MetaExpressNode/MetaExpressBase.h"
+#include "../MetaExpressNode/MetaExpressOperator.h"
+#include "../MetaExpressNode/MetaExpressCalllink.h"
+#include "../MetaExpressNode/MetaExpressNewObject.h"
 #include "../MetaVariable.h"
 #include "../ExpressManager.h"
 #include "../AllowUseSettings.h"
 #include "../../Compile/FileMeta/FileMetaSyntax.h"
+#include "../../Compile/FileMeta/FileMetaCommon.h"
 #include "../../Compile/Token.h"
 #include "../../Debug/Log.h"
 #include "../../Define.h"
+#include "../MetaType.h"
 #include "MetaDefineVarStatements.h"
 #include "MetaAssignStatements.h"
 #include "MetaBlockStatements.h"
@@ -23,6 +28,7 @@
 #include <sstream>
 
 using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -54,7 +60,7 @@ void MetaForStatements::Parse() {
             cep2->SetIsConst(false);
             cep2->SetParseFrom(EParseFrom::StatementRightExpress);
             
-            m_ConditionExpress = ExpressManager::CreateExpressNode(cep2);
+            m_ConditionExpress = ExpressManager::CreateExpressNode(*cep2);
             m_ConditionExpress->CalcReturnType();
         }
         
@@ -69,7 +75,7 @@ void MetaForStatements::Parse() {
             m_ForInContent = mcallEn->GetMetaVariable();
         } else {
             m_ForInContent = new MetaVariable("forcontent_" + std::to_string(reinterpret_cast<uintptr_t>(this)), 
-                MetaVariable::EVariableFrom::LocalStatement, m_OwnerMetaBlockStatements, GetOwnerMetaClass(), 
+                EVariableFrom::LocalStatement, m_OwnerMetaBlockStatements, GetOwnerMetaClass(), 
                 mnoen->GetReturnMetaDefineType());
             m_ThenMetaStatements->UpdateMetaVariableDict(m_ForInContent);
         }
@@ -150,7 +156,7 @@ void MetaForStatements::Parse() {
             cep2->SetIsConst(false);
             cep2->SetParseFrom(EParseFrom::StatementRightExpress);
             
-            m_ConditionExpress = ExpressManager::CreateExpressNode(cep2);
+            m_ConditionExpress = ExpressManager::CreateExpressNode(*cep2);
             m_ConditionExpress->CalcReturnType();
         }
     }
@@ -264,7 +270,7 @@ void MetaWhileDoWhileStatements::Parse() {
         cep2->SetIsConst(false);
         cep2->SetParseFrom(EParseFrom::StatementRightExpress);
         
-        m_ConditionExpress = ExpressManager::CreateExpressNode(cep2);
+        m_ConditionExpress = ExpressManager::CreateExpressNode(*cep2);
     }
     
     MetaMemberFunction::CreateMetaSyntax(m_FileMetaKeyWhileSyntax->GetExecuteBlockSyntax(), m_ThenMetaStatements);

@@ -56,7 +56,7 @@ public:
     virtual ~MetaDefineParam() = default;
 
     std::string GetName() const { return m_Name; }
-    MetaVariable* GetMetaVariable() const { return m_MetaVariable; }
+    MetaVariable* GetMetaVariable() { return m_MetaVariable; }
     MetaExpressNode* GetExpressNode() const { return m_MetaExpressNode; }
     bool IsMust() const { return m_MetaExpressNode == nullptr; }
     bool IsExtendParams() const;
@@ -77,7 +77,7 @@ protected:
     Compile::FileMetaParamterDefine* m_FileMetaParamter = nullptr;
     MetaExpressNode* m_MetaExpressNode = nullptr;
     MetaVariable* m_MetaVariable = nullptr;
-    MetaMethod* m_OwnerMetaFunction = nullptr;
+    MetaFunction* m_OwnerMetaFunction = nullptr;
     std::string m_Name = "";
 };
 

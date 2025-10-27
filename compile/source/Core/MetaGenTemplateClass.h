@@ -60,9 +60,6 @@ public:
     virtual std::string ToDefineTypeString() const override;
     virtual std::string ToFormatString() const override;
 
-    // CRITICAL MISSING METHOD: AddTemplateParameter
-    void AddTemplateParameter(MetaClass* metaClass);
-
 private:
     std::vector<MetaGenTemplate*> m_MetaGenTemplateList;
     MetaClass* m_MetaTemplateClass = nullptr;

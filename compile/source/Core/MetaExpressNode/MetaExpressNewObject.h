@@ -25,6 +25,7 @@ namespace SimpleLanguage {
         class FileMetaBaseTerm;
         class FileMetaCallTerm;
         class FileMetaBracketTerm;
+        class FileMetaConstValueTerm;
     }
 namespace Core {
 

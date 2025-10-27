@@ -59,7 +59,7 @@ void MetaMethodCall::SetStoreMetaVariable(MetaVariable* mv) {
     m_StoreMetaVariable = mv;
 }
 
-MetaType* MetaMethodCall::GeMetaDefineType() {
+MetaType* MetaMethodCall::GetMetaDefineType() {
     return m_VMCallMetaFunction->GetMetaDefineType();
 }
 

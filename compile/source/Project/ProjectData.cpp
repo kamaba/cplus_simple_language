@@ -1,11 +1,15 @@
 #include "ProjectData.h"
+#include "ProjectManager.h"
 #include "../Core/MetaData.h"
 #include "../Core/MetaMemberData.h"
 #include "../Core/MetaVariable.h"
+#include "../Compile/FileMeta/FileMetaMemberData.h"
+#include "../Compile/FileMeta/FileMetaClass.h"
 #include "../Debug/Log.h"
 #include "../Define.h"
 #include <algorithm>
 #include <iostream>
+#include "../Compile/Parse/StructParse.h"
 
 namespace SimpleLanguage {
 namespace Project {
@@ -22,7 +26,7 @@ CompileFileData::CompileFileDataUnit::CompileFileDataUnit(Core::MetaMemberData* 
 }
 
 void CompileFileData::Parse(Core::MetaMemberData* mmd) {
-    for (auto& v : mmd->metaMemberDataDict()) {
+    for (auto& v : mmd->GetMetaMemberDataDict()) {
         m_CompileFileDataUnitList.push_back(new CompileFileDataUnit(v.second));
     }
 }
@@ -70,12 +74,12 @@ DefineStruct* DefineStruct::Parse(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) {
         return nullptr;
     }
-    m_Name = mmd->Name();
+    m_Name = mmd->GetName();
 
     std::string usetype = "namespace";
 
     std::vector<Core::MetaMemberData*> mdChild;
-    for (auto& ns : mmd->metaMemberDataDict()) {
+    for (auto& ns : mmd->GetMetaMemberDataDict()) {
         Core::MetaMemberData* cmmd = dynamic_cast<Core::MetaMemberData*>(ns.second);
         if (cmmd != nullptr) {
             if (cmmd->GetName() == "type") {
@@ -149,10 +153,10 @@ ProjectData::ProjectData(const std::string& _name, bool isConst) : MetaData(_nam
 
 void ProjectData::ParseFileMetaDataMemeberData(Compile::FileMetaClass* fmc) {
     m_Deep = 0;
-    for (size_t i = 0; i < fmc->memberDataList().size(); i++) {
-        auto v = fmc->memberDataList()[i];
+    for (size_t i = 0; i < fmc->GetMemberDataList().size(); i++) {
+        auto v = fmc->GetMemberDataList()[i];
         
-        if (v->name() == "globalVariable")
+        if (v->GetName() == "globalVariable")
             continue;
 
         auto mmd = new Core::MetaMemberData(this, v, i, true);
@@ -172,7 +176,7 @@ void ProjectData::ParseFileMetaDataMemeberData(Compile::FileMetaClass* fmc) {
 void ProjectData::ParseBlockNode(Core::MetaMemberData* mmd) {
     if (mmd == nullptr) return;
 
-    std::string _name = mmd->name();
+    std::string _name = mmd->GetName();
     if (_name == "name" || _name == "desc") {
         if (_name == "name") {
             m_ProjectName = mmd->GetString(_name);
@@ -224,7 +228,7 @@ void ProjectData::ParseGlobalVariable() {
     if (m_FileMetaClassDict.empty())
         return;
     
-    FileMetaMemberData* fmd = nullptr;
+    Compile::FileMetaMemberData* fmd = nullptr;
     for (auto& v : m_FileMetaClassDict) {
         fmd = v.second->GetFileMemberData("globalVariable");
         if (fmd != nullptr)
@@ -235,17 +239,17 @@ void ProjectData::ParseGlobalVariable() {
         return;
     }
 
-    MetaMemberData* mb = ProjectManager::globalData->GetMemberDataByName(fmd->name());
+    Core::MetaMemberData* mb = ProjectManager::GetGlobalData()->GetMemberDataByName(fmd->GetName());
     if (mb != nullptr) {
-        std::cout << "Error ProjectParse ParseGlobalVariable中发现重复: " << allClassName << " 位置: " 
-                  << (fmd->token() ? fmd->token()->ToLexemeAllString() : "") << "元组!!" << std::endl;
+        std::cout << "Error ProjectParse ParseGlobalVariable中发现重复: " << GetAllClassName() << " 位置: " 
+                  << (fmd->GetToken() != nullptr ? fmd->GetToken()->ToLexemeAllString() : "") << "元组!!" << std::endl;
         return;
     }
     
-    auto mmd = new MetaMemberData(ProjectManager::globalData, fmd, ProjectManager::globalData->metaMemberDataDict().size(), true);
+    auto mmd = new Core::MetaMemberData(ProjectManager::GetGlobalData(), fmd, ProjectManager::GetGlobalData()->GetMetaMemberDataDict().size(), true);
     mmd->ParseDefineMetaType();
     mmd->ParseMetaExpress();
-    ProjectManager::globalData->AddMetaMemberData(mmd);
+    ProjectManager::GetGlobalData()->AddMetaMemberData(mmd);
 }
 
 bool ProjectData::IsIncludeDefineStruct(const std::vector<std::string>& liststr) {

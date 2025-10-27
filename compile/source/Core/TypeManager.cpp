@@ -9,6 +9,9 @@
 #include "TypeManager.h"
 #include "MetaType.h"
 #include "MetaClass.h"
+#include "MetaTemplate.h"
+#include "MetaGenTemplateClass.h"
+#include "MetaGenTemplateFunction.h"
 #include "MetaMemberFunction.h"
 #include "MetaNode.h"
 #include "../Compile/FileMeta/FileMetaClass.h"
@@ -21,6 +24,7 @@
 #include <memory>
 
 using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -40,7 +44,7 @@ bool TypeManager::UpdateMetaTypeByGenClassAndFunction(MetaType* mt, MetaGenTempl
     }
     
     if (isNeedReg) {
-        auto newmc = mt->GetMetaClass()->AddInstanceMetaClass(regMCList);
+        MetaGenTemplateClass* newmc = mt->GetMetaClass()->AddInstanceMetaClass(regMCList);
         if (newmc == nullptr) {
             Log::AddInStructMeta(EError::None, "MetaClass is Null");
             return false;
@@ -85,15 +89,15 @@ MetaType* TypeManager::GetMetaTemplateClassAndRegisterExptendTemplateClassInstan
 
     MetaNode* getmc = ClassManager::GetInstance().GetMetaClassByRef(curMc, fmcd);
     if (getmc == nullptr) {
-        auto mt = curMc->GetMetaTemplateByName(fmcd->StringList()[0]);
+        auto mt = curMc->GetMetaTemplateByName(fmcd->GetStringList()[0]);
         if (mt == nullptr) {
-            Log::AddInStructMeta(EError::None, "没有找到模板类中，对应的模板，名称为" + fmcd->GetStringList()[0] + "请仔细检查模板的命名与使用模板命名是否对应", fmcd->GetClassNameToken());
+            //Log::AddInStructMeta(EError::None, "没有找到模板类中，对应的模板，名称为" + fmcd->GetStringList()[0] + "请仔细检查模板的命名与使用模板命名是否对应", fmcd->GetClassNameToken());
         } else {
             auto retmt = new MetaType(mt);
             return retmt;
         }
     } else {
-        return GetMetaTypeByInputTemplateList(curMc, getmc, fmcd->GetInputTemplateNodeList());
+        return GetMetaTypeByInputTemplateList(curMc, getmc, fmcd->InputTemplateNodeList());
     }
     return nullptr;
 }
@@ -143,10 +147,10 @@ MetaType* TypeManager::GetAndRegisterTemplateDefineMetaTemplateClass(MetaClass* 
             mt->SetTemplateMetaClass(findfn);
             std::vector<MetaGenTemplate*> mgtList;
             
-            for (size_t i = 0; i < fmtd->GetDefineClassCallLink()->GetCallNodeList().size(); i++) {
-                auto dcc = fmtd->GetDefineClassCallLink()->GetCallNodeList()[i];
-                for (size_t j = 0; j < dcc->GetInputTemplateNodeList().size(); j++) {
-                    auto itn = dcc->GetInputTemplateNodeList()[j];
+            for (size_t i = 0; i < fmtd->DefineClassCallLink()->GetCallNodeList().size(); i++) {
+                auto dcc = fmtd->DefineClassCallLink()->GetCallNodeList()[i];
+                for (size_t j = 0; j < dcc->InputTemplateNodeList().size(); j++) {
+                    auto itn = dcc->InputTemplateNodeList()[j];
                     auto mt2 = GetAndRegisterTemplateDefineMetaTemplateClass(ownerMc, findfn, itn);
                     mt->AddTemplateMetaType(mt2);
                 }
@@ -175,21 +179,21 @@ MetaType* TypeManager::GetMetaTypeByTemplateFunction(MetaClass* curMc, MetaMembe
 
     MetaNode* getmc = ClassManager::GetInstance().GetMetaClassByRef(curMc, fmcd);
     if (getmc == nullptr) {
-        auto gmtbn = curMc->GetMetaTemplateByName(fmcd->StringList()[0]);
+        auto gmtbn = curMc->GetMetaTemplateByName(fmcd->GetStringList()[0]);
         if (gmtbn != nullptr) {
             auto mt = new MetaType(gmtbn);
             return mt;
         } else if (findFun != nullptr) {
-            auto mt = findFun->GetMetaDefineTemplateByName(fmcd->StringList()[0]);
+            auto mt = findFun->GetMetaDefineTemplateByName(fmcd->GetStringList()[0]);
             if (mt == nullptr) {
                 return nullptr;
             }
             return new MetaType(mt);
         } else {
-            Log::AddInStructMeta(EError::None, "没有找到" + fmcd->StringList()[0] + " 的相关类!");
+            Log::AddInStructMeta(EError::None, "没有找到" + fmcd->GetStringList()[0] + " 的相关类!");
         }
     } else {
-        return GetMetaTypeByTemplateList(curMc, getmc, findFun, fmcd->GetInputTemplateNodeList());
+        return GetMetaTypeByTemplateList(curMc, getmc, findFun, fmcd->InputTemplateNodeList());
     }
     return nullptr;
 }
@@ -247,9 +251,9 @@ MetaType* TypeManager::RegisterTemplateDefineMetaTemplateFunction(MetaClass* fin
         }
         
         if (fmtd->GetInputTemplateCount() > 0) {
-            auto dcc = fmtd->GetDefineClassCallLink()->GetCallNodeList()[fmtd->GetDefineClassCallLink()->GetCallNodeList().size() - 1];
+            auto dcc = fmtd->DefineClassCallLink()->GetCallNodeList()[fmtd->DefineClassCallLink()->GetCallNodeList().size() - 1];
 
-            auto retmc = HandleInputTemplateNodeList(findMc, findfn, findFun, dcc->GetInputTemplateNodeList(), isParse);
+            auto retmc = HandleInputTemplateNodeList(findMc, findfn, findFun, dcc->InputTemplateNodeList(), isParse);
 
             if (retmc != nullptr) {
                 return retmc;

@@ -51,7 +51,7 @@ MetaFunction::MetaFunction(MetaClass* mc)
     m_IsStatic = mf.m_IsStatic;
 }
 
-MetaType* MetaFunction::GetMetaDefineType() const {
+MetaType* MetaFunction::GetMetaDefineType() {
     if (m_ReturnMetaVariable != nullptr) {
         return m_ReturnMetaVariable->GetMetaDefineType();
     }
