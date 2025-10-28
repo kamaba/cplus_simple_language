@@ -94,6 +94,7 @@ public:
     void SetPriority();
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
 private:
     Token* m_SymbolToken = nullptr;
@@ -112,6 +113,7 @@ public:
     Token* GetPlusOrMinusToken() const;
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
 private:
     Token* m_ValueToken = nullptr;
@@ -129,6 +131,7 @@ public:
     Node* GetCallNode() const;
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
 private:
     Node* m_CallNode = nullptr;
@@ -149,6 +152,7 @@ public:
     void ClearDirty();
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
 private:
     Node* m_ParNode = nullptr;
@@ -171,6 +175,7 @@ public:
     void ClearDirty();
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
 private:
     Node* m_BraceNode = nullptr;
@@ -194,6 +199,7 @@ public:
     Token* GetEndToken() const;
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
 private:
     Token* m_BracketeEndToken;
@@ -206,9 +212,10 @@ public:
     FileMetaIfSyntaxTerm(FileMeta* fm, Node* node);
     virtual ~FileMetaIfSyntaxTerm() = default;
 
-    Node* IfNode() const { return m_IfNode; }
+    Node* GetIfNode() const;
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
     FileMetaKeyIfSyntax* GetIfSyntax();
     FileMetaKeyIfSyntax* GetIfSyntax() const;
@@ -226,6 +233,7 @@ public:
     virtual ~FileMetaThreeItemSyntaxTerm() = default;
 
     Node* ThreeItemNode() const { return m_ThreeItemNode; }
+    Node* GetThreeItemNode() const;
     FileMetaBaseTerm* GetReturn1Term() const;
     void SetReturn1Term(FileMetaBaseTerm* value);
     FileMetaBaseTerm* GetReturn2Term() const;
@@ -251,6 +259,7 @@ public:
     virtual ~FileMetaMatchSyntaxTerm() = default;
 
     Node* MatchNode() const { return m_MatchNode; }
+    Node* GetMatchNode() const;
     FileMetaKeySwitchSyntax* GetSwitchSyntax() const;
     void SetDeep(int deep);
     virtual void BuildAST() override;
@@ -279,6 +288,7 @@ public:
     bool BuildTst(std::vector<FileMetaBaseTerm*>& list);
     virtual void BuildAST() override;
     virtual std::string ToFormatString() const override;
+    std::string ToTokenString() const;
 
 private:
     std::vector<Node*> m_NodeList;

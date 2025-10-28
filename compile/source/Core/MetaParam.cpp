@@ -249,7 +249,7 @@ void MetaDefineParamCollection::Clear() {
 void MetaDefineParamCollection::SetOwnerMetaClass(MetaClass* ownerclass) {
     for (size_t i = 0; i < m_MetaDefineParamList.size(); i++) {
         auto dParam = m_MetaDefineParamList[i];
-        // ÕâÀï¿ÉÒÔÌí¼ÓÉèÖÃÓµÓĞÕßÔªÀàµÄÂß¼­
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ß¼ï¿½
     }
 }
 
@@ -272,7 +272,7 @@ bool MetaDefineParamCollection::CheckDefineMetaParam(MetaDefineParam* a, MetaDef
 
 void MetaDefineParamCollection::AddMetaDefineParam(MetaDefineParam* metaMemberParam) {
     if (m_IsExtendParams) {
-        Log::AddInStructMeta(EError::None, "Error Params Ä£Ê½ÏÂ£¬Ö»ÔÊĞí Ê¹ÓÃÒ»¸ö²ÎÊı£¬¶àÓà²ÎÊıÎªÎŞĞ§Ä£Ê½");
+        Log::AddInStructMeta(EError::None, "Error Params mode: only one parameter allowed, otherwise invalid mode");
         return;
     }
 
@@ -283,7 +283,7 @@ void MetaDefineParamCollection::AddMetaDefineParam(MetaDefineParam* metaMemberPa
 
     if (IsHaveDefaultParamExpress()) {
         if (metaMemberParam->GetExpressNode() == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error AddMetaDefineParam ²ÎÊıÇ°±ßÒÑ¶¨Òå±í´ïÊ½£¬ºó±ß±ØĞë¸ú½øÄ¬ÈÏÖµ±í´ïÊ½!!");
+            Log::AddInStructMeta(EError::None, "Error AddMetaDefineParam ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ñ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ß±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ê½!!");
         }
     } else {
         if (metaMemberParam->GetExpressNode() != nullptr) {
@@ -300,7 +300,7 @@ bool MetaDefineParamCollection::IsEqualMetaInputParamCollection(MetaInputParamCo
         inputCount = mpc->GetCount();
     }
     if (m_IsExtendParams) {
-        // ´«ÈëÖµ £¬¿ÉÒÔÓë¶¨ÒåÖµ²»Í¬£¬ÒòÎªÊ¹ÓÃparams µÄ·½Ê½ ºó±ßÒ»°ã¸úÒ»¸ö¶ÔÏóÊı×é£¬»òÕßÊÇÀàĞÍÊı×é½øĞĞÏŞÖÆ
+        // ï¿½ï¿½ï¿½ï¿½Öµ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¶¨ï¿½ï¿½Öµï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ÎªÊ¹ï¿½ï¿½params ï¿½Ä·ï¿½Ê½ ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (m_MetaDefineParamList.size() == 0) {
             return false;
         }
@@ -405,7 +405,7 @@ void MetaInputParamCollection::Clear() {
 
 bool MetaInputParamCollection::CheckInputMetaParam(MetaDefineParam* a, MetaInputParam* b) {
     if (b == nullptr) {
-        return !a->IsMust();      // ±ØĞë´«²Î£¬µ«Ã»ÓĞ²ÎÊı
+        return !a->IsMust();      // ï¿½ï¿½ï¿½ë´«ï¿½Î£ï¿½ï¿½ï¿½Ã»ï¿½Ğ²ï¿½ï¿½ï¿½
     }
     if (a->EqualsInputMetaParam(b))
         return true;
@@ -464,7 +464,7 @@ MetaClass* MetaInputParamCollection::GetMaxLevelMetaClassType() {
         }
     }
     if (isAllSame) {
-        Log::AddInStructMeta(EError::None, "È«¶¼ÏàËÆ");
+        Log::AddInStructMeta(EError::None, "È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
     return mc;
 }
@@ -524,7 +524,7 @@ MetaClass* MetaInputTemplateCollection::GetMaxLevelMetaClassType() {
         if (cmdt == nmdt) {
             isAllSame = true;
         } else {
-            // ÕâÀï¿ÉÒÔÌí¼Ó¸ü¸´ÔÓµÄÂß¼­
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½ï¿½ï¿½Óµï¿½ï¿½ß¼ï¿½
         }
     }
     if (isAllSame) {
@@ -548,7 +548,11 @@ std::string MetaInputTemplateCollection::ToFormatString() {
 
 // MetaInputArrayCollection implementation
 MetaInputArrayCollection::MetaInputArrayCollection(Compile::FileMetaBracketTerm* fmbt) {
-    // ÊµÏÖÂß¼­
+    // Êµï¿½ï¿½ï¿½ß¼ï¿½
+}
+
+bool MetaDefineParam::IsExtendParams() const {
+    return false; // é»˜è®¤å®ç°ï¼Œå¯ä»¥æ ¹æ®éœ€è¦ä¿®æ”¹
 }
 
 } // namespace Core

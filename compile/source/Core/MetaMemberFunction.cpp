@@ -740,5 +740,13 @@ void MetaMemberFunction::Init() {
     m_ReturnMetaVariable = new MetaVariable(m_OwnerMetaClass->GetAllClassName() + "." + m_Name + ".define", EVariableFrom::Argument, nullptr, m_OwnerMetaClass, defineMetaType);
 }
 
+void MetaMemberFunction::SetIsGet(bool isGet) {
+    m_IsGet = isGet;
+}
+
+void MetaMemberFunction::SetSourceMetaMemberFunction(MetaMemberFunction* mmf) {
+    m_SourceMetaMemberFunction = mmf;
+}
+
 } // namespace Core
 } // namespace SimpleLanguage

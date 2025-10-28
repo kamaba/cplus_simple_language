@@ -40,7 +40,7 @@ int ProjectCompile::s_StructParseCount = 0;
 int ProjectCompile::s_BuildParseCount = 0;
 int ProjectCompile::s_GrammerParseCount = 0;
 int ProjectCompile::s_ParseListCount = 0;
-//std::vector<Compile::FileParse*> ProjectCompile::s_FileParseList;
+std::vector<Compile::FileParse*> ProjectCompile::s_FileParseList;
 
 ProjectCompile::ProjectCompile() {
 }
@@ -49,7 +49,7 @@ void ProjectCompile::LoadProject() {
     /*::std::filesystem::path directory(ProjectManager::projectPath);
 
     if (!::std::filesystem::exists(directory)) {
-        std::cout << "Error ÏîÄ¿¼ÓÔØÂ·¾¶²»ÕýÈ·!!" << std::endl;
+        std::cout << "Error ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·!!" << std::endl;
     }
 
     std::vector<std::string> paths;
@@ -60,11 +60,11 @@ void ProjectCompile::LoadProject() {
     }
     
     if (paths.empty()) {
-        std::cout << "Error ÏîÄ¿¼ÓÔØÂ·¾¶Ã»ÓÐÕÒµ½spÎÄ¼þ!!" << std::endl;
+        std::cout << "Error ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½Ã»ï¿½ï¿½ï¿½Òµï¿½spï¿½Ä¼ï¿½!!" << std::endl;
     }
 
     if (!::std::filesystem::exists(paths[0])) {
-        std::cout << "Error ÏîÄ¿¼ÓÔØÂ·¾¶²»ÕýÈ·!!" << std::endl;
+        std::cout << "Error ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·!!" << std::endl;
         return;
     }*/
 
@@ -141,7 +141,7 @@ bool ProjectCompile::CheckFileList() {
     for (size_t i = 0; i < s_FileParseList.size(); i++) {
         if (!s_FileParseList[i]->IsExists()) {
             isSuccess = false;
-            std::cout << "Ã»ÓÐÕÒµ½Òª±àÒëµÄÎÄ¼þ: " << s_FileParseList[i]->filePath << std::endl;
+            std::cout << "Ã»ï¿½ï¿½ï¿½Òµï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½: " << s_FileParseList[i]->filePath << std::endl;
             break;
         }
     }
@@ -221,9 +221,9 @@ void ProjectCompile::CompileFileAllEnd() {
 
     //Log::PrintLog();
 
-    std::cout << "-------------------------½âÎöÍê³ÉºóµÄ¸ñÊ½Êä³ö ¿ªÊ¼--------------------------" << std::endl;
+    std::cout << "-------------------------ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½Ä¸ï¿½Ê½ï¿½ï¿½ï¿½ ï¿½ï¿½Ê¼--------------------------" << std::endl;
     std::cout << ModuleManager::GetInstance().GetSelfModule()->GetMetaNode()->ToFormatString() << std::endl;
-    std::cout << "-------------------------½âÎöÍê³ÉºóµÄ¸ñÊ½Êä³ö ½áÊø--------------------------" << std::endl;
+    std::cout << "-------------------------ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½Ä¸ï¿½Ê½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½--------------------------" << std::endl;
 }
 
 } // namespace Project
