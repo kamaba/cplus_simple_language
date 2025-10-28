@@ -190,7 +190,7 @@ void MetaDefineParam::SetMetaType(MetaType* mt) {
     m_MetaVariable->SetMetaDefineType(mt);
 }
 
-void MetaDefineParam::CaleReturnType() {
+void MetaDefineParam::CalcReturnType() {
     if (m_MetaExpressNode != nullptr) {
         m_MetaExpressNode->CalcReturnType();
     }

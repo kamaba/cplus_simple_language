@@ -7,18 +7,19 @@
 //****************************************************************************
 
 #include "MetaMemberFunction.h"
+#include "MetaMemberVariable.h"
 #include "MetaClass.h"
+#include "MetaFunction.h"
 #include "MetaType.h"
 #include "MetaTemplate.h"
-#include "MetaDefineParam.h"
-#include "MetaDefineParamCollection.h"
-#include "MetaTemplateCollection.h"
-#include "MetaBlockStatements.h"
-#include "MetaStatements.h"
+#include "MetaParam.h"
+#include "Statements/MetaBlockStatements.h"
+#include "Statements/MetaStatements.h"
 #include "MetaVariable.h"
 #include "MetaGenTemplateFunction.h"
-#include "../Compile/FileMeta/FileMetaMember.h"
+#include "../Compile/FileMeta/FileMetaCommon.h"
 #include "../Compile/FileMeta/FileMetaSyntax.h"
+#include "../Compile/FileMeta/FileMetaMemberFunction.h"
 #include "../Compile/Token.h"
 #include "../Debug/Log.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
@@ -28,16 +29,14 @@
 #include "Statements/MetaAssignStatements.h"
 #include "Statements/MetaCallStatements.h"
 #include "Statements/MetaReturnStatements.h"
-#include "Statements/MetaTRStatements.h"
-#include "Statements/MetaGotoLabelStatements.h"
 #include "Statements/MetaIfStatements.h"
 #include "Statements/MetaSwitchStatements.h"
-#include "Statements/MetaForStatements.h"
 #include "Statements/MetaWhileDoWhileStatements.h"
-#include "Statements/MetaBreakStatements.h"
-#include "Statements/MetaContinueStatements.h"
+#include "Statements/MetaBreakContinueGoStatements.h"
 #include <sstream>
 #include <algorithm>
+
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -134,7 +133,7 @@ bool MetaMemberFunctionNode::AddMetaMemberFunction(MetaMemberFunction* mmf) {
         list.push_back(mmf);
         return true;
     } else {
-        Log::AddInStructMeta(EError::None, "发现已经定义过某某类2" + mmf->GetFunctionAllName());
+        //Log::AddInStructMeta(EError::None, "发现已经定义过某某类2" + mmf->GetFunctionAllName());
     }
     return false;
 }
@@ -162,49 +161,49 @@ MetaMemberFunction::MetaMemberFunction() : MetaFunction() {
 MetaMemberFunction::MetaMemberFunction(MetaClass* mc) : MetaFunction(mc) {
 }
 
-MetaMemberFunction::MetaMemberFunction(MetaClass* mc, FileMetaMemberFunction* fmmf) : MetaFunction(mc) {
+MetaMemberFunction::MetaMemberFunction(MetaClass* mc, Compile::FileMetaMemberFunction* fmmf) : MetaFunction(mc) {
     m_MetaMemberParamCollection = new MetaDefineParamCollection(true, false);
     m_FileMetaMemberFunction = fmmf;
-    m_Name = fmmf->name;
+    m_Name = fmmf->GetName();
 
-    m_IsStatic = fmmf->staticToken != nullptr;
-    m_IsGet = fmmf->getToken != nullptr;
-    m_IsSet = fmmf->setToken != nullptr;
-    m_IsFinal = fmmf->finalToken != nullptr;
-    if (fmmf->overrideToken != nullptr) {
-        if (fmmf->overrideToken->type == ETokenType::Override) {
+    m_IsStatic = fmmf->GetStaticToken() != nullptr;
+    m_IsGet = fmmf->GetGetToken() != nullptr;
+    m_IsSet = fmmf->GetSetToken() != nullptr;
+    m_IsFinal = fmmf->GetFinalToken() != nullptr;
+    if (fmmf->GetOverrideToken() != nullptr) {
+        if (fmmf->GetOverrideToken()->GetType() == ETokenType::Override) {
             m_IsOverrideFunction = true;
         }
     }
-    if (fmmf->interfaceToken != nullptr) {
+    if (fmmf->GetInterfaceToken() != nullptr) {
         m_IsWithInterface = true;
     }
 
-    int paramCount = fmmf->metaParamtersList.size();
+    int paramCount = fmmf->GetMetaParamtersList().size();
     for (int i = 0; i < paramCount; i++) {
-        auto param = fmmf->metaParamtersList[i];
+        auto param = fmmf->GetMetaParamtersList()[i];
         MetaDefineParam* mmp = new MetaDefineParam(this, param);
         AddMetaDefineParam(mmp);
     }
 
-    int templateCount = fmmf->metaTemplatesList.size();
+    int templateCount = fmmf->GetMetaTemplatesList().size();
     for (int i = 0; i < templateCount; i++) {
         m_IsTemplateFunction = true;
 
-        auto templateParam = fmmf->metaTemplatesList[i];
+        auto templateParam = fmmf->GetMetaTemplatesList()[i];
 
-        MetaTemplate* mdt = new MetaTemplate(ownerMetaClass, templateParam, mc->GetMetaTemplateList().size() + i);
+        MetaTemplate* mdt = new MetaTemplate( m_OwnerMetaClass, templateParam, mc->GetMetaTemplateList().size() + i);
         AddMetaDefineTemplate(mdt);
 
-        if (templateParam->inClassNameTemplateNode != nullptr) {
-            auto inClassToken = templateParam->inClassNameTemplateNode;
-            MetaNode* mn = ClassManager::GetInstance().GetMetaClassByNameAndFileMeta(ownerMetaClass, inClassToken->fileMeta, inClassToken->nameList);
+        if (templateParam->InClassNameTemplateNode() != nullptr) {
+            auto inClassToken = templateParam->InClassNameTemplateNode();
+            MetaNode* mn = ClassManager::GetInstance().GetMetaClassByNameAndFileMeta(m_OwnerMetaClass, inClassToken->GetFileMeta(), inClassToken->GetNameList() );
             if (mn == nullptr) {
                 continue;
             }
             MetaClass* gmc = mn->GetMetaClassByTemplateCount(0);
             if (gmc == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error 没有查找到inClass的类名, " + inClassToken->ToFormatString());
+                //Log::AddInStructMeta(EError::None, "Error 没有查找到inClass的类名, " + inClassToken->ToFormatString());
                 continue;
             }
             mdt->SetInConstraintMetaClass(gmc);
@@ -235,7 +234,7 @@ MetaMemberFunction::MetaMemberFunction(const MetaMemberFunction& mmf) : MetaFunc
     m_IsWithInterface = mmf.m_IsWithInterface;
     m_FileMetaMemberFunction = mmf.m_FileMetaMemberFunction;
     m_GenTempalteFunctionList = mmf.m_GenTempalteFunctionList;
-    m_SourceMetaMemberFunction = mmf.sourceMetaMemberFunction;
+    m_SourceMetaMemberFunction = mmf.m_SourceMetaMemberFunction;
 }
 
 std::string MetaMemberFunction::GetFunctionAllName() const {
@@ -255,9 +254,9 @@ int MetaMemberFunction::GetParseLevel() const {
     }
 }
 
-Token* MetaMemberFunction::GetToken() const {
-    if (m_FileMetaMemberFunction != nullptr && m_FileMetaMemberFunction->finalToken != nullptr) {
-        return m_FileMetaMemberFunction->finalToken;
+Compile::Token* MetaMemberFunction::GetToken() const {
+    if (m_FileMetaMemberFunction != nullptr && m_FileMetaMemberFunction->GetFinalToken() != nullptr) {
+        return m_FileMetaMemberFunction->GetFinalToken();
     }
     return this->GetPingToken();
 }
@@ -340,12 +339,12 @@ bool MetaMemberFunction::Parse() {
 
 void MetaMemberFunction::ParseDefineMetaType() {
     if (this->m_FileMetaMemberFunction != nullptr) {
-        if (m_FileMetaMemberFunction->defineMetaClass != nullptr) {
-            FileMetaClassDefine* cmr = m_FileMetaMemberFunction->defineMetaClass;
+        if (m_FileMetaMemberFunction->GetDefineMetaClass() != nullptr) {
+            FileMetaClassDefine* cmr = m_FileMetaMemberFunction->GetDefineMetaClass();
             MetaType* defineMetaType = TypeManager::GetInstance().GetMetaTypeByTemplateFunction(m_OwnerMetaClass, this, cmr);
 
             if (m_ConstructInitFunction && defineMetaType->GetMetaClass() != CoreMetaClassManager::GetInstance().GetVoidMetaClass()) {
-                Log::AddInStructMeta(EError::None, "Error 当前类:" + m_AllName + " 是构建Init类，不允许有返回类型 ");
+                //Log::AddInStructMeta(EError::None, "Error 当前类:" + m_AllName + " 是构建Init类，不允许有返回类型 ");
             } else {
                 m_ReturnMetaVariable->SetMetaDefineType(defineMetaType);
                 m_ReturnMetaVariable->SetRealMetaType(defineMetaType);
@@ -379,14 +378,14 @@ void MetaMemberFunction::ParseStatements() {
     bool nohasContent = false;
     if (this->m_FileMetaMemberFunction != nullptr) {
         if (m_ThisMetaVariable != nullptr) {
-            m_ThisMetaVariable->AddPingToken(m_FileMetaMemberFunction->token);
+            m_ThisMetaVariable->AddPingToken(m_FileMetaMemberFunction->GetToken());
         }
-        if (m_FileMetaMemberFunction->fileMetaBlockSyntax != nullptr) {
-            Token* beginToken = m_FileMetaMemberFunction->fileMetaBlockSyntax->beginBlock;
-            Token* endToken = m_FileMetaMemberFunction->fileMetaBlockSyntax->endBlock;
-            m_MetaBlockStatements->SetFileMetaBlockSyntax(m_FileMetaMemberFunction->fileMetaBlockSyntax);
+        if (m_FileMetaMemberFunction->GetFileMetaBlockSyntax() != nullptr) {
+            Compile::Token* beginToken = m_FileMetaMemberFunction->GetFileMetaBlockSyntax()->GetBeginBlock();
+            Compile::Token* endToken = m_FileMetaMemberFunction->GetFileMetaBlockSyntax()->GetEndBlock();
+            m_MetaBlockStatements->SetFileMetaBlockSyntax(m_FileMetaMemberFunction->GetFileMetaBlockSyntax());
             m_MetaBlockStatements->SetMetaMemberParamCollection(m_MetaMemberParamCollection);
-            CreateMetaSyntax(m_FileMetaMemberFunction->fileMetaBlockSyntax, m_MetaBlockStatements);
+            CreateMetaSyntax(m_FileMetaMemberFunction->GetFileMetaBlockSyntax(), m_MetaBlockStatements);
         } else {
             nohasContent = true;
         }
@@ -394,7 +393,7 @@ void MetaMemberFunction::ParseStatements() {
     if (!m_IsWithInterface || this->m_OwnerMetaClass->IsInterfaceClass()) {
     } else {
         if (nohasContent) {
-            Log::AddInStructMeta(EError::None, "Error 类[" + this->m_OwnerMetaClass->GetAllClassName() + "] 该函数[" + this->GetFunctionAllName() + "] 没有定义函数内容！！");
+            //Log::AddInStructMeta(EError::None, "Error 类[" + this->m_OwnerMetaClass->GetAllClassName() + "] 该函数[" + this->GetFunctionAllName() + "] 没有定义函数内容！！");
         }
     }
 }
@@ -439,7 +438,8 @@ MetaType* MetaMemberFunction::AddMetaPreTemplateFunction(MetaType* mt, bool& isG
     if (mcList.size() == mt->GetTemplateMetaTypeList().size()) {
         MetaGenTemplateClass* mgtc = mt->GetMetaClass()->AddInstanceMetaClass(mcList);
         isGenMetaClass = true;
-        return new MetaType(mgtc);
+        std::vector<MetaType*> mtlist;
+        return new MetaType(mgtc, mtlist);
     }
     if (isIncludeTemplateClass) {
         auto find = FindBindStructTemplateFunctionAndClassMtList(mt);
@@ -510,20 +510,20 @@ MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* curren
     }
     else if (auto fmkes = dynamic_cast<FileMetaConditionExpressSyntax*>(childFms)) {
         // dowhile/while conditionvariable
-        if (fmkes->token->type == ETokenType::While || fmkes->token->type == ETokenType::DoWhile) {
+        if (fmkes->GetToken()->GetType() == ETokenType::While || fmkes->GetToken()->GetType() == ETokenType::DoWhile) {
             auto metaWhileStatements = new MetaWhileDoWhileStatements(currentBlockStatements, fmkes);
             beforeStatements->SetNextStatements(metaWhileStatements);
             beforeStatements = metaWhileStatements;
         } else {
-            Log::AddInStructMeta(EError::None, "Error FileMetaConditionExpressSyntax: 暂不支持该类型的解析!!");
+            //Log::AddInStructMeta(EError::None, "Error FileMetaConditionExpressSyntax: 暂不支持该类型的解析!!");
         }
     }
     else if (auto fmoks = dynamic_cast<FileMetaKeyOnlySyntax*>(childFms)) {
-        if (fmoks->token->type == ETokenType::Break) {
+        if (fmoks->GetToken()->GetType() == ETokenType::Break) {
             auto metaBreakStatements = new MetaBreakStatements(currentBlockStatements, fmoks);
             beforeStatements->SetNextStatements(metaBreakStatements);
             beforeStatements = metaBreakStatements;
-        } else if (fmoks->token->type == ETokenType::Continue) {
+        } else if (fmoks->GetToken()->GetType() == ETokenType::Continue) {
             auto metaContinueStatements = new MetaContinueStatements(currentBlockStatements, fmoks);
             beforeStatements->SetNextStatements(metaContinueStatements);
             beforeStatements = metaContinueStatements;
@@ -531,11 +531,11 @@ MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* curren
     }
     else if (auto fmos = dynamic_cast<FileMetaOpAssignSyntax*>(childFms)) {
         bool isDefineVarStatements = false;
-        if (fmos->variableRef->isOnlyName) {
-            std::string name1 = fmos->variableRef->name;
-            if (fmos->hasDefine) {
+        if (fmos->GetVariableRef()->IsOnlyName() ) {
+            std::string name1 = fmos->GetVariableRef()->GetName();
+            if (fmos->HasDefine() ) {
                 if (currentBlockStatements->GetIsMetaVariable(name1)) {
-                    Log::AddInStructMeta(EError::None, "Error 如果使用了var/data/dynamic/int 等前缀，有重复定义的行为" + fmos->variableRef->ToTokenString());
+                    //Log::AddInStructMeta(EError::None, "Error 如果使用了var/data/dynamic/int 等前缀，有重复定义的行为" + fmos->variableRef->ToTokenString());
                     isDefineVarStatements = false;
                 } else {
                     isDefineVarStatements = true;
@@ -563,10 +563,10 @@ MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* curren
     else if (auto fmvs = dynamic_cast<FileMetaDefineVariableSyntax*>(childFms)) {
         // x = 2;
         bool isDefineVarStatements = false;
-        std::string name1 = fmvs->name;
+        std::string name1 = fmvs->GetName();
         if (currentBlockStatements->GetIsMetaVariable(name1)) {
             isDefineVarStatements = true;
-            Log::AddInStructMeta(EError::None, "Error 定义变量名称与类函数临时名称一样!!" + (fmvs->token ? fmvs->token->ToLexemeAllString() : ""));
+            //Log::AddInStructMeta(EError::None, "Error 定义变量名称与类函数临时名称一样!!" + (fmvs->token ? fmvs->token->ToLexemeAllString() : ""));
             return nullptr;
         } else {
             auto mv = currentBlockStatements->GetOwnerMetaClass()->GetMetaMemberVariableByName(name1);
@@ -574,7 +574,7 @@ MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* curren
                 isDefineVarStatements = true;
             } else {
                 if (!mv->IsStatic()) {
-                    Log::AddInStructMeta(EError::None, "Error 定义变量名称与类定义名称一样 如果调用成员变量，需要在前边使用this.!!" + (fmvs->token ? fmvs->token->ToLexemeAllString() : ""));
+                    //Log::AddInStructMeta(EError::None, "Error 定义变量名称与类定义名称一样 如果调用成员变量，需要在前边使用this.!!" + (fmvs->token ? fmvs->token->ToLexemeAllString() : ""));
                     return nullptr;
                 }
             }
@@ -598,18 +598,18 @@ MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* curren
     }
     else if (auto fmrs = dynamic_cast<FileMetaKeyReturnSyntax*>(childFms)) {
         // ret 100
-        if (fmrs->token && fmrs->token->type == ETokenType::Return) {
+        if (fmrs->GetToken() != nullptr  && fmrs->GetToken()->GetType() == ETokenType::Return) {
             auto mrs = new MetaReturnStatements(currentBlockStatements, fmrs);
             beforeStatements->SetNextStatements(mrs);
             beforeStatements = mrs;
             return mrs;
-        } else if (fmrs->token && fmrs->token->type == ETokenType::Transience) {
+        } else if (fmrs->GetToken() != nullptr && fmrs->GetToken()->GetType() == ETokenType::Transience) {
             auto mtrs = new MetaTRStatements(currentBlockStatements, fmrs);
             beforeStatements->SetNextStatements(mtrs);
             beforeStatements = mtrs;
             return mtrs;
         } else {
-            Log::AddInStructMeta(EError::None, "Error 生成MetaStatements出错KeyReturnSyntax类型错误!!");
+            //Log::AddInStructMeta(EError::None, "Error 生成MetaStatements出错KeyReturnSyntax类型错误!!");
         }
     }
     else if (auto fmkgls = dynamic_cast<FileMetaKeyGotoLabelSyntax*>(childFms)) {
@@ -620,7 +620,7 @@ MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* curren
         return metaGotoStatements;
     }
     else {
-        Log::AddInStructMeta(EError::None, "Waning 还有没有解析的语句!! MetaMemberFunction 314");
+        //Log::AddInStructMeta(EError::None, "Waning 还有没有解析的语句!! MetaMemberFunction 314");
     }
     
     return nullptr;
@@ -629,12 +629,10 @@ MetaStatements* MetaMemberFunction::HandleMetaSyntax(MetaBlockStatements* curren
 bool MetaMemberFunction::Equals(MetaBase* obj) const {
     if (obj == nullptr) return false;
 
-    if (GetType() != obj->GetType()) return false;
-
     MetaMemberFunction* rec = dynamic_cast<MetaMemberFunction*>(obj);
     if (rec == nullptr) return false;
 
-    if (rec->GetName() == GetName() && rec->GetMetaMemberParamCollection()->Equals(GetMetaMemberParamCollection())) {
+    if (rec->GetName() == GetName() && rec->GetMetaMemberParamCollection()->IsEqualMetaDefineParamCollection(GetMetaMemberParamCollection())) {
         return true;
     }
     
@@ -664,7 +662,7 @@ std::string MetaMemberFunction::ToString() const {
         }
         sb << ">";
     }
-    sb << "(");
+    sb << "(";
 
     for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
         MetaDefineParam* mpl = m_MetaMemberParamCollection->GetMetaDefineParamList()[i];
@@ -684,7 +682,7 @@ std::string MetaMemberFunction::ToFormatString() const {
     for (int i = 0; i < GetRealDeep(); i++)
         sb << Global::tabChar;
 
-    sb << GetPermissionString() << " ";
+    sb << (int)GetPermission() << " ";
     if (IsStatic()) {
         sb << " static";
     }
@@ -716,7 +714,7 @@ std::string MetaMemberFunction::ToFormatString() const {
     return sb.str();
 }
 
-int MetaMemberFunction::GetHashCode() const {
+int MetaMemberFunction::GetHashCode() const{
     return MetaBase::GetHashCode();
 }
 
@@ -740,9 +738,9 @@ void MetaMemberFunction::Init() {
             tt->SetInConstraintMetaClass(m_OwnerMetaClass);
             mt = new MetaType(tt);
         }
-        m_ThisMetaVariable = new MetaVariable(m_OwnerMetaClass->GetAllClassName() + "." + m_Name + ".this", MetaVariable::EVariableFrom::Argument, nullptr, m_OwnerMetaClass, mt);
+        m_ThisMetaVariable = new MetaVariable(m_OwnerMetaClass->GetAllClassName() + "." + m_Name + ".this", EVariableFrom::Argument, nullptr, m_OwnerMetaClass, mt);
     }
-    m_ReturnMetaVariable = new MetaVariable(m_OwnerMetaClass->GetAllClassName() + "." + m_Name + ".define", MetaVariable::EVariableFrom::Argument, nullptr, m_OwnerMetaClass, defineMetaType);
+    m_ReturnMetaVariable = new MetaVariable(m_OwnerMetaClass->GetAllClassName() + "." + m_Name + ".define", EVariableFrom::Argument, nullptr, m_OwnerMetaClass, defineMetaType);
 }
 
 } // namespace Core

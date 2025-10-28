@@ -311,7 +311,7 @@ void ExpressManager::CreateNewOrCalllink(const CreateExpressParam& cep, MetaNewO
         }
     }
     
-    MetaType* retmt = mcl->GetMetaDeineType();
+    MetaType* retmt = mcl->GetMetaDefineType();
     if (isNewClass) {
         mnoen = new MetaNewObjectExpressNode(fmct, mcl, retmt, omc, mbs, mcl->GetFinalCallNode()->methodCall());
     } else if (isNewData) {

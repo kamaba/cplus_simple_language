@@ -11,15 +11,17 @@
 #include "../MetaType.h"
 #include "../MetaClass.h"
 #include "../MetaCallLink.h"
+#include "../MetaCallNode.h"
+#include "../MetaVisitCall.h"
 #include "../MetaExpressNode/MetaExpressConst.h"
-#include "../MetaExpressNode/MetaCallLinkExpressNode.h"
+#include "../MetaExpressNode/MetaExpressCallLink.h"
 #include "../MetaMemberFunction.h"
-#include "../MetaBlockStatements.h"
+#include "MetaBlockStatements.h"
 #include "../AllowUseSettings.h"
-#include "../../Compile/FileMeta/FileMetaKeySwitchSyntax.h"
+#include "../../Compile/FileMeta/FileMetaSyntax.h"
 #include "../../Compile/Token.h"
 #include "../../Define.h"
-#include "../Debug/Log.h"
+#include "../../Debug/Log.h"
 #include <iostream>
 #include <sstream>
 
@@ -43,7 +45,7 @@ std::string MetaSwitchStatements::MetaNextStatements::ToFormatString() const {
 }
 
 // MetaCaseStatements 实现
-MetaSwitchStatements::MetaCaseStatements::MetaCaseStatements(Compile::FileMetaKeyCaseSyntax* fmkcs, MetaBlockStatements* mbs) {
+MetaSwitchStatements::MetaCaseStatements::MetaCaseStatements(Compile::FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax* fmkcs, MetaBlockStatements* mbs) {
     m_FileMetaKeyCaseSyntax = fmkcs;
     m_OwnerMetaBlockStatements = mbs;
     thenMetaStatements = new MetaBlockStatements(mbs, fmkcs->GetExecuteBlockSyntax());
@@ -62,7 +64,7 @@ void MetaSwitchStatements::MetaCaseStatements::Parse() {
         mcen->Parse(&auc);
         mcen->CalcReturnType();
         
-        matchTypeClass = mcen->GetMetaCallLink()->GetFinalCallNode()->GetCallMetaType()->GetMetaClass();
+        matchTypeClass = mcen->GetMetaCallLink()->GetFinalCallNode()->callMetaType()->GetMetaClass();
         
         if (matchTypeClass != nullptr) {
             switchCaseType = SwitchCaseType::ClassType;
@@ -70,12 +72,12 @@ void MetaSwitchStatements::MetaCaseStatements::Parse() {
         
         if (m_FileMetaKeyCaseSyntax->GetVariableToken() != nullptr) {
             if (matchTypeClass == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error 解析case中，前边的类型没有找到!" + m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString());
+                //Log::AddInStructMeta(EError::None, "Error 解析case中，前边的类型没有找到!" + m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString());
                 return;
             }
-            std::string token2name = m_FileMetaKeyCaseSyntax->GetVariableToken()->GetLexeme()->ToString();
+            std::string token2name = m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString();
             if (thenMetaStatements->GetIsMetaVariable(token2name)) {
-                Log::AddInStructMeta(EError::None, "Error 已有定义变量名称!!" + m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString());
+                //Log::AddInStructMeta(EError::None, "Error 已有定义变量名称!!" + m_FileMetaKeyCaseSyntax->GetVariableToken()->ToLexemeAllString());
                 return;
             }
             MetaType* mdt = new MetaType(matchTypeClass);
@@ -174,7 +176,7 @@ void MetaSwitchStatements::Parse() {
     }
     
     for (size_t i = 0; i < m_FileMetaKeySwitchSyntax->GetFileMetaKeyCaseSyntaxList().size(); i++) {
-        auto cmcs = m_FileMetaKeySwitchSyntax->GetFileMetaKeyCaseSyntaxList()[i];
+        FileMetaKeySwitchSyntax::FileMetaKeyCaseSyntax* cmcs = m_FileMetaKeySwitchSyntax->GetFileMetaKeyCaseSyntaxList()[i];
         MetaCaseStatements* mcs = new MetaCaseStatements(cmcs, m_OwnerMetaBlockStatements);
         metaCaseStatements.push_back(mcs);
     }

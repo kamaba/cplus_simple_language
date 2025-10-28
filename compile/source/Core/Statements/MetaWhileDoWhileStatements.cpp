@@ -67,7 +67,7 @@ void MetaForStatements::Parse() {
         auto mcallEn = dynamic_cast<MetaCallLinkExpressNode*>(m_ConditionExpress);
         auto mnoen = dynamic_cast<MetaNewObjectExpressNode*>(m_ConditionExpress);
         if (mcallEn == nullptr && mnoen == nullptr) {
-            Log::AddInStructMeta(EError::None, "Error For in 表达式应该是迭代表达式");
+            //Log::AddInStructMeta(EError::None, "Error For in 表达式应该是迭代表达式");
             return;
         }
         
@@ -82,7 +82,7 @@ void MetaForStatements::Parse() {
         
         MetaType* mdt = m_ForInContent->GetMetaDefineType();
         if (!mdt->IsCanForIn()) {
-            Log::AddInStructMeta(EError::None, "Error For in 表达式应该是迭代表达式!");
+            //Log::AddInStructMeta(EError::None, "Error For in 表达式应该是迭代表达式!");
             return;
         }
         
@@ -100,7 +100,7 @@ void MetaForStatements::Parse() {
         std::string dname = fmcd->GetVariableRef()->GetName();
         auto dmv = m_ThenMetaStatements->GetMetaVariableByName(dname);
         if (dmv != nullptr) {
-            Log::AddInStructMeta(EError::None, "Error 在 for .. in 中，变量名for 左边不能重复定义!!");
+            //Log::AddInStructMeta(EError::None, "Error 在 for .. in 中，变量名for 左边不能重复定义!!");
             return;
         } else {
             m_ForMetaVariable = new MetaIteratorVariable(dname, GetOwnerMetaClass(), m_OwnerMetaBlockStatements, 

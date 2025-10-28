@@ -16,7 +16,8 @@ namespace SimpleLanguage {
     namespace Compile {
         class Token;
         class FileMetaKeySwitchSyntax;
-        class FileMetaKeyCaseSyntax;
+        class FileMetaKeyMatchSyntax;
+        class FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax;
     }
     namespace Core {
         class MetaConstExpressNode;
@@ -69,10 +70,10 @@ public:
         bool isContinueNext = false;
 
     private:
-        Compile::FileMetaKeyCaseSyntax* m_FileMetaKeyCaseSyntax = nullptr;
+        Compile::FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax* m_FileMetaKeyCaseSyntax = nullptr;
 
     public:
-        MetaCaseStatements(Compile::FileMetaKeyCaseSyntax* fmkcs, MetaBlockStatements* mbs);
+        MetaCaseStatements(Compile::FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax* fmkcs, MetaBlockStatements* mbs);
         virtual ~MetaCaseStatements() = default;
         
     private:

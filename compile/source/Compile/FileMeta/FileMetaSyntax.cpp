@@ -3,6 +3,7 @@
 #include "FileMetaCommon.h"
 #include "FileMeta.h"
 #include "../Parse/Node.h"
+#include "../Token.h"
 #include "../../Debug/Log.h"
 #include "../../Define.h"
 #include <algorithm>
@@ -327,7 +328,8 @@ std::string FileMetaKeySwitchSyntax::ToFormatString() const {
 }
 
 // FileMetaKeyMatchSyntax implementation (similar to FileMetaKeySwitchSyntax)
-FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::FileMetaKeyCaseSyntax(FileMeta* fm, Token* castToken) {
+FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::FileMetaKeyCaseSyntax(FileMeta* fm, Token* castToken)
+{
     m_FileMeta = fm;
     m_Token = castToken;
 }
@@ -344,7 +346,7 @@ void FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::SetContinueNextCastSyntax(bo
     m_IsContinueNextCastSyntax = value;
 }
 
-Token* FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetVariableToken() const {
+Token* FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetVariableToken() {
     return m_VariableToken;
 }
 
@@ -356,7 +358,7 @@ FileMetaBlockSyntax* FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetExecuteBl
     return m_ExecuteBlockSyntax;
 }
 
-const std::vector<FileMetaConstValueTerm*>& FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetConstValueTokenList() const {
+std::vector<FileMetaConstValueTerm*>& FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetConstValueTokenList() const {
     return m_ConstValueTokenList;
 }
 

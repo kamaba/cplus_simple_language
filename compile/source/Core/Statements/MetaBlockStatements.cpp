@@ -7,13 +7,16 @@
 //****************************************************************************
 
 #include "MetaBlockStatements.h"
+#include "MetaBreakContinueGoStatements.h"
+#include "MetaWhileDoWhileStatements.h"
 #include "../MetaFunction.h"
 #include "../MetaVariable.h"
-#include "../MetaDefineParamCollection.h"
-#include "../Compile/CoreFileMeta/FileMetaBlockSyntax.h"
-#include "../Global.h"
-#include "../Debug/Log.h"
-#include "../Compile/Token.h"
+#include "../MetaClass.h"
+#include "../MetaParam.h"
+#include "../../Compile/FileMeta/FileMetaSyntax.h"
+#include "../../Define.h"
+#include "../../Debug/Log.h"
+#include "../../Compile/Token.h"
 #include <iostream>
 #include <sstream>
 
@@ -118,7 +121,7 @@ MetaVariable* MetaBlockStatements::GetMetaVariable(const std::string& name) {
 bool MetaBlockStatements::AddMetaVariable(MetaVariable* mv) {
     if (m_MetaVariableDict.find(mv->GetName()) != m_MetaVariableDict.end()) {
         Compile::Token* token = m_FileMetaBlockSyntax ? m_FileMetaBlockSyntax->GetToken() : nullptr;
-        Log::AddInStructMeta(EError::None, "error Class: [" + (GetOwnerMetaClass() ? GetOwnerMetaClass()->GetAllClassName() : "") 
+        Log::AddInStructMeta(EError::None, "error Class: [" + (GetOwnerMetaClass() != nullptr ? GetOwnerMetaClass()->GetAllClassName() : "") 
                       + "] Method: [" + (m_OwnerMetaFunction ? m_OwnerMetaFunction->GetFunctionAllName() : "") + "]"
                       + "已定义过了变量名称!!! MBS:" + (token ? token->ToLexemeAllString() : "") 
                       + " var:" + mv->ToFormatString());

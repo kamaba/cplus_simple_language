@@ -8,30 +8,32 @@
 
 #include "MetaDefineVarStatements.h"
 #include "../MetaExpressNode/MetaExpressBase.h"
-#include "../MetaExpressNode/MetaConstExpressNode.h"
-#include "../MetaExpressNode/MetaCallLinkExpressNode.h"
+#include "../MetaExpressNode/MetaExpressConst.h"
+#include "../MetaExpressNode/MetaExpressCalllink.h"
 #include "../MetaExpressNode/MetaExecuteStatementsNode.h"
 #include "../MetaGenTemplateClass.h"
 #include "../MetaVariable.h"
 #include "../MetaType.h"
 #include "../MetaClass.h"
+#include "../MetaCallLink.h"
+#include "../MetaVisitCall.h"
 #include "../MetaMemberFunction.h"
 #include "../ClassManager.h"
 #include "../TypeManager.h"
 #include "../ExpressManager.h"
 #include "../AllowUseSettings.h"
 #include "../BaseMetaClass/CoreMetaClassManager.h"
-#include "../../Compile/FileMeta/FileMetaDefineVariableSyntax.h"
-#include "../../Compile/FileMeta/FileMetaOpAssignSyntax.h"
-#include "../../Compile/FileMeta/FileMetaCallSyntax.h"
+#include "../../Compile/FileMeta/FileMetaSyntax.h"
+#include "../../Compile/FileMeta/FileMetaCommon.h"
 #include "../../Compile/FileMeta/FileMetaBase.h"
 #include "../../Compile/Token.h"
 #include "../../Define.h"
-#include "../Debug/Log.h"
+#include "../../Debug/Log.h"
 #include <iostream>
 #include <string>
 
 using namespace SimpleLanguage::Debug;
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -88,14 +90,14 @@ void MetaDefineVarStatements::Parse() {
             mgtc->Parse();
         }
         
-        m_DefineVarMetaVariable = new MetaVariable(m_Name, MetaVariable::EVariableFrom::LocalStatement, 
+        m_DefineVarMetaVariable = new MetaVariable(m_Name, EVariableFrom::LocalStatement, 
             m_OwnerMetaBlockStatements, m_OwnerMetaBlockStatements->GetOwnerMetaClass(), mdt);
         m_DefineVarMetaVariable->AddPingToken(m_FileMetaDefineVariableSyntax->GetToken());
         fileExpress = m_FileMetaDefineVariableSyntax->GetExpress();
     } else if (m_FileMetaOpAssignSyntax != nullptr) {
-        m_DefineVarMetaVariable = new MetaVariable(m_Name, MetaVariable::EVariableFrom::LocalStatement, 
+        m_DefineVarMetaVariable = new MetaVariable(m_Name, EVariableFrom::LocalStatement, 
             m_OwnerMetaBlockStatements, m_OwnerMetaBlockStatements->GetOwnerMetaClass(), mdt);
-        Token* token = m_FileMetaOpAssignSyntax->GetAssignToken();
+        Compile::Token* token = m_FileMetaOpAssignSyntax->GetAssignToken();
         if (m_FileMetaOpAssignSyntax->GetDynamicToken() != nullptr) {
             isDynamicClass = true;
         }
@@ -107,7 +109,7 @@ void MetaDefineVarStatements::Parse() {
         m_DefineVarMetaVariable->AddPingToken(token);
         fileExpress = m_FileMetaOpAssignSyntax->GetExpress();
     } else if (m_FileMetaCallSyntax != nullptr) {
-        m_DefineVarMetaVariable = new MetaVariable(m_Name, MetaVariable::EVariableFrom::LocalStatement, 
+        m_DefineVarMetaVariable = new MetaVariable(m_Name, EVariableFrom::LocalStatement, 
             m_OwnerMetaBlockStatements, m_OwnerMetaBlockStatements->GetOwnerMetaClass(), mdt);
         m_DefineVarMetaVariable->AddPingToken(m_FileMetaCallSyntax->GetToken());
     }
@@ -134,7 +136,7 @@ void MetaDefineVarStatements::Parse() {
         }
         
         AllowUseSettings auc;
-        auc.parseFrom = EParseFrom::StatementRightExpress;
+        auc.SetParseFrom( EParseFrom::StatementRightExpress );
         m_ExpressNode->Parse(&auc);
         m_ExpressNode->CalcReturnType();
         expressRetMetaDefineType = m_ExpressNode->GetReturnMetaDefineType();
@@ -158,7 +160,7 @@ void MetaDefineVarStatements::Parse() {
         }
     } else {
         if (m_ExpressNode != nullptr) {
-            ClassManager::EClassRelation relation = ClassManager::EClassRelation::No;
+            EClassRelation relation = EClassRelation::No;
             auto constExpressNode = dynamic_cast<MetaConstExpressNode*>(m_ExpressNode);
             MetaClass* curClass = mdt->GetMetaClass();
             
@@ -168,7 +170,7 @@ void MetaDefineVarStatements::Parse() {
                     if (expressMDT == nullptr) {
                         std::cout << "Error Enum模式，只允许是调用模式[CallLinkExpress]" << std::endl;
                     } else {
-                        auto varableEnum = expressMDT->GetMetaCallLink()->GetFinalCallNode()->GetVariable()->GetOwnerMetaClass();
+                        auto varableEnum = expressMDT->GetMetaCallLink()->GetFinalCallNode()->variable()->GetOwnerMetaClass();
                         if (mdt->GetMetaClass() != varableEnum) {
                             std::cout << "Error Enum与值不相等!!" << std::endl;
                         } else {
@@ -179,7 +181,7 @@ void MetaDefineVarStatements::Parse() {
             } else {
                 MetaClass* compareClass = nullptr;
                 if (constExpressNode != nullptr && constExpressNode->GetEType() == EType::Null) {
-                    relation = ClassManager::EClassRelation::Same;
+                    relation = EClassRelation::Same;
                 } else {
                     compareClass = expressRetMetaDefineType->GetMetaClass();
                     relation = ClassManager::ValidateClassRelationByMetaClass(curClass, compareClass);
@@ -198,17 +200,17 @@ void MetaDefineVarStatements::Parse() {
                     sb += "表达式类为: " + compareClass->GetAllClassName();
                 }
                 
-                if (relation == ClassManager::EClassRelation::No) {
+                if (relation == EClassRelation::No) {
                     sb += "类型不相同，可能会有强转，强转后可能默认值为null";
                     std::cout << sb << std::endl;
                     m_IsNeedCastStatements = true;
-                } else if (relation == ClassManager::EClassRelation::Same) {
+                } else if (relation == EClassRelation::Same) {
                     m_DefineVarMetaVariable->SetRealMetaType(expressRetMetaDefineType);
-                } else if (relation == ClassManager::EClassRelation::Parent) {
+                } else if (relation == EClassRelation::Parent) {
                     sb += "类型不相同，可能会有强转， 返回值是父类型向子类型转换，存在错误转换!!";
                     std::cout << sb << std::endl;
                     m_IsNeedCastStatements = true;
-                } else if (relation == ClassManager::EClassRelation::Child) {
+                } else if (relation == EClassRelation::Child) {
                     if (compareClass != nullptr) {
                         m_DefineVarMetaVariable->SetRealMetaType(expressRetMetaDefineType);
                     }

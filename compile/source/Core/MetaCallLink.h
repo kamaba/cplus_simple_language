@@ -48,7 +48,7 @@ public:
     MetaVariable* ExecuteGetMetaVariable();
     MetaClass* ExecuteGetMetaClass();
     MetaExpressNode* GetMetaExpressNode();
-    MetaType* GetMetaDeineType();
+    MetaType* GetMetaDefineType();
     std::string ToFormatString() const;
     std::string ToTokenString() const;
 

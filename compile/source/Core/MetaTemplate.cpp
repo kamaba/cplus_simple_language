@@ -104,6 +104,10 @@ namespace Core {
         sb << m_MetaType->GetMetaClass()->GetName();
         return sb.str();
     }
+    std::string MetaGenTemplate::ToString()
+    {
+        return ToFormatString();
+    }
 
     // MetaDefineTemplateCollection implementation
     MetaDefineTemplateCollection::MetaDefineTemplateCollection() {

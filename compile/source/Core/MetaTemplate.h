@@ -78,6 +78,7 @@ namespace Core {
         void SetMetaType(MetaType* mt);
         std::string ToDefineTypeString();
         std::string ToFormatString();
+        std::string ToString();
 
     private:
         MetaType* m_MetaType = nullptr;

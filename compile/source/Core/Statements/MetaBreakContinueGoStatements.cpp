@@ -7,15 +7,16 @@
 //****************************************************************************
 
 #include "MetaBreakContinueGoStatements.h"
-#include "../MetaForStatements.h"
-#include "../MetaWhileDoWhileStatements.h"
+#include "MetaWhileDoWhileStatements.h"
+#include "MetaBlockStatements.h"
 #include "../MetaFunction.h"
-#include "../../Compile/FileMeta/FileMetaKeyOnlySyntax.h"
-#include "../../Compile/FileMeta/FileMetaKeyGotoLabelSyntax.h"
+#include "../../Compile/FileMeta/FileMetaSyntax.h"
 #include "../../Compile/Token.h"
 #include "../../Define.h"
 #include <iostream>
 #include <string>
+
+using namespace SimpleLanguage::Compile;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -73,7 +74,7 @@ MetaGotoLabelStatements::MetaGotoLabelStatements(MetaBlockStatements* mbs, Compi
     
     MetaFunction* mf = m_OwnerMetaBlockStatements->GetOwnerMetaFunction();
     if (mf != nullptr) {
-        std::string labelName = labelToken->GetLexeme()->ToString();
+        std::string labelName = labelToken->GetLexemeString();
         labelData = mf->GetLabelDataById(labelName);
         if (labelData == nullptr) {
             if (isLabel) {
@@ -100,7 +101,7 @@ std::string MetaGotoLabelStatements::ToFormatString() const {
     }
     result += isLabel ? "label " : "goto ";
     if (labelData != nullptr) {
-        result += labelData->GetLabel()->ToString() + ";";
+        result += labelData->GetLabel() + ";";
     }
     result += "\n";
     

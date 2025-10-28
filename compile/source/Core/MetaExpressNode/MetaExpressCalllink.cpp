@@ -10,10 +10,11 @@
 #include "../MetaCallLink.h"
 #include "../MetaVariable.h"
 #include "../MetaClass.h"
-#include "../MetaBlockStatements.h"
+#include "../MetaType.h"
+#include "../Statements/MetaBlockStatements.h"
 #include "../AllowUseSettings.h"
 #include "../MetaType.h"
-#include "../Compile/FileMeta/FileMetaCallLink.h"
+#include "../../Compile/FileMeta/FileMetaCommon.h"
 #include <string>
 
 namespace SimpleLanguage {

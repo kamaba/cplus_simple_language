@@ -134,7 +134,7 @@ public:
 protected:
     void Init();
 
-private:
+protected:
     bool m_IsTemplateFunction = false;
     bool m_IsOverrideFunction = false;
     bool m_IsGet = false;

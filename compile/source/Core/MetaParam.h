@@ -70,7 +70,7 @@ public:
     bool EqualsInputMetaParam(MetaInputParam* mip);
     bool EqualsName(const std::string& name);
     void SetMetaType(MetaType* mt);
-    void CaleReturnType();
+    void CalcReturnType();
     virtual std::string ToFormatString();
     std::string ToString();
 
@@ -83,6 +83,7 @@ protected:
     std::string m_Name = "";
 };
 
+class MetaInputParamCollection;
 // MetaDefineParamCollection class
 class MetaDefineParamCollection {
 public:

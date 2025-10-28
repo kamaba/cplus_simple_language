@@ -8,18 +8,24 @@
 
 #pragma once
 
-#include "../Debug/Log.h"
-#include "ClassManager.h"
 #include <string>
 #include <vector>
 #include <memory>
 
 namespace SimpleLanguage {
+    namespace Compile
+    {
+        class FileMetaClassDefine;
+        class FileInputTemplateNode;
+    }
 namespace Core {
 
-    class MetaGenTempalteFunction;
+    class MetaGenTemplateFunction;
     class MetaType;
+    class MetaClass;
+    class MetaNode;
     class MetaGenTemplateClass;
+    class MetaMemberFunction;
 
 class TypeManager {
 public:
@@ -34,7 +40,7 @@ public:
     TypeManager& operator=(const TypeManager&) = delete;
 
     // ·½·¨ÉùÃ÷
-    bool UpdateMetaTypeByGenClassAndFunction(MetaType* mt, MetaGenTemplateClass* mgtc, MetaGenTempalteFunction* mgtf);
+    bool UpdateMetaTypeByGenClassAndFunction(MetaType* mt, MetaGenTemplateClass* mgtc, MetaGenTemplateFunction* mgtf);
     MetaType* GetMetaTemplateClassAndRegisterExptendTemplateClassInstance(MetaClass* curMc, Compile::FileMetaClassDefine* fmcd);
     MetaType* GetMetaTypeByInputTemplateList(MetaClass* ownerMc, MetaNode* getmc, const std::vector<Compile::FileInputTemplateNode*>& inputTemplateNodeList, std::vector<MetaType*>* list = nullptr);
     MetaType* GetAndRegisterTemplateDefineMetaTemplateClass(MetaClass* ownerMc, MetaClass* findMc, Compile::FileInputTemplateNode* fmtd);

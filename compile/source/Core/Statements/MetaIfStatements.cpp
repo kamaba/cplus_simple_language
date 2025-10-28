@@ -8,7 +8,6 @@
 
 #include "../../Compile/FileMeta/FileMetaSyntax.h"
 #include "../../Compile/FileMeta/FileMetaExpress.h"
-#include "MetaIfStatements.h"
 #include "../MetaExpressNode/MetaExpressBase.h"
 #include "../ExpressManager.h"
 #include "../AllowUseSettings.h"
@@ -17,7 +16,9 @@
 #include "../MetaType.h"
 #include "../MetaVariable.h"
 #include "../MetaClass.h"
+#include "MetaIfStatements.h"
 #include "MetaBlockStatements.h"
+#include "MetaAssignStatements.h"
 #include <iostream>
 #include <sstream>
 
@@ -168,7 +169,7 @@ void MetaIfStatements::Parse() {
     cep->SetIsConst(false);
     cep->SetParseFrom(EParseFrom::StatementRightExpress);
     
-    auto express = ExpressManager::CreateExpressNode(cep);
+    auto express = ExpressManager::CreateExpressNode(*cep);
     express->Parse(new AllowUseSettings());
     
     MetaElseIfStatements* msis = new MetaElseIfStatements(m_OwnerMetaBlockStatements, 
@@ -195,7 +196,7 @@ void MetaIfStatements::Parse() {
         cep2->SetParseFrom(EParseFrom::StatementRightExpress);
         cep2->SetEqualMetaVariable(m_MetaVariable);
         
-        auto express2 = ExpressManager::CreateExpressNode(cep2);
+        auto express2 = ExpressManager::CreateExpressNode(*cep2);
         MetaElseIfStatements* msis2 = new MetaElseIfStatements(m_OwnerMetaBlockStatements, fmsthen, express2);
         AddIfElseStateStatements(msis2, IfElseState::ElseIf);
         

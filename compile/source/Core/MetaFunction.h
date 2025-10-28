@@ -38,6 +38,8 @@ public:
     std::string label;
     MetaStatements* frontStatements = nullptr;
     MetaStatements* nextStatements = nullptr;
+
+    std::string GetLabel() { return label; }
     
     LabelData() = default;
     LabelData(const std::string& _label, MetaStatements* _nextStatements = nullptr) 

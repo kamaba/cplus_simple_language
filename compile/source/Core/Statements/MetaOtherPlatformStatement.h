@@ -9,7 +9,6 @@
 #pragma once
 
 #include "MetaStatements.h"
-#include "../Global.h"
 #include <string>
 
 namespace SimpleLanguage {
@@ -20,9 +19,9 @@ public:
     MetaOtherPlatformStatements(MetaBlockStatements* mbs) : MetaStatements(mbs) {
     }
     
-    virtual std::string ToFormatString() override {
+    virtual std::string ToFormatString() const override {
         std::string result;
-        for (int i = 0; i < m_RealDeep; i++) {
+        for (int i = 0; i < GetRealDeep(); i++) {
             result += Global::GetTabChar();
         }
         return result;

@@ -256,7 +256,7 @@ MetaExpressNode* MetaCallLink::GetMetaExpressNode() {
     return nullptr;
 }
 
-MetaType* MetaCallLink::GetMetaDeineType() {
+MetaType* MetaCallLink::GetMetaDefineType() {
     MetaType* mt = nullptr;
     for (size_t i = 0; i < m_VisitNodeList.size(); i++) {
         mt = m_VisitNodeList[i]->GetMetaDefineType();

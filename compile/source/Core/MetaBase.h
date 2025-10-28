@@ -33,7 +33,7 @@ namespace Core {
         virtual ~MetaBase() = default;
 
         // ÊôĞÔ·ÃÎÊÆ÷
-        virtual int GetHashCode() { return 0; }
+        virtual int GetHashCode() const { return 0; }
         int GetDeep() const { return m_Deep; }
         int GetRealDeep() const { return m_Deep - m_AnchorDeep; }
         EPermission GetPermission() const { return m_Permission; }

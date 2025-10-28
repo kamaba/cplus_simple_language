@@ -58,6 +58,7 @@ public:
     void SetFileMetaBlockSyntax(Compile::FileMetaBlockSyntax* blockSyntax);
     void SetOwnerMetaStatements(MetaStatements* ms);
     virtual void SetNextStatements(MetaStatements* ms) override;
+    void SetParent(MetaBlockStatements* p) { this->parent = p; }
     
     // 查找和遍历方法
     MetaStatements* FindNearestMetaForStatementsOrMetaWhileOrDoWhileStatements();

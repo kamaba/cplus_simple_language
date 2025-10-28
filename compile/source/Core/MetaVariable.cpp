@@ -7,6 +7,7 @@
 //****************************************************************************
 
 #include "MetaVariable.h"
+#include "MetaMemberVariable.h"
 #include "MetaType.h"
 #include "BaseMetaClass/CoreMetaClassManager.h"
 #include "../Compile/CompilerUtil.h"
@@ -261,7 +262,8 @@ MetaVariable* MetaIteratorVariable::GetMetaVariable(const std::string& name) con
     if (it != m_MetaVariableDict.end()) {
         return it->second;
     }
-    return m_OrgMetaDefineType->GetMetaClass()->GetMetaMemberVariableByName(name);
+    MetaMemberVariable* mmv = m_OrgMetaDefineType->GetMetaClass()->GetMetaMemberVariableByName(name);
+    return dynamic_cast<MetaVariable*>(mmv);
 }
 
 std::string MetaIteratorVariable::ToFormatString() const {

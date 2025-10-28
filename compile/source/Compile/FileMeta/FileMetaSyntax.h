@@ -168,10 +168,10 @@ public:
         FileMeta* GetFileMeta() const;
         bool IsContinueNextCastSyntax() const;
         void SetContinueNextCastSyntax(bool value);
-        Token* GetVariableToken() const;
+        Token* GetVariableToken();
         FileMetaCallLink* GetDefineClassCallLink() const;
         FileMetaBlockSyntax* GetExecuteBlockSyntax() const;
-        const std::vector<FileMetaConstValueTerm*>& GetConstValueTokenList() const;
+        std::vector<FileMetaConstValueTerm*>& GetConstValueTokenList() const;
 
         void SetDefineClassNode(Node* defineClassNode);
         void SetVariableToken(Token* variableToken);
@@ -185,7 +185,7 @@ public:
         Token* m_Token = nullptr;
         FileMetaCallLink* m_DefineClassToken = nullptr;
         Token* m_VariableToken = nullptr;
-        std::vector<FileMetaConstValueTerm*> m_ConstValueTokenList;
+        std::vector<FileMetaConstValueTerm*>& m_ConstValueTokenList;
         FileMetaBlockSyntax* m_ExecuteBlockSyntax = nullptr;
         int m_Deep = 0;
         bool m_IsContinueNextCastSyntax = false;

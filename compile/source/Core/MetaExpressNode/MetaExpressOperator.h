@@ -9,6 +9,7 @@
 #pragma once
 
 #include "MetaExpressBase.h"
+#include "../../Define.h"
 #include <string>
 
 namespace SimpleLanguage {

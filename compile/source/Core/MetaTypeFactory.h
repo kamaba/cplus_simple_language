@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include "../Define.h"
 
 namespace SimpleLanguage {
 namespace Core {

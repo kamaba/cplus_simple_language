@@ -59,7 +59,7 @@ public:
 
     // Property accessors
     virtual std::string GetAllClassName() const { return m_AllName; }
-    EType GetEType() const { return m_Type; }
+    EType GetEType()  { return m_Type; }
     EClassDefineType GetClassDefineType() const { return m_ClassDefineType; }
     MetaClass* GetExtendClass() const { return m_ExtendClass; }
     MetaType* GetExtendClassMetaType() const { return m_ExtendClassMetaType; }

@@ -8,9 +8,14 @@
 
 #include "MetaGenTemplateFunction.h"
 #include "MetaMemberFunction.h"
-#include "MetaGenTemplate.h"
+#include "MetaTemplate.h"
 #include "MetaClass.h"
-#include "MetaBlockStatements.h"
+#include "MetaType.h"
+#include "MetaVariable.h"
+#include "MetaParam.h"
+#include "MetaGenTemplateClass.h"
+#include "MetaGenTemplateFunction.h"
+#include "Statements/MetaBlockStatements.h"
 #include "TypeManager.h"
 #include "../Debug/Log.h"
 #include <sstream>
@@ -92,7 +97,7 @@ void MetaGenTemplateFunction::ParseMetaMemberFunctionDefineMetaType() {
         if (!(m_ReturnMetaVariable->GetMetaDefineType()->GetEType() == EMetaTypeType::MetaClass
             && m_ReturnMetaVariable->GetMetaDefineType()->GetMetaClass()->IsTemplateClass() == false)) {
             TypeManager::GetInstance().UpdateMetaTypeByGenClassAndFunction(m_ReturnMetaVariable->GetMetaDefineType(), 
-                dynamic_cast<MetaGenTemplateClass*>(m_OwnerMetaClass), this);
+                dynamic_cast<MetaGenTemplateClass*>(m_OwnerMetaClass), this );
         }
     }
     for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
@@ -170,7 +175,7 @@ std::string MetaGenTemplateFunction::ToString() const {
         sb << mgt->ToString();
     }
     sb << ">";
-    sb << "(");
+    sb << "(";
 
     for (size_t i = 0; i < m_MetaMemberParamCollection->GetMetaDefineParamList().size(); i++) {
         auto mpl = m_MetaMemberParamCollection->GetMetaDefineParamList()[i];

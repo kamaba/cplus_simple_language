@@ -14,7 +14,6 @@ namespace SimpleLanguage
 		class LexerParse;
 		class TokenParse;
 		class StructParse;
-		class ProjectParse;
 		class FileMeta;
 		class FileParse;
 	}
@@ -22,6 +21,7 @@ namespace SimpleLanguage
 	{
 		// Forward declarations
 		class ProjectData;
+		class ProjectParse;
 
 		class ProjectCompile {
 		public:
@@ -58,17 +58,17 @@ namespace SimpleLanguage
 
 			static bool s_IsLoaded;
 			static std::string s_FileContentString;
-			static FileMeta* s_ProjectFile;
-			static LexerParse* s_LexerParse;
-			static TokenParse* s_TokenParse;
-			static StructParse* s_ProjectBuild;
+			static Compile::FileMeta* s_ProjectFile;
+			static Compile::LexerParse* s_LexerParse;
+			static Compile::TokenParse* s_TokenParse;
+			static Compile::StructParse* s_ProjectBuild;
 			static ProjectParse* s_ProjectParse;
 			static ProjectData* s_Data;
 			static int s_StructParseCount;
 			static int s_BuildParseCount;
 			static int s_GrammerParseCount;
 			static int s_ParseListCount;
-			static std::vector<FileParse*> s_FileParseList;
+			static std::vector<Compile::FileParse*> s_FileParseList;
 		};
 
 	} // namespace Project

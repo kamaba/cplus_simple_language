@@ -42,7 +42,7 @@ void MetaCallStatements::UpdateOwnerMetaClass(MetaClass* ownerclass) {
 
 std::string MetaCallStatements::ToFormatString() const {
     std::string result;
-    for (int i = 0; i < m_RealDeep; i++) {
+    for (int i = 0; i < GetRealDeep(); i++) {
         result += Global::GetTabChar();
     }
     result += m_MetaCallLink ? m_MetaCallLink->ToFormatString() : "";

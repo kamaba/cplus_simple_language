@@ -29,7 +29,7 @@ using namespace SimpleLanguage::Compile;
 namespace SimpleLanguage {
 namespace Core {
 
-bool TypeManager::UpdateMetaTypeByGenClassAndFunction(MetaType* mt, MetaGenTemplateClass* mgtc, MetaGenTempalteFunction* mgtf) {
+bool TypeManager::UpdateMetaTypeByGenClassAndFunction(MetaType* mt, MetaGenTemplateClass* mgtc, MetaGenTemplateFunction* mgtf) {
     bool isNeedReg = false;
     MetaClass* findfn = nullptr;
     std::vector<MetaClass*> regMCList;
