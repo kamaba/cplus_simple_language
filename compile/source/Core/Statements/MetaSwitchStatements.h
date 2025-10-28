@@ -9,6 +9,7 @@
 #pragma once
 
 #include "MetaStatements.h"
+#include "../../Compile/FileMeta/FileMetaSyntax.h"
 #include <string>
 #include <vector>
 
@@ -73,7 +74,7 @@ public:
         Compile::FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax* m_FileMetaKeyCaseSyntax = nullptr;
 
     public:
-        MetaCaseStatements(Compile::FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax* fmkcs, MetaBlockStatements* mbs);
+        MetaCaseStatements(Compile::FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax* fmkcs = nullptr, MetaBlockStatements* mbs = nullptr);
         virtual ~MetaCaseStatements() = default;
         
     private:

@@ -70,8 +70,7 @@ private:
 
 class MetaMemberFunction : public MetaFunction {
 public:
-    MetaMemberFunction();
-    MetaMemberFunction(MetaClass* mc);
+    MetaMemberFunction(MetaClass* mc = nullptr);
     MetaMemberFunction(MetaClass* mc, Compile::FileMetaMemberFunction* fmmf);
     MetaMemberFunction(MetaClass* mc, const std::string& name);
     MetaMemberFunction(const MetaMemberFunction& mmf);

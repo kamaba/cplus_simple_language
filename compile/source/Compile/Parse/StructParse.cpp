@@ -13,6 +13,7 @@
 #include "../FileMeta/FileMetaMemberVariable.h"
 #include "../FileMeta/FileMetaNamespace.h"
 #include "../FileMeta/FileMetaSyntax.h"
+#include "../FileMeta/FileMetaGlobalSyntax.h"
 #include "Node.h"
 #include "../../Debug/Log.h"
 #include "../../Project/ProjectManager.h"

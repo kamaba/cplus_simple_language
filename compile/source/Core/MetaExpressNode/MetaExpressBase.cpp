@@ -14,12 +14,6 @@
 namespace SimpleLanguage {
 namespace Core {
 
-MetaExpressNode::MetaExpressNode() {
-    m_OwnerMetaClass = nullptr;
-    m_OwnerMetaBlockStatements = nullptr;
-    m_MetaDefineType = nullptr;
-}
-
 int MetaExpressNode::GetOpLevel() const {
     return MetaTypeFactory::GetOpLevelByMetaType(m_MetaDefineType);
 }

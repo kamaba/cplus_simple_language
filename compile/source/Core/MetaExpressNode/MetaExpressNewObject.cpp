@@ -18,6 +18,7 @@
 #include "../MetaData.h"
 #include "../MetaType.h"
 #include "../MetaClass.h"
+#include "../MetaMemberEnum.h"
 #include "../MetaFunction.h"
 #include "../MetaCallLink.h"
 #include "../MetaMemberFunction.h"

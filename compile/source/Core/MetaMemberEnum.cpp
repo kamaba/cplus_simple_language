@@ -8,26 +8,27 @@
 
 #include "MetaMemberEnum.h"
 #include "MetaVariable.h"
-#include "MetaExpressNode.h"
+#include "MetaExpressNode/MetaExpressBase.h"
+#include "MetaExpressNode/MetaExpressConst.h"
+#include "MetaExpressNode/MetaExpressCallLink.h"
+#include "MetaExpressNode/MetaExpressNewObject.h"
 #include "MetaType.h"
 #include "MetaClass.h"
-#include "FileMetaMemberVariable.h"
-#include "MetaConstExpressNode.h"
-#include "MetaCallLinkExpressNode.h"
-#include "MetaNewObjectExpressNode.h"
-#include "Log.h"
-#include "CoreMetaClassManager.h"
+#include "../Compile/FileMeta/FileMetaMemberData.h"
+#include "../Compile/FileMeta/FileMetaMemberVariable.h"
+#include "../Debug/Log.h"
+#include "BaseMetaClass/CoreMetaClassManager.h"
 #include "ExpressManager.h"
 #include "AllowUseSettings.h"
-#include "CreateExpressParam.h"
-#include "Global.h"
-#include "CompilerUtil.h"
-#include "MetaInputParamCollection.h"
+#include "MetaParam.h"
+#include "MetaTemplate.h"
 #include "MetaMemberFunction.h"
-#include "MetaGenTemplate.h"
 #include <vector>
 #include <string>
 #include <sstream>
+
+using namespace SimpleLanguage::Compile;
+using namespace SimpleLanguage::Debug;
 
 namespace SimpleLanguage {
 namespace Core {
@@ -39,21 +40,21 @@ int MetaMemberEnum::s_NoHaveRetStaticLevel = 200000000;
 int MetaMemberEnum::s_DefineMetaTypeLevel = 1000000000;
 int MetaMemberEnum::s_ExpressLevel = 1500000000;
 
-MetaMemberEnum::MetaMemberEnum(MetaClass* mc, FileMetaMemberVariable* fmmv) {
+MetaMemberEnum::MetaMemberEnum(MetaClass* mc, Compile::FileMetaMemberVariable* fmmv) {
     m_FileMetaMemeberVariable = fmmv;
-    m_Name = fmmv->Name();
-    AddPingToken(fmmv->GetNameToken());
+    m_Name = fmmv->GetName();
+    AddPingToken(fmmv->NameToken());
     m_Index = mc->GetMetaMemberVariableDict().size();
     m_FromType = EFromType::Code;
     m_DefineMetaType = new MetaType(CoreMetaClassManager::GetInstance().GetObjectMetaClass());
-    m_IsStatic = true; // enum ³ÉÔ±È«²¿Îªstatic
+    m_IsStatic = true; // enum ï¿½ï¿½Ô±È«ï¿½ï¿½Îªstatic
     m_VariableFrom = EVariableFrom::Static;
-    if (fmmv->GetStaticToken() != nullptr) {
-        Log::AddInStructMeta(EError::None, "Error ENumÖÐ£¬²»ÔÊÐíÓÐ¾²Ì¬¹Ø¼ü×Ö£¬¶øÊÇÈ«²¿ÊÇ¾²Ì¬¹Ø¼ü×Ö!!");
+    if (fmmv->StaticToken() != nullptr) {
+        Log::AddInStructMeta(EError::None, "Error ENumï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¾ï¿½Ì¬ï¿½Ø¼ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½Ç¾ï¿½Ì¬ï¿½Ø¼ï¿½ï¿½ï¿½!!");
     }
-    if (m_FileMetaMemeberVariable->GetPermissionToken() != nullptr) {
-        Log::AddInStructMeta(EError::None, "Error EnumÖÐ£¬²»ÔÊÐíÊ¹ÓÃpublic/privateµÈÈ¨ÏÞ¹Ø¼ü×Ö!!");
-        m_Permission = CompilerUtil::GetPerMissionByString(m_FileMetaMemeberVariable->GetPermissionToken()->GetLexeme().ToString());
+    if (m_FileMetaMemeberVariable->PermissionToken() != nullptr) {
+        Log::AddInStructMeta(EError::None, "Error Enumï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½public/privateï¿½ï¿½È¨ï¿½Þ¹Ø¼ï¿½ï¿½ï¿½!!");
+        m_Permission = CompilerUtil::GetPerMissionByString(m_FileMetaMemeberVariable->PermissionToken()->GetLexeme().ToString());
     }
 
     SetOwnerMetaClass(mc);
@@ -68,11 +69,11 @@ void MetaMemberEnum::ParseDefineMetaType() {
             cep.ownerMetaClass = m_OwnerMetaClass;
             cep.equalMetaVariable = this;
             cep.ownerMBS = m_OwnerMetaBlockStatements;
-            cep.parsefrom = EParseFrom::MemberVariableExpress;
+            cep.SetParseFrom( EParseFrom::MemberVariableExpress );
             m_Express = ExpressManager::CreateExpressNodeByCEP(cep);
 
             if (m_Express == nullptr) {
-                Log::AddInStructMeta(EError::None, "Error Ã»ÓÐ½âÎöµ½ExpressµÄÄÚÈÝ ÔÚMetaMemberData Àï±ß 372");
+                Log::AddInStructMeta(EError::None, "Error Ã»ï¿½Ð½ï¿½ï¿½ï¿½ï¿½ï¿½Expressï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½MetaMemberData ï¿½ï¿½ï¿½ 372");
             }
         }
     }
@@ -81,8 +82,8 @@ void MetaMemberEnum::ParseDefineMetaType() {
 bool MetaMemberEnum::ParseMetaExpress() {
     if (m_Express != nullptr) {
         AllowUseSettings auc;
-        auc.parseFrom = EParseFrom::MemberVariableExpress;
-        m_Express->Parse(auc);
+        auc.SetParseFrom( EParseFrom::MemberVariableExpress );
+        m_Express->Parse(&auc);
     }
     return true;
 }
@@ -95,10 +96,10 @@ void MetaMemberEnum::SetExpress(MetaConstExpressNode* mcen) {
 std::string MetaMemberEnum::ToFormatString() const {
     std::stringstream sb;
 
-    for (int i = 0; i < realDeep; i++)
+    for (int i = 0; i < GetRealDeep(); i++)
         sb << Global::GetTabChar();
 
-    sb << permission.ToFormatString() << " ";
+    sb << (int)m_Permission << " ";
     if (IsConst()) {
         sb << "const ";
     }
@@ -118,8 +119,8 @@ std::string MetaMemberEnum::ToFormatString() const {
 std::string MetaMemberEnum::ToTokenString() {
     std::stringstream sb;
 
-    sb << m_FileMetaMemeberVariable->GetNameToken()->GetSourceBeginLine() << " Óë¸¸ÀàµÄTokenÎ»ÖÃ: "
-       << m_FileMetaMemeberVariable->GetNameToken()->GetSourceBeginLine();
+    sb << m_FileMetaMemeberVariable->NameToken()->GetSourceBeginLine() << " ï¿½ë¸¸ï¿½ï¿½ï¿½TokenÎ»ï¿½ï¿½: "
+       << m_FileMetaMemeberVariable->NameToken()->GetSourceBeginLine();
 
     return sb.str();
 }
@@ -128,7 +129,7 @@ MetaExpressNode* MetaMemberEnum::CreateExpressNodeInClassMetaVariable() {
     auto express = m_FileMetaMemeberVariable->GetExpress();
     if (express == nullptr) return nullptr;
 
-    auto root = express->Root();
+    auto root = express->GetRoot();
     if (root == nullptr)
         return nullptr;
     if (root->GetLeft() == nullptr && root->GetRight() == nullptr) {
@@ -138,56 +139,56 @@ MetaExpressNode* MetaMemberEnum::CreateExpressNodeInClassMetaVariable() {
         if (m_DefineMetaType != nullptr) {
             if (fmpt != nullptr) {
                 if (m_IsSupportConstructionFunctionOnlyParType) {
-                    MetaInputParamCollection mpc(fmpt, ownerMetaClass, nullptr);
+                    MetaInputParamCollection mpc(fmpt, GetOwnerMetaClass(), nullptr);
 
                     MetaMemberFunction* mmf = m_DefineMetaType->GetMetaMemberConstructFunction(&mpc);
 
                     if (mmf == nullptr) return nullptr;
 
-                    MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(fmpt, m_DefineMetaType, ownerMetaClass, mmf->GetMetaBlockStatements());
+                    MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(fmpt, m_DefineMetaType, GetOwnerMetaClass(), mmf->GetMetaBlockStatements());
                     if (mnoen != nullptr) {
                         return mnoen;
                     }
                 } else {
-                    Log::AddInStructMeta(EError::None, "Error ÏÖÔÚÅäÖÃÖÐ£¬²»Ö§³Ö³ÉÔ±±äÁ¿ÖÐÊ¹ÓÃÀàµÄ()¹¹Ôì·½Ê½!!");
+                    Log::AddInStructMeta(EError::None, "Error ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½Ö§ï¿½Ö³ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½()ï¿½ï¿½ï¿½ì·½Ê½!!");
                 }
             } else if (fmbt != nullptr) {
-                MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(fmbt, m_DefineMetaType, ownerMetaClass, nullptr, nullptr);
+                MetaNewObjectExpressNode* mnoen = new MetaNewObjectExpressNode(fmbt, m_DefineMetaType, GetOwnerMetaClass(), nullptr, nullptr);
                 return mnoen;
             } else if (fmct != nullptr) {
                 if (fmct->GetCallLink()->GetCallNodeList().size() > 0) {
                     auto finalNode = fmct->GetCallLink()->GetCallNodeList()[fmct->GetCallLink()->GetCallNodeList().size() - 1];
                     if (finalNode->GetFileMetaBraceTerm() != nullptr && !m_IsSupportConstructionFunctionConnectBraceType) {
-                        Log::AddInStructMeta(EError::None, "Error ÔÚÀà±äÁ¿ÖÐ£¬²»ÔÊÐí Ê¹ÓÃClass()ºó´ø{}µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
+                        Log::AddInStructMeta(EError::None, "Error ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ê¹ï¿½ï¿½Class()ï¿½ï¿½ï¿½{}ï¿½Ä¸ï¿½Öµï¿½ï¿½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                         return nullptr;
                     }
                 }
                 AllowUseSettings auc;
-                auc.useNotConst = false;
-                auc.useNotStatic = true;
+                auc.SetUseNotConst( false );
+                auc.SetUseNotStatic( true );
             }
         } else {
             if (fmpt != nullptr) {
-                Log::AddInStructMeta(EError::None, "Error ÔÚÀàÃ»ÓÐ¶¨ÒåµÄ±äÁ¿ÖÐ£¬²»ÔÊÐí Ê¹ÓÃ()µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
+                Log::AddInStructMeta(EError::None, "Error ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¶ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ê¹ï¿½ï¿½()ï¿½Ä¸ï¿½Öµï¿½ï¿½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                 return nullptr;
             } else if (fmbt != nullptr) {
-                Log::AddInStructMeta(EError::None, "Error ÔÚÀàÃ»ÓÐ¶¨ÒåµÄ±äÁ¿ÖÐ£¬²»ÔÊÐí Ê¹ÓÃ{}µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
+                Log::AddInStructMeta(EError::None, "Error ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¶ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ê¹ï¿½ï¿½{}ï¿½Ä¸ï¿½Öµï¿½ï¿½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                 return nullptr;
             } else if (fmct != nullptr) {
                 if (fmct->GetCallLink()->GetCallNodeList().size() > 0) {
                     auto finalNode = fmct->GetCallLink()->GetCallNodeList()[fmct->GetCallLink()->GetCallNodeList().size() - 1];
                     if (finalNode->GetFileMetaBraceTerm() != nullptr && !m_IsSupportConstructionFunctionConnectBraceType) {
-                        Log::AddInStructMeta(EError::None, "Error ÔÚÀà±äÁ¿ÖÐ£¬²»ÔÊÐí Ê¹ÓÃClass()ºó´ø{}µÄ¸³Öµ·½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
+                        Log::AddInStructMeta(EError::None, "Error ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ê¹ï¿½ï¿½Class()ï¿½ï¿½ï¿½{}ï¿½Ä¸ï¿½Öµï¿½ï¿½Ê½!!" + fmbt->GetToken()->ToLexemeAllString());
                         return nullptr;
                     }
                 }
                 AllowUseSettings auc;
-                auc.useNotConst = false;
-                auc.useNotStatic = true;
+                auc.SetUseNotConst( false );
+                auc.SetUseNotStatic( true );
             }
         }
         CreateExpressParam cep;
-        cep.ownerMetaClass = ownerMetaClass;
+        cep.ownerMetaClass = m_OwnerMetaClass;
         cep.metaType = m_DefineMetaType;
         cep.fme = root;
         return ExpressManager::CreateExpressNode(cep);

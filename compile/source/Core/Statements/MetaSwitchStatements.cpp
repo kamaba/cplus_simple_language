@@ -47,17 +47,25 @@ std::string MetaSwitchStatements::MetaNextStatements::ToFormatString() const {
 // MetaCaseStatements 实现
 MetaSwitchStatements::MetaCaseStatements::MetaCaseStatements(Compile::FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax* fmkcs, MetaBlockStatements* mbs) {
     m_FileMetaKeyCaseSyntax = fmkcs;
-    m_OwnerMetaBlockStatements = mbs;
-    thenMetaStatements = new MetaBlockStatements(mbs, fmkcs->GetExecuteBlockSyntax());
-    if (fmkcs->IsContinueNextCastSyntax()) {
-        isContinueNext = true;
+    if (fmkcs != nullptr) {
+        thenMetaStatements = new MetaBlockStatements(mbs, fmkcs->GetExecuteBlockSyntax());
+        if (fmkcs->IsContinueNextCastSyntax()) {
+            isContinueNext = true;
+        }
+        
+        Parse();
+        MetaMemberFunction::CreateMetaSyntax(fmkcs->GetExecuteBlockSyntax(), thenMetaStatements);
+    } else {
+        thenMetaStatements = nullptr;
+        isContinueNext = false;
     }
-    
-    Parse();
-    MetaMemberFunction::CreateMetaSyntax(fmkcs->GetExecuteBlockSyntax(), thenMetaStatements);
 }
 
 void MetaSwitchStatements::MetaCaseStatements::Parse() {
+    if (m_FileMetaKeyCaseSyntax == nullptr) {
+        return;
+    }
+    
     if (m_FileMetaKeyCaseSyntax->GetDefineClassCallLink() != nullptr) {
         MetaCallLinkExpressNode* mcen = new MetaCallLinkExpressNode(m_FileMetaKeyCaseSyntax->GetDefineClassCallLink(), nullptr, nullptr, nullptr);
         AllowUseSettings auc;
@@ -82,7 +90,7 @@ void MetaSwitchStatements::MetaCaseStatements::Parse() {
             }
             MetaType* mdt = new MetaType(matchTypeClass);
             defineMetaVariable = new MetaVariable(token2name, EVariableFrom::LocalStatement, 
-                m_OwnerMetaBlockStatements, m_OwnerMetaBlockStatements->GetOwnerMetaClass(), mdt);
+                thenMetaStatements, thenMetaStatements->GetOwnerMetaClass(), mdt);
             thenMetaStatements->AddMetaVariable(defineMetaVariable);
             
             switchCaseType = SwitchCaseType::ClassType;
@@ -177,7 +185,7 @@ void MetaSwitchStatements::Parse() {
     
     for (size_t i = 0; i < m_FileMetaKeySwitchSyntax->GetFileMetaKeyCaseSyntaxList().size(); i++) {
         FileMetaKeySwitchSyntax::FileMetaKeyCaseSyntax* cmcs = m_FileMetaKeySwitchSyntax->GetFileMetaKeyCaseSyntaxList()[i];
-        MetaCaseStatements* mcs = new MetaCaseStatements(cmcs, m_OwnerMetaBlockStatements);
+        MetaCaseStatements* mcs = new MetaCaseStatements(nullptr, m_OwnerMetaBlockStatements);
         metaCaseStatements.push_back(mcs);
     }
     

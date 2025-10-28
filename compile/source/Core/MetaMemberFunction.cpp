@@ -155,9 +155,6 @@ std::vector<MetaMemberFunction*> MetaMemberFunctionNode::GetMetaMemberFunctionLi
 }
 
 // MetaMemberFunction implementation
-MetaMemberFunction::MetaMemberFunction() : MetaFunction() {
-}
-
 MetaMemberFunction::MetaMemberFunction(MetaClass* mc) : MetaFunction(mc) {
 }
 

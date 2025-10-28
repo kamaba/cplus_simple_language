@@ -358,7 +358,7 @@ FileMetaBlockSyntax* FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetExecuteBl
     return m_ExecuteBlockSyntax;
 }
 
-std::vector<FileMetaConstValueTerm*>& FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetConstValueTokenList() const {
+const std::vector<FileMetaConstValueTerm*>& FileMetaKeyMatchSyntax::FileMetaKeyCaseSyntax::GetConstValueTokenList() const {
     return m_ConstValueTokenList;
 }
 

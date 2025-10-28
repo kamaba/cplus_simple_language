@@ -11,11 +11,12 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include "Process/CompileStateBase.h"
 
 namespace SimpleLanguage {
 namespace Compile {
 
-    // Ç°ÏòÉùÃ÷
+    // Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     class CompileStateBase;
 
     class CompileManager
