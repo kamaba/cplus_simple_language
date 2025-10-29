@@ -35,7 +35,7 @@ struct ParseFileParam {
 class FileParse {
 public:
     std::string filePath;
-    long fileSize;
+    size_t fileSize;
     std::string content;
     
     std::function<void()> structParseComplete;

@@ -77,7 +77,7 @@ namespace Core {
         bool IsIncludeMetaNode(const std::string& name) const;
         virtual MetaNode* GetChildrenMetaNodeByName(const std::string& name) const;
         MetaNamespace* GetMetaNamespaceByName(const std::string& name) const;
-        MetaClass* GetMetaClassByTemplateCount(int count) const;
+        MetaClass* GetMetaClassByTemplateCount(size_t count) const;
         void SetDeep(int deep);
         virtual void SetAnchorDeep(int addep);
         virtual MetaNode* GetMetaBaseInParentByName(const std::string& inputname, bool isInclude = true) const;

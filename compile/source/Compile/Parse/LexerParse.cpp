@@ -332,7 +332,7 @@ void LexerParse::ReadString(bool isWithAtOp) {
         } else if (m_TempChar == '"') {
             stringBuilder += m_Builder;
             MultiData md;
-            md.type == DataType::String;
+            md.type = DataType::String;
             md.data.string_val = stringBuilder.c_str();
             m_CurrentToken->SetLexeme(md);
             m_Index++;

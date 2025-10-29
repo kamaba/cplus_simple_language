@@ -75,9 +75,8 @@ public:
     ::std::vector<Node*> m_ExtendLinkNodeList;
     ::std::vector<Node*> childList;       // 子内容节点
 
-    int parseIndex = 0;
+    size_t parseIndex = 0;
 
-    Node(Token& token);
     Node(Token* token);
     
     Node* GetParseCurrent();

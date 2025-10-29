@@ -211,7 +211,7 @@ MetaNamespace* MetaNode::GetMetaNamespaceByName(const std::string& name) const {
     return nullptr;
 }
 
-MetaClass* MetaNode::GetMetaClassByTemplateCount(int count) const {
+MetaClass* MetaNode::GetMetaClassByTemplateCount(size_t count) const {
     auto it = m_MetaTemplateClassDict.find(count);
     if (it != m_MetaTemplateClassDict.end()) {
         return it->second;

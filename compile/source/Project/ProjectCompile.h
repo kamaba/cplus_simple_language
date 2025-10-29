@@ -35,10 +35,10 @@ namespace SimpleLanguage
 			static bool IsLoaded() { return s_IsLoaded; }
 			static Compile::FileMeta* ProjectFileMeta() { return s_ProjectFile; }
 
-			static int StructParseCount() { return s_StructParseCount; }
-			static int BuildParseCount() { return s_BuildParseCount; }
-			static int GrammerParseCount() { return s_GrammerParseCount; }
-			static int ParseListCount() { return s_ParseListCount; }
+			static size_t StructParseCount() { return s_StructParseCount; }
+			static size_t BuildParseCount() { return s_BuildParseCount; }
+			static size_t GrammerParseCount() { return s_GrammerParseCount; }
+			static size_t ParseListCount() { return s_ParseListCount; }
 			static const std::vector<Compile::FileParse*>& FileParseList() { return s_FileParseList; }
 
 			// Methods
@@ -64,10 +64,10 @@ namespace SimpleLanguage
 			static Compile::StructParse* s_ProjectBuild;
 			static ProjectParse* s_ProjectParse;
 			static ProjectData* s_Data;
-			static int s_StructParseCount;
-			static int s_BuildParseCount;
-			static int s_GrammerParseCount;
-			static int s_ParseListCount;
+			static size_t s_StructParseCount;
+			static size_t s_BuildParseCount;
+			static size_t s_GrammerParseCount;
+			static size_t s_ParseListCount;
 			static std::vector<Compile::FileParse*> s_FileParseList;
 		};
 

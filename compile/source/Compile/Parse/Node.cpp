@@ -12,16 +12,11 @@
 namespace SimpleLanguage {
 namespace Compile {
 
-Node::Node(Token& _token) 
-{
-    this->token = &_token;
-}
-
 Node::Node(Token* _token) : token(_token ) {
 }
 
 Node* Node::GetParseCurrent() {
-    if (parseIndex >= static_cast<int>(childList.size())) {
+    if (parseIndex >= childList.size() ) {
         return nullptr;
     }
     return childList[parseIndex];

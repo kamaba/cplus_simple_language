@@ -188,14 +188,14 @@ void StructParse::ParseRootNodeToFileMeta() {
                     break;
                 default:
                     Log::AddInStructFileMeta(EError::None, 
-                        "Error ����ʱ ��Fileͷ��Ŀ¼�г��� : " + node->token->GetLexemeString());
+                        "Error 不允许 在File头级目录中出现 : " + node->token->GetLexemeString());
                     break;
             }
         } else if (node->nodeType == ENodeType::IdentifierLink) {
             ParseNamespaceOrTopClass(pnode);
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error ����ʱ ��Fileͷ��Ŀ¼�г���2 : " + (node->token ? node->token->GetLexemeString() : "null"));
+                "Error 不允许 在File头级目录中出现2 : " + (node->token ? node->token->GetLexemeString() : "null"));
         }
     }
 
@@ -206,11 +206,10 @@ void StructParse::ParseRootNodeToFileMeta() {
 #ifdef DEBUG
         m_FileMeta->SetDeep(0);
 #endif
-        Log::AddProcess(EProcess::ParseNode, EError::None, 
-            "����Code�ļ��ṹ�ļ��ɹ�!!! ��һ����ʼ ����Meta�ļ� \n ����FileMeta�ļ��ɹ�!!! ��һ����ʼ �﷨����");
+        string log1 = "";
+        Log::AddProcess(EProcess::ParseNode, EError::None, log1);
     } else {
-        Log::AddProcess(EProcess::ParseNode, EError::ParseFileError, 
-            "����ʱ���ִ��� ParseFile : " + std::to_string(static_cast<int>(GetCurrentNodeInfo()->parseType)));
+        Log::AddProcess(EProcess::ParseNode, EError::ParseFileError, "解析出现错误 ParseFile : " + std::to_string(static_cast<int>(GetCurrentNodeInfo()->parseType)));
         return;
     }
 }
@@ -332,13 +331,13 @@ void StructParse::ParseNamespace(Node* pnode) {
 void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
     Node* braceNode = pnode->blockNode;
     std::vector<Node*> nodeList;
-    int index = pnode->parseIndex;
+    size_t index = pnode->parseIndex;
     Node* curNode = nullptr;
     bool isCanAdd = false;
     Node* nextNode = nullptr;
 
-    int isClass = 0; // 0 unknows 1 class 2namespace
-    for (index = pnode->parseIndex; index < static_cast<int>(pnode->childList.size());) {
+    size_t isClass = 0; // 0 unknows 1 class 2namespace
+    for (index = pnode->parseIndex; index < pnode->childList.size();) {
         curNode = pnode->childList[index++];
         pnode->parseIndex = index;
         

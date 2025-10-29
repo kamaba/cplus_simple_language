@@ -132,7 +132,7 @@ std::vector<std::string> FileInputTemplateNode::GetNameList() const {
 int FileInputTemplateNode::GetInputTemplateCount() const {
     int templateCount = 0;
     if (m_DefineClassCallLink != nullptr) {
-        int cn = m_DefineClassCallLink->GetCallNodeList().size();
+        size_t cn = m_DefineClassCallLink->GetCallNodeList().size();
         if (cn > 0) {
             return m_DefineClassCallLink->GetCallNodeList()[cn - 1]->InputTemplateNodeList().size();
         }

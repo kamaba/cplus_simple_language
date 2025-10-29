@@ -58,14 +58,14 @@ public:
     static ClassManager& GetInstance();
     static void DestroyInstance();
     
-    // å±æ€§è®¿é—®å™¨
+    // ÊôĞÔ·ÃÎÊÆ÷
     const std::unordered_map<std::string, MetaClass*>& GetAllClassDict() const { return m_AllClassDict; }
     const std::unordered_map<std::string, MetaData*>& GetAllDataDict() const { return m_AllDataDict; }
     const std::vector<MetaDynamicClass*>& GetDynamicClassList() const { return m_DynamicClassList; }
     const std::vector<MetaGenTemplateClass*>& GetGenTemplateMetaClassList() const { return m_GenTemplateMetaClassList; }
     const std::vector<MetaClass*>& GetRuntimeClassList() const { return m_RuntimeClassList; }
     
-    // ç±»ç®¡ç†æ–¹æ³•
+    // Àà¹ÜÀí·½·¨
     MetaClass* GetClassByName(const std::string& name, int templateCount = 0);
     MetaClass* GetMetaClassByCSharpType(const std::string& typeName);
     bool AddMetaClass(MetaClass* mc, MetaModule* mm = nullptr);
@@ -74,16 +74,16 @@ public:
     bool AddDynamicClass(MetaDynamicClass* dc);
     void AddInitHandleMetaClassList(MetaClass* mc);
     
-    // æ•°æ®ç®¡ç†æ–¹æ³•
+    // Êı¾İ¹ÜÀí·½·¨
     MetaData* FindMetaData(MetaData* md);
     MetaData* FindMetaDataByName(const std::string& name);
     bool AddMetaData(MetaData* dc);
     
-    // æ¯”è¾ƒæ–¹æ³•
+    // ±È½Ï·½·¨
     bool CompareMetaClassMemberVariable(MetaClass* curClass, MetaClass* cpClass);
     bool CompareMetaDataMember(MetaData* curClass, MetaData* cpClass);
     
-    // ç±»æ·»åŠ å’Œå¤„ç†æ–¹æ³•
+    // ÀàÌí¼ÓºÍ´¦Àí·½·¨
     MetaClass* AddClass(Compile::FileMetaClass* fmc);
     void AddRuntimeMetaClass(MetaClass* mc);
     void HandleExtendMember();
@@ -93,11 +93,11 @@ public:
     void ParseDefineComplete();
     void ParseMemberEnumExpress();
     
-    // é™æ€å·¥å…·æ–¹æ³•
+    // ¾²Ì¬¹¤¾ß·½·¨
     static bool IsNumberClass(MetaClass* curClass);
     static EClassRelation ValidateClassRelationByMetaClass(MetaClass* curClass, MetaClass* compareClass);
     
-    // æŸ¥æ‰¾æ–¹æ³•
+    // ²éÕÒ·½·¨
     MetaNode* GetMetaClassByRef(MetaClass* mc, Compile::FileMetaClassDefine* fmcv);
     MetaNode* GetMetaClassByClassDefine(MetaClass* ownerClass, Compile::FileMetaClassDefine* fmcd);
     MetaNode* GetMetaClassByNameAndFileMeta(MetaClass* ownerClass, Compile::FileMeta* fm, const std::vector<std::string>& stringList);
@@ -105,10 +105,10 @@ public:
     MetaClass* GetMetaClassByInputTemplateAndFileMeta(MetaClass* ownerClass, Compile::FileInputTemplateNode* fitn);
     MetaClass* GetMetaClassAndRegisterExptendTemplateClassInstance(MetaClass* curMc, Compile::FileMetaClassDefine* fmcd);
     
-    // è°ƒè¯•æ–¹æ³•
+    // µ÷ÊÔ·½·¨
     void PrintAlllClassContent();
     
-    // æ¥å£å¤„ç†æ–¹æ³•
+    // ½Ó¿Ú´¦Àí·½·¨
     void HandleInterface(Compile::FileMetaClass* mc);
 
 private:

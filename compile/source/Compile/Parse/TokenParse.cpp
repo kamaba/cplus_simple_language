@@ -101,7 +101,7 @@ Node* TokenParse::AddAtOpSign(Token& token) {
 }
 
 Node* TokenParse::AddSymbol(Token& token) {
-    auto node = new Node(token);
+    auto node = new Node(&token);
     node->nodeType = ENodeType::Symbol;
     m_CurrentNode->AddChild(node);
     m_TokenIndex++;

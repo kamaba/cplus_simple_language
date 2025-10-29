@@ -36,10 +36,10 @@ TokenParse* ProjectCompile::s_TokenParse = nullptr;
 StructParse* ProjectCompile::s_ProjectBuild = nullptr;
 ProjectParse* ProjectCompile::s_ProjectParse = nullptr;
 ProjectData* ProjectCompile::s_Data = nullptr;
-int ProjectCompile::s_StructParseCount = 0;
-int ProjectCompile::s_BuildParseCount = 0;
-int ProjectCompile::s_GrammerParseCount = 0;
-int ProjectCompile::s_ParseListCount = 0;
+size_t ProjectCompile::s_StructParseCount = 0;
+size_t ProjectCompile::s_BuildParseCount = 0;
+size_t ProjectCompile::s_GrammerParseCount = 0;
+size_t ProjectCompile::s_ParseListCount = 0;
 std::vector<Compile::FileParse*> ProjectCompile::s_FileParseList;
 
 ProjectCompile::ProjectCompile() {
