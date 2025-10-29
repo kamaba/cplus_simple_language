@@ -11,7 +11,7 @@ int main( const char* args )
     std::cout << "Hello World!\n";
     std::vector<std::string> sss;
     CommandInputArgs* inputArgs = new CommandInputArgs(sss);
-    ProjectManager::Run("../../../test/BaseTest", inputArgs);
+    ProjectManager::Run("test/BaseTest", inputArgs);
 
     system("pause");
 }

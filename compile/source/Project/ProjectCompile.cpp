@@ -46,10 +46,14 @@ ProjectCompile::ProjectCompile() {
 }
 
 void ProjectCompile::LoadProject() {
-    /*::std::filesystem::path directory(ProjectManager::projectPath);
+    ::std::filesystem::path directory(ProjectManager::GetProjectPath());
 
     if (!::std::filesystem::exists(directory)) {
-        std::cout << "Error ��Ŀ����·������ȷ!!" << std::endl;
+        std::cout << "Error 项目加载路径不正确!!" << std::endl;
+    }
+    if (!std::filesystem::is_directory(directory))
+    {
+        std::cout << "Error 项目加载路径不正确2!!" << std::endl;
     }
 
     std::vector<std::string> paths;
@@ -60,16 +64,15 @@ void ProjectCompile::LoadProject() {
     }
     
     if (paths.empty()) {
-        std::cout << "Error ��Ŀ����·��û���ҵ�sp�ļ�!!" << std::endl;
+        std::cout << "Error 项目加载路径没有找到sp文件!!" << std::endl;
     }
 
     if (!::std::filesystem::exists(paths[0])) {
-        std::cout << "Error ��Ŀ����·������ȷ!!" << std::endl;
+        std::cout << "Error 项目加载路径不正确!!" << std::endl;
         return;
-    }*/
+    }
+    std::string path = paths[0];
 
-    std::string path = "";
-    
     s_ProjectFile = new FileMeta(path);
 
     std::ifstream file(path, std::ios::binary);
