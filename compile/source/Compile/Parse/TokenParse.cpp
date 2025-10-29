@@ -110,67 +110,67 @@ Node* TokenParse::AddSymbol(Token& token) {
 
 void TokenParse::AddPlusMinus(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level2_LinkOp;
+    node->SetPriority( SignComputePriority::Level2_LinkOp );
 }
 
 void TokenParse::AddDoublePlusMinus(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level2_LinkOp;
+    node->SetPriority(SignComputePriority::Level2_LinkOp);
 }
 
 void TokenParse::AddLeftToRightEqualSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level11_Assign;
+    node->SetPriority(SignComputePriority::Level11_Assign);
 }
 
 void TokenParse::AddBitMoveOperatorSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level5_BitMoveOp;
+    node->SetPriority(SignComputePriority::Level5_BitMoveOp);
 }
 
 void TokenParse::AddDXCompareSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level6_Compare;
+    node->SetPriority(SignComputePriority::Level6_Compare);
 }
 
 void TokenParse::AddCompareNotOrEqualSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level7_EqualAb;
+    node->SetPriority(SignComputePriority::Level7_EqualAb);
 }
 
 void TokenParse::AddBitAndSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level8_BitAndOp;
+    node->SetPriority(SignComputePriority::Level8_BitAndOp);
 }
 
 void TokenParse::AddBitXOrOpSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level8_BitXOrOp;
+    node->SetPriority(SignComputePriority::Level8_BitXOrOp);
 }
 
 void TokenParse::AddBitOrOpSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level8_BitOrOp;
+    node->SetPriority(SignComputePriority::Level8_BitOrOp);
 }
 
 void TokenParse::AddHightComputeSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level3_Hight_Compute;
+    node->SetPriority(SignComputePriority::Level3_Hight_Compute);
 }
 
 void TokenParse::AddSingleSign(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level2_LinkOp;
+    node->SetPriority(SignComputePriority::Level2_LinkOp);
 }
 
 void TokenParse::AddAndCompareSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level9_And;
+    node->SetPriority(SignComputePriority::Level9_And);
 }
 
 void TokenParse::AddOrCompareSymbol(Token& code) {
     auto node = AddSymbol(code);
-    node->priority = SignComputePriority::Level9_Or;
+    node->SetPriority(SignComputePriority::Level9_Or );
 }
 
 void TokenParse::ParseToken() {

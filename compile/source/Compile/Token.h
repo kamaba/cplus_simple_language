@@ -134,7 +134,8 @@ namespace Compile {
         virtual ~Token() = default;
 
         // 属性访问器
-        std::string GetHashCodeString() { return m_HashCode; }
+        std::string GetHashCodeString() { return std::to_string(m_HashCode); }
+        uint32_t GetHashCode() { return m_HashCode; }
         std::string GetPath() const { return m_Path; }
         ETokenType GetType() const { return m_Type; }
         MultiData GetLexeme() const { return m_Lexeme; }
@@ -166,7 +167,7 @@ namespace Compile {
         std::string ToConstString() const;
 
     private:
-        std::string m_HashCode;             //hashCode
+        uint32_t m_HashCode;             //hashCode
         std::string m_Path;               //文件路径
         ETokenType m_Type;               //标记类型
         MultiData m_Lexeme;            //标记值

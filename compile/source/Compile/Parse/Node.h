@@ -59,8 +59,6 @@ enum class ENodeType {
 using namespace std;
 class Node {
 public:
-    int priority = -1;
-    bool isDel = false;
 
     Token* token = nullptr;              // 
     Token* endToken = nullptr;           // )}]
@@ -87,7 +85,11 @@ public:
     const ::std::vector<Node*>& GetExtendLinkNodeList() const { return m_ExtendLinkNodeList; }
     ::std::vector<Node*> GetLinkNodeList(bool isIncludeSelf = true);
     ::std::vector<Token*> GetLinkTokenList();
-    
+
+    int GetPriority() { return m_Priority; }
+    void SetPriority(int _pri) { m_Priority = _pri; }
+    int GetIsDel() { return m_IsDel; }
+    void SetIsDel(bool _del) { m_IsDel = _del; }
     Node* GetParseNode(int index = 1, bool isAddIndex = true);
     void AddLinkNode(Node* node);
     void SetLinkNode(const ::std::vector<Node*>& nodeList);
@@ -98,6 +100,8 @@ public:
     ::std::string ToFormatString() const;
 
 private:
+    int m_Priority = -1;
+    bool m_IsDel = false;
     void SetLinkNode(::std::vector<Node*>&& nodeList);
 };
 

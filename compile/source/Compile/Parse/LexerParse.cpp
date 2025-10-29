@@ -25,13 +25,8 @@ LexerParse::LexerParse(const std::string& path, const std::string& buffer)
 }
 std::vector<Token*> LexerParse::GetListTokensWidthEnd() 
 {
-    std::vector<Token*> withEndList;
-    for (auto& token : m_ListTokens) {
-        withEndList.push_back(new Token(*token));
-    }
-    std::string endchar;
-    endchar = (END_CHAR);
-    Token* newtoken = new Token(m_Path, ETokenType::Finished, endchar, m_SourceLine, m_SourceChar );
+    std::vector<Token*> withEndList= std::vector<Token*>(m_ListTokens);
+    Token* newtoken = new Token(m_Path, ETokenType::Finished, END_CHAR, m_SourceLine, m_SourceChar );
     withEndList.push_back(newtoken);
     return withEndList;
 }
@@ -897,13 +892,17 @@ void LexerParse::ParseToTokenList() {
                 num++;
             }
 
-            auto spacetoken = std::make_unique<Token>(m_Path, ETokenType::Space, "", bline, bchar);
-         /*   spacetoken->SetSrouceEnd(m_SourceLine, m_SourceChar);
+            auto spacetoken = new Token(m_Path, ETokenType::Space, "", bline, bchar);
+            spacetoken->SetSourceEnd(m_SourceLine, m_SourceChar);
             spacetoken->SetExtend(num);
-            m_ListTokens.push_back(std::move(spacetoken));*/
+            m_ListTokens.push_back(spacetoken);
         } else if (m_CurChar == '\t' || m_CurChar == '\r') {
             m_Index++;
-            m_SourceChar++;
+            auto spacetoken = new Token(m_Path, ETokenType::Space, "", m_SourceLine, m_SourceChar);
+            m_SourceChar += 4;
+            spacetoken->SetSourceEnd(m_SourceLine, m_SourceChar);
+            spacetoken->SetExtend(m_CurChar);
+            m_ListTokens.push_back(spacetoken);
             continue;
         } else if (m_CurChar == '.') {
             AddToken(ETokenType::Period, ".");

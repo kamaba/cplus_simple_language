@@ -12,6 +12,7 @@
 namespace SimpleLanguage {
 namespace Compile {
 
+    static uint32_t s_HashCodeAdd = 1000000;
     Token::Token()
         : m_Type(ETokenType::None)
         , m_SourceBeginLine(0)
@@ -23,7 +24,12 @@ namespace Compile {
     }
 
     Token::Token(const std::string& path, ETokenType tokenType, const std::string& lexeme,
-        int sourceLine, int sourceChar, EType extendType )
+        int sourceLine, int sourceChar, EType extendType ) : m_Path(path)
+        , m_Type(tokenType)
+        , m_SourceBeginLine(sourceLine )
+        , m_SourceBeginChar(sourceChar)
+        , m_SourceEndLine(0)
+        , m_SourceEndChar(0)
     {
         CreateHashCode();
     }
@@ -31,7 +37,7 @@ namespace Compile {
         int sourceLine, int sourceChar )
         : m_Path(path)
         , m_Type(tokenType)
-        , m_SourceBeginLine(sourceLine + 1)
+        , m_SourceBeginLine(sourceLine )
         , m_SourceBeginChar(sourceChar)
         , m_SourceEndLine(0)
         , m_SourceEndChar(0)
@@ -72,11 +78,7 @@ namespace Compile {
     }
     void Token::CreateHashCode()
     {        
-        std::srand(1000);
-        std::stringstream ss;
-        ss << std::rand();
-        ss << std::rand();
-        m_HashCode = ss.str();
+        m_HashCode = s_HashCodeAdd++;
     }
     void Token::SetSourceEnd(int endSourceLine, int endSourceChar)
     {

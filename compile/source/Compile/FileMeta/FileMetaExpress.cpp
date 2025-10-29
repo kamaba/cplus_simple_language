@@ -178,7 +178,7 @@ FileMetaParTerm::FileMetaParTerm(FileMeta* fm, Node* node, EExpressType expressT
             auto cnode = nodeList[0];
             if (cnode->nodeType == ENodeType::ConstValue) {     // Fun( 1 )
                 auto fileMetaConstValueTerm = new FileMetaConstValueTerm(m_FileMeta, cnode->token);
-                fileMetaConstValueTerm->SetPriority(cnode->priority);
+                fileMetaConstValueTerm->SetPriority(cnode->GetPriority());
                 AddFileMetaTerm(fileMetaConstValueTerm);
             } else if (cnode->nodeType == ENodeType::Bracket) {       // Fun( [1] )
                 auto fileMetaBracketTerm = new FileMetaBracketTerm(m_FileMeta, cnode);

@@ -86,7 +86,8 @@ void ProjectCompile::LoadProject() {
     s_LexerParse = new LexerParse(path, s_FileContentString);
     s_LexerParse->ParseToTokenList();
 
-    s_TokenParse = new TokenParse(s_ProjectFile, s_LexerParse->GetListTokensWidthEnd());
+    const std::vector<Token*> vtoken = s_LexerParse->GetListTokensWidthEnd();
+    s_TokenParse = new TokenParse(s_ProjectFile, vtoken);
     s_TokenParse->BuildStruct();
 
     s_ProjectBuild = new StructParse(s_ProjectFile, s_TokenParse->GetRootNode());
