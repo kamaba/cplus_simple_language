@@ -87,7 +87,7 @@ Node* TokenParse::AddKeyNode(Token& token) {
     node->nodeType = ENodeType::Key;
     m_CurrentNode->AddChild(node);
     m_TokenIndex++;
-    return new Node(&token);
+    return node;
 }
 
 Node* TokenParse::AddAtOpSign(Token& token) {
@@ -105,7 +105,7 @@ Node* TokenParse::AddSymbol(Token& token) {
     node->nodeType = ENodeType::Symbol;
     m_CurrentNode->AddChild(node);
     m_TokenIndex++;
-    return new Node(&token);
+    return node;
 }
 
 void TokenParse::AddPlusMinus(Token& code) {

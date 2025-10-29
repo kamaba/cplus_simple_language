@@ -45,9 +45,9 @@ bool FileMetaClass::Parse() {
 
     Node* angleNode = nullptr;
     Node* lastNode = nullptr;
-    int addCount = 0;
+    size_t addCount = 0;
     
-    while (addCount < static_cast<int>(m_NodeList.size())) {
+    while (addCount < m_NodeList.size() ) {
         Node* cnode = m_NodeList[addCount++];
 
         if (cnode->nodeType == SimpleLanguage::Compile::ENodeType::IdentifierLink) {

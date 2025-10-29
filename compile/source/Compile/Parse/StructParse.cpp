@@ -199,14 +199,14 @@ void StructParse::ParseRootNodeToFileMeta() {
         }
     }
 
-    auto fileCode = std::move(m_CurrentNodeInfoStack.top());
+    ParseCurrentNodeInfo* fileCode = m_CurrentNodeInfoStack.top();
     m_CurrentNodeInfoStack.pop();
 
     if (fileCode->parseType == EParseNodeType::File) {
 #ifdef DEBUG
         m_FileMeta->SetDeep(0);
 #endif
-        string log1 = "";
+        string log1 = "Code";
         Log::AddProcess(EProcess::ParseNode, EError::None, log1);
     } else {
         Log::AddProcess(EProcess::ParseNode, EError::ParseFileError, "解析出现错误 ParseFile : " + std::to_string(static_cast<int>(GetCurrentNodeInfo()->parseType)));
@@ -327,7 +327,7 @@ void StructParse::ParseNamespace(Node* pnode) {
         m_FileMeta->AddFileSearchNamespace(fmn);
     }
 }
-// ֻ���� ȫ���ļ��µ� namespace �� ȫ���ļ�class
+// ֻ只解析 在全局文件下的 namespace 下 的 还有就是文件class
 void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
     Node* braceNode = pnode->blockNode;
     std::vector<Node*> nodeList;
@@ -341,25 +341,24 @@ void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
         curNode = pnode->childList[index++];
         pnode->parseIndex = index;
         
-        Node* newnode = new Node(*curNode);
         if (curNode->nodeType == ENodeType::Key) {
             if (curNode->token->GetType() == ETokenType::Namespace) {
                 isClass = 2;
             } else if (curNode->token->GetType() == ETokenType::Class) {
                 isClass = 1;
             }
-            nodeList.push_back(newnode);
+            nodeList.push_back(curNode);
         } else if (curNode->nodeType == ENodeType::LeftAngle) { // Class1<T> 
-            nodeList.push_back(newnode);
+            nodeList.push_back(curNode);
         } else if (curNode->nodeType == ENodeType::RightAngle) { // Class1<T>   Func<T>( T t );  array<int> arr1;
-            nodeList.push_back(newnode);
+            nodeList.push_back(curNode);
         } else if (curNode->nodeType == ENodeType::Comma) {
-            nodeList.push_back(newnode);
+            nodeList.push_back(curNode);
         } else if (curNode->nodeType == ENodeType::IdentifierLink) { // Class1
-            nodeList.push_back(newnode);
+            nodeList.push_back(curNode);
         } else if (curNode->nodeType == ENodeType::LineEnd) {
             nextNode = nullptr;
-            if (index < static_cast<int>(pnode->childList.size())) {
+            if (index < pnode->childList.size() ) {
                 nextNode = pnode->childList[index];
             }
             if (nextNode && nextNode->nodeType == ENodeType::Brace) {
@@ -379,7 +378,7 @@ void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
             break;
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error ����ʱ�ڽ���Classʱ���ִ��� �﷨--------------------" + 
+                "Error 不允许在解释Class的时候，有错误 的语法--------------------" + 
                 (curNode->token ? curNode->token->ToLexemeAllString() : "null"));
         }
     }
@@ -403,11 +402,11 @@ void StructParse::ParseNamespaceOrTopClass(Node* pnode) {
                 ParseNamespaceOrTopClass(pnode);
             } else {
                 Log::AddInStructFileMeta(EError::None, 
-                    "Error ���� namespace A.B{}�ĸ�ʽ ֻ����һ����ʶ��!1");
+                    "Error 对于 namespace A.B{}的格式 多了一个参数!1");
             }
         } else {
             Log::AddInStructFileMeta(EError::None, 
-                "Error û�з���Class����Namespace�Ĺؼ���!");
+                "Error 没有发现是Class还是Namespace的关键字!");
         }
     }
 }

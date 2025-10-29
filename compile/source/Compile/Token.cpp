@@ -31,6 +31,7 @@ namespace Compile {
         , m_SourceEndLine(0)
         , m_SourceEndChar(0)
     {
+        m_Lexeme = MultiData(lexeme);
         CreateHashCode();
     }
     Token::Token(const std::string& path, ETokenType tokenType, const MultiData& lexeme,

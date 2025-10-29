@@ -29,7 +29,7 @@ public:
     void ParseToTokenList();
 
 private:
-    const unsigned short END_CHAR = 0xFF; // ½áÎ²×Ö·û
+    const char END_CHAR = 0xFF; // ½áÎ²×Ö·û
     
     char ReadChar();
     char PeekChar();
