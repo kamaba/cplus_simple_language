@@ -489,18 +489,217 @@ void StructParse::ParseDataBracketNode(Node* bracketNode) {
     }
 }
 
-void StructParse::ParseDataNode(Node* pnode) {
-    auto nodeList = GetAllNodeToSemiColon(pnode);
-    auto fmmd = new FileMetaMemberData(m_FileMeta, nodeList);
-    AddParseDataInfo(fmmd);
-    
-    for (size_t i = 0; i < fmmd->GetFileMetaMemberData().size(); i++) {
-        auto cfmmd = fmmd->GetFileMetaMemberData()[i];
-        if (cfmmd->GetMemberDataType() == FileMetaMemberData::EMemberDataType::Data) {
-            //ParseDataBracketNode(cfmmd->node);
+void StructParse::ParseDataNode(Node* pnode) {            
+    Node* curParentNode = pnode;
+    int index = curParentNode->parseIndex;
+
+    bool isParseEnd = false;
+    Node* assignNode = nullptr;
+    std::vector<Node*> frontList;
+    std::vector<Node*> backList;
+    for (index = curParentNode->parseIndex; index < static_cast<int>(curParentNode->childList.size());) {
+        auto* curNode = curParentNode->childList[index++];
+        Node* nextNode = nullptr;
+        if (index < static_cast<int>(curParentNode->childList.size())) {
+            nextNode = curParentNode->childList[index];
+        }
+
+        if (curNode->nodeType == ENodeType::IdentifierLink) {  //Class1
+            if (assignNode == nullptr) {
+                frontList.push_back(curNode);
+            }
+            else {
+                backList.push_back(curNode);
+
+                for( int j = index; j < static_cast<int>(curParentNode->childList.size()); ) {
+                    auto* next2Node = curParentNode->childList[j++];
+                    if (next2Node == nullptr) continue;
+
+                    if (next2Node->nodeType == ENodeType::Par) {   //Class1()
+                        curNode->parNode = next2Node;
+                        index = j;
+                        isParseEnd = true;
+                        if ( j < static_cast<int>(curParentNode->childList.size()) ) {
+                            auto* next3Node = curParentNode->childList[j];
+                            if (next3Node == nullptr) continue;
+                            if( next3Node->nodeType == ENodeType::LineEnd ) {
+                                if( j + 1 < static_cast<int>(curParentNode->childList.size()) ) {
+                                    auto* next4Node = curParentNode->childList[j + 1];
+                                    if (next4Node == nullptr) continue;
+                                    if (next4Node->nodeType == ENodeType::Brace) {
+                                        curNode->blockNode = next4Node;
+                                        isParseEnd = true;
+                                        index = j + 2;
+                                        break;
+                                    }
+                                    else {
+                                        isParseEnd = true;
+                                        index = j + 1;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (next2Node->nodeType == ENodeType::Brace) {
+                        curNode->blockNode = next2Node;
+                        isParseEnd = true;
+                        index = j + 1;
+                        break;
+                    }
+                    else if (next2Node->nodeType == ENodeType::Brace) {
+                        curNode->blockNode = next2Node;
+                        index = j;
+                        isParseEnd = true;
+                        break;
+                    }
+                    if (ProjectManager::GetIsUseForceSemiColonInLineEnd()) {
+                        if (next2Node->nodeType == ENodeType::SemiColon) {
+                            isParseEnd = true;
+                        }
+                    }
+                    else {
+                        if (next2Node->nodeType == ENodeType::SemiColon) {
+                            isParseEnd = true;
+                        }
+                        else if (next2Node->nodeType == ENodeType::LineEnd) {
+                            isParseEnd = true;
+                        }
+                        else {
+                            Log::AddInStructFileMeta(EError::None, "Error Data解析中，不能使用超出自动换行!!" + (curNode->token ? curNode->token->ToLexemeAllString() : "null"));
+                        }
+                    }
+                }
+
+                if (isParseEnd) {
+                    auto fmmd = new FileMetaMemberData(m_FileMeta, frontList, assignNode, backList, true, FileMetaMemberData::EMemberDataType::Class);
+                    frontList.clear();
+                    backList.clear();
+                    assignNode = nullptr;
+                    isParseEnd = false;
+                    AddParseDataInfo(fmmd);
+                    m_CurrentNodeInfoStack.pop();
+                }
+            }
+        }
+        else if (curNode->nodeType == ENodeType::Symbol) {
+            if( assignNode == nullptr ) {
+                frontList.push_back(curNode);
+            }
+            else {
+                backList.push_back(curNode);
+            }
+            continue;
+        }
+        else if (curNode->nodeType == ENodeType::Assign) { //varname = 1/"1"/-20/{}/[]/Class1(){}/Data1(){}
+            assignNode = curNode;
+            Node* blockNode = nullptr;
+
+            if( nextNode == nullptr ) {
+                Log::AddInStructFileMeta(EError::None, "Error 左边变量名不能为空...");
+                continue;
+            }
+
+            int parseType = 0;
+            //=号后面第一位是identifier 还是 constValue值， 如果是identifier，只支持 \n{}  \
+            // a = 10 常量值  
+            if (nextNode->nodeType == ENodeType::ConstValue) 
+            { 
+                index++;
+                backList.push_back(nextNode);
+            }
+            else if(nextNode->nodeType == ENodeType::IdentifierLink ) {
+            }
+            else if (nextNode->nodeType == ENodeType::Symbol && 
+                (nextNode->token->GetType() == ETokenType::Plus
+                    || nextNode->token->GetType() == ETokenType::Minus ) ) {
+                if( index + 1 < static_cast<int>(curParentNode->childList.size()) ) {
+                    auto* next2Node = curParentNode->childList[index + 1];
+                    if( next2Node->nodeType == ENodeType::ConstValue ) {
+                        index+=2;
+                        backList.push_back(nextNode);
+                        backList.push_back(next2Node);
+                    }
+                    else {
+                        Log::AddInStructFileMeta(EError::None, "Error ");
+                    }
+                }
+                else {
+                    Log::AddInStructFileMeta(EError::None, "Error ");
+                }
+            }
+            else if(nextNode->nodeType == ENodeType::Brace ) {
+                index++;
+                parseType = 1;
+                blockNode = nextNode;
+            }
+            else if( nextNode->nodeType == ENodeType::Bracket ) {
+                index++;
+                parseType = 2;
+                blockNode = nextNode;
+            }
+            else if (nextNode->nodeType == ENodeType::LineEnd) {
+                index++;
+                auto* next2Node = index < static_cast<int>(curParentNode->childList.size()) ? curParentNode->childList[index] : nullptr;
+                // a = /n{}  a = /n[]
+                if (next2Node && next2Node->nodeType == ENodeType::Brace) {
+                    index++;
+                    parseType = 1;
+                    blockNode = next2Node;
+                }
+                else if (next2Node && next2Node->nodeType == ENodeType::Bracket) {
+                    index++;
+                    parseType = 2;
+                    blockNode = next2Node;
+                }
+                else {
+                    Log::AddInStructFileMeta(EError::None, "Error ");
+                }
+            }
+            else {
+                Log::AddInStructFileMeta(EError::None, "Error ");
+            }
+
+            if( parseType > 0 ) {
+                FileMetaMemberData::EMemberDataType emdt = parseType == 1 ? FileMetaMemberData::EMemberDataType::Data : FileMetaMemberData::EMemberDataType::Array;
+                auto fmmd = new FileMetaMemberData(m_FileMeta, frontList, assignNode, backList, true, emdt);
+                frontList.clear();
+                isParseEnd = false;
+                assignNode = nullptr;
+                AddParseDataInfo(fmmd);
+                if( parseType == 1 ) {
+                    ParseDataNode(blockNode);
+                }
+                else if( parseType == 2 ) {
+                    ParseDataBracketNode(blockNode);
+                }
+                m_CurrentNodeInfoStack.pop();
+            }
+            continue;
+        }
+        else if (curNode->nodeType == ENodeType::LineEnd) {
+            isParseEnd = true;
+        }
+        else if (curNode->nodeType == ENodeType::SemiColon) {
+            isParseEnd = true;
+        }
+        else {
+            Log::AddInStructFileMeta(EError::None, "Error 解析时出现 解析Data数据时，不支持的语法错误!" + (curNode->token ? curNode->token->ToLexemeAllString() : "null") );
+        }
+
+        if (isParseEnd) {
+            if (frontList.size() > 0) {
+                auto fmmd = new FileMetaMemberData(m_FileMeta, frontList, assignNode, backList, true, FileMetaMemberData::EMemberDataType::ConstValue );
+                frontList.clear();
+                backList.clear();
+                assignNode = nullptr;
+                AddParseDataInfo(fmmd);
+                m_CurrentNodeInfoStack.pop();
+            }
+            isParseEnd = false;
         }
     }
-    m_CurrentNodeInfoStack.pop();
+    curParentNode->parseIndex = index;            
 }
 
 void StructParse::ParseEnumNode(Node* pnode) {
@@ -510,10 +709,22 @@ void StructParse::ParseEnumNode(Node* pnode) {
 }
 
 void StructParse::ParseSyntax(Node* pnode) {
-    auto fms = HandleCreateFileMetaSyntaxByPNode(pnode);
-    if (fms != nullptr) {
-        AddParseSyntaxNodeInfo(fms, false);
+    Node* node = pnode->GetParseCurrent();
+    if (node == nullptr) return;
+
+    if (node->nodeType == ENodeType::Brace) {
+        auto cps = new FileMetaBlockSyntax(m_FileMeta, node->token, node->endToken);
+
+        AddParseSyntaxNodeInfo(cps, true);
+
+        m_CurrentNodeInfoStack.pop();
+
+        pnode->parseIndex++;
     }
+    else {
+        HandleCreateFileMetaSyntaxByPNode(pnode);
+    }
+    ParseSyntax(pnode);
 }
 
 std::vector<Node*> StructParse::HandleBeforeNode(Node* node) {
