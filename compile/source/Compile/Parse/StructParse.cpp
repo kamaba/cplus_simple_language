@@ -13,6 +13,8 @@
 #include "../FileMeta/FileMetaMemberVariable.h"
 #include "../FileMeta/FileMetaNamespace.h"
 #include "../FileMeta/FileMetaSyntax.h"
+#include "../FileMeta/FileMetaCommon.h"
+#include "../FileMeta/FileMetatUtil.h"
 #include "../FileMeta/FileMetaGlobalSyntax.h"
 #include "Node.h"
 #include "../../Debug/Log.h"
@@ -1336,8 +1338,8 @@ FileMetaSyntax* StructParse::CrateFileMetaSyntaxNoKey(const std::vector<Node*>& 
     Token* varToken = nullptr;
     Token* dataToken = nullptr;
     Token* nameToken = nullptr;
-    // FileMetaClassDefine* classRef = nullptr;
-    // FileMetaCallLink* varRef = nullptr;
+    Compile::FileMetaClassDefine* classRef = nullptr;
+    Compile::FileMetaCallLink* varRef = nullptr;
 
     Node parseNode(nullptr);
     parseNode.childList = beforeNodeList;
@@ -1397,25 +1399,21 @@ FileMetaSyntax* StructParse::CrateFileMetaSyntaxNoKey(const std::vector<Node*>& 
     }
     else if (defineNodeList.size() == 1) {
         nameToken = defineNodeList[0]->token;
-        // varRef = new FileMetaCallLink(m_FileMeta, defineNodeList[0]);
+        varRef = new FileMetaCallLink(m_FileMeta, defineNodeList[0]);
     }
     else if (defineNodeList.size() == 2) {
         if (varToken != nullptr || dynamicToken != nullptr || dataToken != nullptr) {
             nameToken = defineNodeList[1]->token;
-            // varRef = new FileMetaCallLink(m_FileMeta, defineNodeList[1]);
+            varRef = new FileMetaCallLink(m_FileMeta, defineNodeList[1]);
         }
         else {
-            // classRef = new FileMetaClassDefine(m_FileMeta, defineNodeList[0]);
+            classRef = new FileMetaClassDefine(m_FileMeta, defineNodeList[0]);
             auto* node2 = defineNodeList[1];
-            // if (node2->linkTokenList.size() != 1) {
-            //     Log::AddInStructFileMeta(EError::None, "Error 解析时出现错误，只能有一个字符串!!");
-            //     return nullptr;
-            // }
             nameToken = node2->token;
         }
     }
 
-    // FileMetaBaseTerm* fme = nullptr;
+    FileMetaBaseTerm* fme = nullptr;
     if (assignNode != nullptr && afterNodeList.size() > 0) {
         if (afterNodeList[0]->nodeType == ENodeType::Key
             && afterNodeList[0]->token->GetType() != ETokenType::This
@@ -1424,9 +1422,48 @@ FileMetaSyntax* StructParse::CrateFileMetaSyntaxNoKey(const std::vector<Node*>& 
             Log::AddInStructFileMeta(EError::None, "Error 暂不支持 a = if/switch{}语法");
         }
     }
-    
-    // 这里需要实现具体的语法创建逻辑
-    // 由于缺少一些依赖类，暂时返回nullptr
+
+    if (fme == nullptr) {
+        fme = FileMetatUtil::CreateFileMetaExpress(m_FileMeta, afterNodeList, EExpressType::Common);
+    }
+
+    if (assignNode != nullptr) {
+        if (nameToken == nullptr) {
+            Log::AddInStructFileMeta(EError::None, "Error 作为赋值的时候，名字不能为空!!");
+            return nullptr;
+        }
+        if (classRef != nullptr) {
+            auto* fmdvs = new FileMetaDefineVariableSyntax(m_FileMeta, classRef,
+                nameToken, assignNode->token, staticToken, fme);
+            return fmdvs;
+        }
+        if (varRef != nullptr) {
+            auto* fms = new FileMetaOpAssignSyntax(varRef, assignNode->token, dynamicToken, dataToken, varToken, fme, true);
+            return fms;
+        }
+    }
+    else if (opAssignNode != nullptr) {
+        if (varRef == nullptr) {
+            Log::AddInStructFileMeta(EError::None, "Error 作为赋值的时候，名字不能为空!!");
+            return nullptr;
+        }
+        auto* fms = new FileMetaOpAssignSyntax(varRef, opAssignNode->token, dynamicToken, dataToken, varToken, fme);
+        return fms;
+    }
+    else {
+        if (nameToken == nullptr) {
+            Log::AddInStructFileMeta(EError::None, "Error 作为赋值的时候，名字不能为空!!");
+            return nullptr;
+        }
+        if (classRef != nullptr) {
+            auto* fmdvs = new FileMetaDefineVariableSyntax(m_FileMeta, classRef, nameToken, staticToken, nullptr, nullptr);
+            return fmdvs;
+        }
+        else {
+            auto* fmcs = new FileMetaCallSyntax(varRef);
+            return fmcs;
+        }
+    }
     return nullptr;
 }
 
