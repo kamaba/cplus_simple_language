@@ -19,12 +19,98 @@
 #include "../../Project/ProjectManager.h"
 #include "StructParse.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace SimpleLanguage::Debug;
 using namespace SimpleLanguage::Project;
 
 namespace SimpleLanguage {
 namespace Compile {
+
+// SyntaxNodeStruct 方法实现
+void StructParse::SyntaxNodeStruct::SetMainKeyNode(Node* _keyNode) {
+    keyNode = _keyNode;
+    tokenType = _keyNode->token->GetType();
+    eSyntaxNodeType = ESyntaxNodeStructType::KeySyntax;
+}
+
+void StructParse::SyntaxNodeStruct::AddContent(Node* node) {
+    if (tokenType == ETokenType::If
+        || tokenType == ETokenType::ElseIf
+        || tokenType == ETokenType::Switch
+        || tokenType == ETokenType::For
+        || tokenType == ETokenType::While
+        || tokenType == ETokenType::DoWhile
+        || tokenType == ETokenType::Return
+        || tokenType == ETokenType::Transience
+        || tokenType == ETokenType::Case) {
+        keyContent.push_back(node);
+    }
+    else if (tokenType == ETokenType::Else
+        || tokenType == ETokenType::Next
+        || tokenType == ETokenType::Break
+        || tokenType == ETokenType::Continue) {
+        Log::AddInStructFileMeta(EError::None, "Error 解析Else时，不能包含任何代码" + (node->token ? node->token->ToLexemeAllString() : "null"));
+    }
+    else {
+        commonContent.push_back(node);
+        eSyntaxNodeType = ESyntaxNodeStructType::CommonSyntax;
+    }
+}
+
+void StructParse::SyntaxNodeStruct::SetBraceNode(Node* node) {
+    blockNode = node;
+    if (tokenType == ETokenType::If
+        || tokenType == ETokenType::ElseIf
+        || tokenType == ETokenType::Else
+        || tokenType == ETokenType::Switch
+        || tokenType == ETokenType::For
+        || tokenType == ETokenType::While || tokenType == ETokenType::DoWhile
+        || tokenType == ETokenType::Case
+        || tokenType == ETokenType::Default
+        || tokenType == ETokenType::Return
+        || tokenType == ETokenType::Transience
+        || tokenType == ETokenType::Label
+        || tokenType == ETokenType::Goto) {
+    }
+    else {
+        Log::AddInStructFileMeta(EError::None, "Error 解析{}时，关键字不支持这种语法结构" + (node->token ? node->token->ToLexemeAllString() : "null"));
+    }
+}
+
+bool StructParse::SyntaxNodeStruct::IsLineEndBreak() {
+    if (tokenType == ETokenType::If
+        || tokenType == ETokenType::ElseIf
+        || tokenType == ETokenType::Else
+        || tokenType == ETokenType::Switch
+        || tokenType == ETokenType::For
+        || tokenType == ETokenType::While
+        || tokenType == ETokenType::DoWhile
+        || tokenType == ETokenType::Label) {
+        if (blockNode == nullptr) {
+            return false;
+        }
+        return !ProjectManager::GetIsUseForceSemiColonInLineEnd();
+    }
+    return true;
+}
+
+// Condition 方法实现
+bool StructParse::Condition::IsMatchTokenType(ETokenType tokenType) {
+    return std::find(eTokenTypeList.begin(), eTokenTypeList.end(), tokenType) != eTokenTypeList.end();
+}
+
+StructParse::Condition::Condition(ETokenType tokenType) {
+    eTokenTypeList.push_back(tokenType);
+    if (tokenType == ETokenType::Else || tokenType == ETokenType::ElseIf) {
+        isFirstKey = true;
+    }
+    isCheck = true;
+}
+
+void StructParse::Condition::AddTokenTypeList(ETokenType tokenType) {
+    eTokenTypeList.push_back(tokenType);
+}
 
 // ParseCurrentNodeInfo ���캯��ʵ��
 StructParse::ParseCurrentNodeInfo::ParseCurrentNodeInfo(FileMeta* cf) 
@@ -797,45 +883,157 @@ bool StructParse::IsCommonExpressNode(Node* node) {
             return false;
     }
 }
-
 void StructParse::_HandleExpressNodeProcess(Node* node, Node* inputFinaleNode) {
-    if (node == nullptr) {
+    if (node->parseIndex < 0 || node->parseIndex >= static_cast<int>(node->childList.size())) {
         return;
     }
-    
-    // ��������ʽ�ڵ�
-    for (size_t i = 0; i < node->childList.size(); i++) {
-        Node* child = node->childList[i];
-        if (child != nullptr) {
-            // �����Ƕȱ���ʽ�ڵ�
-            if (child->nodeType == ENodeType::LeftAngle || child->nodeType == ENodeType::RightAngle) {
-                HandleAngleExpressNode(child, node);
-            }
-            
-            // �ݹ鴦���ӽڵ�
-            _HandleExpressNodeProcess(child, inputFinaleNode);
-        }
-    }
-}
 
-void StructParse::HandleAngleExpressNode(Node* node, Node* parentNode) {
-    if (node == nullptr || parentNode == nullptr) {
+    int index = node->parseIndex;
+    Node* currentExpressNode = node->GetParseCurrent();
+    if (inputFinaleNode == nullptr) {
+        node->parseIndex++;
+        _HandleExpressNodeProcess(node, currentExpressNode);
         return;
     }
-    
-    // �����Ƕȱ���ʽ�ڵ㣨ģ����� <T>��
-    if (node->nodeType == ENodeType::LeftAngle) {
-        // ������ǶȽڵ�
-        for (size_t i = 0; i < node->childList.size(); i++) {
-            Node* child = node->childList[i];
-            if (child != nullptr && child->nodeType == ENodeType::IdentifierLink) {
-                // ����ģ�����
-                // �����������ģ������Ĵ����߼�
+
+    Node* finalNode = inputFinaleNode->GetFinalNode();
+    if (finalNode && (finalNode->nodeType == ENodeType::IdentifierLink
+        || finalNode->token->GetType() == ETokenType::New)) {
+        if (currentExpressNode->nodeType == ENodeType::LeftAngle) {
+            HandleAngleExpressNode(node, finalNode);
+            _HandleExpressNodeProcess(node, finalNode);
+            return;
+        }
+        else if (currentExpressNode->nodeType == ENodeType::Par) {
+            node->parseIndex++;
+            finalNode->parNode = currentExpressNode;
+            currentExpressNode->SetIsDel( true );
+            if (currentExpressNode->GetExtendLinkNodeList().size() > 0) {
+                finalNode->SetLinkNode(currentExpressNode->GetExtendLinkNodeList() );
+                _HandleExpressNodeProcess(node, currentExpressNode);
+                return;
+            }
+            else {
+                _HandleExpressNodeProcess(currentExpressNode, nullptr);
+                DelHandleNostList(currentExpressNode);
+                _HandleExpressNodeProcess(node, finalNode);
+                return;
             }
         }
-    } else if (node->nodeType == ENodeType::RightAngle) {
-        // �����ҽǶȽڵ�
-        // �����������ģ����������Ĵ����߼�
+        else if (currentExpressNode->nodeType == ENodeType::Brace) {
+            node->parseIndex++;
+            finalNode->blockNode = currentExpressNode;
+            currentExpressNode->SetIsDel( true );
+            _HandleExpressNodeProcess(currentExpressNode, nullptr);
+            return;
+        }
+        else if (currentExpressNode->nodeType == ENodeType::Bracket) {
+            node->parseIndex++;
+            finalNode->bracketNode = currentExpressNode;
+            currentExpressNode->SetIsDel(true);
+
+            if (currentExpressNode->GetExtendLinkNodeList().size() > 0) {
+                finalNode->SetLinkNode(currentExpressNode->GetExtendLinkNodeList() );
+                _HandleExpressNodeProcess(currentExpressNode, nullptr);
+                return;
+            }
+            else {
+                _HandleExpressNodeProcess(currentExpressNode, nullptr);
+                return;
+            }
+        }
+    }
+    node->parseIndex++;
+    _HandleExpressNodeProcess(node, currentExpressNode);
+}
+void StructParse::HandleAngleExpressNode(Node* node, Node* parentNode) {
+    while (node->parseIndex < static_cast<int>(node->childList.size())) {
+        Node* cnode = node->childList[node->parseIndex];
+        if (cnode->nodeType == ENodeType::LeftAngle) {
+            cnode->SetIsDel( true );
+            node->parseIndex++;
+            parentNode->angleNode = cnode;
+        }
+        else if (cnode->nodeType == ENodeType::RightAngle) {
+            cnode->SetIsDel( true );
+            parentNode->angleNode->endToken = cnode->token;
+            node->parseIndex++;
+            if (cnode->GetExtendLinkNodeList().size() > 0) {
+                parentNode->SetLinkNode(cnode->GetExtendLinkNodeList() );
+            }
+            return;
+        }
+        else if (cnode->nodeType == ENodeType::Comma) {
+            cnode->SetIsDel( true );
+            node->parseIndex++;
+            continue;
+        }
+        else if (cnode->nodeType == ENodeType::IdentifierLink) {
+            node->parseIndex++;
+            if (parentNode->angleNode != nullptr) {
+                cnode->SetIsDel(true);
+                parentNode->angleNode->AddChild(cnode);
+            }
+            if (node->parseIndex < static_cast<int>(node->childList.size())) {
+                Node* nextNode = node->childList[node->parseIndex];
+                if (nextNode->nodeType == ENodeType::LeftAngle) {
+                    HandleAngleExpressNode(node, cnode);
+                }
+                else if (nextNode->nodeType == ENodeType::Key
+                    && nextNode->token->GetType() == ETokenType::Colon) {
+                    if (node->parseIndex + 1 < static_cast<int>(node->childList.size())) {
+                        nextNode->SetIsDel(true);
+                        Node* nextNode2 = node->childList[node->parseIndex + 1];
+                        nextNode2->SetIsDel(true);
+                        cnode->AddChild(nextNode2);
+                        node->parseIndex += 2;
+                    }
+                }
+                else if (nextNode->nodeType == ENodeType::RightAngle) {
+                    HandleAngleExpressNode(node, parentNode);
+                    return;
+                }
+                else if (nextNode->nodeType == ENodeType::Comma) {
+                    continue;
+                }
+                else if (nextNode->nodeType == ENodeType::Par) {
+                    parentNode->parNode = nextNode;
+                    nextNode->SetIsDel(true);
+                    _HandleExpressNodeProcess(nextNode, nullptr);
+
+                    if (nextNode->GetExtendLinkNodeList().size() > 0) {
+                        parentNode->SetLinkNode(nextNode->GetExtendLinkNodeList() );
+                        _HandleExpressNodeProcess(node, parentNode);
+                        return;
+                    }
+                    else {
+                        parentNode = parentNode->GetFinalNode();
+                        if (node->parseIndex < static_cast<int>(node->childList.size())) {
+                            Node* next2ExpressNode = node->childList[node->parseIndex];
+                            if (next2ExpressNode->nodeType == ENodeType::Brace) {
+                                parentNode->blockNode = next2ExpressNode;
+                                next2ExpressNode->SetIsDel( true );
+                                _HandleExpressNodeProcess(node, parentNode);
+                                return;
+                            }
+                        }
+                    }
+                }
+                else {
+                    HandleAngleExpressNode(node, parentNode);
+                    return;
+                }
+            }
+        }
+        else {
+            node->parseIndex++;
+            if (parentNode->angleNode != nullptr) {
+                parentNode->angleNode->AddChild(cnode);
+            }
+            else {
+                parentNode->AddChild(cnode);
+            }
+        }
     }
 }
 
@@ -868,45 +1066,368 @@ void StructParse::AddFileMetaClasss(Node* blockNode, const std::vector<Node*>& n
     m_CurrentNodeInfoStack.pop();
 }
 
-FileMetaSyntax* StructParse::HandleCreateFileMetaSyntaxByPNode(Node* pnode) {
-    auto nodeList = GetAllNodeToSemiColon(pnode);
-    if (nodeList.empty()) {
-        return nullptr;
+StructParse::SyntaxNodeStruct StructParse::GetOneSyntax(Node* pnode, Condition* condition) {
+    SyntaxNodeStruct keynodeStruct;
+    if (pnode->parseIndex >= static_cast<int>(pnode->childList.size())) {
+        return keynodeStruct;
     }
+    int index = 0;
+    int tCurIndex = 0;
+    Node* curNode = nullptr;
+    Token* curToken = nullptr;
+    ENodeType curNodeType = ENodeType::None;
+    while (pnode->parseIndex < static_cast<int>(pnode->childList.size())) {
+        tCurIndex = pnode->parseIndex + index++;
+        curNode = nullptr;
+        if (tCurIndex < static_cast<int>(pnode->childList.size())) {
+            curNode = pnode->childList[tCurIndex];
+        }
+        if (curNode == nullptr) {
+            break;
+        }
+        curNodeType = curNode->nodeType;
+        curToken = curNode->token;
+        if (curToken == nullptr) {
+            break;
+        }
+
+        if (curNodeType == ENodeType::LineEnd) {
+            if (keynodeStruct.IsLineEndBreak()) {
+                if (ProjectManager::GetIsUseForceSemiColonInLineEnd()) {
+                    Log::AddInStructFileMeta(EError::None, "warning");// 使用的强制分号结束语句方式，注意在节点继承下不匹配" + (curToken ? curToken->ToLexemeAllString() : "null"));
+                }
+                break;
+            }
+        }
+        else if (curNodeType == ENodeType::SemiColon) {
+            break;
+        }
+        else if (curNodeType == ENodeType::Brace) {
+            bool isMustContactBrace = false;
+            ETokenType ttt = keynodeStruct.tokenType;
+            if (ttt == ETokenType::If
+                || ttt == ETokenType::ElseIf
+                || ttt == ETokenType::Else
+                || ttt == ETokenType::For
+                || ttt == ETokenType::While
+                || ttt == ETokenType::DoWhile
+                || ttt == ETokenType::Switch
+                || ttt == ETokenType::Case
+                || ttt == ETokenType::Label) { // ClassName(){}
+                isMustContactBrace = true;
+            }
+
+            if (isMustContactBrace) {
+                keynodeStruct.SetBraceNode(curNode);
+            }
+            else {
+                if (keynodeStruct.eSyntaxNodeType == ESyntaxNodeStructType::CommonSyntax) {
+                    keynodeStruct.AddContent(curNode);
+                }
+            }
+            break;
+        }
+        else if (curNodeType == ENodeType::Key) {
+            if (condition != nullptr && condition->isCheck) {
+                if (!condition->isFirstKey) {
+                    index = 0;
+                    break;
+                }
+                if (!condition->IsMatchTokenType(curToken->GetType())) {
+                    index = 0;
+                    break;
+                }
+                condition->isCheck = false;
+            }
+
+            ETokenType ttt = curNode->token->GetType();
+            if (ttt == ETokenType::If
+                || ttt == ETokenType::ElseIf
+                || ttt == ETokenType::Else
+                || ttt == ETokenType::Switch
+                || ttt == ETokenType::For
+                || ttt == ETokenType::While || curNode->token->GetType() == ETokenType::DoWhile
+                || ttt == ETokenType::Case
+                || ttt == ETokenType::Default
+                || ttt == ETokenType::Return
+                || ttt == ETokenType::Transience
+                || ttt == ETokenType::Next
+                || ttt == ETokenType::Break
+                || ttt == ETokenType::Continue
+                || ttt == ETokenType::Label
+                || ttt == ETokenType::Goto
+                || ttt == ETokenType::Const) {
+                keynodeStruct.SetMainKeyNode(curNode);
+            }
+            else if (ttt == ETokenType::Data) {
+                keynodeStruct.AddContent(curNode);
+            }
+            else if (ttt == ETokenType::Var) {
+                keynodeStruct.AddContent(curNode);
+            }
+            else if (ttt == ETokenType::In) {
+                keynodeStruct.AddContent(curNode);
+            }
+            else if (ttt == ETokenType::Dynamic) {
+                keynodeStruct.AddContent(curNode);
+            }
+            else if (ttt == ETokenType::This
+                || ttt == ETokenType::Base
+                || ttt == ETokenType::New) {
+                keynodeStruct.AddContent(curNode);
+            }
+            else {
+                Log::AddInStructFileMeta(EError::None, "Error parse exception keyworks");
+            }
+        }
+        else {
+            if (condition != nullptr && condition->isCheck) {
+                if (condition->isFirstKey) {
+                    index = 0;
+                    break;
+                }
+            }
+            keynodeStruct.AddContent(curNode);
+        }
+    }
+    keynodeStruct.moveIndex = index;
+    return keynodeStruct;
+}
+
+FileMetaSyntax* StructParse::HandleCreateFileMetaSyntaxByPNode(Node* pnode) {
+    FileMetaSyntax* fms = nullptr;
+    SyntaxNodeStruct akss = GetOneSyntax(pnode);
+    pnode->parseIndex += akss.moveIndex;
+    if (akss.eSyntaxNodeType == ESyntaxNodeStructType::None) {
+    }
+    else if (akss.eSyntaxNodeType == ESyntaxNodeStructType::CommonSyntax) {
+        if (akss.commonContent.size() > 0) {
+            fms = CrateFileMetaSyntaxNoKey(akss.commonContent);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+    }
+    else if (akss.eSyntaxNodeType == ESyntaxNodeStructType::KeySyntax) {
+        if (akss.tokenType == ETokenType::If) {
+            while (true) {
+                Condition condition(ETokenType::ElseIf);
+                condition.AddTokenTypeList(ETokenType::Else);
+                SyntaxNodeStruct cakss = GetOneSyntax(pnode, &condition);
+                if (cakss.eSyntaxNodeType == ESyntaxNodeStructType::None) {
+                    if (cakss.moveIndex == 0)
+                        break;
+                    pnode->parseIndex += cakss.moveIndex;
+                    continue;
+                }
+
+                if (cakss.tokenType == ETokenType::ElseIf) {
+                    pnode->parseIndex += cakss.moveIndex;
+                    akss.followKeySyntaxStructList.push_back(new SyntaxNodeStruct(cakss));
+                    continue;
+                }
+                else if (cakss.tokenType == ETokenType::Else) {
+                    pnode->parseIndex += cakss.moveIndex;
+                    akss.followKeySyntaxStructList.push_back(new SyntaxNodeStruct(cakss));
+                }
+                break;
+            }
+            // 这里需要实现FileMetaKeyIfSyntax::ParseIfSyntax
+            // fms = FileMetaKeyIfSyntax::ParseIfSyntax(m_FileMeta, akss);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+        else if (akss.tokenType == ETokenType::Switch) {
+            while (true) {
+                Condition condition(ETokenType::Case);
+                condition.AddTokenTypeList(ETokenType::Default);
+                SyntaxNodeStruct cakss = GetOneSyntax(akss.blockNode, &condition);
+                if (cakss.eSyntaxNodeType == ESyntaxNodeStructType::None)
+                    break;
+                akss.childrenKeySyntaxStructList.push_back(new SyntaxNodeStruct(cakss));
+            }
+            // 这里需要实现ParseSwitchSyntax
+            // fms = ParseSwitchSyntax(m_FileMeta, akss);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+        else if (akss.tokenType == ETokenType::For) {
+            // 这里需要实现ParseForSyntax
+            // fms = ParseForSyntax(m_FileMeta, akss);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+        else if (akss.tokenType == ETokenType::While || akss.tokenType == ETokenType::DoWhile) {
+            // 这里需要实现ParseConditionSyntax
+            // fms = ParseConditionSyntax(m_FileMeta, akss);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+        else if (akss.tokenType == ETokenType::Return || akss.tokenType == ETokenType::Transience) {
+            // 这里需要实现FileMetaKeyReturnSyntax
+            // fms = new FileMetaKeyReturnSyntax(m_FileMeta, akss.keyNode->token, conditionExpress);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+        else if (akss.tokenType == ETokenType::Label || akss.tokenType == ETokenType::Goto) {
+            Token* labelToken = nullptr;
+            if (akss.keyContent.size() != 1) {
+                Log::AddInStructFileMeta(EError::None, "Error 解析Goto Label语法，只支持 goto id; 这种语法!!");
+            }
+            else {
+                labelToken = akss.keyContent[0]->token;
+                if (labelToken->GetType() != ETokenType::Identifier) {
+                    Log::AddInStructFileMeta(EError::None, "Error parse GotoLabel right label must used origenal keyworks");
+                }
+            }
+            // 这里需要实现FileMetaKeyGotoLabelSyntax
+            // fms = new FileMetaKeyGotoLabelSyntax(m_FileMeta, akss.keyNode->token, labelToken);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+        else if (akss.tokenType == ETokenType::Break || akss.tokenType == ETokenType::Continue) {
+            // 这里需要实现FileMetaKeyOnlySyntax
+            // fms = new FileMetaKeyOnlySyntax(m_FileMeta, akss.keyNode->token, nullptr);
+            AddParseSyntaxNodeInfo(fms, false);
+        }
+    }
+    return fms;
+}
+
+FileMetaSyntax* StructParse::CrateFileMetaSyntaxNoKey(const std::vector<Node*>& pNodeList) {
+    std::vector<Node*> beforeNodeList;
+    Node* assignNode = nullptr;
+    Node* opAssignNode = nullptr;
+    ETokenType tet = ETokenType::None;
+    std::vector<Node*> afterNodeList;
     
-    // 根据第一个节点判断是什么类型的语句
-    Node* firstNode = nodeList[0];
-    if (firstNode->nodeType == ENodeType::Key && firstNode->token != nullptr) {
-        switch (firstNode->token->GetType()) {
-            case ETokenType::If:
-                return FileMetaKeyIfSyntax::ParseIfSyntax(m_FileMeta, pnode);
-            case ETokenType::While:
-            case ETokenType::DoWhile:
-                return new FileMetaKeyOnlySyntax(m_FileMeta, firstNode->token, nullptr);
-            case ETokenType::For:
-                return new FileMetaKeyForSyntax(m_FileMeta, firstNode->token, nullptr);
-            case ETokenType::Switch:
-                return new FileMetaKeySwitchSyntax(m_FileMeta, firstNode->token, nullptr, nullptr, nullptr);
-            case ETokenType::Return: {
-                FileMetaBaseTerm* returnExpr = nodeList.size() > 1 ? nullptr : nullptr; // 需要解析表达式
-                return new FileMetaKeyReturnSyntax(m_FileMeta, firstNode->token, returnExpr);
+    for (size_t j = 0; j < pNodeList.size(); j++) {
+        auto* cnode = pNodeList[j];
+        if (cnode->nodeType == ENodeType::Assign) {
+            if (assignNode == nullptr && opAssignNode == nullptr) {
+                assignNode = cnode;
+                continue;
             }
-            case ETokenType::Break:
-            case ETokenType::Continue:
-                return new FileMetaKeyOnlySyntax(m_FileMeta, firstNode->token, nullptr);
-            case ETokenType::Goto:
-            case ETokenType::Label: {
-                Token* labelToken = nodeList.size() > 1 ? nodeList[1]->token : nullptr;
-                return new FileMetaKeyGotoLabelSyntax(m_FileMeta, firstNode->token, labelToken);
+        }
+        else {
+            tet = cnode->token->GetType();
+            if (tet == ETokenType::PlusAssign
+                || tet == ETokenType::MinusAssign
+                || tet == ETokenType::MultiplyAssign
+                || tet == ETokenType::DivideAssign
+                || tet == ETokenType::ModuloAssign
+                || tet == ETokenType::InclusiveOrAssign
+                || tet == ETokenType::CombineAssign
+                || tet == ETokenType::XORAssign
+                || tet == ETokenType::DoublePlus
+                || tet == ETokenType::DoubleMinus) {
+                if (assignNode == nullptr && opAssignNode == nullptr) {
+                    opAssignNode = cnode;
+                    continue;
+                }
             }
-            default:
-                // 其他关键字作为普通语句处理
-                return new FileMetaCallSyntax(nullptr);
+        }
+        if (assignNode != nullptr || opAssignNode != nullptr)
+            afterNodeList.push_back(cnode);
+        else {
+            beforeNodeList.push_back(cnode);
         }
     }
     
-    // 默认为调用语句处理
-    return new FileMetaCallSyntax(nullptr);
+    if (beforeNodeList.empty()) {
+        Log::AddInStructFileMeta(EError::None, "Error parse find sign express not include pre-viarble!");
+        return nullptr;
+    }
+
+    Token* staticToken = nullptr;
+    Token* dynamicToken = nullptr;
+    Token* varToken = nullptr;
+    Token* dataToken = nullptr;
+    Token* nameToken = nullptr;
+    // FileMetaClassDefine* classRef = nullptr;
+    // FileMetaCallLink* varRef = nullptr;
+
+    Node parseNode(nullptr);
+    parseNode.childList = beforeNodeList;
+    parseNode.parseIndex = 0;
+    auto handleBeforeList = HandleBeforeNode(&parseNode);
+
+    std::vector<Node*> defineNodeList;
+    for (size_t i = 0; i < handleBeforeList.size(); i++) {
+        auto* cnode = handleBeforeList[i];
+        if (cnode->nodeType == ENodeType::IdentifierLink) {
+            defineNodeList.push_back(cnode);
+        }
+        else {
+            Token* token = cnode->token;
+            if (token->GetType() == ETokenType::This || token->GetType() == ETokenType::Base) {
+                defineNodeList.push_back(cnode);
+            }
+            else if (token->GetType() == ETokenType::Static) {
+                if (staticToken != nullptr) {
+                    Log::AddInStructFileMeta(EError::None, "Error 重复Static!!");
+                }
+                staticToken = token;
+            }
+            else if (token->GetType() == ETokenType::Type || token->GetType() == ETokenType::String) {
+                defineNodeList.push_back(cnode);
+            }
+            else if (token->GetType() == ETokenType::Dynamic) {
+                if (varToken != nullptr || dynamicToken != nullptr || dataToken != nullptr) {
+                    Log::AddInStructFileMeta(EError::None, "Error 重复Dynamic!!");
+                }
+                dynamicToken = token;
+                defineNodeList.push_back(cnode);
+            }
+            else if (token->GetType() == ETokenType::Var) {
+                if (varToken != nullptr || dynamicToken != nullptr || dataToken != nullptr) {
+                    Log::AddInStructFileMeta(EError::None, "Error 重复Var!!");
+                }
+                varToken = token;
+                defineNodeList.push_back(cnode);
+            }
+            else if (token->GetType() == ETokenType::Data) {
+                if (varToken != nullptr || dynamicToken != nullptr || dataToken != nullptr) {
+                    Log::AddInStructFileMeta(EError::None, "Error 重复Data!!");
+                }
+                dataToken = token;
+                defineNodeList.push_back(cnode);
+            }
+            else {
+                Log::AddInStructFileMeta(EError::None, "Error 解析时出现没有该节点!!" + (token ? token->ToLexemeAllString() : "null"));
+            }
+        }
+    }
+    
+    if (defineNodeList.empty() || defineNodeList.size() > 3) {
+        Log::AddInStructFileMeta(EError::None, "Error 解析时出现错误1");
+        return nullptr;
+    }
+    else if (defineNodeList.size() == 1) {
+        nameToken = defineNodeList[0]->token;
+        // varRef = new FileMetaCallLink(m_FileMeta, defineNodeList[0]);
+    }
+    else if (defineNodeList.size() == 2) {
+        if (varToken != nullptr || dynamicToken != nullptr || dataToken != nullptr) {
+            nameToken = defineNodeList[1]->token;
+            // varRef = new FileMetaCallLink(m_FileMeta, defineNodeList[1]);
+        }
+        else {
+            // classRef = new FileMetaClassDefine(m_FileMeta, defineNodeList[0]);
+            auto* node2 = defineNodeList[1];
+            // if (node2->linkTokenList.size() != 1) {
+            //     Log::AddInStructFileMeta(EError::None, "Error 解析时出现错误，只能有一个字符串!!");
+            //     return nullptr;
+            // }
+            nameToken = node2->token;
+        }
+    }
+
+    // FileMetaBaseTerm* fme = nullptr;
+    if (assignNode != nullptr && afterNodeList.size() > 0) {
+        if (afterNodeList[0]->nodeType == ENodeType::Key
+            && afterNodeList[0]->token->GetType() != ETokenType::This
+            && afterNodeList[0]->token->GetType() != ETokenType::Base
+            && afterNodeList[0]->token->GetType() != ETokenType::New) {
+            Log::AddInStructFileMeta(EError::None, "Error 暂不支持 a = if/switch{}语法");
+        }
+    }
+    
+    // 这里需要实现具体的语法创建逻辑
+    // 由于缺少一些依赖类，暂时返回nullptr
+    return nullptr;
 }
 
 } // namespace Compile

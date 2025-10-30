@@ -12,6 +12,7 @@
 #include <memory>
 #include <stack>
 #include <string>
+#include "Node.h"
 
 namespace SimpleLanguage {
 namespace Compile {
@@ -35,6 +36,43 @@ public:
         Function,
         Statements,
         DataMemeber
+    };
+
+    enum class ESyntaxNodeStructType {
+        None = 0,
+        KeySyntax,
+        CommonSyntax,
+    };
+
+    class SyntaxNodeStruct {
+    public:
+        ESyntaxNodeStructType eSyntaxNodeType = ESyntaxNodeStructType::None;
+        ETokenType tokenType = ETokenType::None;
+        ENodeType curNodeType = ENodeType::None;
+        int moveIndex = 0;
+        Node* keyNode = nullptr;
+        std::vector<Node*> keyContent;                //关键字和括号内容  if () switch() for()
+        Node* blockNode = nullptr;
+        std::vector<Node*> commonContent;             //普通调用内容    Class.CalFun()
+        std::vector<SyntaxNodeStruct*> childrenKeySyntaxStructList; //关键字嵌套内容, 如switch
+        std::vector<SyntaxNodeStruct*> followKeySyntaxStructList; //关键字跟随内容if/elif/elif/else  
+
+        SyntaxNodeStruct() = default;
+        void SetMainKeyNode(Node* _keyNode);
+        void AddContent(Node* node);
+        void SetBraceNode(Node* node);
+        bool IsLineEndBreak();
+    };
+
+    class Condition {
+    public:
+        bool isFirstKey = false;
+        bool isCheck = true;
+        std::vector<ETokenType> eTokenTypeList;
+
+        bool IsMatchTokenType(ETokenType tokenType);
+        Condition(ETokenType tokenType);
+        void AddTokenTypeList(ETokenType tokenType);
     };
 
     struct ParseCurrentNodeInfo {
@@ -70,6 +108,10 @@ public:
     void ParseEnumNode(Node* pnode);
     void ParseSyntax(Node* pnode);
     
+    SyntaxNodeStruct GetOneSyntax(Node* pnode, Condition* condition = nullptr);
+    FileMetaSyntax* HandleCreateFileMetaSyntaxByPNode(Node* pnode);
+    FileMetaSyntax* CrateFileMetaSyntaxNoKey(const std::vector<Node*>& pNodeList);
+    
     static std::vector<Node*> HandleBeforeNode(Node* node);
     static std::vector<Node*> HandleExpressNode(Node* node);
     static void DelHandleNostList(Node* node);
@@ -89,7 +131,6 @@ protected:
     
     void AddFileMetaFunctionVariable(Node* pnode, Node* blockNode, const std::vector<Node*>& nodeList);
     void AddFileMetaClasss(Node* blockNode, const std::vector<Node*>& nodeList);
-    FileMetaSyntax* HandleCreateFileMetaSyntaxByPNode(Node* pnode);
 
 private:
     FileMeta* m_FileMeta;
