@@ -110,7 +110,7 @@ namespace Compile {
                 break;
             case DataType::String:
                 // 直接将字符数组转换为 string
-                ss << std::string(data.string_val);
+                ss << data.string_val;
                 break;
             default:
                 throw std::runtime_error("Unknown data type");
